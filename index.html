@@ -1,30 +1,33 @@
 <!DOCTYPE html>
-<html lang="vi" class="scroll-smooth">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bảng Tin Tương Tác: Phân Tích Thị Trường Crypto Tháng 7/2025 (với Gemini AI)</title>
+    <title>Infographic: Kỷ Nguyên Mới Của Thị Trường Crypto</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Warm Neutrals & Subtle Accents -->
-    <!-- Application Structure Plan: A single-page dashboard structure with a sticky top navigation bar for quick access to thematic sections (Market Overview, Bitcoin, Altcoins, Vietnam Focus, Strategy). This structure is chosen over the report's linear format to provide a high-level snapshot upfront and allow users to dive into specific areas of interest non-linearly. Key interactions include filterable cards for altcoin narratives and a hover-able timeline for Vietnam's regulations, designed to make complex information digestible and engaging for Vietnamese investors and businesses. A new Gemini API feature was added to the altcoin section to provide AI-powered, in-depth analysis on demand. -->
-    <!-- Visualization & Content Choices: 
-        - Report Info: Key market stats -> Goal: Inform -> Viz: HTML Stat Cards -> Interaction: None -> Justification: Quick, scannable data.
-        - Report Info: Market sentiment shift -> Goal: Show Change -> Viz: Chart.js Line Chart -> Interaction: Hover Tooltips -> Justification: Visualizes trend over time.
-        - Report Info: Bitcoin ETF flows -> Goal: Compare -> Viz: Chart.js Bar Chart -> Interaction: Hover Tooltips -> Justification: Quantifies key market driver (institutional demand).
-        - Report Info: On-chain divergence -> Goal: Compare -> Viz: Chart.js Donut Chart -> Interaction: Hover Tooltips -> Justification: Clearly illustrates whale vs. retail behavior.
-        - Report Info: Altcoin capital rotation -> Goal: Organize/Compare -> Viz: Filterable HTML Cards + AI Analysis -> Interaction: Click Filters, Click AI Button -> Justification: Allows user-driven exploration and deep-dives using Gemini API for enhanced insights.
-        - Report Info: Vietnam legal roadmap -> Goal: Organize/Inform -> Viz: Interactive HTML Timeline -> Interaction: Hover -> Justification: Simplifies a dense but critical timeline for the target audience.
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Brilliant Blues -->
+    <!-- Application Structure Plan: A single-page, top-to-bottom scrolling infographic telling a linear story. It starts with a high-impact "Hook" (big numbers), explains the "Why" (Tam Giác Quyền Lực), analyzes market sentiment, dives deep into Bitcoin, explores the Altcoin universe, and concludes with a strategic summary (Risks vs. Opportunities). This narrative flow guides the user from general context to specific details logically. -->
+    <!-- Visualization & Content Choices:
+        - Market KPIs -> Inform -> Single Big Numbers -> Immediate high-level context.
+        - Driving Forces -> Organize -> Structured HTML/CSS 3-column layout with Unicode icons -> Clearly breaks down the core narrative into three distinct pillars for easy digestion.
+        - Fear & Greed Index -> Inform -> Chart.js Donut/Gauge Chart -> Provides a quick visual summary of market sentiment.
+        - Bitcoin Price -> Change -> Chart.js Line Chart -> Shows the recent dramatic trend.
+        - Bitcoin RSI -> Inform -> Chart.js Donut/Gauge Chart -> Highlights the "Overbought" risk visually.
+        - Liquidations -> Compare -> Chart.js Bar Chart -> Dramatically shows the short squeeze impact.
+        - Top Altcoins -> Compare/Rank -> Chart.js Ordered Bar Chart -> Quickly shows which narratives are winning.
+        - Altcoin Stories -> Organize/Inform -> Structured HTML/CSS cards -> Explains the "why" behind top performers.
+        - Risks vs. Opportunities -> Compare/Organize -> HTML/CSS two-column layout -> Presents a balanced strategic view.
+        - CONFIRMATION: NO SVG used. NO Mermaid JS used. All charts use Chart.js on Canvas.
     -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
-            font-family: 'Be Vietnam Pro', sans-serif;
-            background-color: #f9fafb; 
-            color: #1f2937;
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f8ff;
         }
         .chart-container {
             position: relative;
@@ -40,619 +43,347 @@
                 height: 350px;
             }
         }
-        .nav-link {
-            transition: all 0.3s ease;
-            border-bottom: 2px solid transparent;
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            transition: all 0.3s ease-in-out;
         }
-        .nav-link:hover, .nav-link.active {
-            color: #3b82f6;
-            border-bottom-color: #3b82f6;
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
         }
-        .card-shadow {
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        .section-title {
+            color: #003049;
+            font-weight: 900;
+            font-size: 2.25rem;
+            line-height: 2.5rem;
+            text-align: center;
+            margin-bottom: 1rem;
         }
-        .fade-in {
-            animation: fadeIn 0.5s ease-in-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .timeline-item-content {
-            transition: all 0.3s ease;
-        }
-        .modal-backdrop {
-            transition: opacity 0.3s ease;
-        }
-        .modal-content {
-            transition: transform 0.3s ease;
-        }
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3b82f6;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .section-subtitle {
+            text-align: center;
+            color: #6c757d;
+            max-width: 48rem;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 3rem;
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="text-gray-800">
 
-    <header id="top" class="bg-white p-4 sm:p-6 sticky top-0 z-50 shadow-md">
-        <div class="container mx-auto px-4">
-            <nav class="flex justify-between items-center">
-                <h1 class="text-xl md:text-2xl font-bold text-blue-600">Crypto Dashboard 7/2025</h1>
-                <div class="hidden md:flex space-x-6 text-sm lg:text-base font-medium">
-                    <a href="#overview" class="nav-link px-2 py-1">Tổng Quan</a>
-                    <a href="#bitcoin" class="nav-link px-2 py-1">Bitcoin</a>
-                    <a href="#altcoins" class="nav-link px-2 py-1">Altcoin</a>
-                    <a href="#vietnam" class="nav-link px-2 py-1">Tiêu Điểm: Việt Nam</a>
-                    <a href="#strategy" class="nav-link px-2 py-1">Chiến Lược</a>
+    <div class="container mx-auto p-4 md:p-8">
+
+        <!-- Header -->
+        <header class="text-center my-8 md:my-12">
+            <h1 class="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#00509d] to-[#00b4d8]">KỶ NGUYÊN MỚI CỦA CRYPTO</h1>
+            <p class="mt-4 text-lg text-gray-600">Phân tích toàn cảnh thị trường ngày 11 tháng 7 năm 2025</p>
+        </header>
+
+        <!-- Section 1: Big Numbers -->
+        <section class="mb-12">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                <div class="card p-6">
+                    <p class="text-lg font-semibold text-gray-500">Tổng Vốn Hóa</p>
+                    <p class="text-5xl font-extrabold text-[#00509d] mt-2">~$3.6T</p>
+                    <p class="text-xl font-bold text-green-500 mt-1">+4.3% (24h)</p>
                 </div>
-                 <button id="mobile-menu-button" class="md:hidden p-2 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
-                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                </button>
-            </nav>
-        </div>
-        <div id="mobile-menu" class="hidden md:hidden mt-4">
-             <a href="#overview" class="block py-2 px-4 text-sm hover:bg-gray-100">Tổng Quan</a>
-             <a href="#bitcoin" class="block py-2 px-4 text-sm hover:bg-gray-100">Bitcoin</a>
-             <a href="#altcoins" class="block py-2 px-4 text-sm hover:bg-gray-100">Altcoin</a>
-             <a href="#vietnam" class="block py-2 px-4 text-sm hover:bg-gray-100">Tiêu Điểm: Việt Nam</a>
-             <a href="#strategy" class="block py-2 px-4 text-sm hover:bg-gray-100">Chiến Lược</a>
-        </div>
-    </header>
+                <div class="card p-6">
+                    <p class="text-lg font-semibold text-gray-500">Khối Lượng GD 24h</p>
+                    <p class="text-5xl font-extrabold text-[#00509d] mt-2">~$175B</p>
+                    <p class="text-xl font-bold text-gray-700 mt-1">Sôi động</p>
+                </div>
+                <div class="card p-6">
+                    <p class="text-lg font-semibold text-gray-500">BTC Dominance</p>
+                    <p class="text-5xl font-extrabold text-[#00509d] mt-2">~62%</p>
+                     <p class="text-xl font-bold text-gray-700 mt-1">Dẫn dắt</p>
+                </div>
+            </div>
+        </section>
 
-    <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <!-- Section 2: Driving Forces -->
+        <section class="my-16">
+            <h2 class="section-title">TAM GIÁC QUYỀN LỰC</h2>
+            <p class="section-subtitle">Đợt tăng trưởng này không phải ngẫu nhiên, mà được củng cố bởi 3 trụ cột vững chắc, tạo nên một nền tảng bền vững chưa từng có trong lịch sử thị trường.</p>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="card p-8 text-center border-t-4 border-[#00509d]">
+                    <div class="text-6xl mb-4">🏦</div>
+                    <h3 class="font-bold text-xl mb-2 text-[#003049]">Dòng Vốn Tổ Chức</h3>
+                    <p class="text-gray-600">Các quỹ Bitcoin Spot ETF thu hút hàng tỷ USD, hợp pháp hóa Bitcoin như một tài sản đầu tư chính thống, tạo ra một nguồn cầu ổn định và bền vững.</p>
+                </div>
+                <div class="card p-8 text-center border-t-4 border-[#0077b6]">
+                    <div class="text-6xl mb-4">🏛️</div>
+                    <h3 class="font-bold text-xl mb-2 text-[#003049]">Gió Thuận Chính Trị</h3>
+                    <p class="text-gray-600">Chính sách thân thiện với crypto từ Washington làm giảm rủi ro pháp lý, tạo môi trường "risk-on" lý tưởng cho các nhà đầu tư lớn tham gia thị trường.</p>
+                </div>
+                <div class="card p-8 text-center border-t-4 border-[#00b4d8]">
+                    <div class="text-6xl mb-4">🇻🇳</div>
+                    <h3 class="font-bold text-xl mb-2 text-[#003049]">Bước Ngoặt Pháp Lý VN</h3>
+                    <p class="text-gray-600">Lần đầu tiên, tài sản số được công nhận trong luật, đưa 21 triệu nhà đầu tư Việt Nam ra khỏi "vùng xám", mở đường trở thành trung tâm crypto khu vực.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Market Sentiment -->
+        <section class="my-16">
+            <h2 class="section-title">NHỊP ĐẬP THỊ TRƯỜNG</h2>
+            <p class="section-subtitle">Chỉ số Sợ hãi & Tham lam đang ở mức cao, phản ánh sự lạc quan tột độ nhưng cũng là lời cảnh báo về khả năng thị trường đang quá nóng.</p>
+            <div class="card p-6 md:p-8">
+                <div class="chart-container h-[250px] md:h-[300px] max-w-md">
+                    <canvas id="fearGreedChart"></canvas>
+                </div>
+                <p class="text-center text-gray-500 italic mt-4">"Hãy sợ hãi khi người khác tham lam." - Warren Buffett</p>
+            </div>
+        </section>
+
+        <!-- Section 4: Bitcoin Deep Dive -->
+        <section class="my-16">
+            <h2 class="section-title">BITCOIN: VỊ VUA PHÁ VỠ MỌI RÀO CẢN</h2>
+             <p class="section-subtitle">Với vai trò đầu tàu, Bitcoin đã có màn trình diễn ngoạn mục, liên tục thiết lập các đỉnh cao mới. Cùng phân tích sâu hơn về sức mạnh đằng sau đà tăng này.</p>
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                <div class="lg:col-span-3 card p-6">
+                    <h3 class="font-bold text-xl text-center mb-4">Hành Trình Vượt Đỉnh Lịch Sử (USD)</h3>
+                    <div class="chart-container h-[350px]">
+                        <canvas id="bitcoinPriceChart"></canvas>
+                    </div>
+                    <p class="text-center text-sm text-gray-600 mt-4">BTC đã bứt phá ngoạn mục khỏi các mô hình tích lũy, xác nhận một xu hướng tăng giá cực kỳ mạnh mẽ, hiện đang trong giai đoạn "dò giá" (price discovery).</p>
+                </div>
+                <div class="lg:col-span-2 space-y-8">
+                    <div class="card p-6">
+                        <h3 class="font-bold text-xl text-center mb-2">Chỉ Số Sức Mạnh (RSI)</h3>
+                        <div class="chart-container h-[150px] max-w-xs">
+                           <canvas id="rsiChart"></canvas>
+                        </div>
+                         <p class="text-center text-sm text-gray-600 mt-2">Chỉ số RSI ở vùng "Quá Mua", cảnh báo nguy cơ có một đợt điều chỉnh kỹ thuật ngắn hạn.</p>
+                    </div>
+                    <div class="card p-6">
+                        <h3 class="font-bold text-xl text-center mb-2">Cú Ép Bán Khống (24h)</h3>
+                        <div class="chart-container h-[200px]">
+                            <canvas id="liquidationChart"></canvas>
+                        </div>
+                        <p class="text-center text-sm text-gray-600 mt-2">Hơn 453 triệu USD vị thế short bị thanh lý, tạo ra một vòng lặp tự khuếch đại, "dọn dẹp" phe bán ra khỏi thị trường.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Altcoin Universe -->
+        <section class="my-16">
+            <h2 class="section-title">VŨ TRỤ ALTCOIN BÙNG NỔ</h2>
+            <p class="section-subtitle">Sóng tăng của Bitcoin đã lan tỏa mạnh mẽ, tạo nên một mùa xanh cho toàn thị trường. Cùng khám phá những "ngôi sao" và "câu chuyện" đang dẫn dắt dòng tiền.</p>
+            <div class="card p-6 md:p-8 mb-8">
+                 <h3 class="font-bold text-xl text-center mb-4">Top Altcoin Tăng Trưởng Vượt Trội (24h)</h3>
+                 <div class="chart-container h-[350px] md:h-[400px]">
+                    <canvas id="altcoinGrowthChart"></canvas>
+                </div>
+            </div>
+             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="card p-6">
+                    <div class="mb-3"><span class="font-bold text-white bg-gradient-to-r from-purple-500 to-pink-500 px-3 py-1 rounded-full text-sm">Phygital</span></div>
+                    <h3 class="font-bold text-xl mb-2">Pudgy Penguins (PENGU)</h3>
+                    <p class="text-gray-600">Thành công với mô hình "Vật lý + Kỹ thuật số", kết hợp bán đồ chơi tại Walmart và NFT, vạch ra công thức thành công mới cho các dự án thương hiệu.</p>
+                </div>
+                 <div class="card p-6">
+                    <div class="mb-3"><span class="font-bold text-white bg-gradient-to-r from-blue-500 to-teal-400 px-3 py-1 rounded-full text-sm">AI</span></div>
+                    <h3 class="font-bold text-xl mb-2">Worldcoin (WLD)</h3>
+                    <p class="text-gray-600">Giải quyết bài toán "nhận dạng cá nhân" trong kỷ nguyên AI, một dự án "moonshot" với tiềm năng đột phá nhưng cũng đi kèm rủi ro lớn về quyền riêng tư.</p>
+                </div>
+                 <div class="card p-6">
+                     <div class="mb-3"><span class="font-bold text-white bg-gradient-to-r from-green-500 to-lime-400 px-3 py-1 rounded-full text-sm">Layer 1</span></div>
+                    <h3 class="font-bold text-xl mb-2">Cardano (ADA)</h3>
+                    <p class="text-gray-600">"Gã khổng lồ tỉnh giấc" với mức tăng trưởng vượt trội. Dòng tiền đang quay trở lại với các coin nền tảng tốt nhưng chưa tăng giá nhiều.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 6: Strategic Outlook -->
+        <section class="my-16">
+             <h2 class="section-title">GÓC NHÌN CHIẾN LƯỢC</h2>
+             <p class="section-subtitle">Thị trường đang ở trong trạng thái "hưng phấn có cơ sở". Để điều hướng thành công, nhà đầu tư cần duy trì một cái nhìn cân bằng, nhận diện rõ cả rủi ro và cơ hội.</p>
+             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                 <div class="card p-8 border-l-4 border-red-500">
+                     <h3 class="text-2xl font-bold text-red-600 mb-4 flex items-center">⚠️ Rủi Ro Cần Lưu Ý</h3>
+                     <ul class="space-y-3 text-gray-700 list-disc list-inside">
+                         <li><b>Điều chỉnh kỹ thuật:</b> Tình trạng "Quá Mua" và "Tham lam" cực độ làm tăng xác suất có một đợt điều chỉnh giá ngắn hạn.</li>
+                         <li><b>Áp lực chốt lời:</b> Giá ở đỉnh cao sẽ đi kèm áp lực bán từ các nhà đầu tư đã mua ở vùng giá thấp.</li>
+                         <li><b>Rủi ro vĩ mô:</b> Các chính sách thuế quan hoặc thay đổi chính sách bất lợi có thể nhanh chóng đảo ngược tâm lý thị trường.</li>
+                     </ul>
+                 </div>
+                  <div class="card p-8 border-l-4 border-green-500">
+                     <h3 class="text-2xl font-bold text-green-600 mb-4 flex items-center">✨ Cơ Hội Đáng Chú Ý</h3>
+                     <ul class="space-y-3 text-gray-700 list-disc list-inside">
+                         <li><b>Sự trưởng thành của Bitcoin:</b> BTC ngày càng được công nhận như một tài sản vĩ mô, một loại "vàng kỹ thuật số".</li>
+                         <li><b>Tiềm năng thị trường Việt Nam:</b> Khung pháp lý mới mở ra cơ hội vàng để Việt Nam trở thành một trung tâm blockchain của khu vực.</li>
+                         <li><b>Sự đổi mới từ Altcoin:</b> Các xu hướng như "Phygital" hay RWA (Tài sản thế giới thực) có thể là những câu chuyện lớn tiếp theo.</li>
+                     </ul>
+                 </div>
+             </div>
+        </section>
         
-        <section id="hero" class="text-center mb-12 fade-in">
-            <h2 class="text-3xl md:text-4xl font-bold mb-2">Phân Tích Thị Trường Tiền Mã Hóa Toàn Cầu</h2>
-            <p class="text-lg text-gray-600 mb-6">Viễn Cảnh Chiến Lược Cho Việt Nam - Tháng 7 Năm 2025</p>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
-                <div class="bg-white p-4 rounded-lg card-shadow">
-                    <p class="text-sm text-gray-500">Tổng Vốn Hóa</p>
-                    <p class="text-2xl font-bold text-green-600">$3.69 T</p>
-                </div>
-                <div class="bg-white p-4 rounded-lg card-shadow">
-                    <p class="text-sm text-gray-500">KLGD 24h</p>
-                    <p class="text-2xl font-bold">$195.67 B</p>
-                </div>
-                <div class="bg-white p-4 rounded-lg card-shadow">
-                    <p class="text-sm text-gray-500">BTC Dominance</p>
-                    <p class="text-2xl font-bold">62.5%</p>
-                </div>
-                <div class="bg-white p-4 rounded-lg card-shadow">
-                    <p class="text-sm text-gray-500">Sợ hãi & Tham lam</p>
-                    <p class="text-2xl font-bold text-orange-500">71 (Tham lam)</p>
-                </div>
-            </div>
-        </section>
+        <footer class="text-center mt-12 py-6 border-t border-gray-200">
+            <p class="text-sm text-gray-500">Lưu ý: Infographic này chỉ mang tính chất tham khảo, không phải là lời khuyên đầu tư tài chính.</p>
+        </footer>
 
-        <section id="overview" class="mb-16 scroll-mt-24">
-            <h3 class="text-2xl md:text-3xl font-bold text-center mb-8">Tổng Quan: Một Thị Trường Ở Ngã Rẽ</h3>
-             <p class="max-w-3xl mx-auto text-center text-gray-600 mb-10">Thị trường đang bị giằng co giữa hai thế lực vĩ mô hùng mạnh: kỳ vọng cắt giảm lãi suất thúc đẩy tâm lý lạc quan và mối đe dọa từ chính sách thuế quan của Hoa Kỳ tạo ra sự bất ổn. Cuộc đối đầu này định hình tâm lý rủi ro và tạo ra một môi trường đầy biến động.</p>
-            <div class="grid md:grid-cols-2 gap-8 items-center">
-                <div class="bg-white p-6 rounded-lg card-shadow">
-                    <h4 class="font-bold text-lg mb-4 text-center">Cuộc Giằng Co Kinh Tế Vĩ Mô</h4>
-                    <div class="flex justify-around items-center space-x-4">
-                        <div class="text-center p-4 bg-green-50 rounded-lg flex-1">
-                            <span class="text-4xl">📈</span>
-                            <p class="font-semibold text-green-700 mt-2">Nhiên Liệu Tăng Giá</p>
-                            <p class="text-sm text-green-600">Kỳ vọng Fed cắt giảm lãi suất, tăng thanh khoản và khẩu vị rủi ro.</p>
-                        </div>
-                        <div class="font-bold text-2xl text-gray-400">VS</div>
-                        <div class="text-center p-4 bg-red-50 rounded-lg flex-1">
-                             <span class="text-4xl">📉</span>
-                            <p class="font-semibold text-red-700 mt-2">Áp Lực Giảm Giá</p>
-                            <p class="text-sm text-red-600">Rủi ro thuế quan của Hoa Kỳ, nguy cơ lạm phát đình trệ.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-white p-6 rounded-lg card-shadow">
-                    <h4 class="font-bold text-lg mb-2 text-center">Diễn Biến Tâm Lý Thị Trường</h4>
-                    <div class="chart-container h-64 sm:h-72">
-                        <canvas id="fearGreedChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="bitcoin" class="mb-16 scroll-mt-24">
-            <h3 class="text-2xl md:text-3xl font-bold text-center mb-8">Phân Tích Chuyên Sâu: Bitcoin</h3>
-            <p class="max-w-3xl mx-auto text-center text-gray-600 mb-10">Sự chấp thuận của các tổ chức tài chính thông qua các quỹ ETF đã mở ra một kỷ nguyên mới cho Bitcoin, biến nó thành động lực chính cho thị trường tăng trưởng hiện tại. Hãy cùng khám phá các yếu tố chính đằng sau sức mạnh của BTC.</p>
-            <div class="bg-white rounded-lg p-4 sm:p-6 card-shadow">
-                <div class="flex justify-center border-b mb-4">
-                    <button data-tab="btc-price" class="btc-tab-button active-tab p-4 font-semibold text-blue-600 border-b-2 border-blue-600">Phân Tích Giá</button>
-                    <button data-tab="btc-etf" class="btc-tab-button p-4 font-semibold text-gray-500 hover:text-blue-600">Dòng Vốn ETF</button>
-                    <button data-tab="btc-onchain" class="btc-tab-button p-4 font-semibold text-gray-500 hover:text-blue-600">Dữ Liệu On-Chain</button>
-                </div>
-                <div id="btc-content" class="fade-in">
-                    <!-- Content will be injected by JS -->
-                </div>
-            </div>
-        </section>
-
-        <section id="altcoins" class="mb-16 scroll-mt-24">
-            <h3 class="text-2xl md:text-3xl font-bold text-center mb-8">Toàn Cảnh Thị Trường Altcoin</h3>
-            <p class="max-w-3xl mx-auto text-center text-gray-600 mb-10">Thị trường altcoin đang cho thấy sự phân hóa rõ rệt. Dòng vốn đang có xu hướng luân chuyển khỏi các câu chuyện cũ để hướng tới các hệ sinh thái công nghệ mới nổi. Lựa chọn đúng câu chuyện là chìa khóa để tìm kiếm lợi nhuận.</p>
-            
-            <div class="flex flex-wrap justify-center gap-2 mb-8">
-                <button data-filter="all" class="altcoin-filter-button active-filter bg-blue-600 text-white px-4 py-2 rounded-full">Tất Cả</button>
-                <button data-filter="ai" class="altcoin-filter-button bg-white text-gray-700 px-4 py-2 rounded-full border">🤖 AI x Crypto</button>
-                <button data-filter="l2" class="altcoin-filter-button bg-white text-gray-700 px-4 py-2 rounded-full border">🧱 Lớp 2 & Modular</button>
-                <button data-filter="meme" class="altcoin-filter-button bg-white text-gray-700 px-4 py-2 rounded-full border">🐸 Memecoin</button>
-                <button data-filter="defi" class="altcoin-filter-button bg-white text-gray-700 px-4 py-2 rounded-full border">🔗 DeFi</button>
-            </div>
-
-            <div id="altcoin-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                 <!-- Altcoin cards will be injected by JS -->
-            </div>
-        </section>
-        
-        <section id="vietnam" class="mb-16 scroll-mt-24">
-            <h3 class="text-2xl md:text-3xl font-bold text-center mb-8">Tiêu Điểm Đặc Biệt: Sự Thức Tỉnh Của Crypto Tại Việt Nam</h3>
-            <p class="max-w-3xl mx-auto text-center text-gray-600 mb-10">Việc Quốc hội thông qua "Luật Công nghiệp Công nghệ số" là một bước ngoặt lịch sử, đưa lĩnh vực tài sản số ra khỏi "vùng xám" pháp lý. Điều này không chỉ bảo vệ nhà đầu tư mà còn mở ra cơ hội định vị Việt Nam thành một trung tâm crypto khu vực.</p>
-            <div class="bg-white rounded-lg p-6 sm:p-8 card-shadow">
-                <h4 class="text-xl font-bold mb-6 text-center">Lộ Trình Thực Thi Pháp Lý</h4>
-                <div class="relative">
-                    <div class="hidden sm:block absolute left-1/2 w-0.5 h-full bg-blue-200 -translate-x-1/2"></div>
-                    <div class="space-y-12">
-                        <!-- Timeline Item 1 -->
-                        <div class="timeline-item flex sm:items-center flex-col sm:flex-row">
-                            <div class="sm:w-1/2 sm:pr-8">
-                                <div class="p-4 bg-blue-50 rounded-lg border border-blue-200 sm:text-right">
-                                    <p class="font-bold text-blue-800">14/06/2025</p>
-                                    <p class="font-semibold">Thông qua Luật</p>
-                                    <div class="timeline-item-content text-sm text-gray-600 mt-1">
-                                       Quốc hội chính thức thông qua "Luật Công nghiệp Công nghệ số", tạo ra hành lang pháp lý đầu tiên cho tài sản kỹ thuật số.
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="mt-4 sm:mt-0 sm:w-1/2 sm:pl-8 relative">
-                               <div class="absolute -top-1.5 sm:left-1/2 sm:-translate-x-1/2 w-4 h-4 bg-blue-500 rounded-full border-4 border-white"></div>
-                            </div>
-                        </div>
-                        <!-- Timeline Item 2 -->
-                        <div class="timeline-item flex sm:items-center flex-col sm:flex-row-reverse">
-                            <div class="sm:w-1/2 sm:pl-8">
-                                 <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                                    <p class="font-bold text-blue-800">Tháng 6 - 12/2025</p>
-                                    <p class="font-semibold">Soạn Thảo Nghị Định</p>
-                                    <div class="timeline-item-content text-sm text-gray-600 mt-1">
-                                        Giai đoạn quan trọng để soạn thảo các nghị định hướng dẫn chi tiết về cấp phép, thuế, và các quy tắc vận hành cho thị trường.
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="mt-4 sm:mt-0 sm:w-1/2 sm:pr-8 relative">
-                                <div class="absolute -top-1.5 sm:right-1/2 sm:translate-x-1/2 w-4 h-4 bg-blue-500 rounded-full border-4 border-white"></div>
-                            </div>
-                        </div>
-                        <!-- Timeline Item 3 -->
-                         <div class="timeline-item flex sm:items-center flex-col sm:flex-row">
-                            <div class="sm:w-1/2 sm:pr-8">
-                                <div class="p-4 bg-blue-50 rounded-lg border border-blue-200 sm:text-right">
-                                    <p class="font-bold text-blue-800">01/01/2026</p>
-                                    <p class="font-semibold">Luật Có Hiệu Lực</p>
-                                    <div class="timeline-item-content text-sm text-gray-600 mt-1">
-                                       Luật chính thức có hiệu lực. Các sàn giao dịch và công ty crypto phải bắt đầu tuân thủ các quy định mới.
-                                    </div>
-                                </div>
-                            </div>
-                           <div class="mt-4 sm:mt-0 sm:w-1/2 sm:pl-8 relative">
-                                <div class="absolute -top-1.5 sm:left-1/2 sm:-translate-x-1/2 w-4 h-4 bg-blue-500 rounded-full border-4 border-white"></div>
-                            </div>
-                        </div>
-                         <!-- Timeline Item 4 -->
-                        <div class="timeline-item flex sm:items-center flex-col sm:flex-row-reverse">
-                            <div class="sm:w-1/2 sm:pl-8">
-                                <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                                    <p class="font-bold text-blue-800">Cuối năm 2026</p>
-                                    <p class="font-semibold">Mục Tiêu Tuân Thủ FATF</p>
-                                     <div class="timeline-item-content text-sm text-gray-600 mt-1">
-                                        Việt Nam đặt mục tiêu tuân thủ đầy đủ các tiêu chuẩn của Lực lượng Đặc nhiệm Tài chính (FATF) về chống rửa tiền.
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="mt-4 sm:mt-0 sm:w-1/2 sm:pr-8 relative">
-                                <div class="absolute -top-1.5 sm:right-1/2 sm:translate-x-1/2 w-4 h-4 bg-blue-500 rounded-full border-4 border-white"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="strategy" class="scroll-mt-24">
-            <h3 class="text-2xl md:text-3xl font-bold text-center mb-8">Viễn Cảnh & Chiến Lược Hành Động</h3>
-             <p class="max-w-3xl mx-auto text-center text-gray-600 mb-10">Tổng hợp các phân tích để đưa ra dự báo và lời khuyên chiến lược, giúp nhà đầu tư và doanh nghiệp đưa ra quyết định sáng suốt trong một môi trường đầy biến động và cơ hội.</p>
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="bg-white p-6 rounded-lg card-shadow">
-                    <h4 class="font-bold text-lg mb-4 text-green-600">✅ Chất Xúc Tác Tăng Giá</h4>
-                    <ul class="space-y-3 text-gray-700">
-                        <li class="flex items-start"><span class="mr-2 mt-1">🏢</span><span><strong>Dòng vốn tổ chức:</strong> Nhu cầu bền vững từ các quỹ ETF và kho bạc doanh nghiệp.</span></li>
-                        <li class="flex items-start"><span class="mr-2 mt-1">🏦</span><span><strong>Chính sách của Fed:</strong> Cắt giảm lãi suất sẽ cung cấp nhiên liệu cho các tài sản rủi ro.</span></li>
-                        <li class="flex items-start"><span class="mr-2 mt-1">🇻🇳</span><span><strong>Sự rõ ràng pháp lý:</strong> Các thị trường trọng điểm như Việt Nam hợp pháp hóa tạo ra nhu cầu dài hạn.</span></li>
-                    </ul>
-                </div>
-                <div class="bg-white p-6 rounded-lg card-shadow">
-                    <h4 class="font-bold text-lg mb-4 text-red-600">⚠️ Yếu Tố Rủi Ro Giảm Giá</h4>
-                     <ul class="space-y-3 text-gray-700">
-                        <li class="flex items-start"><span class="mr-2 mt-1">🚢</span><span><strong>Rủi ro thuế quan:</strong> Chính sách của Hoa Kỳ có thể kích hoạt làn sóng né tránh rủi ro.</span></li>
-                        <li class="flex items-start"><span class="mr-2 mt-1">📉</span><span><strong>Kịch bản "Bẫy tăng giá":</strong> Rủi ro kỹ thuật nếu BTC không giữ được các mức hỗ trợ quan trọng.</span></li>
-                        <li class="flex items-start"><span class="mr-2 mt-1">🌍</span><span><strong>Suy thoái kinh tế:</strong> Một cuộc suy thoái rộng lớn hơn sẽ tác động tiêu cực đến mọi tài sản.</span></li>
-                    </ul>
-                </div>
-            </div>
-             <div class="mt-8 bg-blue-50 p-6 rounded-lg border border-blue-200">
-                <h4 class="font-bold text-lg mb-4 text-blue-800">💡 Khuyến Nghị Cho Nhà Đầu Tư Việt Nam</h4>
-                <ul class="space-y-3 list-disc list-inside text-gray-700">
-                    <li><strong>Giai đoạn hiện tại - 12/2025:</strong> Ưu tiên bảo mật, sử dụng các sàn uy tín và tích lũy kiến thức về các quy định sắp tới.</li>
-                    <li><strong>Định vị cho 2026:</strong> Chuẩn bị chuyển đổi sang các nền tảng trong nước được cấp phép để có sự bảo vệ pháp lý. Nắm rõ các quy định về thuế để tính toán lợi nhuận thực.</li>
-                    <li><strong>Phân bổ tài sản:</strong> Giữ <strong class="text-blue-700">Bitcoin</strong> làm tài sản cốt lõi. Với altcoin, tập trung vào các câu chuyện dài hạn (<strong class="text-blue-700">AI, Modular</strong>) thay vì đa dạng hóa dàn trải.</li>
-                </ul>
-            </div>
-        </section>
-
-    </main>
-    
-    <footer class="text-center py-6 mt-8 border-t">
-        <p class="text-sm text-gray-500">Dữ liệu và phân tích dựa trên "Phân Tích Thị Trường Tiền Mã Hóa Toàn Cầu & Viễn Cảnh Chiến Lược Cho Việt Nam: Tháng 7 Năm 2025".</p>
-        <p class="text-xs text-gray-400 mt-1">Một số tính năng được hỗ trợ bởi Gemini AI.</p>
-    </footer>
-
-    <!-- AI Analysis Modal -->
-    <div id="ai-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 hidden modal-backdrop">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col modal-content">
-            <div class="flex justify-between items-center p-4 border-b">
-                <h3 id="modal-title" class="text-xl font-bold">Phân Tích Chuyên Sâu</h3>
-                <button id="close-modal-button" class="text-gray-400 hover:text-gray-600">&times;</button>
-            </div>
-            <div id="modal-body" class="p-6 overflow-y-auto">
-                <div id="modal-loader" class="flex justify-center items-center h-48">
-                    <div class="loader"></div>
-                </div>
-                <div id="modal-content-area" class="text-gray-700 leading-relaxed hidden"></div>
-                 <div id="modal-error-area" class="text-red-600 text-center hidden"></div>
-            </div>
-        </div>
     </div>
 
-
     <script>
+        const chartTooltipPlugin = {
+            tooltip: {
+                callbacks: {
+                    title: function(tooltipItems) {
+                        const item = tooltipItems[0];
+                        let label = item.chart.data.labels[item.dataIndex];
+                        if (Array.isArray(label)) {
+                          return label.join(' ');
+                        } else {
+                          return label;
+                        }
+                    }
+                }
+            }
+        };
+
+        function formatLabel(str, maxwidth){
+            if (!str) return [''];
+            const sections = [];
+            const words = str.split(" ");
+            let temp = "";
+            words.forEach((item, index) => {
+                if (temp.length > 0) {
+                    const concat = temp + ' ' + item;
+                    if (concat.length > maxwidth){
+                        sections.push(temp);
+                        temp = "";
+                    } else {
+                        if (index === (words.length-1)){ sections.push(concat); return; } 
+                        else { temp = concat; return; }
+                    }
+                }
+                if (index === (words.length-1)){ sections.push(item); return; }
+                if (item.length < maxwidth) { temp = item; } 
+                else { sections.push(item); }
+            });
+            return sections;
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
+            Chart.defaults.font.family = "'Inter', sans-serif";
+            Chart.defaults.plugins.legend.display = false;
 
-            const btcTabsData = {
-                'btc-price': `
-                    <div class="grid md:grid-cols-2 gap-6 items-center">
-                        <div>
-                           <h4 class="font-semibold text-lg mb-4">Các Mức Kỹ Thuật Chính</h4>
-                           <div class="space-y-3">
-                                <div class="flex justify-between p-3 bg-gray-50 rounded-md"><span>Giá Hiện Tại:</span> <strong class="text-xl text-green-600"> ~$116,341</strong></div>
-                                <div class="flex justify-between p-3 bg-green-50 rounded-md"><span>Hỗ Trợ Chính:</span> <strong>$111,000 - $112,000</strong></div>
-                                <div class="flex justify-between p-3 bg-red-50 rounded-md"><span>Kháng Cự Chính:</span> <strong>$115,000 - $120,000</strong></div>
-                                <div class="flex justify-between p-3 bg-red-50 rounded-md"><span>Mục Tiêu Dài Hạn (Quyền chọn):</span> <strong>$140,000 - $150,000</strong></div>
-                           </div>
-                        </div>
-                        <div class="chart-container h-64 sm:h-72">
-                            <canvas id="btcPriceChart"></canvas>
-                        </div>
-                    </div>
-                `,
-                'btc-etf': `
-                    <div class="grid md:grid-cols-2 gap-6 items-center">
-                         <div>
-                           <h4 class="font-semibold text-lg mb-4">Sức Mạnh Của Dòng Vốn Tổ Chức</h4>
-                           <div class="space-y-3">
-                               <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                                   <p class="text-sm text-gray-500">Tổng dòng vốn ròng tích lũy (ETF Hoa Kỳ)</p>
-                                   <p class="text-3xl font-bold text-blue-600">>$50 Tỷ</p>
-                               </div>
-                               <div class="p-4 bg-gray-100 rounded-lg">
-                                   <p class="text-sm text-gray-500">Quỹ IBIT của BlackRock nắm giữ</p>
-                                   <p class="text-2xl font-bold">>700,900 BTC</p>
-                               </div>
-                           </div>
-                        </div>
-                        <div class="chart-container h-64 sm:h-72">
-                            <canvas id="etfFlowChart"></canvas>
-                        </div>
-                    </div>
-                `,
-                'btc-onchain': `
-                    <div class="grid md:grid-cols-2 gap-6 items-center">
-                        <div class="chart-container h-64 sm:h-72">
-                           <canvas id="onchainBehaviorChart"></canvas>
-                        </div>
-                        <div>
-                           <h4 class="font-semibold text-lg mb-4">Cuộc Chuyển Giao Thầm Lặng</h4>
-                           <p class="text-gray-600 mb-4 text-sm">Dữ liệu on-chain cho thấy một sự phân hóa rõ rệt: các thực thể lớn ("cá voi") đang tích lũy ổn định, trong khi các nhà đầu tư nhỏ lẻ lại bán ròng. Đây là dấu hiệu "dòng tiền thông minh" đang mua vào.</p>
-                           <div class="space-y-3">
-                               <div class="p-3 bg-green-50 rounded-md">
-                                  <p class="font-semibold">Nguồn cung Người nắm giữ dài hạn (LTH)</p>
-                                  <p class="text-green-700">Đạt mức cao nhất mọi thời đại (14.7 triệu BTC)</p>
-                               </div>
-                               <div class="p-3 bg-green-50 rounded-md">
-                                  <p class="font-semibold">Lượng BTC trên sàn giao dịch</p>
-                                  <p class="text-green-700">Giảm xuống mức thấp, cho thấy xu hướng HODL.</p>
-                               </div>
-                           </div>
-                        </div>
-                    </div>
-                `
-            };
-
-            const altcoinData = [
-                { id: 1, category: 'ai', name: 'AI x Crypto', description: 'Câu chuyện phổ biến nhất Q1 2025, tập trung vào các giao thức được AI hỗ trợ. Tiềm năng lớn nhưng cũng đầy biến động.', sentiment: 'bullish' },
-                { id: 2, category: 'l2', name: 'Chuỗi Khối Modular', description: 'Các dự án như Celestia (TIA) thu hút sự chú ý mạnh mẽ, hứa hẹn khả năng mở rộng và tùy biến cao cho các nhà phát triển.', sentiment: 'bullish' },
-                { id: 3, category: 'meme', name: 'Sự trỗi dậy của Memecoin', description: 'Các token như DOGE, WIF, BONK tăng mạnh, phản ánh khẩu vị rủi ro và FOMO của nhà đầu tư bán lẻ quay trở lại.', sentiment: 'neutral' },
-                { id: 4, category: 'defi', name: 'Sự phục hưng của DeFi?', description: 'TVL đang tăng trở lại, nhưng tâm lý bị chia rẽ giữa các "blue chip" cũ và các giao thức thế hệ mới.', sentiment: 'neutral' },
-                { id: 5, category: 'l2', name: 'Nền tảng Lớp 1 mới', description: 'Các dự án có nền tảng công nghệ vững chắc như Sui (SUI) đang thể hiện tâm lý tăng giá từ cộng đồng.', sentiment: 'bullish' },
-                { id: 6, category: 'defi', name: 'Ripple (XRP) & Stablecoin', description: 'Sau vụ kiện, XRP cho thấy sự ổn định. Việc ra mắt stablecoin RLUSD là động lực cơ bản quan trọng cần theo dõi.', sentiment: 'neutral' }
-            ];
-
-            const btcContentDiv = document.getElementById('btc-content');
-            const btcTabButtons = document.querySelectorAll('.btc-tab-button');
-            const altcoinGrid = document.getElementById('altcoin-grid');
-            const altcoinFilterButtons = document.querySelectorAll('.altcoin-filter-button');
-            const aiModal = document.getElementById('ai-modal');
-            const closeModalButton = document.getElementById('close-modal-button');
-            const modalTitle = document.getElementById('modal-title');
-            const modalLoader = document.getElementById('modal-loader');
-            const modalContentArea = document.getElementById('modal-content-area');
-            const modalErrorArea = document.getElementById('modal-error-area');
-
-            function renderBtcTab(tabId) {
-                btcContentDiv.innerHTML = btcTabsData[tabId];
-                if (tabId === 'btc-price') createBtcPriceChart();
-                if (tabId === 'btc-etf') createEtfFlowChart();
-                if (tabId === 'btc-onchain') createOnchainBehaviorChart();
-            }
-
-            btcTabButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    btcTabButtons.forEach(btn => {
-                        btn.classList.remove('active-tab', 'text-blue-600', 'border-blue-600');
-                        btn.classList.add('text-gray-500', 'hover:text-blue-600');
-                    });
-                    button.classList.add('active-tab', 'text-blue-600', 'border-blue-600');
-                    button.classList.remove('text-gray-500');
-                    const tabId = button.getAttribute('data-tab');
-                    renderBtcTab(tabId);
-                });
+            // Fear & Greed Chart
+            const fearGreedCtx = document.getElementById('fearGreedChart').getContext('2d');
+            new Chart(fearGreedCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Tham lam', ''],
+                    datasets: [{ data: [71, 29], backgroundColor: ['#d90429', '#e9ecef'], borderColor: '#fff', borderWidth: 4, circumference: 180, rotation: 270 }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { tooltip: {enabled: false} }
+                },
+                plugins: [{
+                    id: 'gaugeText',
+                    beforeDraw(chart) {
+                        const { width, height, ctx } = chart;
+                        ctx.restore();
+                        ctx.font = `900 ${(height / 100).toFixed(2)}rem sans-serif`;
+                        ctx.textBaseline = 'middle';
+                        ctx.fillStyle = '#d90429';
+                        const text = '71';
+                        const textX = Math.round((width - ctx.measureText(text).width) / 2);
+                        const textY = height / 1.5;
+                        ctx.fillText(text, textX, textY);
+                        ctx.save();
+                    }
+                }]
             });
 
-            function renderAltcoinGrid(filter = 'all') {
-                altcoinGrid.innerHTML = '';
-                const filteredData = filter === 'all' ? altcoinData : altcoinData.filter(item => item.category === filter);
-                filteredData.forEach(item => {
-                    const sentimentIcon = item.sentiment === 'bullish' ? '<span class="text-green-500">▲ Tích cực</span>' : '<span class="text-gray-500">~ Trung lập</span>';
-                    const card = document.createElement('div');
-                    card.className = 'bg-white p-6 rounded-lg card-shadow fade-in flex flex-col justify-between';
-                    card.innerHTML = `
-                        <div>
-                            <h4 class="font-bold text-lg mb-2">${item.name}</h4>
-                            <p class="text-sm text-gray-600 mb-4 h-20">${item.description}</p>
-                            <div class="text-sm font-medium mb-4">Tâm lý cộng đồng: ${sentimentIcon}</div>
-                        </div>
-                        <button data-narrative="${item.name}" class="ai-analysis-button mt-auto w-full bg-blue-50 text-blue-700 font-semibold py-2 px-4 rounded-lg hover:bg-blue-100 transition-colors">
-                            ✨ Phân tích với AI
-                        </button>
-                    `;
-                    altcoinGrid.appendChild(card);
-                });
-                addAiButtonListeners();
-            }
-
-            altcoinFilterButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    altcoinFilterButtons.forEach(btn => {
-                        btn.classList.remove('active-filter', 'bg-blue-600', 'text-white');
-                        btn.classList.add('bg-white', 'text-gray-700');
-                    });
-                    button.classList.add('active-filter', 'bg-blue-600', 'text-white');
-                    button.classList.remove('bg-white', 'text-gray-700');
-                    renderAltcoinGrid(button.dataset.filter);
-                });
+            // Bitcoin Price Chart
+            const bitcoinPriceCtx = document.getElementById('bitcoinPriceChart').getContext('2d');
+            new Chart(bitcoinPriceCtx, {
+                type: 'line',
+                data: {
+                    labels: ['T-6', 'T-5', 'T-4', 'T-3', 'T-2', 'T-1', 'Hiện tại'],
+                    datasets: [{
+                        label: 'Giá BTC',
+                        data: [107000, 109500, 112000, 113734, 116800, 115900, 118100],
+                        borderColor: '#00509d',
+                        backgroundColor: 'rgba(0, 80, 157, 0.1)',
+                        fill: true, tension: 0.4, borderWidth: 3,
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { ticks: { callback: (v) => '$' + v/1000 + 'k' } } }, plugins: chartTooltipPlugin }
             });
 
-            function showModal() {
-                aiModal.classList.remove('hidden');
-                modalLoader.style.display = 'flex';
-                modalContentArea.style.display = 'none';
-                modalErrorArea.style.display = 'none';
-            }
+            // RSI Chart
+            const rsiCtx = document.getElementById('rsiChart').getContext('2d');
+            new Chart(rsiCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['RSI', ''],
+                    datasets: [{ data: [83, 17], backgroundColor: ['#fb8500', '#e9ecef'], borderColor: '#fff', borderWidth: 4, circumference: 270, rotation: 225 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { tooltip: {enabled: false} } },
+                plugins: [{
+                    id: 'gaugeTextRSI',
+                    beforeDraw(chart) {
+                        const { width, height, ctx } = chart;
+                        ctx.restore();
+                        ctx.font = `900 ${(height / 80).toFixed(2)}rem sans-serif`;
+                        ctx.textBaseline = 'middle';
+                        ctx.fillStyle = '#fb8500';
+                        const text = '83';
+                        const textX = Math.round((width - ctx.measureText(text).width) / 2);
+                        const textY = height / 1.8;
+                        ctx.fillText(text, textX, textY);
+                        ctx.font = `600 ${(height / 150).toFixed(2)}rem sans-serif`;
+                        ctx.fillStyle = '#6c757d';
+                        const subtext = 'Quá Mua';
+                        const subtextX = Math.round((width - ctx.measureText(subtext).width) / 2);
+                        ctx.fillText(subtext, subtextX, textY + 30);
+                        ctx.save();
+                    }
+                }]
+            });
 
-            function hideModal() {
-                aiModal.classList.add('hidden');
-            }
+            // Liquidation Chart
+            const liquidationCtx = document.getElementById('liquidationChart').getContext('2d');
+            new Chart(liquidationCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Vị thế Long', 'Vị thế Short'],
+                    datasets: [{
+                        data: [75, 453],
+                        backgroundColor: ['#2a9d8f', '#e76f51'],
+                        borderRadius: 4
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { ticks: { callback: (v) => '$' + v + 'M' } } }, plugins: chartTooltipPlugin }
+            });
 
-            closeModalButton.addEventListener('click', hideModal);
-            aiModal.addEventListener('click', (e) => {
-                if (e.target === aiModal) {
-                    hideModal();
+            // Altcoin Growth Chart
+            const altcoinGrowthCtx = document.getElementById('altcoinGrowthChart').getContext('2d');
+            new Chart(altcoinGrowthCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['PENGU', 'WLD', 'HBAR', 'ADA', 'SUI'],
+                    datasets: [{
+                        label: 'Tăng trưởng 24h (%)',
+                        data: [29.65, 21.10, 14.36, 12.40, 11.24],
+                        backgroundColor: ['#0077b6', '#0096c7', '#00b4d8', '#48cae4', '#90e0ef'],
+                        borderWidth: 0,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { x: { ticks: { callback: (v) => v + '%' } } },
+                    plugins: chartTooltipPlugin
                 }
             });
-
-            async function getAiAnalysis(narrative) {
-                showModal();
-                modalTitle.innerText = `Phân Tích AI: ${narrative}`;
-                
-                const prompt = `Dựa trên bối cảnh một báo cáo thị trường crypto vào tháng 7/2025 dành cho nhà đầu tư Việt Nam, hãy cung cấp một phân tích chi tiết về câu chuyện "${narrative}". Phân tích nên bao gồm các mục sau, viết bằng tiếng Việt với định dạng Markdown:\n\n**1. Tiềm năng & Cơ hội:** (Giải thích tại sao câu chuyện này hấp dẫn, các yếu tố thúc đẩy)\n\n**2. Rủi ro chính:** (Nêu rõ các rủi ro tiềm ẩn, từ công nghệ đến thị trường)\n\n**3. Triển vọng tương lai:** (Đưa ra nhận định về hướng phát triển của câu chuyện này trong 6-12 tháng tới).`;
-
-                try {
-                    const apiKey = ""; 
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                    
-                    const payload = {
-                        contents: [{ role: "user", parts: [{ text: prompt }] }]
-                    };
-
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`API error: ${response.statusText}`);
-                    }
-
-                    const result = await response.json();
-                    
-                    let text = 'Không có nội dung trả về.';
-                    if (result.candidates && result.candidates.length > 0 &&
-                        result.candidates[0].content && result.candidates[0].content.parts &&
-                        result.candidates[0].content.parts.length > 0) {
-                        text = result.candidates[0].content.parts[0].text;
-                    }
-                    
-                    // Simple Markdown to HTML
-                    let htmlContent = text
-                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                        .replace(/\n/g, '<br>');
-
-                    modalContentArea.innerHTML = htmlContent;
-                    modalLoader.style.display = 'none';
-                    modalContentArea.style.display = 'block';
-
-                } catch (error) {
-                    console.error("Error fetching AI analysis:", error);
-                    modalErrorArea.innerText = 'Đã xảy ra lỗi khi kết nối với AI. Vui lòng thử lại sau.';
-                    modalLoader.style.display = 'none';
-                    modalErrorArea.style.display = 'block';
-                }
-            }
-
-            function addAiButtonListeners() {
-                document.querySelectorAll('.ai-analysis-button').forEach(button => {
-                    button.addEventListener('click', () => {
-                        const narrative = button.dataset.narrative;
-                        getAiAnalysis(narrative);
-                    });
-                });
-            }
-
-            const createFearGreedChart = () => {
-                const ctx = document.getElementById('fearGreedChart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: ['Q1 2025', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Hiện tại (T7)'],
-                        datasets: [{
-                            label: 'Chỉ số Sợ hãi & Tham lam',
-                            data: [35, 45, 58, 65, 71],
-                            borderColor: '#f97316',
-                            backgroundColor: 'rgba(249, 115, 22, 0.1)',
-                            fill: true,
-                            tension: 0.4
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: { y: { beginAtZero: true, max: 100, title: { display: true, text: 'Mức độ' } } }
-                    }
-                });
-            };
-            
-            const createBtcPriceChart = () => {
-                const ctx = document.getElementById('btcPriceChart').getContext('2d');
-                 new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: ['Tháng 5', 'Tháng 6', 'Cuối T6', 'Đầu T7', 'Hiện tại'],
-                        datasets: [{
-                            label: 'Giá Bitcoin ($)',
-                            data: [102000, 107000, 106500, 112000, 116341],
-                            borderColor: '#22c55e',
-                            backgroundColor: 'rgba(34, 197, 94, 0.1)',
-                            fill: true,
-                            tension: 0.3,
-                        }]
-                    },
-                     options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { ticks: { callback: value => '$' + (value/1000) + 'k' }}}}
-                });
-            };
-
-            const createEtfFlowChart = () => {
-                const ctx = document.getElementById('etfFlowChart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Tuần 1 T7', '07/07', '08/07', '09/07'],
-                        datasets: [{
-                            label: 'Dòng vốn ròng (Triệu USD)',
-                            data: [1200, 216.5, 180, 215.7],
-                            backgroundColor: '#3b82f6',
-                            borderColor: '#1e40af',
-                            borderWidth: 1
-                        }]
-                    },
-                     options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, title: {display: true, text: 'Triệu USD'} }}}
-                });
-            };
-            
-            const createOnchainBehaviorChart = () => {
-                const ctx = document.getElementById('onchainBehaviorChart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Cá voi (>1k BTC) - Tích lũy', 'Bán lẻ (1-10 BTC) - Bán ròng'],
-                        datasets: [{
-                            data: [70, 30],
-                            backgroundColor: ['#10b981', '#ef4444'],
-                            hoverOffset: 4
-                        }]
-                    },
-                     options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' }, title: {display: true, text: 'Hành vi của các nhóm nhà đầu tư'}}}
-                });
-            };
-            
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenuButton.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
-            
-            const navLinks = document.querySelectorAll('nav a');
-            navLinks.forEach(link => {
-                link.addEventListener('click', () => {
-                    if(!mobileMenu.classList.contains('hidden')) {
-                         mobileMenu.classList.add('hidden');
-                    }
-                })
-            });
-
-            const sections = document.querySelectorAll('section[id]');
-            const mainNavLinks = document.querySelectorAll('header nav a');
-
-            const onScroll = () => {
-                const scrollPos = window.scrollY + 120;
-                sections.forEach(section => {
-                    if (section.offsetTop <= scrollPos && (section.offsetTop + section.offsetHeight) > scrollPos) {
-                        mainNavLinks.forEach(link => {
-                            link.classList.remove('active');
-                            if (section.getAttribute('id') === link.getAttribute('href').substring(1)) {
-                                link.classList.add('active');
-                            }
-                        });
-                    }
-                });
-            };
-
-            window.addEventListener('scroll', onScroll);
-
-            createFearGreedChart();
-            renderBtcTab('btc-price');
-            renderAltcoinGrid('all');
         });
     </script>
 </body>
