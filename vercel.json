@@ -7,8 +7,18 @@
   ],
   "routes": [
     {
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
+    },
+    {
       "src": "/(.*)",
       "dest": "api/index.py"
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/update-cache",
+      "schedule": "*/5 * * * *"
     }
   ]
 }
