@@ -1,8 +1,13 @@
+import os
 from flask import Flask, render_template
 import requests
 
+# Lấy đường dẫn tuyệt đối của thư mục chứa file script này
+basedir = os.path.abspath(os.path.dirname(__file__))
+
 # Khởi tạo ứng dụng Flask
-app = Flask(__name__, template_folder='../templates')
+# Vercel sẽ tự động tìm biến 'app' này.
+app = Flask(__name__, template_folder=os.path.join(basedir, '../templates'))
 
 def get_market_data():
     """
@@ -67,3 +72,6 @@ def home():
     """
     market_data = get_market_data()
     return render_template('index.html', data=market_data)
+
+if __name__ == '__main__':
+    app.run(debug=True)

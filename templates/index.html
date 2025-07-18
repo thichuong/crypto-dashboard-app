@@ -120,26 +120,34 @@
             </div>
             
             <h3 class="mt-16 text-center text-2xl font-bold">Các Chỉ Số Thị Trường Chính</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
                 <div class="card">
                     <h4 class="font-semibold text-slate-500 mb-2">Giá Bitcoin (BTC)</h4>
-                    <p class="text-3xl font-bold text-slate-900 font-mono">~$120.500</p>
-                    <div class="mt-2"><span class="tag tag-green">Tăng</span></div>
+                    <p class="text-3xl font-bold text-slate-900 font-mono">{{ data.btc_price }}</p>
+                    <div class="mt-2"><span class="tag tag-blue">USD</span></div>
                 </div>
                 <div class="card">
                     <h4 class="font-semibold text-slate-500 mb-2">Tổng Vốn Hóa</h4>
-                    <p class="text-3xl font-bold text-slate-900 font-mono">~$3.92T</p>
-                    <div class="mt-2"><span class="tag tag-green">Tăng</span></div>
+                    <p class="text-3xl font-bold text-slate-900 font-mono">{{ data.total_market_cap }}</p>
+                    <div class="mt-2"><span class="tag tag-blue">USD</span></div>
                 </div>
                 <div class="card">
                     <h4 class="font-semibold text-slate-500 mb-2">BTC Dominance</h4>
-                    <p class="text-3xl font-bold text-slate-900 font-mono">~59%</p>
-                    <div class="mt-2"><span class="tag tag-red">Giảm</span></div>
+                    <p class="text-3xl font-bold text-slate-900 font-mono">{{ data.btc_dominance }}</p>
+                    <div class="mt-2"><span class="tag tag-orange">Thị phần</span></div>
                 </div>
                 <div class="card">
                     <h4 class="font-semibold text-slate-500 mb-2">Fear & Greed Index</h4>
-                    <p class="text-3xl font-bold text-slate-900 font-mono">75</p>
-                    <div class="mt-2"><span class="tag tag-green">Tham lam Cực độ</span></div>
+                    <p class="text-3xl font-bold text-slate-900 font-mono">{{ data.fear_greed_value }}</p>
+                    <div class="mt-2">
+                        {% if data.fear_greed_text in ['Extreme Greed', 'Greed'] %}
+                        <span class="tag tag-green">{{ data.fear_greed_text }}</span>
+                        {% elif data.fear_greed_text in ['Extreme Fear', 'Fear'] %}
+                        <span class="tag tag-red">{{ data.fear_greed_text }}</span>
+                        {% else %}
+                        <span class="tag tag-yellow">{{ data.fear_greed_text }}</span>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </section>
