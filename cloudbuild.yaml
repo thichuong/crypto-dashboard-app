@@ -1,13 +1,16 @@
 steps:
   # Bước 1: Cài đặt các thư viện Python cần thiết
-  # 'gcr.io/cloud-builders/pip' là một image xây dựng do Google cung cấp
   - name: 'gcr.io/cloud-builders/pip'
     args: ['install', '-r', 'requirements.txt', '--user']
 
   # Bước 2: Triển khai ứng dụng lên Google App Engine
-  # 'gcr.io/cloud-builders/gcloud' là image chứa các công cụ dòng lệnh gcloud
   - name: 'gcr.io/cloud-builders/gcloud'
     args: ['app', 'deploy']
 
 # Thời gian chờ cho quy trình xây dựng
 timeout: '1600s'
+
+# -- THÊM PHẦN NÀY VÀO --
+options:
+  # Chỉ định rằng logs sẽ được gửi đến Cloud Logging
+  logging: CLOUD_LOGGING_ONLY
