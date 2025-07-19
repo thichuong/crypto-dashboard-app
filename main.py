@@ -14,5 +14,6 @@ def home():
 
 # Dòng này để đảm bảo máy chủ chỉ chạy khi bạn thực thi trực tiếp tệp main.py
 # và cần thiết để App Engine hoạt động
+
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8080, debug=True)
