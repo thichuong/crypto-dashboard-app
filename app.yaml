@@ -1,5 +1,0 @@
-# Chọn môi trường chạy là Python
-runtime: python39
-
-# Dòng này cho phép App Engine chạy ứng dụng của bạn
-entrypoint: gunicorn -b :$PORT main:app
