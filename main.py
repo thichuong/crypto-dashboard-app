@@ -1,19 +1,19 @@
-from flask import Flask, render_template
+# main.py
+from flask import Flask
 
-# Khởi tạo ứng dụng Flask
-app = Flask(__name__)
+# Cấu hình Flask để phục vụ các tệp từ thư mục 'static'
+# static_url_path='' có nghĩa là file trong 'static' sẽ được truy cập từ URL gốc
+# Ví dụ: file 'static/index.html' sẽ có thể được truy cập tại địa chỉ '/'
+app = Flask(__name__, static_folder='static', static_url_path='')
 
-# Tạo một route (đường dẫn) cho trang chủ
 @app.route('/')
-def home():
-    """
-    Hàm này sẽ được gọi khi người dùng truy cập vào địa chỉ gốc ('/').
-    Nó sẽ tìm và trả về tệp 'index.html' từ thư mục 'templates'.
-    """
-    return render_template('index.html')
+def index():
+    """Phục vụ file index.html từ thư mục static."""
+    return app.send_static_file('index.html')
 
-# Dòng này để đảm bảo máy chủ chỉ chạy khi bạn thực thi trực tiếp tệp main.py
-# và cần thiết để App Engine hoạt động
+# Không cần thêm route cho report.html vì Flask sẽ tự động phục vụ nó
+# khi index.html yêu cầu thông qua fetch('report.html')
 
+# Dòng này chỉ dùng khi chạy trực tiếp file main.py trên máy tính của bạn
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8080, debug=True)
