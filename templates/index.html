@@ -64,24 +64,40 @@
 
     <script>
         // ... (hàm formatNumber giữ nguyên) ...
-
-        async function fetchCryptoData() {
-            try {
-                // Chỉ cần gọi đến một endpoint trên server của bạn
-                const response = await fetch('/api/crypto/global');
-                if (!response.ok) throw new Error('Lỗi khi lấy dữ liệu global.');
-
-                const data = await response.json();
-                const marketData = data.data;
-
-                document.getElementById('market-cap').textContent = '$' + formatNumber(marketData.total_market_cap.usd);
-                document.getElementById('volume-24h').textContent = '$' + formatNumber(marketData.total_volume.usd);
-
-            } catch (error) {
-                console.error('Lỗi fetchCryptoData:', error);
-                ['market-cap', 'volume-24h'].forEach(id => document.getElementById(id).textContent = 'Error');
+        function formatNumber(num) {
+            if (!num) return 'N/A'; // Trả về 'N/A' nếu không có số
+            if (num >= 1e12) {
+                return (num / 1e12).toFixed(2) + ' nghìn tỷ';
             }
+            if (num >= 1e9) {
+                return (num / 1e9).toFixed(2) + ' tỷ';
+            }
+            if (num >= 1e6) {
+                return (num / 1e6).toFixed(2) + ' triệu';
+            }
+            // Trả về số được định dạng với dấu phẩy ngăn cách hàng nghìn
+            return num.toLocaleString('en-US');
         }
+        async function fetchCryptoData() {
+                try {
+                    const response = await fetch('/api/crypto/global');
+                    if (!response.ok) throw new Error('Lỗi khi lấy dữ liệu global.');
+
+                    const data = await response.json();
+                    // print ra gia tri data
+                    console.log(data);
+                    
+                    // Truy cập trực tiếp vào các key của JSON mới
+                    document.getElementById('market-cap').textContent = '$' + formatNumber(data['market-cap']);
+                    document.getElementById('volume-24h').textContent = '$' + formatNumber(data['volume-24h']);
+
+                } catch (error) {
+                    console.error('Lỗi fetchCryptoData:', error);
+                    ['market-cap', 'volume-24h'].forEach(id => document.getElementById(id).textContent = error);
+                    console.log(error);
+                }
+            }
+
 
         async function fetchBtcAndFearGreed() {
             try {
