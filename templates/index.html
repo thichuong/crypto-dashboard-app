@@ -91,7 +91,9 @@
             <p class="text-lg text-gray-600 max-w-3xl mx-auto">Phân tích Kỷ nguyên Vốn hóa 4 Nghìn Tỷ USD và Sự Dịch chuyển Dòng vốn Chiến lược</p>
         </header>
 
+        <!-- Real-time Data Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <!-- Giá BTC -->
             <div class="card">
                 <div class="flex items-center mb-2">
                     <i class="fab fa-bitcoin text-yellow-500 text-3xl mr-3"></i>
@@ -100,6 +102,7 @@
                 <p id="btc-price" class="text-3xl font-bold text-gray-900">Loading...</p>
                 <p id="btc-change" class="text-sm">Loading...</p>
             </div>
+            <!-- Tổng Vốn Hóa -->
             <div class="card">
                 <div class="flex items-center mb-2">
                     <i class="fas fa-globe-americas text-blue-500 text-3xl mr-3"></i>
@@ -108,6 +111,7 @@
                 <p id="market-cap" class="text-3xl font-bold text-gray-900">Loading...</p>
                  <p class="text-sm text-gray-500">Toàn thị trường</p>
             </div>
+            <!-- Khối Lượng 24h -->
             <div class="card">
                 <div class="flex items-center mb-2">
                     <i class="fas fa-chart-line text-green-500 text-3xl mr-3"></i>
@@ -116,6 +120,7 @@
                 <p id="volume-24h" class="text-3xl font-bold text-gray-900">Loading...</p>
                  <p class="text-sm text-gray-500">Toàn thị trường</p>
             </div>
+            <!-- Chỉ Số Sợ hãi & Tham lam -->
             <div class="card">
                 <div class="flex items-center mb-2">
                     <i class="fas fa-gauge-high text-red-500 text-3xl mr-3"></i>
@@ -127,7 +132,96 @@
         </div>
 
         <main class="bg-white p-6 md:p-8 rounded-lg border border-gray-200 shadow-lg">
-            {{ report_content|safe }}
+            <!-- Content from the document -->
+            <section id="summary">
+                <h2><i class="fas fa-file-alt icon"></i>I. Báo cáo Tóm tắt</h2>
+                <p>Thị trường tài sản kỹ thuật số đang trong giai đoạn chuyển mình lịch sử, lần đầu tiên vượt qua cột mốc vốn hóa 4 nghìn tỷ USD. Đà tăng trưởng mạnh mẽ này không chỉ đơn thuần được thúc đẩy bởi sự đầu cơ nhỏ lẻ, mà được củng cố bởi hai chất xúc tác cơ bản, có mối liên hệ mật thiết: sự rõ ràng về mặt pháp lý mang tính bước ngoặt tại Hoa Kỳ và một dòng vốn tổ chức khổng lồ chảy vào thị trường thông qua các quỹ hoán đổi danh mục (ETF) giao ngay mới được phê duyệt.</p>
+                <ul class="list-disc list-inside space-y-2 mt-4 pl-4">
+                    <li><strong>Bitcoin (BTC):</strong> Sau khi thiết lập mức cao nhất mọi thời đại (ATH) mới trên 123,000 USD, Bitcoin đang bước vào một giai đoạn củng cố lành mạnh.</li>
+                    <li><strong>Ethereum (ETH) và Altcoin:</strong> Đang có một sự luân chuyển vốn mạnh mẽ từ Bitcoin sang Ethereum và các altcoin vốn hóa lớn khác.</li>
+                    <li><strong>Tâm lý Thị trường:</strong> Chỉ số Sợ hãi & Tham lam (Fear & Greed Index) duy trì ở mức "Tham lam" (Greed), cho thấy xu hướng tăng hiện tại vẫn còn dư địa.</li>
+                </ul>
+            </section>
+
+            <section id="macro-context">
+                <h2><i class="fas fa-landmark icon"></i>II. Bối cảnh Vĩ mô và Chính trị</h2>
+                <p>Động lực chính định hình cấu trúc thị trường hiện tại đến từ những tiến bộ pháp lý chưa từng có tại Hoa Kỳ. Trong sự kiện được mệnh danh là "Tuần lễ Tiền mã hóa" (Crypto Week), Hạ viện Hoa Kỳ đã thông qua một loạt dự luật quan trọng, thiết lập khuôn khổ liên bang đầu tiên cho các stablecoin.</p>
+            </section>
+
+            <section id="market-overview">
+                <h2><i class="fas fa-chart-pie icon"></i>III. Tổng quan Thị trường</h2>
+                <p>Thị trường tiền mã hóa toàn cầu đã chính thức vượt qua ngưỡng vốn hóa 4 nghìn tỷ USD lần đầu tiên trong lịch sử. Dữ liệu gần đây cho thấy tổng vốn hóa thị trường ở mức khoảng 3.88 nghìn tỷ USD, với khối lượng giao dịch trong 24 giờ đạt 182.78 tỷ USD.</p>
+                <div class="overflow-x-auto rounded-lg border border-gray-200">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th><th>Tên (Mã)</th><th>Giá (USD)</th><th>Vốn hóa Thị trường</th><th>Khối lượng 24 giờ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1</td><td>Bitcoin (BTC)</td><td>$118,040</td><td>$2.35T</td><td>$27.76B</td></tr>
+                            <tr><td>2</td><td>Ethereum (ETH)</td><td>$3,570</td><td>$431.68B</td><td>$32.41B</td></tr>
+                            <tr><td>3</td><td>XRP (XRP)</td><td>$3.43</td><td>$202.92B</td><td>$6.70B</td></tr>
+                            <tr><td>4</td><td>Tether (USDT)</td><td>$1.00</td><td>$161.62B</td><td>$93.76B</td></tr>
+                            <tr><td>5</td><td>BNB (BNB)</td><td>$733.81</td><td>$107.22B</td><td>$1.66B</td></tr>
+                            <tr><td>6</td><td>Solana (SOL)</td><td>$177.41</td><td>$95.31B</td><td>$8.69B</td></tr>
+                            <tr><td>7</td><td>USDC (USDC)</td><td>$1.00</td><td>$64.74B</td><td>$14.35B</td></tr>
+                            <tr><td>8</td><td>Dogecoin (DOGE)</td><td>$0.24</td><td>$36.43B</td><td>$14.39B</td></tr>
+                            <tr><td>9</td><td>Lido Staked Ether (STETH)</td><td>$3,570</td><td>$32.50B</td><td>$92.36M</td></tr>
+                            <tr><td>10</td><td>TRON (TRX)</td><td>$0.32</td><td>$30.37B</td><td>$3.71B</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="sentiment-analysis">
+                <h2><i class="fas fa-brain icon"></i>IV. Phân tích Tâm lý Thị trường</h2>
+                <p>Chỉ số Sợ hãi & Tham lam (Fear & Greed Index) hiện đang ở mức 67, nằm vững trong vùng "Tham lam" (Greed). Lòng tham hiện tại dường như bắt nguồn trực tiếp từ các tin tức cơ bản tích cực (ETF, quy định) thay vì sự hưng phấn đầu cơ thuần túy. Đây có thể được gọi là "Lòng tham Tự tin".</p>
+            </section>
+            
+            <section id="btc-analysis">
+                <h2><i class="fab fa-bitcoin icon"></i>V. Phân tích Chuyên sâu: Bitcoin (BTC)</h2>
+                <p>Nhu cầu đối với các quỹ ETF Bitcoin giao ngay đã không ngừng tăng. Bitcoin đã đạt mức cao nhất mọi thời đại mới là 123,218 USD vào ngày 14 tháng 7 trước khi củng cố.</p>
+                <div class="highlight-rsi">
+                    <h4 class="font-bold text-lg text-gray-900 mb-2"><i class="fas fa-wave-square mr-2 text-green-600"></i>Phân Tích Chỉ Báo RSI (Bitcoin)</h4>
+                    <p>Về các chỉ báo kỹ thuật, <strong>chỉ số RSI hàng ngày đã hạ nhiệt từ vùng quá mua (trên 70) nhưng vẫn duy trì xu hướng tăng</strong>. Chỉ báo MACD hàng ngày vẫn cho thấy một giao cắt tăng giá, mặc dù động lượng đang có dấu hiệu suy yếu.</p>
+                </div>
+            </section>
+
+            <section id="eth-analysis">
+                 <h2><i class="fab fa-ethereum icon"></i>VI. Phân tích: Ethereum & Altcoin</h2>
+                <p>Ethereum đã có hiệu suất vượt trội đáng kể so với Bitcoin trong những tuần gần đây, tăng hơn 23% chỉ trong một tuần, báo hiệu khẩu vị rủi ro ngày càng tăng trên thị trường.</p>
+                <div class="highlight-rsi">
+                    <h4 class="font-bold text-lg text-gray-900 mb-2"><i class="fas fa-wave-square mr-2 text-green-600"></i>Phân Tích Chỉ Báo RSI (Ethereum)</h4>
+                    <p>Tuy nhiên, các chỉ báo kỹ thuật đang đưa ra cảnh báo. <strong>Chỉ số RSI hàng ngày đang ở vùng quá mua cực độ (85-89)</strong>. Đây là một cảnh báo mạnh mẽ về một đợt giảm giá hoặc củng cố sắp xảy ra.</p>
+                </div>
+            </section>
+
+            <section id="notable-coins">
+                <h2><i class="fas fa-star icon"></i>VII. Động lực Thị trường: Các Đồng coin Nổi bật</h2>
+                <p>Phân tích các đồng tiền tăng giá mạnh nhất cho thấy một xu hướng rõ ràng: thị trường đang thưởng cho các dự án có chất xúc tác cơ bản hữu hình như Sui (SUI), Tezos (XTZ), và Zora (ZORA).</p>
+            </section>
+
+            <section id="expert-opinions">
+                <h2><i class="fas fa-user-tie icon"></i>VIII. Tổng hợp Nhận định Chuyên gia</h2>
+                <div class="mt-6 grid md:grid-cols-2 gap-8">
+                    <!-- Bull Case Card -->
+                    <div class="card bull-card p-6">
+                        <h3 class="text-xl font-bold text-green-800 flex items-center"><i class="fas fa-arrow-trend-up mr-3"></i>A. Kịch bản Tăng giá (Bull Case)</h3>
+                        <p class="mt-4 text-green-700">Các nhà phân tích từ Standard Chartered và Bernstein duy trì các mục tiêu giá cao cho Bitcoin (<strong>$150,000 - $250,000</strong>) do nhu cầu không ngừng từ các quỹ ETF. Các mô hình kỹ thuật cũng dự báo các mục tiêu giá cao cho cả BTC và ETH.</p>
+                    </div>
+                    <!-- Bear Case Card -->
+                    <div class="card bear-card p-6">
+                        <h3 class="text-xl font-bold text-red-800 flex items-center"><i class="fas fa-arrow-trend-down mr-3"></i>B. Kịch bản Giảm giá & Rủi ro (Bear Case)</h3>
+                        <p class="mt-4 text-red-700">Cây nến tuần "topping tail" của BTC và chỉ số RSI quá mua là những tín hiệu cảnh báo. Rủi ro chốt lời, các khoảng trống giá cần lấp đầy, và các yếu tố vĩ mô không chắc chắn vẫn là những mối đe dọa tiềm tàng cho một đợt điều chỉnh.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="conclusion">
+                <h2><i class="fas fa-flag-checkered icon"></i>IX. Triển vọng và Khuyến nghị</h2>
+                <p>Thị trường đang trong một thị trường tăng giá có cấu trúc vững chắc. Kịch bản có khả năng xảy ra nhất là một đợt điều chỉnh ngắn hạn để làm nguội các chỉ báo, sau đó xu hướng tăng dự kiến sẽ tiếp tục. Nhà đầu tư nên thận trọng, xem xét chiến lược trung bình giá và sử dụng lệnh dừng lỗ để quản lý rủi ro.</p>
+            </section>
         </main>
     </div>
 
