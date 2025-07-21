@@ -3,391 +3,297 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Báo Cáo Phân Tích Thị Trường Tiền Điện Tử - 19/07/2025</title>
+    <title>Phân Tích Thị Trường Crypto</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f0f2f5;
-        }
-        .metric-card {
-            background-color: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            transition: all 0.3s ease-in-out;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        .metric-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            background-color: #f3f4f6;
+            color: #374151;
         }
         .card {
-            background-color: white;
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
             border-radius: 0.75rem;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+        }
+        .highlight-rsi {
+            background-color: #f0fdf4;
+            border-left: 4px solid #22c55e;
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0.5rem;
         }
         h1, h2, h3 {
-            font-weight: 700;
+            color: #111827;
+            font-weight: 800;
         }
-        .tag {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-weight: 500;
-            font-size: 0.875rem;
+        h2 {
+            font-size: 1.75rem;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 0.75rem;
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
         }
-        .tag-green { background-color: #d1fae5; color: #065f46; }
-        .tag-red { background-color: #fee2e2; color: #991b1b; }
-        .tag-blue { background-color: #dbeafe; color: #1e40af; }
-        .tag-yellow { background-color: #fef9c3; color: #854d0e; }
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-radius: 50%;
-            border-top: 4px solid #3498db;
-            width: 24px;
-            height: 24px;
-            animation: spin 2s linear infinite;
+        h2 .icon {
+            color: #4b5563;
+            margin-right: 0.75rem;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        table {
+            width: 100%;
+            margin-top: 1.5rem;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        th {
+            background-color: #f9fafb;
+            color: #1f2937;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+        tbody tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
+        tbody tr:hover {
+            background-color: #f0f9ff;
+        }
+        .bull-card {
+            background-color: #f0fdf4;
+            border-left: 4px solid #22c55e;
+        }
+        .bear-card {
+            background-color: #fef2f2;
+            border-left: 4px solid #ef4444;
         }
     </style>
 </head>
-<body class="text-gray-800">
+<body class="antialiased">
 
-    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
-        <!-- Header -->
-        <header class="text-center mb-10">
-            <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900">Báo Cáo Phân Tích Toàn Diện Thị Trường Tiền Điện Tử</h1>
-            <p class="text-lg text-gray-500 mt-2">Ngày 19 tháng 7 năm 2025 <span class="text-sm">(Dữ liệu cập nhật tự động)</span></p>
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-green-500">Toàn Cảnh Thị Trường Tiền Mã Hóa</h1>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto">Phân tích Kỷ nguyên Vốn hóa 4 Nghìn Tỷ USD và Sự Dịch chuyển Dòng vốn Chiến lược</p>
         </header>
 
-        <!-- Real-time Metrics -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-            <!-- BTC Price Card -->
-            <div id="btc-card" class="metric-card p-4">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-md font-semibold text-gray-500">Giá Bitcoin (BTC)</h3>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-yellow-500" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" transform="scale(1.2) translate(-2, -2)"/><path fill="#fff" d="M11.5 7.5h1v9h-1z"/><path fill="#fff" d="M10.5 11.5h3v1h-3zM10.5 8.5h3v1h-3z"/></svg>
+        <!-- Real-time Data Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <!-- Giá BTC -->
+            <div class="card">
+                <div class="flex items-center mb-2">
+                    <i class="fab fa-bitcoin text-yellow-500 text-3xl mr-3"></i>
+                    <h3 class="text-lg font-semibold text-gray-700">Giá BTC</h3>
                 </div>
-                <div>
-                    <p id="btc-price" class="text-3xl font-bold mt-2 h-10 flex items-center">
-                        <span class="loader"></span>
-                    </p>
-                    <p id="btc-change" class="text-sm font-medium h-5"></p>
-                </div>
+                <p id="btc-price" class="text-3xl font-bold text-gray-900">Loading...</p>
+                <p id="btc-change" class="text-sm">Loading...</p>
             </div>
-            <!-- Market Cap Card -->
-            <div id="market-cap-card" class="metric-card p-4">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-md font-semibold text-gray-500">Tổng Vốn Hóa</h3>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+            <!-- Tổng Vốn Hóa -->
+            <div class="card">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-globe-americas text-blue-500 text-3xl mr-3"></i>
+                    <h3 class="text-lg font-semibold text-gray-700">Tổng Vốn Hóa</h3>
                 </div>
-                <div>
-                    <p id="market-cap" class="text-3xl font-bold mt-2 h-10 flex items-center">
-                        <span class="loader"></span>
-                    </p>
-                    <p class="text-sm font-medium h-5 text-gray-400">Toàn thị trường</p>
-                </div>
+                <p id="market-cap" class="text-3xl font-bold text-gray-900">Loading...</p>
+                 <p class="text-sm text-gray-500">Toàn thị trường</p>
             </div>
-            <!-- 24h Volume Card -->
-            <div id="volume-card" class="metric-card p-4">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-md font-semibold text-gray-500">Khối Lượng Giao Dịch 24h</h3>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h5M20 20v-5h-5M4 20h5v-5M20 4h-5v5" /></svg>
+            <!-- Khối Lượng 24h -->
+            <div class="card">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-chart-line text-green-500 text-3xl mr-3"></i>
+                    <h3 class="text-lg font-semibold text-gray-700">Khối Lượng Giao Dịch 24h</h3>
                 </div>
-                <div>
-                    <p id="volume-24h" class="text-3xl font-bold mt-2 h-10 flex items-center">
-                        <span class="loader"></span>
-                    </p>
-                     <p class="text-sm font-medium h-5 text-gray-400">Toàn thị trường</p>
-                </div>
+                <p id="volume-24h" class="text-3xl font-bold text-gray-900">Loading...</p>
+                 <p class="text-sm text-gray-500">Toàn thị trường</p>
             </div>
-            <!-- Fear & Greed Card -->
-            <div id="fear-greed-card" class="metric-card p-4">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-md font-semibold text-gray-500">Sợ hãi & Tham lam</h3>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <!-- Chỉ Số Sợ hãi & Tham lam -->
+            <div class="card">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-gauge-high text-red-500 text-3xl mr-3"></i>
+                    <h3 class="text-lg font-semibold text-gray-700">Sợ hãi & Tham lam</h3>
                 </div>
-                <div>
-                    <p id="fear-greed-value" class="text-3xl font-bold mt-2 h-10 flex items-center">
-                        <span class="loader"></span>
-                    </p>
-                    <p id="fear-greed-text" class="text-sm font-medium h-5"></p>
-                </div>
+                <p id="fear-greed-value" class="text-3xl font-bold text-gray-900">Loading...</p>
+                <p id="fear-greed-text" class="text-sm font-medium">Loading...</p>
             </div>
         </div>
 
-        <div class="space-y-8">
-            <!-- Phần 1: Tóm Tắt Toàn Cảnh -->
-            <section id="overview" class="card p-6">
-                <h2 class="text-2xl font-bold mb-4 text-blue-700">Phần 1: Tóm Tắt Toàn Cảnh Thị Trường – Đỉnh Cao Mới và Tâm Lý Tham Lam</h2>
-                <p class="mb-4">Thị trường tiền điện tử đang trải qua một giai đoạn tăng trưởng đặc biệt mạnh mẽ, được đánh dấu bằng việc Bitcoin (BTC) thiết lập một đỉnh cao nhất mọi thời đại (ATH) mới trên 122.000 USD. Đà tăng này đã kéo theo sự phục hồi của toàn bộ thị trường, với tổng vốn hóa vượt mốc 3,8 nghìn tỷ USD.</p>
-                <div class="mb-6 p-4 border-l-4 border-yellow-400 bg-yellow-50 rounded-r-lg">
-                    <p class="font-semibold">Chỉ số Sợ hãi và Tham lam (Fear & Greed Index) hiện đang ở mức cao. Điều này cho thấy sự hưng phấn đang chiếm ưu thế, nhưng cũng là một tín hiệu cảnh báo về khả năng thị trường đang trở nên quá nóng.</p>
-                </div>
-                <p class="mb-4">Hai động lực chính thúc đẩy đợt tăng trưởng này là dòng vốn khổng lồ vào các quỹ ETF giao ngay và một môi trường pháp lý ngày càng rõ ràng hơn.</p>
+        <main class="bg-white p-6 md:p-8 rounded-lg border border-gray-200 shadow-lg">
+            <!-- Content from the document -->
+            <section id="summary">
+                <h2><i class="fas fa-file-alt icon"></i>I. Báo cáo Tóm tắt</h2>
+                <p>Thị trường tài sản kỹ thuật số đang trong giai đoạn chuyển mình lịch sử, lần đầu tiên vượt qua cột mốc vốn hóa 4 nghìn tỷ USD. Đà tăng trưởng mạnh mẽ này không chỉ đơn thuần được thúc đẩy bởi sự đầu cơ nhỏ lẻ, mà được củng cố bởi hai chất xúc tác cơ bản, có mối liên hệ mật thiết: sự rõ ràng về mặt pháp lý mang tính bước ngoặt tại Hoa Kỳ và một dòng vốn tổ chức khổng lồ chảy vào thị trường thông qua các quỹ hoán đổi danh mục (ETF) giao ngay mới được phê duyệt.</p>
+                <ul class="list-disc list-inside space-y-2 mt-4 pl-4">
+                    <li><strong>Bitcoin (BTC):</strong> Sau khi thiết lập mức cao nhất mọi thời đại (ATH) mới trên 123,000 USD, Bitcoin đang bước vào một giai đoạn củng cố lành mạnh.</li>
+                    <li><strong>Ethereum (ETH) và Altcoin:</strong> Đang có một sự luân chuyển vốn mạnh mẽ từ Bitcoin sang Ethereum và các altcoin vốn hóa lớn khác.</li>
+                    <li><strong>Tâm lý Thị trường:</strong> Chỉ số Sợ hãi & Tham lam (Fear & Greed Index) duy trì ở mức "Tham lam" (Greed), cho thấy xu hướng tăng hiện tại vẫn còn dư địa.</li>
+                </ul>
             </section>
 
-            <!-- Phần 2: Bối Cảnh Vĩ Mô -->
-            <section id="macro" class="card p-6">
-                <h2 class="text-2xl font-bold mb-4 text-blue-700">Phần 2: Bối Cảnh Vĩ Mô và Chính Trị – Cơn Gió Thuận Chiều</h2>
-                <p class="mb-4">Môi trường pháp lý và chính trị, đặc biệt tại Hoa Kỳ, đã trở thành động lực tăng trưởng quan trọng. Việc Tổng thống Donald Trump ký ban hành <span class="font-semibold">Đạo luật GENIUS</span> đã cung cấp một khuôn khổ pháp lý rõ ràng cho stablecoin và tài sản kỹ thuật số, củng cố niềm tin của nhà đầu tư tổ chức.</p>
+            <section id="macro-context">
+                <h2><i class="fas fa-landmark icon"></i>II. Bối cảnh Vĩ mô và Chính trị</h2>
+                <p>Động lực chính định hình cấu trúc thị trường hiện tại đến từ những tiến bộ pháp lý chưa từng có tại Hoa Kỳ. Trong sự kiện được mệnh danh là "Tuần lễ Tiền mã hóa" (Crypto Week), Hạ viện Hoa Kỳ đã thông qua một loạt dự luật quan trọng, thiết lập khuôn khổ liên bang đầu tiên cho các stablecoin.</p>
             </section>
 
-            <!-- Phần 3: Phân Tích Dòng Vốn -->
-            <section id="capital-flow" class="card p-6">
-                <h2 class="text-2xl font-bold mb-4 text-blue-700">Phần 3: Phân Tích Dòng Vốn – Sự Bùng Nổ của các Quỹ ETF</h2>
-                <p class="mb-4">Sự bùng nổ của các quỹ ETF giao ngay là động lực chính không thể phủ nhận. Các quỹ ETF Bitcoin đã thu hút dòng vốn ròng tích lũy hơn <span class="font-bold text-green-600">53 tỷ USD</span>. Các quỹ ETF Ethereum cũng nhanh chóng thu hút hơn <span class="font-bold text-green-600">5,5 tỷ USD</span>.</p>
-            </section>
-            
-            <!-- Phần 4: Phân Tích Dữ Liệu On-Chain và Tâm Lý Thị Trường -->
-            <section id="on-chain" class="card p-6">
-                <h2 class="text-2xl font-bold mb-4 text-blue-700">Phần 4: Phân Tích Dữ Liệu On-Chain và Tâm Lý Thị Trường</h2>
-                <div class="grid md:grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div>
-                        <h3 class="text-xl font-semibold mb-2">Tỷ Lệ Thống Trị của Bitcoin (BTC.D)</h3>
-                        <p>Dữ liệu về Tỷ lệ Thống trị của Bitcoin (BTC.D) đang vẽ nên một bức tranh phức tạp. Trong khi xu hướng dài hạn tăng, cho thấy Bitcoin đã hoạt động tốt hơn altcoin, thì trong ngắn hạn, chỉ số này lại đang giảm mạnh. Sự sụt giảm gần đây được cho là tín hiệu khởi đầu cho một "mùa altcoin", khi vốn luân chuyển từ Bitcoin sang các tài sản khác như Ethereum, đặc biệt sau sự ra mắt của các quỹ ETF Ethereum.</p>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-semibold mb-2">Tâm Lý Thị Trường</h3>
-                        <p>Sự phân kỳ giữa xu hướng BTC.D dài hạn và ngắn hạn phản ánh một thị trường đang trong giai đoạn chuyển tiếp. Xu hướng tăng dài hạn được thúc đẩy bởi các quỹ ETF Bitcoin, thu hút vốn tổ chức. Xu hướng giảm ngắn hạn lại được thúc đẩy bởi sự ra mắt của các quỹ ETF Ethereum, mở ra một kênh thứ hai cho dòng vốn tổ chức, khởi đầu cho quá trình đa dạng hóa danh mục đầu tư.</p>
-                    </div>
-                </div>
-            </section>
-            
-            <!-- Phần 5: Phân Tích Kỹ Thuật Chuyên Sâu -->
-            <section id="technical-analysis" class="card p-6">
-                <h2 class="text-2xl font-bold mb-4 text-blue-700">Phần 5: Phân Tích Kỹ Thuật Chuyên Sâu – Đọc Vị Biểu Đồ</h2>
-                <div class="space-y-4">
-                    <div>
-                        <h3 class="text-xl font-semibold mb-2">Bitcoin (BTC/USD)</h3>
-                        <p class="mb-2">Bitcoin đã thể hiện sức mạnh vượt trội, thiết lập ATH mới tại khoảng 123.000 USD. Các mức hỗ trợ quan trọng cần theo dõi bao gồm 118.500 USD và 117.169 USD. Ở phía trên, vùng kháng cự trước mắt là 122.000 - 123.000 USD. Chỉ số RSI cho thấy thị trường đang ở trạng thái căng thẳng hoặc quá nóng.</p>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-semibold mb-2">Ethereum (ETH/USD)</h3>
-                        <p class="mb-2">Ethereum đã có một đợt tăng giá mạnh mẽ, vượt qua 3.600 USD, với mục tiêu tiếp theo là 4.000 USD. Hỗ trợ gần nhất được xác định quanh mức 3.250 USD. Tương tự Bitcoin, dữ liệu RSI của Ethereum cũng báo hiệu tình trạng quá mua, tiềm ẩn rủi ro điều chỉnh.</p>
-                    </div>
-                </div>
-                <div class="overflow-x-auto mt-6">
-                    <table class="w-full text-left border-collapse">
-                        <caption class="text-lg font-semibold p-4 text-gray-700">Bảng 3: Các Mức Kỹ Thuật Quan Trọng của BTC & ETH</caption>
-                        <thead class="bg-gray-100">
+            <section id="market-overview">
+                <h2><i class="fas fa-chart-pie icon"></i>III. Tổng quan Thị trường</h2>
+                <p>Thị trường tiền mã hóa toàn cầu đã chính thức vượt qua ngưỡng vốn hóa 4 nghìn tỷ USD lần đầu tiên trong lịch sử. Dữ liệu gần đây cho thấy tổng vốn hóa thị trường ở mức khoảng 3.88 nghìn tỷ USD, với khối lượng giao dịch trong 24 giờ đạt 182.78 tỷ USD.</p>
+                <div class="overflow-x-auto rounded-lg border border-gray-200">
+                    <table>
+                        <thead>
                             <tr>
-                                <th class="p-3 font-semibold text-sm text-gray-700 border-b">Tài sản</th>
-                                <th class="p-3 font-semibold text-sm text-gray-700 border-b">Hỗ trợ 1 (S1)</th>
-                                <th class="p-3 font-semibold text-sm text-gray-700 border-b">Hỗ trợ 2 (S2)</th>
-                                <th class="p-3 font-semibold text-sm text-gray-700 border-b">Kháng cự 1 (R1)</th>
-                                <th class="p-3 font-semibold text-sm text-gray-700 border-b">Kháng cự 2 (R2)</th>
+                                <th>#</th><th>Tên (Mã)</th><th>Giá (USD)</th><th>Vốn hóa Thị trường</th><th>Khối lượng 24 giờ</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="hover:bg-gray-50">
-                                <td class="p-3 border-b border-gray-200 font-bold">BTC</td>
-                                <td class="p-3 border-b border-gray-200 font-mono">117,169 USD</td>
-                                <td class="p-3 border-b border-gray-200 font-mono">112,065 USD</td>
-                                <td class="p-3 border-b border-gray-200 font-mono">123,000 USD</td>
-                                <td class="p-3 border-b border-gray-200 font-mono">125,000 USD</td>
-                            </tr>
-                            <tr class="hover:bg-gray-50">
-                                <td class="p-3 border-b border-gray-200 font-bold">ETH</td>
-                                <td class="p-3 border-b border-gray-200 font-mono">3,250 USD</td>
-                                <td class="p-3 border-b border-gray-200 font-mono">3,000 USD</td>
-                                <td class="p-3 border-b border-gray-200 font-mono">4,000 USD</td>
-                                <td class="p-3 border-b border-gray-200 font-mono">4,915 USD</td>
-                            </tr>
+                            <tr><td>1</td><td>Bitcoin (BTC)</td><td>$118,040</td><td>$2.35T</td><td>$27.76B</td></tr>
+                            <tr><td>2</td><td>Ethereum (ETH)</td><td>$3,570</td><td>$431.68B</td><td>$32.41B</td></tr>
+                            <tr><td>3</td><td>XRP (XRP)</td><td>$3.43</td><td>$202.92B</td><td>$6.70B</td></tr>
+                            <tr><td>4</td><td>Tether (USDT)</td><td>$1.00</td><td>$161.62B</td><td>$93.76B</td></tr>
+                            <tr><td>5</td><td>BNB (BNB)</td><td>$733.81</td><td>$107.22B</td><td>$1.66B</td></tr>
+                            <tr><td>6</td><td>Solana (SOL)</td><td>$177.41</td><td>$95.31B</td><td>$8.69B</td></tr>
+                            <tr><td>7</td><td>USDC (USDC)</td><td>$1.00</td><td>$64.74B</td><td>$14.35B</td></tr>
+                            <tr><td>8</td><td>Dogecoin (DOGE)</td><td>$0.24</td><td>$36.43B</td><td>$14.39B</td></tr>
+                            <tr><td>9</td><td>Lido Staked Ether (STETH)</td><td>$3,570</td><td>$32.50B</td><td>$92.36M</td></tr>
+                            <tr><td>10</td><td>TRON (TRX)</td><td>$0.32</td><td>$30.37B</td><td>$3.71B</td></tr>
                         </tbody>
                     </table>
                 </div>
             </section>
 
-            <!-- Phần 6: Thị Trường Altcoin -->
-            <section id="altcoins" class="card p-6">
-                <h2 class="text-2xl font-bold mb-4 text-blue-700">Phần 6: Thị Trường Altcoin – "Mùa Altcoin" Đã Thực Sự Bắt Đầu?</h2>
-                <p class="mb-4">Nhiều dấu hiệu cho thấy thị trường đang bước vào một "mùa altcoin" được mong đợi. Các dấu hiệu bao gồm sự luân chuyển vốn vào Ethereum, các mô hình tăng giá trên biểu đồ vốn hóa altcoin (TOTAL2, TOTAL3), và một lượng lớn stablecoin sẵn sàng được triển khai vào thị trường.</p>
-                <div class="mt-4">
-                    <h3 class="text-xl font-semibold mb-3">Các Câu Chuyện Thu Hút Chú Ý</h3>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="tag tag-blue">Trí tuệ nhân tạo (AI)</span>
-                        <span class="tag tag-green">DeFi</span>
-                        <span class="tag tag-yellow">Memecoins</span>
-                        <span class="tag tag-red">Tài sản Thế giới Thực (RWAs)</span>
-                        <span class="tag tag-blue">Hệ sinh thái Solana</span>
-                        <span class="tag tag-green">DePIN</span>
-                        <span class="tag tag-yellow">Layer 2</span>
-                    </div>
+            <section id="sentiment-analysis">
+                <h2><i class="fas fa-brain icon"></i>IV. Phân tích Tâm lý Thị trường</h2>
+                <p>Chỉ số Sợ hãi & Tham lam (Fear & Greed Index) hiện đang ở mức 67, nằm vững trong vùng "Tham lam" (Greed). Lòng tham hiện tại dường như bắt nguồn trực tiếp từ các tin tức cơ bản tích cực (ETF, quy định) thay vì sự hưng phấn đầu cơ thuần túy. Đây có thể được gọi là "Lòng tham Tự tin".</p>
+            </section>
+            
+            <section id="btc-analysis">
+                <h2><i class="fab fa-bitcoin icon"></i>V. Phân tích Chuyên sâu: Bitcoin (BTC)</h2>
+                <p>Nhu cầu đối với các quỹ ETF Bitcoin giao ngay đã không ngừng tăng. Bitcoin đã đạt mức cao nhất mọi thời đại mới là 123,218 USD vào ngày 14 tháng 7 trước khi củng cố.</p>
+                <div class="highlight-rsi">
+                    <h4 class="font-bold text-lg text-gray-900 mb-2"><i class="fas fa-wave-square mr-2 text-green-600"></i>Phân Tích Chỉ Báo RSI (Bitcoin)</h4>
+                    <p>Về các chỉ báo kỹ thuật, <strong>chỉ số RSI hàng ngày đã hạ nhiệt từ vùng quá mua (trên 70) nhưng vẫn duy trì xu hướng tăng</strong>. Chỉ báo MACD hàng ngày vẫn cho thấy một giao cắt tăng giá, mặc dù động lượng đang có dấu hiệu suy yếu.</p>
                 </div>
             </section>
 
-            <!-- Phần 7: Tổng Hợp Quan Điểm Chuyên Gia -->
-            <section id="experts" class="card p-6">
-                <h2 class="text-2xl font-bold mb-4 text-blue-700">Phần 7: Tổng Hợp Quan Điểm Chuyên Gia</h2>
-                <div class="grid md:grid-cols-1 lg:grid-cols-2 gap-8">
-                    <!-- Bull Case -->
-                    <div class="p-4 border-2 border-green-500 rounded-lg bg-green-50/50">
-                        <h3 class="text-xl font-bold text-green-700 mb-2 flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
-                            Luận Điểm Tăng Giá (Bull Case)
-                        </h3>
-                        <ul class="list-disc list-inside space-y-1 text-green-800">
-                            <li>Dòng vốn tổ chức bền vững qua các quỹ ETF.</li>
-                            <li>Môi trường pháp lý ngày càng thuận lợi.</li>
-                            <li>Phá vỡ các mức kháng cự kỹ thuật quan trọng.</li>
-                            <li>Dự báo giá lạc quan từ các tổ chức lớn.</li>
-                        </ul>
-                    </div>
-                    <!-- Bear Case -->
-                    <div class="p-4 border-2 border-red-500 rounded-lg bg-red-50/50">
-                        <h3 class="text-xl font-bold text-red-700 mb-2 flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" /></svg>
-                            Luận Điểm Giảm Giá (Bear Case)
-                        </h3>
-                        <ul class="list-disc list-inside space-y-1 text-red-800">
-                            <li>Các chỉ báo kỹ thuật (RSI) ở mức quá mua.</li>
-                            <li>Chỉ số Tham lam ở mức cao, báo hiệu điều chỉnh.</li>
-                            <li>Rủi ro vĩ mô và căng thẳng địa chính trị.</li>
-                            <li>Rủi ro công nghệ dài hạn (máy tính lượng tử).</li>
-                        </ul>
-                    </div>
+            <section id="eth-analysis">
+                 <h2><i class="fab fa-ethereum icon"></i>VI. Phân tích: Ethereum & Altcoin</h2>
+                <p>Ethereum đã có hiệu suất vượt trội đáng kể so với Bitcoin trong những tuần gần đây, tăng hơn 23% chỉ trong một tuần, báo hiệu khẩu vị rủi ro ngày càng tăng trên thị trường.</p>
+                <div class="highlight-rsi">
+                    <h4 class="font-bold text-lg text-gray-900 mb-2"><i class="fas fa-wave-square mr-2 text-green-600"></i>Phân Tích Chỉ Báo RSI (Ethereum)</h4>
+                    <p>Tuy nhiên, các chỉ báo kỹ thuật đang đưa ra cảnh báo. <strong>Chỉ số RSI hàng ngày đang ở vùng quá mua cực độ (85-89)</strong>. Đây là một cảnh báo mạnh mẽ về một đợt giảm giá hoặc củng cố sắp xảy ra.</p>
                 </div>
             </section>
 
-            <!-- Kết Luận -->
-            <section id="conclusion" class="card p-6">
-                <h2 class="text-2xl font-bold mb-4 text-blue-700">Kết Luận Tổng Hợp</h2>
-                <p class="mb-4">Thị trường tiền điện tử đang trong một xu hướng tăng giá mạnh mẽ, có cơ sở vững chắc và được dẫn dắt bởi sự tham gia của các tổ chức ở một quy mô chưa từng thấy. Các động lực tăng giá cơ bản, đặc biệt là dòng vốn ETF và sự rõ ràng về quy định, hiện đang chiếm ưu thế.</p>
-                <p>Tuy nhiên, các rủi ro là không thể bỏ qua. Thị trường đang ở trạng thái "quá nóng" về mặt kỹ thuật, khiến nó dễ bị tổn thương trước các tin tức tiêu cực. Triển vọng ngắn hạn đến trung hạn vẫn nghiêng về phía tăng giá, nhưng với khả năng xảy ra các đợt điều chỉnh mạnh. Quản lý rủi ro chặt chẽ là điều tối cần thiết.</p>
+            <section id="notable-coins">
+                <h2><i class="fas fa-star icon"></i>VII. Động lực Thị trường: Các Đồng coin Nổi bật</h2>
+                <p>Phân tích các đồng tiền tăng giá mạnh nhất cho thấy một xu hướng rõ ràng: thị trường đang thưởng cho các dự án có chất xúc tác cơ bản hữu hình như Sui (SUI), Tezos (XTZ), và Zora (ZORA).</p>
             </section>
-        </div>
 
-        <!-- Nguồn -->
-        <footer id="sources" class="text-center p-6 mt-4">
-            <h2 class="text-xl font-semibold mb-4 text-gray-600">Nguồn Trích Dẫn</h2>
-            <div class="text-xs text-gray-500 space-y-1 break-words max-w-4xl mx-auto">
-                <p>[1] Znews, [2] Báo Lao Động, [3] CoinDCX, [4] Tin Nhanh Chứng Khoán, [5] Slickcharts, [6] TradingView, [8] Cryptodnes.bg, [11] Economic Times, [12] Mitrade, [13] Vietstock, [15] TradingView, [16] Futu News, [18] CoinDCX, [25] Cointelegraph, [36] Cointelegraph, và các nguồn khác được liệt kê trong tài liệu gốc.</p>
-            </div>
-        </footer>
+            <section id="expert-opinions">
+                <h2><i class="fas fa-user-tie icon"></i>VIII. Tổng hợp Nhận định Chuyên gia</h2>
+                <div class="mt-6 grid md:grid-cols-2 gap-8">
+                    <!-- Bull Case Card -->
+                    <div class="card bull-card p-6">
+                        <h3 class="text-xl font-bold text-green-800 flex items-center"><i class="fas fa-arrow-trend-up mr-3"></i>A. Kịch bản Tăng giá (Bull Case)</h3>
+                        <p class="mt-4 text-green-700">Các nhà phân tích từ Standard Chartered và Bernstein duy trì các mục tiêu giá cao cho Bitcoin (<strong>$150,000 - $250,000</strong>) do nhu cầu không ngừng từ các quỹ ETF. Các mô hình kỹ thuật cũng dự báo các mục tiêu giá cao cho cả BTC và ETH.</p>
+                    </div>
+                    <!-- Bear Case Card -->
+                    <div class="card bear-card p-6">
+                        <h3 class="text-xl font-bold text-red-800 flex items-center"><i class="fas fa-arrow-trend-down mr-3"></i>B. Kịch bản Giảm giá & Rủi ro (Bear Case)</h3>
+                        <p class="mt-4 text-red-700">Cây nến tuần "topping tail" của BTC và chỉ số RSI quá mua là những tín hiệu cảnh báo. Rủi ro chốt lời, các khoảng trống giá cần lấp đầy, và các yếu tố vĩ mô không chắc chắn vẫn là những mối đe dọa tiềm tàng cho một đợt điều chỉnh.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="conclusion">
+                <h2><i class="fas fa-flag-checkered icon"></i>IX. Triển vọng và Khuyến nghị</h2>
+                <p>Thị trường đang trong một thị trường tăng giá có cấu trúc vững chắc. Kịch bản có khả năng xảy ra nhất là một đợt điều chỉnh ngắn hạn để làm nguội các chỉ báo, sau đó xu hướng tăng dự kiến sẽ tiếp tục. Nhà đầu tư nên thận trọng, xem xét chiến lược trung bình giá và sử dụng lệnh dừng lỗ để quản lý rủi ro.</p>
+            </section>
+        </main>
     </div>
 
-<script>
-    // DOM Elements
-    const btcPriceEl = document.getElementById('btc-price');
-    const btcChangeEl = document.getElementById('btc-change');
-    const marketCapEl = document.getElementById('market-cap');
-    const volumeEl = document.getElementById('volume-24h');
-    const fearGreedValueEl = document.getElementById('fear-greed-value');
-    const fearGreedTextEl = document.getElementById('fear-greed-text');
+    <script>
+        const formatNumber = (num) => {
+            if (num >= 1e12) return (num / 1e12).toFixed(2) + 'T';
+            if (num >= 1e9) return (num / 1e9).toFixed(2) + 'B';
+            if (num >= 1e6) return (num / 1e6).toFixed(2) + 'M';
+            return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        };
 
-    // API Endpoints
-    const coingeckoApiUrl = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin&order=market_cap_desc&per_page=1&page=1&sparkline=false&price_change_percentage=24h';
-    const fearAndGreedApiUrl = 'https://api.allorigins.win/raw?url=https://api.alternative.me/fng/?limit=1';
-    const globalDataApiUrl = 'https://api.coingecko.com/api/v3/global';
-
-    // Formatters
-    const currencyFormatter = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-    });
-
-    const numberFormatter = new Intl.NumberFormat('en-US', {
-        notation: 'compact',
-        compactDisplay: 'short',
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    });
-
-    // Function to fetch and update data
-    async function updateMetrics() {
-        try {
-            // Fetch all data concurrently
-            const [coinResponse, fearGreedResponse, globalResponse] = await Promise.all([
-                fetch(coingeckoApiUrl),
-                fetch(fearAndGreedApiUrl),
-                fetch(globalDataApiUrl)
-            ]);
-
-            if (!coinResponse.ok) throw new Error(`CoinGecko API error: ${coinResponse.statusText}`);
-            if (!fearGreedResponse.ok) throw new Error(`Alternative.me API error: ${fearGreedResponse.statusText}`);
-            if (!globalResponse.ok) throw new Error(`CoinGecko Global API error: ${globalResponse.statusText}`);
-
-            const coinData = await coinResponse.json();
-            const fearGreedData = JSON.parse(await fearGreedResponse.text());
-            const globalData = await globalResponse.json();
-            
-            // --- Update Bitcoin Price & 24h Change ---
-            if (coinData && coinData.length > 0) {
-                const btc = coinData[0];
-                btcPriceEl.textContent = currencyFormatter.format(btc.current_price).replace('$', '$ ');
+        async function fetchCryptoData() {
+            try {
+                const [globalRes, btcRes] = await Promise.all([
+                    fetch('https://api.coingecko.com/api/v3/global'),
+                    fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true')
+                ]);
+                if (!globalRes.ok || !btcRes.ok) throw new Error('Network response was not ok.');
                 
-                const change = btc.price_change_percentage_24h;
+                const globalData = await globalRes.json();
+                const btcData = await btcRes.json();
+
+                const marketData = globalData.data;
+                const bitcoin = btcData.bitcoin;
+
+                document.getElementById('market-cap').textContent = '$' + formatNumber(marketData.total_market_cap.usd);
+                document.getElementById('volume-24h').textContent = '$' + formatNumber(marketData.total_volume.usd);
+                document.getElementById('btc-price').textContent = '$' + bitcoin.usd.toLocaleString('en-US');
+                
+                const btcChangeEl = document.getElementById('btc-change');
+                const change = bitcoin.usd_24h_change;
                 btcChangeEl.textContent = `${change.toFixed(2)}% (24h)`;
-                btcChangeEl.classList.remove('text-red-500', 'text-green-500');
-                if (change < 0) {
-                    btcChangeEl.classList.add('text-red-500');
-                } else {
-                    btcChangeEl.classList.add('text-green-500');
-                }
-            } else {
-                 btcPriceEl.textContent = 'N/A';
-                 btcChangeEl.textContent = '';
+                btcChangeEl.className = `text-sm font-semibold ${change >= 0 ? 'text-green-600' : 'text-red-600'}`;
+
+            } catch (error) {
+                console.error('Failed to fetch crypto data:', error);
+                ['market-cap', 'volume-24h', 'btc-price'].forEach(id => document.getElementById(id).textContent = 'Error');
             }
-
-            // --- Update Global Market Cap & Volume ---
-            if (globalData && globalData.data) {
-                const totalMarketCap = globalData.data.total_market_cap.usd;
-                const totalVolume = globalData.data.total_volume.usd;
-                marketCapEl.textContent = '$' + numberFormatter.format(totalMarketCap);
-                volumeEl.textContent = '$' + numberFormatter.format(totalVolume);
-            } else {
-                marketCapEl.textContent = 'N/A';
-                volumeEl.textContent = 'N/A';
-            }
-
-            // --- Update Fear & Greed Index ---
-            if (fearGreedData && fearGreedData.data && fearGreedData.data.length > 0) {
-                const fng = fearGreedData.data[0];
-                const value = parseInt(fng.value);
-                const classification = fng.value_classification;
-
-                fearGreedValueEl.textContent = value;
-                fearGreedTextEl.textContent = classification;
-
-                fearGreedTextEl.classList.remove('text-red-500', 'text-yellow-500', 'text-green-500');
-                if (value <= 25) {
-                    fearGreedTextEl.classList.add('text-red-500');
-                } else if (value <= 75) {
-                    fearGreedTextEl.classList.add('text-yellow-500');
-                } else {
-                    fearGreedTextEl.classList.add('text-green-500');
-                }
-            } else {
-                fearGreedValueEl.textContent = 'N/A';
-            }
-
-        } catch (error) {
-            console.error('Failed to fetch crypto data:', error);
-            btcPriceEl.textContent = 'Lỗi';
-            marketCapEl.textContent = 'Lỗi';
-            volumeEl.textContent = 'Lỗi';
-            fearGreedValueEl.textContent = 'Lỗi';
         }
-    }
 
-    // Initial call and set interval to update every 60 seconds
-    document.addEventListener('DOMContentLoaded', () => {
-        updateMetrics();
-        setInterval(updateMetrics, 60000); // 60 seconds
-    });
+        async function fetchFearAndGreed() {
+            try {
+                const response = await fetch('https://api.alternative.me/fng/?limit=1');
+                if (!response.ok) throw new Error('Network response was not ok for F&G data.');
+                const data = await response.json();
+                const fearGreed = data.data[0];
 
-</script>
+                const valueEl = document.getElementById('fear-greed-value');
+                const textEl = document.getElementById('fear-greed-text');
 
+                valueEl.textContent = fearGreed.value;
+                textEl.textContent = fearGreed.value_classification;
+
+                let colorClass = 'text-yellow-500';
+                if (parseInt(fearGreed.value) <= 25) colorClass = 'text-red-600';
+                if (parseInt(fearGreed.value) >= 75) colorClass = 'text-green-600';
+                textEl.className = `text-sm font-medium ${colorClass}`;
+
+            } catch (error) {
+                console.error('Failed to fetch Fear and Greed Index:', error);
+                document.getElementById('fear-greed-value').textContent = 'Error';
+            }
+        }
+
+        function init() {
+            fetchCryptoData();
+            fetchFearAndGreed();
+            setInterval(fetchCryptoData, 60000);
+            setInterval(fetchFearAndGreed, 300000); // F&G updates less frequently
+        }
+
+        window.onload = init;
+    </script>
 </body>
 </html>
