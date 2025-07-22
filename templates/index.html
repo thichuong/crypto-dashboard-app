@@ -17,9 +17,7 @@
             <p class="text-lg text-gray-600 max-w-3xl mx-auto">Phân tích Kỷ nguyên Vốn hóa 4 Nghìn Tỷ USD và Sự Dịch chuyển Dòng vốn Chiến lược</p>
         </header>
 
-        <!-- Real-time Data Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            <!-- Giá BTC -->
             <div class="card">
                 <div class="flex items-center mb-2">
                     <i class="fab fa-bitcoin text-yellow-500 text-3xl mr-3"></i>
@@ -28,7 +26,6 @@
                 <p id="btc-price" class="text-3xl font-bold text-gray-900">Loading...</p>
                 <p id="btc-change" class="text-sm">Loading...</p>
             </div>
-            <!-- Tổng Vốn Hóa -->
             <div class="card">
                 <div class="flex items-center mb-2">
                     <i class="fas fa-globe-americas text-blue-500 text-3xl mr-3"></i>
@@ -37,7 +34,6 @@
                 <p id="market-cap" class="text-3xl font-bold text-gray-900">Loading...</p>
                  <p class="text-sm text-gray-500">Toàn thị trường</p>
             </div>
-            <!-- Khối Lượng 24h -->
             <div class="card">
                 <div class="flex items-center mb-2">
                     <i class="fas fa-chart-line text-green-500 text-3xl mr-3"></i>
@@ -46,7 +42,6 @@
                 <p id="volume-24h" class="text-3xl font-bold text-gray-900">Loading...</p>
                  <p class="text-sm text-gray-500">Toàn thị trường</p>
             </div>
-            <!-- Chỉ Số Sợ hãi & Tham lam -->
             <div class="card">
                 <div class="flex items-center mb-2">
                     <i class="fas fa-gauge-high text-red-500 text-3xl mr-3"></i>
@@ -57,65 +52,53 @@
             </div>
         </div>
 
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-x-12">
+            <aside class="hidden lg:block lg:col-span-1">
+                 <nav id="report-navigation-panel" class="sticky top-8">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3 tracking-wide">Mục lục Báo cáo</h3>
+                    <ul id="report-nav-links" class="space-y-2">
+                        </ul>
+                </nav>
+            </aside>
 
-        <main id="report-container" class="bg-white p-6 md:p-8 rounded-lg border border-gray-200 shadow-lg">
-            </main>
+            <main id="report-container" class="lg:col-span-3">
+                 </main>
+        </div>
     </div>
 
     <script>
-        // ... (hàm formatNumber giữ nguyên) ...
         function formatNumber(num) {
-            if (!num) return 'N/A'; // Trả về 'N/A' nếu không có số
-            if (num >= 1e12) {
-                return (num / 1e12).toFixed(2) + ' nghìn tỷ';
-            }
-            if (num >= 1e9) {
-                return (num / 1e9).toFixed(2) + ' tỷ';
-            }
-            if (num >= 1e6) {
-                return (num / 1e6).toFixed(2) + ' triệu';
-            }
-            // Trả về số được định dạng với dấu phẩy ngăn cách hàng nghìn
+            if (!num) return 'N/A';
+            if (num >= 1e12) return (num / 1e12).toFixed(2) + ' nghìn tỷ';
+            if (num >= 1e9) return (num / 1e9).toFixed(2) + ' tỷ';
+            if (num >= 1e6) return (num / 1e6).toFixed(2) + ' triệu';
             return num.toLocaleString('en-US');
         }
+
         async function fetchCryptoData() {
-                try {
-                    const response = await fetch('/api/crypto/global');
-                    if (!response.ok) throw new Error('Lỗi khi lấy dữ liệu global.');
-
-                    const data = await response.json();
-                    // print ra gia tri data
-                    console.log(data);
-                    
-                    // Truy cập trực tiếp vào các key của JSON mới
-                    document.getElementById('market-cap').textContent = '$' + formatNumber(data['market-cap']);
-                    document.getElementById('volume-24h').textContent = '$' + formatNumber(data['volume-24h']);
-
-                } catch (error) {
-                    console.error('Lỗi fetchCryptoData:', error);
-                    ['market-cap', 'volume-24h'].forEach(id => document.getElementById(id).textContent = error);
-                    console.log(error);
-                }
+            try {
+                const response = await fetch('/api/crypto/global');
+                if (!response.ok) throw new Error('Error fetching global data.');
+                const data = await response.json();
+                document.getElementById('market-cap').textContent = '$' + formatNumber(data['market-cap']);
+                document.getElementById('volume-24h').textContent = '$' + formatNumber(data['volume-24h']);
+            } catch (error) {
+                console.error('fetchCryptoData Error:', error);
+                ['market-cap', 'volume-24h'].forEach(id => document.getElementById(id).textContent = 'Error');
             }
-
+        }
 
         async function fetchBtcAndFearGreed() {
             try {
-                // Gọi đến endpoint kết hợp để lấy giá BTC và chỉ số F&G
                 const response = await fetch('/api/crypto/btc-and-fng');
-                if (!response.ok) throw new Error('Lỗi khi lấy dữ liệu BTC và F&G.');
-
+                if (!response.ok) throw new Error('Error fetching BTC and F&G data.');
                 const data = await response.json();
-
-                // Xử lý dữ liệu BTC
                 const bitcoin = data.bitcoin.bitcoin;
                 document.getElementById('btc-price').textContent = '$' + bitcoin.usd.toLocaleString('en-US');
                 const btcChangeEl = document.getElementById('btc-change');
                 const change = bitcoin.usd_24h_change;
                 btcChangeEl.textContent = `${change.toFixed(2)}% (24h)`;
                 btcChangeEl.className = `text-sm font-semibold ${change >= 0 ? 'text-green-600' : 'text-red-600'}`;
-
-                // Xử lý dữ liệu Fear & Greed
                 const fearGreed = data.fear_and_greed.data[0];
                 const valueEl = document.getElementById('fear-greed-value');
                 const textEl = document.getElementById('fear-greed-text');
@@ -125,37 +108,95 @@
                 if (parseInt(fearGreed.value) <= 25) colorClass = 'text-red-600';
                 if (parseInt(fearGreed.value) >= 75) colorClass = 'text-green-600';
                 textEl.className = `text-sm font-medium ${colorClass}`;
-
             } catch (error) {
-                console.error('Lỗi fetchBtcAndFearGreed:', error);
+                console.error('fetchBtcAndFearGreed Error:', error);
                 ['btc-price', 'fear-greed-value'].forEach(id => document.getElementById(id).textContent = 'Error');
             }
         }
 
-
-        // Script mới để tải nội dung báo cáo (giữ nguyên)
-        async function loadReport() {
+        async function loadReportAndCreateNav() {
             try {
                 const response = await fetch("{{ url_for('static', filename='report.html') }}");
-                if (!response.ok) throw new Error('Không thể tải tệp báo cáo.');
+                if (!response.ok) throw new Error('Could not load the report file.');
                 const reportHtml = await response.text();
-                document.getElementById('report-container').innerHTML = reportHtml;
+
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = reportHtml;
+
+                const navLinksContainer = document.getElementById('report-nav-links');
+                const reportContainer = document.getElementById('report-container');
+                reportContainer.innerHTML = ''; // Clear previous content
+
+                const sections = tempDiv.querySelectorAll('section');
+
+                sections.forEach(section => {
+                    const h2 = section.querySelector('h2');
+                    if (h2 && section.id) {
+                        reportContainer.appendChild(section);
+                        const li = document.createElement('li');
+                        const a = document.createElement('a');
+                        a.href = `#${section.id}`;
+                        const h2Text = h2.cloneNode(true);
+                        h2Text.querySelector('.icon')?.remove();
+                        a.textContent = h2Text.textContent.trim();
+                        
+                        // *** FIX STARTS HERE ***
+                        // Add click event handler for instant active state
+                        a.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            
+                            // Remove active class from all nav links
+                            navLinksContainer.querySelectorAll('a').forEach(link => link.classList.remove('active'));
+                            
+                            // Add active class to the clicked link
+                            e.target.classList.add('active');
+                            
+                            // Scroll to the section
+                            document.getElementById(section.id).scrollIntoView({
+                                behavior: 'smooth'
+                            });
+                        });
+                        // *** FIX ENDS HERE ***
+
+                        li.appendChild(a);
+                        navLinksContainer.appendChild(li);
+                    }
+                });
+
+                // Scroll Spy Logic (still useful for manual scrolling)
+                const reportSections = reportContainer.querySelectorAll('section');
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            navLinksContainer.querySelectorAll('a').forEach(link => {
+                                link.classList.remove('active');
+                                if (link.getAttribute('href').substring(1) === entry.target.id) {
+                                    link.classList.add('active');
+                                }
+                            });
+                        }
+                    });
+                }, { rootMargin: "-30% 0px -70% 0px" });
+
+                reportSections.forEach(section => {
+                    observer.observe(section);
+                });
+
             } catch (error) {
-                console.error('Lỗi tải báo cáo:', error);
-                document.getElementById('report-container').innerHTML = '<p>Không thể tải nội dung báo cáo.</p>';
+                console.error('Error loading report:', error);
+                document.getElementById('report-container').innerHTML = '<p class="text-red-600 font-semibold">Error: Could not load the detailed report content.</p>';
             }
         }
 
         function init() {
-            loadReport();
+            loadReportAndCreateNav();
             fetchCryptoData();
             fetchBtcAndFearGreed();
-            setInterval(fetchCryptoData, 300000); // Giảm tần suất gọi
+            setInterval(fetchCryptoData, 300000);
             setInterval(fetchBtcAndFearGreed, 300000);
         }
 
         window.onload = init;
     </script>
-   
 </body>
 </html>

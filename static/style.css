@@ -22,7 +22,7 @@ body {
 /* --- Bố cục chính cho nội dung báo cáo --- */
 #report-container section {
     background-color: #ffffff;
-    padding: 2rem 2.5rem; /* Tăng padding */
+    padding: 2rem 2.5rem;
     border-radius: 0.75rem;
     margin-bottom: 2.5rem;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
@@ -41,7 +41,7 @@ body {
 }
 
 #report-navigation-panel li {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.5rem; /* Giữ nguyên */
 }
 
 #report-navigation-panel a {
@@ -50,22 +50,22 @@ body {
     padding: 0.75rem 1rem;
     border-radius: 0.5rem;
     text-decoration: none;
-    color: #4b5563; /* Màu chữ xám */
+    color: #4b5563;
     font-weight: 600;
     transition: all 0.2s ease-in-out;
-    border-left: 4px solid transparent; /* Viền trái trong suốt */
+    border-left: 4px solid transparent;
 }
 
 #report-navigation-panel a:hover {
-    background-color: #f3f4f6; /* Nền xám nhạt khi hover */
+    background-color: #f3f4f6;
     color: #111827;
 }
 
 #report-navigation-panel a.active {
-    background-color: #eef2ff; /* Nền màu Indigo nhạt */
-    color: #4338ca; /* Chữ màu Indigo đậm */
+    background-color: #eef2ff;
+    color: #4338ca;
     font-weight: 700;
-    border-left-color: #6366f1; /* Viền trái màu Indigo */
+    border-left-color: #6366f1;
 }
 
 /* --- Tiêu đề các cấp --- */
@@ -74,9 +74,8 @@ h1, h2, h3, h4 {
     font-weight: 800;
 }
 
-/* TĂNG CỠ CHỮ H2 */
 h2 {
-    font-size: 2.75rem; /* Cỡ chữ lớn hơn */
+    font-size: 2.25rem; /* Điều chỉnh lại một chút cho cân đối */
     line-height: 1.2;
     border-bottom: 3px solid #6366f1;
     padding-bottom: 0.75rem;
@@ -87,7 +86,7 @@ h2 {
 }
 
 h3 {
-    font-size: 1.5rem; /* Tăng cỡ chữ h3 một chút */
+    font-size: 1.5rem;
     margin-top: 2.5rem;
     margin-bottom: 1.25rem;
     color: #1f2937;
@@ -98,7 +97,7 @@ h3 {
 /* --- Icon đầy màu sắc --- */
 h2 .icon {
     margin-right: 1rem;
-    font-size: 2.25rem; /* Làm icon trong h2 nhỏ hơn một chút so với chữ */
+    font-size: 2rem;
 }
 #summary .icon { color: #3b82f6; }
 #macro-legal .icon { color: #8b5cf6; }
@@ -141,15 +140,15 @@ tbody tr:hover { background-color: #f0f9ff; }
 .text-yellow-600 { color: #f59e0b; }
 
 /* --- Danh sách --- */
-ul {
+ul:not(#report-nav-links) {
     list-style-position: inside;
     padding-left: 0.5rem;
 }
 li {
     margin-bottom: 0.75rem;
-    line-height: 1.7; /* Tăng khoảng cách dòng */
+    line-height: 1.7;
 }
-li::marker {
+ul:not(#report-nav-links) > li::marker {
     color: #6366f1;
     font-weight: bold;
 }
