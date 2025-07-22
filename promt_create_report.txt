@@ -1,11 +1,11 @@
-Tạp file report.html gồm các section.
+Tạp file report_crypto.html gồm các section.
 
-Mỗi tiêu đề 2 là 1 section.
+Mỗi heading 2 của file word  là 1 section của file report_crypto.html
 
 Các section cập nhật theo file doc.
 
 Cách trình bày nội dung theo file phân tích.
 
-Định dạng mỗi section, h2, div, card theo theo file report.html để file .css và index.html đọc được.
+Định dạng mỗi section, h2, div, card theo theo section file report.html mẫu để file style.css và index.html đọc được.
 
 Bỏ [cite_start] để khi trình bày trên web dễ nhìn hơn.
