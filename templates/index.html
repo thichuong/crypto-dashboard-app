@@ -110,7 +110,7 @@
                 textEl.className = `text-sm font-medium ${colorClass}`;
             } catch (error) {
                 console.error('Lỗi fetchBtcAndFearGreed:', error);
-                ['btc-price', 'fear-greed-value'].forEach(id => document.getElementById(id).textContent = 'Error');
+                ['btc-price', 'fear-greed-value'].forEach(id => document.getElementById(id).textContent = error);
             }
         }
 
