@@ -1,10 +1,10 @@
 body {
     font-family: 'Inter', sans-serif;
-    background-color: #f3f4f6; /* Màu nền xám nhạt */
-    color: #374151; /* Màu chữ chính */
+    background-color: #f3f4f6;
+    color: #374151;
 }
 
-/* --- Kiểu dáng cho các thẻ Card --- */
+/* --- Card nhỏ (dữ liệu real-time) --- */
 .card {
     background-color: #ffffff;
     border: 1px solid #e5e7eb;
@@ -19,48 +19,100 @@ body {
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
 }
 
-/* --- Tiêu đề chính và phụ --- */
+/* --- Bố cục chính cho nội dung báo cáo --- */
+#report-container section {
+    background-color: #ffffff;
+    padding: 2rem 2.5rem; /* Tăng padding */
+    border-radius: 0.75rem;
+    margin-bottom: 2.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e5e7eb;
+    transition: all 0.3s ease;
+}
+
+#report-container section:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Panel định hướng (Mục lục) --- */
+#report-navigation-panel ul {
+    list-style: none;
+    padding: 0;
+}
+
+#report-navigation-panel li {
+    margin-bottom: 0.5rem;
+}
+
+#report-navigation-panel a {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    color: #4b5563; /* Màu chữ xám */
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+    border-left: 4px solid transparent; /* Viền trái trong suốt */
+}
+
+#report-navigation-panel a:hover {
+    background-color: #f3f4f6; /* Nền xám nhạt khi hover */
+    color: #111827;
+}
+
+#report-navigation-panel a.active {
+    background-color: #eef2ff; /* Nền màu Indigo nhạt */
+    color: #4338ca; /* Chữ màu Indigo đậm */
+    font-weight: 700;
+    border-left-color: #6366f1; /* Viền trái màu Indigo */
+}
+
+/* --- Tiêu đề các cấp --- */
 h1, h2, h3, h4 {
     color: #111827;
     font-weight: 800;
 }
 
-/* --- CỠ CHỮ LỚN ĐỒNG BỘ CHO TẤT CẢ TIÊU ĐỀ MỤC --- */
+/* TĂNG CỠ CHỮ H2 */
 h2 {
-    font-size: 2.25rem; /* Cỡ chữ lớn, áp dụng cho tất cả các phần */
-    line-height: 2.75rem;
-    border-bottom: 3px solid #d1d5db; /* Làm đường viền đậm hơn */
+    font-size: 2.75rem; /* Cỡ chữ lớn hơn */
+    line-height: 1.2;
+    border-bottom: 3px solid #6366f1;
     padding-bottom: 0.75rem;
-    margin-top: 3.5rem; /* Tăng khoảng cách giữa các phần */
+    margin-top: 0;
     margin-bottom: 1.75rem;
     display: flex;
     align-items: center;
 }
 
 h3 {
-    font-size: 1.25rem;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
+    font-size: 1.5rem; /* Tăng cỡ chữ h3 một chút */
+    margin-top: 2.5rem;
+    margin-bottom: 1.25rem;
     color: #1f2937;
+    border-bottom: 1px solid #d1d5db;
+    padding-bottom: 0.5rem;
 }
 
-/* --- Icon đầy màu sắc cho các mục báo cáo --- */
-#summary .icon { color: #3b82f6; } /* Blue */
-#macro-legal .icon { color: #8b5cf6; } /* Purple */
-#institutional-flow .icon { color: #10b981; } /* Green */
-#on-chain-sentiment .icon { color: #f97316; } /* Orange */
-#technical-analysis .icon { color: #ef4444; } /* Red */
-#altcoin-focus .icon { color: #f59e0b; } /* Amber */
-#expert-outlook .icon { color: #6366f1; } /* Indigo */
-#conclusion .icon { color: #14b8a6; } /* Teal */
+/* --- Icon đầy màu sắc --- */
+h2 .icon {
+    margin-right: 1rem;
+    font-size: 2.25rem; /* Làm icon trong h2 nhỏ hơn một chút so với chữ */
+}
+#summary .icon { color: #3b82f6; }
+#macro-legal .icon { color: #8b5cf6; }
+#on-chain-sentiment .icon { color: #f97316; }
+#technical-analysis .icon { color: #ef4444; }
+#conclusion .icon { color: #14b8a6; }
+#expert-outlook .icon { color: #6366f1; }
 
-/* --- Kiểu dáng cho Bảng --- */
+/* --- Bảng --- */
 table {
     width: 100%;
     margin-top: 1.5rem;
     border-collapse: collapse;
 }
-
 table caption {
     font-weight: 600;
     color: #4b5563;
@@ -69,13 +121,11 @@ table caption {
     caption-side: top;
     text-align: left;
 }
-
 th, td {
     padding: 1rem;
     text-align: left;
     border-bottom: 1px solid #e5e7eb;
 }
-
 th {
     background-color: #f9fafb;
     color: #1f2937;
@@ -84,43 +134,26 @@ th {
     font-size: 0.75rem;
     letter-spacing: 0.05em;
 }
-
-tbody tr:nth-child(even) {
-    background-color: #f9fafb;
-}
-
-tbody tr:hover {
-    background-color: #f0f9ff; /* Màu xanh dương rất nhạt khi di chuột vào */
-}
-
-/* --- Màu cho các chỉ số Tăng/Giảm trong bảng --- */
+tbody tr:nth-child(even) { background-color: #f9fafb; }
+tbody tr:hover { background-color: #f0f9ff; }
 .text-green-600 { color: #16a34a; }
 .text-red-600 { color: #dc2626; }
 .text-yellow-600 { color: #f59e0b; }
 
-/* --- Kiểu dáng cho danh sách (list) --- */
+/* --- Danh sách --- */
 ul {
-    list-style-position: outside;
-    padding-left: 1.5rem;
+    list-style-position: inside;
+    padding-left: 0.5rem;
 }
-
 li {
     margin-bottom: 0.75rem;
-    line-height: 1.6;
+    line-height: 1.7; /* Tăng khoảng cách dòng */
 }
-
 li::marker {
-    color: #6b7280;
+    color: #6366f1;
+    font-weight: bold;
 }
 
-
-/* --- Kiểu dáng cho card Kịch bản Tăng/Giảm --- */
-.bull-card {
-    background-color: #f0fdf4;
-    border-left: 4px solid #22c55e;
-}
-
-.bear-card {
-    background-color: #fef2f2;
-    border-left: 4px solid #ef4444;
-}
+/* --- Card Kịch bản --- */
+.bull-card { background-color: #f0fdf4; border-left: 4px solid #22c55e; }
+.bear-card { background-color: #fef2f2; border-left: 4px solid #ef4444; }
