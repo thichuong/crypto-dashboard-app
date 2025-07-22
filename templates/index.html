@@ -52,7 +52,7 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-x-12">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-x-12 pb-96">
             <aside class="hidden lg:block lg:col-span-1">
                  <nav id="report-navigation-panel" class="sticky top-8">
                     <h3 class="text-lg font-semibold text-gray-800 mb-3 tracking-wide">Mục lục Báo cáo</h3>
@@ -78,12 +78,12 @@
         async function fetchCryptoData() {
             try {
                 const response = await fetch('/api/crypto/global');
-                if (!response.ok) throw new Error('Error fetching global data.');
+                if (!response.ok) throw new Error('Lỗi khi lấy dữ liệu global.');
                 const data = await response.json();
                 document.getElementById('market-cap').textContent = '$' + formatNumber(data['market-cap']);
                 document.getElementById('volume-24h').textContent = '$' + formatNumber(data['volume-24h']);
             } catch (error) {
-                console.error('fetchCryptoData Error:', error);
+                console.error('Lỗi fetchCryptoData:', error);
                 ['market-cap', 'volume-24h'].forEach(id => document.getElementById(id).textContent = 'Error');
             }
         }
@@ -91,7 +91,7 @@
         async function fetchBtcAndFearGreed() {
             try {
                 const response = await fetch('/api/crypto/btc-and-fng');
-                if (!response.ok) throw new Error('Error fetching BTC and F&G data.');
+                if (!response.ok) throw new Error('Lỗi khi lấy dữ liệu BTC và F&G.');
                 const data = await response.json();
                 const bitcoin = data.bitcoin.bitcoin;
                 document.getElementById('btc-price').textContent = '$' + bitcoin.usd.toLocaleString('en-US');
@@ -109,7 +109,7 @@
                 if (parseInt(fearGreed.value) >= 75) colorClass = 'text-green-600';
                 textEl.className = `text-sm font-medium ${colorClass}`;
             } catch (error) {
-                console.error('fetchBtcAndFearGreed Error:', error);
+                console.error('Lỗi fetchBtcAndFearGreed:', error);
                 ['btc-price', 'fear-greed-value'].forEach(id => document.getElementById(id).textContent = 'Error');
             }
         }
@@ -117,7 +117,7 @@
         async function loadReportAndCreateNav() {
             try {
                 const response = await fetch("{{ url_for('static', filename='report.html') }}");
-                if (!response.ok) throw new Error('Could not load the report file.');
+                if (!response.ok) throw new Error('Không thể tải tệp báo cáo.');
                 const reportHtml = await response.text();
 
                 const tempDiv = document.createElement('div');
@@ -125,50 +125,37 @@
 
                 const navLinksContainer = document.getElementById('report-nav-links');
                 const reportContainer = document.getElementById('report-container');
-                reportContainer.innerHTML = ''; // Clear previous content
+                reportContainer.innerHTML = ''; // Xóa nội dung cũ
 
                 const sections = tempDiv.querySelectorAll('section');
 
                 sections.forEach(section => {
                     const h2 = section.querySelector('h2');
                     if (h2 && section.id) {
+                        // Thêm section vào container chính
                         reportContainer.appendChild(section);
+
+                        // Tạo mục lục
                         const li = document.createElement('li');
                         const a = document.createElement('a');
                         a.href = `#${section.id}`;
+                        // Lấy text của h2 bỏ qua icon
                         const h2Text = h2.cloneNode(true);
                         h2Text.querySelector('.icon')?.remove();
                         a.textContent = h2Text.textContent.trim();
-                        
-                        // *** FIX STARTS HERE ***
-                        // Add click event handler for instant active state
-                        a.addEventListener('click', (e) => {
-                            e.preventDefault();
-                            
-                            // Remove active class from all nav links
-                            navLinksContainer.querySelectorAll('a').forEach(link => link.classList.remove('active'));
-                            
-                            // Add active class to the clicked link
-                            e.target.classList.add('active');
-                            
-                            // Scroll to the section
-                            document.getElementById(section.id).scrollIntoView({
-                                behavior: 'smooth'
-                            });
-                        });
-                        // *** FIX ENDS HERE ***
-
                         li.appendChild(a);
                         navLinksContainer.appendChild(li);
                     }
                 });
 
-                // Scroll Spy Logic (still useful for manual scrolling)
+                // Scroll Spy Logic
+                const navLinks = navLinksContainer.querySelectorAll('a');
                 const reportSections = reportContainer.querySelectorAll('section');
+
                 const observer = new IntersectionObserver((entries) => {
                     entries.forEach(entry => {
                         if (entry.isIntersecting) {
-                            navLinksContainer.querySelectorAll('a').forEach(link => {
+                            navLinks.forEach(link => {
                                 link.classList.remove('active');
                                 if (link.getAttribute('href').substring(1) === entry.target.id) {
                                     link.classList.add('active');
@@ -183,8 +170,8 @@
                 });
 
             } catch (error) {
-                console.error('Error loading report:', error);
-                document.getElementById('report-container').innerHTML = '<p class="text-red-600 font-semibold">Error: Could not load the detailed report content.</p>';
+                console.error('Lỗi tải báo cáo:', error);
+                document.getElementById('report-container').innerHTML = '<p class="text-red-600 font-semibold">Lỗi: Không thể tải nội dung báo cáo chi tiết.</p>';
             }
         }
 
