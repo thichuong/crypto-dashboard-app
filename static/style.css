@@ -1,172 +1,245 @@
+/* static/style.css */
+
+/* --- Bảng màu cho Light Mode (Mặc định) --- */
+:root {
+    --bg-primary: #f3f4f6;
+    --bg-secondary: #ffffff;
+    --bg-gradient-start: #f3f4f6;
+    --bg-gradient-end: #eef2ff;
+    --text-primary: #1f2937;
+    --text-secondary: #4b5563;
+    --text-accent: #4338ca;
+    --border-color: #e5e7eb;
+    --card-bg: rgba(255, 255, 255, 0.7);
+    --card-border: rgba(229, 231, 235, 0.8);
+    --card-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.07);
+    --nav-link-bg-active: #eef2ff;
+    --accent-color: #6366f1;
+    --positive-color: #16a34a;
+    --negative-color: #dc2626;
+    --neutral-color: #f59e0b;
+    --bull-card-bg: #f0fdf4;
+    --bear-card-bg: #fef2f2;
+    --table-row-hover-bg: #f0f9ff; /* MÀU NỀN KHI HOVER BẢNG */
+    /* MÀU ICON CHO LIGHT MODE */
+    --icon-color-summary: #3b82f6;
+    --icon-color-macro-legal: #8b5cf6;
+    --icon-color-capital-rotation: #10b981;
+    --icon-color-on-chain-sentiment: #f97316;
+    --icon-color-technical-analysis: #ef4444;
+    --icon-color-market-activity: #f59e0b;
+    --icon-color-outlook: #14b8a6;
+}
+
+/* --- Bảng màu cho Dark Mode --- */
+[data-theme="dark"] {
+    --bg-primary: #0d1117;
+    --bg-secondary: #161b22;
+    --bg-gradient-start: #0d1117;
+    --bg-gradient-end: #1f2937;
+    --text-primary: #e5e7eb;
+    --text-secondary: #9ca3af;
+    --text-accent: #818cf8;
+    --border-color: #30363d;
+    --card-bg: rgba(22, 27, 34, 0.7);
+    --card-border: rgba(48, 54, 61, 0.8);
+    --card-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.2);
+    --nav-link-bg-active: #312e81;
+    --accent-color: #818cf8;
+    --positive-color: #22c55e;
+    --negative-color: #ef4444;
+    --neutral-color: #f59e0b;
+    --bull-card-bg: #052e16;
+    --bear-card-bg: #450a0a;
+    --table-row-hover-bg: #1e293b; /* MÀU NỀN KHI HOVER BẢNG */
+    /* MÀU ICON CHO DARK MODE - Sáng hơn để nổi bật trên nền tối */
+    --icon-color-summary: #60a5fa;
+    --icon-color-macro-legal: #a78bfa;
+    --icon-color-capital-rotation: #34d399;
+    --icon-color-on-chain-sentiment: #fb923c;
+    --icon-color-technical-analysis: #f87171;
+    --icon-color-market-activity: #fbbf24;
+    --icon-color-outlook: #2dd4bf;
+}
+
+
 body {
     font-family: 'Inter', sans-serif;
-    /* Nền gradient nhẹ nhàng */
-    background: linear-gradient(180deg, #f3f4f6 0%, #eef2ff 100%);
-    color: #374151;
-    overflow-x: hidden; /* Ngăn cuộn ngang do hiệu ứng */
+    background: linear-gradient(180deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+    color: var(--text-secondary);
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* --- Card nhỏ (dữ liệu real-time) --- */
+/* --- Theme Toggle Button --- */
+.theme-toggle {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    z-index: 1000;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s ease;
+}
+.theme-toggle:hover {
+    transform: scale(1.1);
+}
+.theme-toggle .fa-sun { display: none; }
+.theme-toggle .fa-moon { display: block; }
+
+[data-theme="dark"] .theme-toggle .fa-sun { display: block; }
+[data-theme="dark"] .theme-toggle .fa-moon { display: none; }
+
+
+/* --- Cards, Headers, Sections using CSS Variables --- */
+
+header h1 {
+     color: var(--text-primary);
+}
+header p {
+     color: var(--text-secondary);
+}
+
 .card {
-    background-color: rgba(255, 255, 255, 0.7); /* Hiệu ứng thủy tinh mờ */
+    background-color: var(--card-bg);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(229, 231, 235, 0.8);
-    border-radius: 1rem; /* Bo tròn nhiều hơn */
+    border: 1px solid var(--card-border);
+    border-radius: 1rem;
     padding: 1.5rem;
     transition: all 0.3s ease-in-out;
-    box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.07), 0 2px 8px -2px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--card-shadow);
 }
-
 .card:hover {
     transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
+.card h3 {
+    color: var(--text-secondary);
+}
+.card .text-gray-900 { color: var(--text-primary); }
+.card .text-gray-500 { color: var(--text-secondary); }
 
-/* --- Bố cục chính cho nội dung báo cáo --- */
 #report-container section {
-    background-color: #ffffff;
+    background-color: var(--bg-secondary);
     padding: 2.5rem 3rem;
     border-radius: 1rem;
     margin-bottom: 3rem;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--border-color);
     transition: all 0.3s ease-in-out;
 }
 
-/* --- Panel định hướng (Mục lục) --- */
 #report-navigation-panel h3 {
-    border: none; /* Bỏ border cho tiêu đề mục lục */
-    padding-bottom: 0;
-    margin-bottom: 1rem;
+    color: var(--text-primary);
 }
 #report-navigation-panel a {
-    display: flex;
-    align-items: center;
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-    text-decoration: none;
-    color: #4b5563;
-    font-weight: 500; /* Giảm độ đậm */
-    transition: all 0.2s ease-in-out;
+    color: var(--text-secondary);
     border-left: 3px solid transparent;
+    transition: all 0.2s ease-in-out;
 }
-
 #report-navigation-panel a:hover {
-    background-color: #f9fafb;
-    color: #111827;
-    transform: translateX(4px); /* Hiệu ứng nhỏ khi hover */
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    transform: translateX(4px);
 }
-
 #report-navigation-panel a.active {
-    background-color: #eef2ff;
-    color: #4338ca;
+    background-color: var(--nav-link-bg-active);
+    color: var(--text-accent);
     font-weight: 700;
-    border-left-color: #6366f1;
+    border-left-color: var(--accent-color);
 }
 
-/* --- CSS CHO HIỆU ỨNG TRÌNH CHIẾU --- */
-/* Lớp này sẽ được thêm vào các phần tử cần hiệu ứng */
-.reveal {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Tốc độ chuyển động mượt hơn */
-    will-change: opacity, transform; /* Tối ưu hóa hiệu năng */
-}
-
-/* Lớp này được thêm bằng JS khi phần tử xuất hiện trên màn hình */
-.reveal.is-visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-
-/* --- Các cải tiến nhỏ khác --- */
-h2 {
-    font-size: 2rem;
+#report-container h2 {
+    font-size: 2.25rem;
     line-height: 1.3;
-    border-bottom: 2px solid #6366f1;
+    border-bottom: 2px solid var(--accent-color);
     padding-bottom: 0.75rem;
     margin-top: 0;
     margin-bottom: 1.75rem;
     display: flex;
     align-items: center;
+    color: var(--text-primary);
 }
 
 h3 {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
+    font-weight: 700;
     margin-top: 2.5rem;
-    margin-bottom: 1.25rem;
-    color: #1f2937;
-    border-bottom: 1px solid #d1d5db;
-    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.75rem;
 }
 
-/* Icon */
+
+/* --- Icon Styling --- */
 h2 .icon {
     margin-right: 1rem;
-    font-size: 1.8rem; /* Điều chỉnh kích thước icon một chút */
-    transition: transform 0.3s ease;
+    font-size: 1.8rem;
+    transition: transform 0.3s ease, color 0.3s ease;
 }
 h2:hover .icon {
-    transform: scale(1.1) rotate(-5deg); /* Hiệu ứng cho icon */
+    transform: scale(1.1) rotate(-5deg);
 }
 
-/* ... giữ nguyên các phần còn lại của CSS ... */
+#summary .icon { color: var(--icon-color-summary); }
+#macro-legal .icon { color: var(--icon-color-macro-legal); }
+#capital-rotation .icon { color: var(--icon-color-capital-rotation); }
+#on-chain-sentiment .icon { color: var(--icon-color-on-chain-sentiment); }
+#technical-analysis .icon { color: var(--icon-color-technical-analysis); }
+#market-activity .icon { color: var(--icon-color-market-activity); }
+#outlook .icon { color: var(--icon-color-outlook); }
 
-#summary .icon { color: #3b82f6; }
-#macro-legal .icon { color: #8b5cf6; }
-#capital-rotation .icon { color: #10b981; }
-#on-chain-sentiment .icon { color: #f97316; }
-#technical-analysis .icon { color: #ef4444; }
-#market-activity .icon { color: #f59e0b; }
-#outlook .icon { color: #14b8a6; }
 
-/* ... Bảng, Danh sách, Card Kịch bản giữ nguyên ... */
+/* --- THAY ĐỔI: Table styling --- */
 table {
     width: 100%;
     margin-top: 1.5rem;
     border-collapse: collapse;
 }
 table caption {
-    font-weight: 600;
-    color: #4b5563;
-    padding: 0.75rem;
-    font-size: 1.1rem;
-    caption-side: top;
-    text-align: left;
+    color: var(--text-secondary);
 }
 th, td {
     padding: 1rem;
     text-align: left;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid var(--border-color);
 }
 th {
-    background-color: #f9fafb;
-    color: #1f2937;
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 0.75rem;
-    letter-spacing: 0.05em;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
 }
-tbody tr:nth-child(even) { background-color: #f9fafb; }
-tbody tr:hover { background-color: #f0f9ff; }
-.text-green-600 { color: #16a34a; }
-.text-red-600 { color: #dc2626; }
-.text-yellow-600 { color: #f59e0b; }
+tbody tr {
+    /* THÊM MỚI: Thêm hiệu ứng chuyển động mượt mà */
+    transition: background-color 0.2s ease-in-out;
+}
+tbody tr:hover { 
+    /* THAY ĐỔI: Sử dụng biến màu mới cho hiệu ứng hover */
+    background-color: var(--table-row-hover-bg); 
+    cursor: pointer;
+}
 
-ul:not(#report-nav-links) {
-    list-style-position: inside;
-    padding-left: 0.5rem;
-}
-li {
-    margin-bottom: 0.75rem;
-    line-height: 1.7;
-}
+
+/* --- Text colors, Lists, Scenario Cards --- */
+.text-green-600 { color: var(--positive-color); }
+.text-red-600 { color: var(--negative-color); }
+.text-yellow-600 { color: var(--neutral-color); }
+
 ul:not(#report-nav-links) > li::marker {
-    color: #6366f1;
+    color: var(--accent-color);
     font-weight: bold;
 }
 
-.bull-card { background-color: #f0fdf4; border-left: 4px solid #22c55e; }
-.bear-card { background-color: #fef2f2; border-left: 4px solid #ef4444; }
+.bull-card { background-color: var(--bull-card-bg); border-left: 4px solid var(--positive-color); }
+.bear-card { background-color: var(--bear-card-bg); border-left: 4px solid var(--negative-color); }
+
+.bull-card h4, .bull-card p { color: var(--positive-color); }
+.bear-card h4, .bear-card p { color: var(--negative-color); }

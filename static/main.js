@@ -6,11 +6,23 @@
  * @returns {string} - Chuỗi đã được định dạng.
  */
 function formatNumber(num) {
-    if (!num) return 'N/A';
+    if (num === null || num === undefined) return 'N/A';
     if (num >= 1e12) return (num / 1e12).toFixed(2) + ' nghìn tỷ';
     if (num >= 1e9) return (num / 1e9).toFixed(2) + ' tỷ';
     if (num >= 1e6) return (num / 1e6).toFixed(2) + ' triệu';
     return num.toLocaleString('en-US');
+}
+
+/**
+ * Hiển thị thông báo lỗi thân thiện trên một card cụ thể.
+ * @param {string} containerId - ID của container cần hiển thị lỗi.
+ * @param {string} message - Thông báo lỗi.
+ */
+function displayError(containerId, message = 'Không thể tải dữ liệu.') {
+    const container = document.getElementById(containerId);
+    if (container) {
+        container.innerHTML = `<p class="text-sm text-red-600">${message}</p>`;
+    }
 }
 
 /**
@@ -19,27 +31,32 @@ function formatNumber(num) {
 async function fetchCryptoData() {
     try {
         const response = await fetch('/api/crypto/global');
-        if (!response.ok) throw new Error('Lỗi khi lấy dữ liệu global.');
+        if (!response.ok) {
+            // Ném lỗi nếu response không 'ok' để khối catch có thể xử lý
+            const errorData = await response.json();
+            throw new Error(errorData.error || `Lỗi server ${response.status}`);
+        }
         const data = await response.json();
         
-        // Cập nhật Tổng Vốn Hóa
+        // Cập nhật Tổng Vốn Hóa - SỬ DỤNG KEY MỚI 'market_cap'
         const marketCapContainer = document.getElementById('market-cap-container');
         marketCapContainer.innerHTML = `
-            <p class="text-3xl font-bold text-gray-900">${'$' + formatNumber(data['market-cap'])}</p>
+            <p class="text-3xl font-bold text-gray-900">${'$' + formatNumber(data.market_cap)}</p>
             <p class="text-sm text-gray-500">Toàn thị trường</p>
         `;
 
-        // Cập nhật Khối Lượng Giao Dịch
+        // Cập nhật Khối Lượng Giao Dịch - SỬ DỤNG KEY MỚI 'volume_24h'
         const volumeContainer = document.getElementById('volume-24h-container');
         volumeContainer.innerHTML = `
-            <p class="text-3xl font-bold text-gray-900">${'$' + formatNumber(data['volume-24h'])}</p>
+            <p class="text-3xl font-bold text-gray-900">${'$' + formatNumber(data.volume_24h)}</p>
             <p class="text-sm text-gray-500">Toàn thị trường</p>
         `;
 
     } catch (error) {
         console.error('Lỗi fetchCryptoData:', error);
-        document.getElementById('market-cap-container').innerHTML = `<p class="text-red-600">Error</p>`;
-        document.getElementById('volume-24h-container').innerHTML = `<p class="text-red-600">Error</p>`;
+        // HIỂN THỊ LỖI THÂN THIỆN
+        displayError('market-cap-container', error.message);
+        displayError('volume-24h-container', error.message);
     }
 }
 
@@ -49,38 +66,42 @@ async function fetchCryptoData() {
 async function fetchBtcAndFearGreed() {
     try {
         const response = await fetch('/api/crypto/btc-and-fng');
-        if (!response.ok) throw new Error('Lỗi khi lấy dữ liệu BTC và F&G.');
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `Lỗi server ${response.status}`);
+        }
         const data = await response.json();
 
-        // Cập nhật giá BTC
-        const bitcoin = data.bitcoin.bitcoin;
+        // Cập nhật giá BTC - SỬ DỤNG KEY MỚI 'btc_price_usd' và 'btc_change_24h'
         const btcContainer = document.getElementById('btc-price-container');
-        const change = bitcoin.usd_24h_change;
+        const change = data.btc_change_24h;
         const changeClass = change >= 0 ? 'text-green-600' : 'text-red-600';
         btcContainer.innerHTML = `
-            <p class="text-3xl font-bold text-gray-900">${'$' + bitcoin.usd.toLocaleString('en-US')}</p>
-            <p class="text-sm font-semibold ${changeClass}">${change.toFixed(2)}% (24h)</p>
+            <p class="text-3xl font-bold text-gray-900">${'$' + (data.btc_price_usd ? data.btc_price_usd.toLocaleString('en-US') : 'N/A')}</p>
+            <p class="text-sm font-semibold ${changeClass}">${change !== null ? change.toFixed(2) : 'N/A'}% (24h)</p>
         `;
 
-        // Cập nhật chỉ số Sợ hãi & Tham lam
-        const fearGreed = data.fear_and_greed.data[0];
+        // Cập nhật chỉ số Sợ hãi & Tham lam - SỬ DỤNG KEY MỚI 'fng_value' và 'fng_classification'
         const fngContainer = document.getElementById('fear-greed-container');
-        const value = parseInt(fearGreed.value);
-        let colorClass = 'text-yellow-500';
-        if (value <= 25) colorClass = 'text-red-600';
-        if (value >= 75) colorClass = 'text-green-600';
+        const value = parseInt(data.fng_value, 10);
+        let colorClass = 'text-yellow-500'; // Mặc định
+        if (!isNaN(value)) {
+            if (value <= 25) colorClass = 'text-red-600';
+            else if (value >= 75) colorClass = 'text-green-600';
+        }
+        
         fngContainer.innerHTML = `
-            <p class="text-3xl font-bold text-gray-900">${fearGreed.value}</p>
-            <p class="text-sm font-medium ${colorClass}">${fearGreed.value_classification}</p>
+            <p class="text-3xl font-bold text-gray-900">${data.fng_value || 'N/A'}</p>
+            <p class="text-sm font-medium ${colorClass}">${data.fng_classification || 'Unknown'}</p>
         `;
 
     } catch (error) {
         console.error('Lỗi fetchBtcAndFearGreed:', error);
-        document.getElementById('btc-price-container').innerHTML = `<p class="text-red-600">Error</p>`;
-        document.getElementById('fear-greed-container').innerHTML = `<p class="text-red-600">Error</p>`;
+        // HIỂN THỊ LỖI THÂN THIỆN
+        displayError('btc-price-container', error.message);
+        displayError('fear-greed-container', error.message);
     }
 }
-
 
 /**
  * Tải nội dung báo cáo từ file tĩnh và tạo mục lục điều hướng.
@@ -151,11 +172,41 @@ async function loadReportAndCreateNav() {
  */
 function init() {
     loadReportAndCreateNav();
+    
+    // Gọi lần đầu để tải dữ liệu ngay lập tức
     fetchCryptoData();
     fetchBtcAndFearGreed();
-    setInterval(fetchCryptoData, 300000); // 5 phút
-    setInterval(fetchBtcAndFearGreed, 300000); // 5 phút
+    
+    // Thiết lập tự động cập nhật sau mỗi 5 phút
+    setInterval(fetchCryptoData, 300000); 
+    setInterval(fetchBtcAndFearGreed, 300000);
+}
+
+
+function setupThemeSwitcher() {
+    const themeToggleButton = document.getElementById('theme-toggle');
+    const htmlElement = document.documentElement;
+
+    // 1. Kiểm tra theme đã lưu trong localStorage khi tải trang
+    const currentTheme = localStorage.getItem('theme');
+    if (currentTheme) {
+        htmlElement.setAttribute('data-theme', currentTheme);
+    }
+
+    // 2. Lắng nghe sự kiện click trên nút
+    themeToggleButton.addEventListener('click', () => {
+        if (htmlElement.getAttribute('data-theme') === 'dark') {
+            htmlElement.removeAttribute('data-theme');
+            localStorage.removeItem('theme');
+        } else {
+            htmlElement.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        }
+    });
 }
 
 // Chạy hàm init khi toàn bộ nội dung trang đã sẵn sàng
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', () => {
+    init();
+    setupThemeSwitcher(); // Gọi hàm cài đặt theme switcher
+});
