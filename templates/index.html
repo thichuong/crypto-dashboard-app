@@ -23,32 +23,40 @@
                     <i class="fab fa-bitcoin text-yellow-500 text-3xl mr-3"></i>
                     <h3 class="text-lg font-semibold text-gray-700">Giá BTC</h3>
                 </div>
-                <p id="btc-price" class="text-3xl font-bold text-gray-900">Loading...</p>
-                <p id="btc-change" class="text-sm">Loading...</p>
+                <div id="btc-price-container">
+                    <div class="skeleton h-9 w-3/4 mb-2"></div>
+                    <div class="skeleton h-5 w-1/2"></div>
+                </div>
             </div>
             <div class="card">
                 <div class="flex items-center mb-2">
                     <i class="fas fa-globe-americas text-blue-500 text-3xl mr-3"></i>
                     <h3 class="text-lg font-semibold text-gray-700">Tổng Vốn Hóa</h3>
                 </div>
-                <p id="market-cap" class="text-3xl font-bold text-gray-900">Loading...</p>
-                 <p class="text-sm text-gray-500">Toàn thị trường</p>
+                <div id="market-cap-container">
+                    <div class="skeleton h-9 w-3/4 mb-2"></div>
+                    <div class="skeleton h-5 w-1/2"></div>
+                </div>
             </div>
             <div class="card">
                 <div class="flex items-center mb-2">
                     <i class="fas fa-chart-line text-green-500 text-3xl mr-3"></i>
                     <h3 class="text-lg font-semibold text-gray-700">Khối Lượng Giao Dịch 24h</h3>
                 </div>
-                <p id="volume-24h" class="text-3xl font-bold text-gray-900">Loading...</p>
-                 <p class="text-sm text-gray-500">Toàn thị trường</p>
+                 <div id="volume-24h-container">
+                    <div class="skeleton h-9 w-3/4 mb-2"></div>
+                    <div class="skeleton h-5 w-1/2"></div>
+                </div>
             </div>
             <div class="card">
                 <div class="flex items-center mb-2">
                     <i class="fas fa-gauge-high text-red-500 text-3xl mr-3"></i>
                     <h3 class="text-lg font-semibold text-gray-700">Sợ hãi & Tham lam</h3>
                 </div>
-                <p id="fear-greed-value" class="text-3xl font-bold text-gray-900">Loading...</p>
-                <p id="fear-greed-text" class="text-sm font-medium">Loading...</p>
+                <div id="fear-greed-container">
+                    <div class="skeleton h-9 w-1/4 mb-2"></div>
+                    <div class="skeleton h-5 w-1/2"></div>
+                </div>
             </div>
         </div>
 
@@ -66,124 +74,6 @@
         </div>
     </div>
 
-    <script>
-        function formatNumber(num) {
-            if (!num) return 'N/A';
-            if (num >= 1e12) return (num / 1e12).toFixed(2) + ' nghìn tỷ';
-            if (num >= 1e9) return (num / 1e9).toFixed(2) + ' tỷ';
-            if (num >= 1e6) return (num / 1e6).toFixed(2) + ' triệu';
-            return num.toLocaleString('en-US');
-        }
-
-        async function fetchCryptoData() {
-            try {
-                const response = await fetch('/api/crypto/global');
-                if (!response.ok) throw new Error('Lỗi khi lấy dữ liệu global.');
-                const data = await response.json();
-                document.getElementById('market-cap').textContent = '$' + formatNumber(data['market-cap']);
-                document.getElementById('volume-24h').textContent = '$' + formatNumber(data['volume-24h']);
-            } catch (error) {
-                console.error('Lỗi fetchCryptoData:', error);
-                ['market-cap', 'volume-24h'].forEach(id => document.getElementById(id).textContent = 'Error');
-            }
-        }
-
-        async function fetchBtcAndFearGreed() {
-            try {
-                const response = await fetch('/api/crypto/btc-and-fng');
-                if (!response.ok) throw new Error('Lỗi khi lấy dữ liệu BTC và F&G.');
-                const data = await response.json();
-                const bitcoin = data.bitcoin.bitcoin;
-                document.getElementById('btc-price').textContent = '$' + bitcoin.usd.toLocaleString('en-US');
-                const btcChangeEl = document.getElementById('btc-change');
-                const change = bitcoin.usd_24h_change;
-                btcChangeEl.textContent = `${change.toFixed(2)}% (24h)`;
-                btcChangeEl.className = `text-sm font-semibold ${change >= 0 ? 'text-green-600' : 'text-red-600'}`;
-                const fearGreed = data.fear_and_greed.data[0];
-                const valueEl = document.getElementById('fear-greed-value');
-                const textEl = document.getElementById('fear-greed-text');
-                valueEl.textContent = fearGreed.value;
-                textEl.textContent = fearGreed.value_classification;
-                let colorClass = 'text-yellow-500';
-                if (parseInt(fearGreed.value) <= 25) colorClass = 'text-red-600';
-                if (parseInt(fearGreed.value) >= 75) colorClass = 'text-green-600';
-                textEl.className = `text-sm font-medium ${colorClass}`;
-            } catch (error) {
-                console.error('Lỗi fetchBtcAndFearGreed:', error);
-                ['btc-price', 'fear-greed-value'].forEach(id => document.getElementById(id).textContent = error);
-            }
-        }
-
-        async function loadReportAndCreateNav() {
-            try {
-                const response = await fetch("{{ url_for('static', filename='report.html') }}");
-                if (!response.ok) throw new Error('Không thể tải tệp báo cáo.');
-                const reportHtml = await response.text();
-
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = reportHtml;
-
-                const navLinksContainer = document.getElementById('report-nav-links');
-                const reportContainer = document.getElementById('report-container');
-                reportContainer.innerHTML = ''; // Xóa nội dung cũ
-
-                const sections = tempDiv.querySelectorAll('section');
-
-                sections.forEach(section => {
-                    const h2 = section.querySelector('h2');
-                    if (h2 && section.id) {
-                        // Thêm section vào container chính
-                        reportContainer.appendChild(section);
-
-                        // Tạo mục lục
-                        const li = document.createElement('li');
-                        const a = document.createElement('a');
-                        a.href = `#${section.id}`;
-                        // Lấy text của h2 bỏ qua icon
-                        const h2Text = h2.cloneNode(true);
-                        h2Text.querySelector('.icon')?.remove();
-                        a.textContent = h2Text.textContent.trim();
-                        li.appendChild(a);
-                        navLinksContainer.appendChild(li);
-                    }
-                });
-
-                // Scroll Spy Logic
-                const navLinks = navLinksContainer.querySelectorAll('a');
-                const reportSections = reportContainer.querySelectorAll('section');
-
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            navLinks.forEach(link => {
-                                link.classList.remove('active');
-                                if (link.getAttribute('href').substring(1) === entry.target.id) {
-                                    link.classList.add('active');
-                                }
-                            });
-                        }
-                    });
-                }, { rootMargin: "-30% 0px -70% 0px" });
-
-                reportSections.forEach(section => {
-                    observer.observe(section);
-                });
-
-            } catch (error) {
-                console.error('Lỗi tải báo cáo:', error);
-                document.getElementById('report-container').innerHTML = '<p class="text-red-600 font-semibold">Lỗi: Không thể tải nội dung báo cáo chi tiết.</p>';
-            }
-        }
-
-        function init() {
-            loadReportAndCreateNav();
-            fetchCryptoData();
-            fetchBtcAndFearGreed();
-            setInterval(fetchCryptoData, 300000);
-            setInterval(fetchBtcAndFearGreed, 300000);
-        }
-
-        window.onload = init;
-    </script>
+    <script src="{{ url_for('static', filename='main.js') }}" defer></script>
 </body>
 </html>
