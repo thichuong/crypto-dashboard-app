@@ -169,7 +169,7 @@ header p {
     color: var(--text-primary);
 }
 
-h3 {
+#report-container h3 {
     font-size: 1.75rem;
     font-weight: 700;
     margin-top: 2.5rem;
