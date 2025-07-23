@@ -101,6 +101,38 @@ def get_btc_and_fng_data():
         # Bắt thêm IndexError, KeyError phòng trường hợp cấu trúc JSON trả về không như mong đợi
         return jsonify({"error": f"Lỗi xử lý dữ liệu hoặc request: {e}"}), 500
 
+# --- THÊM MỚI: API cho chỉ số RSI của BTC ---
+@app.route('/api/crypto/btc-rsi')
+@cache.cached(timeout=900) # Cache 15 phút vì RSI không thay đổi quá nhanh
+def get_btc_rsi():
+    """
+    Lấy chỉ số RSI(14) của Bitcoin từ TAAPI.IO.
+    """
+    api_url = os.getenv('TAAPI_RSI_API_URL')
+    if not api_url or 'YOUR_API_KEY' in api_url:
+        return jsonify({"error": "API key cho TAAPI.IO chưa được cấu hình"}), 500
+        
+    try:
+        response = requests.get(api_url, timeout=15)
+        response.raise_for_status()
+        
+        # API của TAAPI trả về một object với key là "value" cho chỉ số RSI
+        rsi_value = response.json().get('value')
+        
+        data = {
+            'rsi_14': rsi_value
+        }
+        return jsonify(data)
+        
+    except HTTPError as http_err:
+        return jsonify({"error": f"Lỗi HTTP khi gọi TAAPI: {http_err}", "status_code": http_err.response.status_code}), 500
+    except ConnectionError as conn_err:
+        return jsonify({"error": f"Lỗi kết nối đến TAAPI: {conn_err}"}), 503
+    except Timeout:
+        return jsonify({"error": "Request đến TAAPI timed out"}), 504
+    except (RequestException, KeyError) as e:
+        return jsonify({"error": f"Lỗi xử lý dữ liệu hoặc request đến TAAPI: {e}"}), 500
+
 
 if __name__ == '__main__':
     # Chạy ứng dụng ở chế độ debug

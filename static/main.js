@@ -32,20 +32,17 @@ async function fetchCryptoData() {
     try {
         const response = await fetch('/api/crypto/global');
         if (!response.ok) {
-            // Ném lỗi nếu response không 'ok' để khối catch có thể xử lý
             const errorData = await response.json();
             throw new Error(errorData.error || `Lỗi server ${response.status}`);
         }
         const data = await response.json();
         
-        // Cập nhật Tổng Vốn Hóa - SỬ DỤNG KEY MỚI 'market_cap'
         const marketCapContainer = document.getElementById('market-cap-container');
         marketCapContainer.innerHTML = `
             <p class="text-3xl font-bold text-gray-900">${'$' + formatNumber(data.market_cap)}</p>
             <p class="text-sm text-gray-500">Toàn thị trường</p>
         `;
 
-        // Cập nhật Khối Lượng Giao Dịch - SỬ DỤNG KEY MỚI 'volume_24h'
         const volumeContainer = document.getElementById('volume-24h-container');
         volumeContainer.innerHTML = `
             <p class="text-3xl font-bold text-gray-900">${'$' + formatNumber(data.volume_24h)}</p>
@@ -54,7 +51,6 @@ async function fetchCryptoData() {
 
     } catch (error) {
         console.error('Lỗi fetchCryptoData:', error);
-        // HIỂN THỊ LỖI THÂN THIỆN
         displayError('market-cap-container', error.message);
         displayError('volume-24h-container', error.message);
     }
@@ -64,6 +60,9 @@ async function fetchCryptoData() {
  * Fetch giá Bitcoin và chỉ số Sợ hãi & Tham lam.
  */
 async function fetchBtcAndFearGreed() {
+    const btcContainer = document.getElementById('btc-price-container');
+    const fngContainer = document.getElementById('fear-greed-container');
+
     try {
         const response = await fetch('/api/crypto/btc-and-fng');
         if (!response.ok) {
@@ -72,8 +71,7 @@ async function fetchBtcAndFearGreed() {
         }
         const data = await response.json();
 
-        // Cập nhật giá BTC - SỬ DỤNG KEY MỚI 'btc_price_usd' và 'btc_change_24h'
-        const btcContainer = document.getElementById('btc-price-container');
+        // Cập nhật giá BTC
         const change = data.btc_change_24h;
         const changeClass = change >= 0 ? 'text-green-600' : 'text-red-600';
         btcContainer.innerHTML = `
@@ -81,27 +79,113 @@ async function fetchBtcAndFearGreed() {
             <p class="text-sm font-semibold ${changeClass}">${change !== null ? change.toFixed(2) : 'N/A'}% (24h)</p>
         `;
 
-        // Cập nhật chỉ số Sợ hãi & Tham lam - SỬ DỤNG KEY MỚI 'fng_value' và 'fng_classification'
-        const fngContainer = document.getElementById('fear-greed-container');
-        const value = parseInt(data.fng_value, 10);
-        let colorClass = 'text-yellow-500'; // Mặc định
-        if (!isNaN(value)) {
-            if (value <= 25) colorClass = 'text-red-600';
-            else if (value >= 75) colorClass = 'text-green-600';
+        // Cập nhật chỉ số Sợ hãi & Tham lam bằng đồng hồ đo
+        const fngValue = parseInt(data.fng_value, 10);
+        if (!isNaN(fngValue)) {
+            createFngGauge(fngContainer, fngValue, data.fng_classification);
+        } else {
+            throw new Error('Giá trị F&G không hợp lệ.');
         }
-        
-        fngContainer.innerHTML = `
-            <p class="text-3xl font-bold text-gray-900">${data.fng_value || 'N/A'}</p>
-            <p class="text-sm font-medium ${colorClass}">${data.fng_classification || 'Unknown'}</p>
-        `;
 
     } catch (error) {
         console.error('Lỗi fetchBtcAndFearGreed:', error);
-        // HIỂN THỊ LỖI THÂN THIỆN
         displayError('btc-price-container', error.message);
         displayError('fear-greed-container', error.message);
     }
 }
+
+/**
+ * Fetch và hiển thị chỉ số RSI
+ */
+async function fetchBtcRsi() {
+    const container = document.getElementById('rsi-container');
+    try {
+        const response = await fetch('/api/crypto/btc-rsi');
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `Lỗi server ${response.status}`);
+        }
+        const data = await response.json();
+        const rsiValue = data.rsi_14;
+
+        if (rsiValue === null || rsiValue === undefined) {
+            throw new Error('Không nhận được giá trị RSI.');
+        }
+        
+        createRsiGauge(container, rsiValue);
+
+    } catch (error) {
+        console.error('Lỗi fetchBtcRsi:', error);
+        displayError('rsi-container', error.message);
+    }
+}
+
+/**
+ * Hàm chung để tạo đồng hồ đo
+ * @param {HTMLElement} container - Element chứa biểu đồ
+ * @param {number} value - Giá trị (0-100)
+ * @param {string} label - Nhãn hiển thị
+ * @param {string} colorVar - Biến màu CSS
+ * @param {string} gaugeClass - Lớp CSS riêng cho đồng hồ đo
+ */
+function createGauge(container, value, label, colorVar, gaugeClass) {
+    const val = Math.max(0, Math.min(100, value));
+    const radius = 80;
+    const circumference = 2 * Math.PI * radius;
+    const offset = circumference - (val / 100) * circumference;
+
+    container.innerHTML = `
+        <div class="gauge">
+            <svg class="gauge__body" viewBox="0 0 180 180">
+                <circle class="gauge__track" r="${radius}" cx="90" cy="90" style="stroke-dasharray: ${circumference};"></circle>
+                <circle class="gauge__fill ${gaugeClass}" r="${radius}" cx="90" cy="90" 
+                        style="stroke: ${colorVar}; stroke-dasharray: ${circumference}; stroke-dashoffset: ${offset};">
+                </circle>
+            </svg>
+            <div class="gauge__cover">
+                <div class="gauge__value">${Math.round(val)}</div>
+                <div class="gauge__label" style="color: ${colorVar};">${label}</div>
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Tạo đồng hồ đo cho Fear & Greed Index
+ * @param {HTMLElement} container
+ * @param {number} value
+ * @param {string} classification
+ */
+function createFngGauge(container, value, classification) {
+    let colorVar;
+    if (value <= 24) colorVar = 'var(--fng-extreme-fear-color)';
+    else if (value <= 49) colorVar = 'var(--fng-fear-color)';
+    else if (value <= 54) colorVar = 'var(--fng-neutral-color)';
+    else if (value <= 74) colorVar = 'var(--fng-greed-color)';
+    else colorVar = 'var(--fng-extreme-greed-color)';
+    
+    createGauge(container, value, classification || 'N/A', colorVar, 'gauge__fill--fng');
+}
+
+/**
+ * Tạo đồng hồ đo cho RSI
+ * @param {HTMLElement} container
+ * @param {number} value
+ */
+function createRsiGauge(container, value) {
+    let label = 'Trung tính';
+    let colorVar = 'var(--rsi-neutral-color)';
+    if (value >= 70) {
+        label = 'Quá mua';
+        colorVar = 'var(--rsi-overbought-color)';
+    } else if (value <= 30) {
+        label = 'Quá bán';
+        colorVar = 'var(--rsi-oversold-color)';
+    }
+    
+    createGauge(container, value, label, colorVar, 'gauge__fill--rsi');
+}
+
 
 /**
  * Tải nội dung báo cáo từ file tĩnh và tạo mục lục điều hướng.
@@ -117,21 +201,18 @@ async function loadReportAndCreateNav() {
 
         const navLinksContainer = document.getElementById('report-nav-links');
         const reportContainer = document.getElementById('report-container');
-        reportContainer.innerHTML = ''; // Xóa nội dung cũ
+        reportContainer.innerHTML = '';
 
         const sections = tempDiv.querySelectorAll('section');
 
         sections.forEach(section => {
             const h2 = section.querySelector('h2');
             if (h2 && section.id) {
-                // Thêm section vào container chính
                 reportContainer.appendChild(section);
 
-                // Tạo mục lục
                 const li = document.createElement('li');
                 const a = document.createElement('a');
                 a.href = `#${section.id}`;
-                // Lấy text của h2 bỏ qua icon
                 const h2Text = h2.cloneNode(true);
                 h2Text.querySelector('.icon')?.remove();
                 a.textContent = h2Text.textContent.trim();
@@ -140,7 +221,6 @@ async function loadReportAndCreateNav() {
             }
         });
 
-        // Scroll Spy Logic
         const navLinks = navLinksContainer.querySelectorAll('a');
         const reportSections = reportContainer.querySelectorAll('section');
 
@@ -168,18 +248,18 @@ async function loadReportAndCreateNav() {
 }
 
 /**
- * Hàm khởi tạo chính, được gọi khi trang tải xong.
+ * Hàm khởi tạo chính
  */
 function init() {
     loadReportAndCreateNav();
     
-    // Gọi lần đầu để tải dữ liệu ngay lập tức
     fetchCryptoData();
     fetchBtcAndFearGreed();
+    fetchBtcRsi(); 
     
-    // Thiết lập tự động cập nhật sau mỗi 5 phút
     setInterval(fetchCryptoData, 300000); 
-    setInterval(fetchBtcAndFearGreed, 300000);
+    setInterval(fetchBtcAndFearGreed, 300000); 
+    setInterval(fetchBtcRsi, 900000); 
 }
 
 
@@ -187,13 +267,11 @@ function setupThemeSwitcher() {
     const themeToggleButton = document.getElementById('theme-toggle');
     const htmlElement = document.documentElement;
 
-    // 1. Kiểm tra theme đã lưu trong localStorage khi tải trang
     const currentTheme = localStorage.getItem('theme');
     if (currentTheme) {
         htmlElement.setAttribute('data-theme', currentTheme);
     }
 
-    // 2. Lắng nghe sự kiện click trên nút
     themeToggleButton.addEventListener('click', () => {
         if (htmlElement.getAttribute('data-theme') === 'dark') {
             htmlElement.removeAttribute('data-theme');
@@ -205,8 +283,7 @@ function setupThemeSwitcher() {
     });
 }
 
-// Chạy hàm init khi toàn bộ nội dung trang đã sẵn sàng
 document.addEventListener('DOMContentLoaded', () => {
     init();
-    setupThemeSwitcher(); // Gọi hàm cài đặt theme switcher
+    setupThemeSwitcher();
 });
