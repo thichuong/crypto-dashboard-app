@@ -33,6 +33,15 @@
     --fng-neutral-color: #6b7280;
     --fng-greed-color: #84cc16;
     --fng-extreme-greed-color: #22c55e;
+    /* THÊM MỚI: Màu cho các Icon H2 */
+    --icon-color-summary: #3b82f6;      /* Blue */
+    --icon-color-macro-legal: #f59e0b;   /* Amber */
+    --icon-color-on-chain-sentiment: #14b8a6; /* Teal */
+    --icon-color-btc-analysis: #f97316;  /* Orange */
+    --icon-color-eth-analysis: #6366f1;  /* Indigo */
+    --icon-color-market-activity: #22c55e; /* Green */
+    --icon-color-expert-outlook: #8b5cf6;/* Violet */
+    --icon-color-outlook: #d946ef;      /* Fuchsia */
 }
 
 /* --- Bảng màu cho Dark Mode --- */
@@ -68,6 +77,15 @@
     --fng-neutral-color: #9ca3af;
     --fng-greed-color: #a3e635;
     --fng-extreme-greed-color: #4ade80;
+    /* THÊM MỚI: Màu cho các Icon H2 (Giữ nguyên ở Dark Mode) */
+    --icon-color-summary: #3b82f6;
+    --icon-color-macro-legal: #f59e0b;
+    --icon-color-on-chain-sentiment: #14b8a6;
+    --icon-color-btc-analysis: #f97316;
+    --icon-color-eth-analysis: #6366f1;
+    --icon-color-market-activity: #22c55e;
+    --icon-color-expert-outlook: #8b5cf6;
+    --icon-color-outlook: #d946ef;
 }
 
 
@@ -147,22 +165,35 @@ header p {
 
 #report-navigation-panel h3 {
     color: var(--text-primary);
+    padding-left: 0.5rem; /* Căn lề tiêu đề với các thẻ */
 }
+
 #report-navigation-panel a {
+    display: block; /* Hiển thị link dưới dạng block để tạo thành thẻ */
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.75rem; /* Bo góc mượt mà hơn */
+    font-weight: 500;
     color: var(--text-secondary);
-    border-left: 3px solid transparent;
-    transition: all 0.2s ease-in-out;
+    border: 1px solid transparent; /* Border trong suốt để không bị giật layout khi hover */
+    transition: all 0.25s cubic-bezier(0.165, 0.84, 0.44, 1); /* Hiệu ứng chuyển động mượt mà */
+    position: relative; /* Cần cho hiệu ứng nâng lên */
 }
+
 #report-navigation-panel a:hover {
-    background-color: var(--bg-secondary);
+    background-color: var(--card-bg);
+    border-color: var(--card-border);
+    box-shadow: var(--card-shadow);
     color: var(--text-primary);
-    transform: translateX(4px);
+    transform: scale(1.03) translateY(-2px); /* Hiệu ứng nâng lên và phóng to */
 }
+
 #report-navigation-panel a.active {
     background-color: var(--nav-link-bg-active);
     color: var(--text-accent);
     font-weight: 700;
-    border-left-color: var(--accent-color);
+    border-color: var(--accent-color);
+    box-shadow: var(--card-shadow);
+    transform: scale(1.05); /* Làm cho mục active nổi bật hơn */
 }
 
 #report-container h2 {
@@ -205,15 +236,6 @@ h2 .icon {
 h2:hover .icon {
     transform: scale(1.1) rotate(-5deg);
 }
-
-#summary .icon { color: var(--icon-color-summary); }
-#macro-legal .icon { color: var(--icon-color-macro-legal); }
-#capital-rotation .icon { color: var(--icon-color-capital-rotation); }
-#on-chain-sentiment .icon { color: var(--icon-color-on-chain-sentiment); }
-#technical-analysis .icon { color: var(--icon-color-technical-analysis); }
-#market-activity .icon { color: var(--icon-color-market-activity); }
-#outlook .icon { color: var(--icon-color-outlook); }
-
 
 /* --- THAY ĐỔI: Table styling --- */
 table {

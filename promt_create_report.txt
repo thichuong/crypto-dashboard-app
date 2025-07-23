@@ -6,6 +6,6 @@ Các section cập nhật theo file doc.
 
 Cách trình bày nội dung theo file phân tích.
 
-Định dạng mỗi section, h2, div, card theo theo section file report.html mẫu để file style.css và index.html đọc được.
+Định dạng mỗi section, h2, div, card theo theo section file report.html mẫu để file style.css, main.js và index.html đọc được.
 
 Bỏ [cite_start] để khi trình bày trên web dễ nhìn hơn.
