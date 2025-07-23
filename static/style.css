@@ -130,6 +130,7 @@ body {
 
 header h1 {
      color: var(--text-primary);
+     padding-bottom: 0.75rem;
 }
 header p {
      color: var(--text-secondary);
@@ -197,7 +198,7 @@ header p {
 }
 
 #report-container h2 {
-    font-size: 2rem;
+    font-size: 1.75rem;
     line-height: 1.3;
     border-bottom: 2px solid var(--accent-color);
     padding-bottom: 0.75rem;
