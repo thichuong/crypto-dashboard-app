@@ -155,133 +155,11 @@ header p {
 .card .text-gray-900 { color: var(--text-primary); }
 .card .text-gray-500 { color: var(--text-secondary); }
 
-#report-container section {
-    background-color: var(--bg-secondary);
-    padding: 2.5rem 3rem;
-    border-radius: 1rem;
-    margin-bottom: 3rem;
-    border: 1px solid var(--border-color);
-    transition: all 0.3s ease-in-out;
-}
-
-#report-navigation-panel h3 {
-    color: var(--text-primary);
-    padding-left: 0.5rem; /* Căn lề tiêu đề với các thẻ */
-}
-
-#report-navigation-panel a {
-    display: block; /* Hiển thị link dưới dạng block để tạo thành thẻ */
-    padding: 0.75rem 1.25rem;
-    border-radius: 0.75rem; /* Bo góc mượt mà hơn */
-    font-weight: 500;
-    color: var(--text-secondary);
-    border: 1px solid transparent; /* Border trong suốt để không bị giật layout khi hover */
-    transition: all 0.25s cubic-bezier(0.165, 0.84, 0.44, 1); /* Hiệu ứng chuyển động mượt mà */
-    position: relative; /* Cần cho hiệu ứng nâng lên */
-}
-
-#report-navigation-panel a:hover {
-    background-color: var(--card-bg);
-    border-color: var(--card-border);
-    box-shadow: var(--card-shadow);
-    color: var(--text-primary);
-    transform: scale(1.03) translateY(-2px); /* Hiệu ứng nâng lên và phóng to */
-}
-
-#report-navigation-panel a.active {
-    background-color: var(--nav-link-bg-active);
-    color: var(--text-accent);
-    font-weight: 700;
-    border-color: var(--accent-color);
-    box-shadow: var(--card-shadow);
-    transform: scale(1.05); /* Làm cho mục active nổi bật hơn */
-}
-
-#report-container h2 {
-    font-size: 1.75rem;
-    line-height: 1.3;
-    border-bottom: 2px solid var(--accent-color);
-    padding-bottom: 0.75rem;
-    margin-top: 0;
-    margin-bottom: 1.75rem;
-    display: flex;
-    align-items: center;
-    color: var(--text-primary);
-}
-
-#report-container h3 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-top: 2.5rem;
-    margin-bottom: 1.5rem;
-    color: var(--text-primary);
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 0.75rem;
-}
-#report-container h4 {
-    font-size: 1rem;
-    font-weight: 700;
-    margin-top: 1.5rem;
-    margin-bottom: 1.5rem;
-    color: var(--text-primary);
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 0.75rem;
-}
-
-/* --- Icon Styling --- */
-h2 .icon {
-    margin-right: 1rem;
-    font-size: 1.8rem;
-    transition: transform 0.3s ease, color 0.3s ease;
-}
-h2:hover .icon {
-    transform: scale(1.1) rotate(-5deg);
-}
-
-/* --- THAY ĐỔI: Table styling --- */
-table {
-    width: 100%;
-    margin-top: 1.5rem;
-    border-collapse: collapse;
-}
-table caption {
-    color: var(--text-secondary);
-}
-th, td {
-    padding: 1rem;
-    text-align: left;
-    border-bottom: 1px solid var(--border-color);
-}
-th {
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
-}
-tbody tr {
-    /* THÊM MỚI: Thêm hiệu ứng chuyển động mượt mà */
-    transition: background-color 0.2s ease-in-out;
-}
-tbody tr:hover { 
-    /* THAY ĐỔI: Sử dụng biến màu mới cho hiệu ứng hover */
-    background-color: var(--table-row-hover-bg); 
-    cursor: pointer;
-}
-
-
 /* --- Text colors, Lists, Scenario Cards --- */
 .text-green-600 { color: var(--positive-color); }
 .text-red-600 { color: var(--negative-color); }
 .text-yellow-600 { color: var(--neutral-color); }
 
-ul:not(#report-nav-links) > li::marker {
-    color: var(--accent-color);
-    font-weight: bold;
-}
-
-.bull-card { background-color: var(--bull-card-bg); border-left: 4px solid var(--positive-color); }
-.bear-card { background-color: var(--bear-card-bg); border-left: 4px solid var(--negative-color); }
-
-.bull-card h4, .bull-card p { color: var(--positive-color); }
-.bear-card h4, .bear-card p { color: var(--negative-color); }
 
 /* --- CSS cho Đồng hồ đo (Gauge) --- */
 .gauge {
@@ -343,4 +221,37 @@ ul:not(#report-nav-links) > li::marker {
     font-size: 0.875rem;
     font-weight: 600;
     text-transform: uppercase;
+}
+
+#report-navigation-panel h3 {
+    color: var(--text-primary);
+    padding-left: 0.5rem; /* Căn lề tiêu đề với các thẻ */
+}
+
+#report-navigation-panel a {
+    display: block; /* Hiển thị link dưới dạng block để tạo thành thẻ */
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.75rem; /* Bo góc mượt mà hơn */
+    font-weight: 500;
+    color: var(--text-secondary);
+    border: 1px solid transparent; /* Border trong suốt để không bị giật layout khi hover */
+    transition: all 0.25s cubic-bezier(0.165, 0.84, 0.44, 1); /* Hiệu ứng chuyển động mượt mà */
+    position: relative; /* Cần cho hiệu ứng nâng lên */
+}
+
+#report-navigation-panel a:hover {
+    background-color: var(--card-bg);
+    border-color: var(--card-border);
+    box-shadow: var(--card-shadow);
+    color: var(--text-primary);
+    transform: scale(1.03) translateY(-2px); /* Hiệu ứng nâng lên và phóng to */
+}
+
+#report-navigation-panel a.active {
+    background-color: var(--nav-link-bg-active);
+    color: var(--text-accent);
+    font-weight: 700;
+    border-color: var(--accent-color);
+    box-shadow: var(--card-shadow);
+    transform: scale(1.05); /* Làm cho mục active nổi bật hơn */
 }

@@ -241,6 +241,12 @@ async function loadReportAndCreateNav() {
             observer.observe(section);
         });
 
+        // Gọi hàm vẽ các biểu đồ từ report.js SAU KHI nội dung đã được tải.
+        // Điều này đảm bảo các phần tử DOM (`.gauge-container`) đã tồn tại.
+        if (typeof initializeAllGauges === 'function') {
+            initializeAllGauges();
+        }
+
     } catch (error) {
         console.error('Lỗi tải báo cáo:', error);
         document.getElementById('report-container').innerHTML = '<p class="text-red-600 font-semibold">Lỗi: Không thể tải nội dung báo cáo chi tiết.</p>';

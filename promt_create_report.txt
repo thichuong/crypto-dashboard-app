@@ -1,4 +1,6 @@
-Tạo file report.html chỉ gồm các section.
+Tạo file report.html và report.css, report.js chỉ gồm các section, không tạo thêm file khác 3 file này.
+
+Nội dung của file report.html dùng để tải lên file index.html qua file main.js.
 
 Mỗi heading 2 của file word  là 1 section của file report.html
 
@@ -6,46 +8,65 @@ Các section cập nhật theo file word.
 
 Số section bằng số heading 2 của file word.
 
-Định dạng mỗi section, h2, div, card theo theo mẫu section trong file template_report.html để file style.css đọc được.
 
 Bỏ [cite_start] để khi trình bày trên web dễ nhìn hơn.
-File report.html không script.
+File report.html có các section có tiêu đề h2 là phần heading 2 của file word, có icon phía trước.
+Ví dụ
+    <section id="macro-background">
+        <h2><i class="fas fa-landmark icon"></i>Phần I: Bối Cảnh Vĩ Mô và Tâm Lý Thị Trường</h2>
 
-File report.html đảm bảo hàm sau hoạt động 
-/**
- * Tải nội dung báo cáo từ file tĩnh và tạo mục lục điều hướng.
- */
-async function loadReportAndCreateNav() {
-    try {
-        const response = await fetch("/static/report.html");
-        if (!response.ok) throw new Error('Không thể tải tệp báo cáo.');
-        const reportHtml = await response.text();
 
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = reportHtml;
-
-        const navLinksContainer = document.getElementById('report-nav-links');
-        const reportContainer = document.getElementById('report-container');
-        reportContainer.innerHTML = '';
-
-        const sections = tempDiv.querySelectorAll('section');
-
-        sections.forEach(section => {
-            const h2 = section.querySelector('h2');
-            if (h2 && section.id) {
-                reportContainer.appendChild(section);
-
-                const li = document.createElement('li');
-                const a = document.createElement('a');
-                a.href = `#${section.id}`;
-                const h2Text = h2.cloneNode(true);
-                h2Text.querySelector('.icon')?.remove();
-                a.textContent = h2Text.textContent.trim();
-                li.appendChild(a);
-                navLinksContainer.appendChild(li);
-            }
-        });
-    } catch (error) {
-        console.error(error);
-    }
+File report.css dùng Bảng màu
+/* --- Bảng màu (Mặc định) --- */ Bảng màu không có trong file report.css, bảng màu thuộc file style.css
+:root {
+    --bg-primary: #f3f4f6;
+    --bg-secondary: #ffffff;
+    --bg-gradient-start: #f3f4f6;
+    --bg-gradient-end: #eef2ff;
+    --text-primary: #1f2937;
+    --text-secondary: #4b5563;
+    --text-accent: #4338ca;
+    --border-color: #e5e7eb;
+    --card-bg: rgba(255, 255, 255, 0.7);
+    --card-border: rgba(229, 231, 235, 0.8);
+    --card-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.07);
+    --nav-link-bg-active: #eef2ff;
+    --accent-color: #6366f1;
+    --positive-color: #16a34a;
+    --negative-color: #dc2626;
+    --neutral-color: #f59e0b;
+    --bull-card-bg: #f0fdf4;
+    --bear-card-bg: #fef2f2;
+    --table-row-hover-bg: #f0f9ff;
+    /* Màu cho thước đo RSI */
+    --rsi-track-color: #e5e7eb;
+    --rsi-overbought-color: #ef4444;
+    --rsi-oversold-color: #22c55e;
+    --rsi-neutral-color: #f59e0b;
+    /* Màu cho thước đo Fear & Greed */
+    --fng-track-color: #e5e7eb;
+    --fng-extreme-fear-color: #dc2626;
+    --fng-fear-color: #f97316;
+    --fng-neutral-color: #6b7280;
+    --fng-greed-color: #84cc16;
+    --fng-extreme-greed-color: #22c55e;
+    /* THÊM MỚI: Màu cho các Icon H2 */
+    --icon-color-summary: #3b82f6;      /* Blue */
+    --icon-color-macro-legal: #f59e0b;   /* Amber */
+    --icon-color-on-chain-sentiment: #14b8a6; /* Teal */
+    --icon-color-btc-analysis: #f97316;  /* Orange */
+    --icon-color-eth-analysis: #6366f1;  /* Indigo */
+    --icon-color-market-activity: #22c55e; /* Green */
+    --icon-color-expert-outlook: #8b5cf6;/* Violet */
+    --icon-color-outlook: #d946ef;      /* Fuchsia */
 }
+
+
+file report.css các biến có thêm #report-container
+ví du: #report-container section
+        #report-container h2
+        #report-container h3
+
+file report.js chỉ gồm các hàm vẽ biểu đồ, vẽ chỉ số,..
+    có hàm initializeAllGauges(); để file main.js gọi sau khi load các section xong.
+Trình bày đẹp, trực quan.
