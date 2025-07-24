@@ -82,7 +82,7 @@ async function fetchBtcAndFearGreed() {
         // Cập nhật chỉ số Sợ hãi & Tham lam bằng đồng hồ đo
         const fngValue = parseInt(data.fng_value, 10);
         if (!isNaN(fngValue)) {
-            createFngGauge(fngContainer, fngValue, data.fng_classification);
+            createFngGauge_index(fngContainer, fngValue, data.fng_classification);
         } else {
             throw new Error('Giá trị F&G không hợp lệ.');
         }
@@ -97,7 +97,7 @@ async function fetchBtcAndFearGreed() {
 /**
  * Fetch và hiển thị chỉ số RSI
  */
-async function fetchBtcRsi() {
+async function fetchBtcRsi_index() {
     const container = document.getElementById('rsi-container');
     try {
         const response = await fetch('/api/crypto/btc-rsi');
@@ -112,10 +112,10 @@ async function fetchBtcRsi() {
             throw new Error('Không nhận được giá trị RSI.');
         }
         
-        createRsiGauge(container, rsiValue);
+        createRsiGauge_index(container, rsiValue);
 
     } catch (error) {
-        console.error('Lỗi fetchBtcRsi:', error);
+        console.error('Lỗi fetchBtcRsi_index:', error);
         displayError('rsi-container', error.message);
     }
 }
@@ -128,7 +128,7 @@ async function fetchBtcRsi() {
  * @param {string} colorVar - Biến màu CSS
  * @param {string} gaugeClass - Lớp CSS riêng cho đồng hồ đo
  */
-function createGauge(container, value, label, colorVar, gaugeClass) {
+function createGauge_index(container, value, label, colorVar, gaugeClass) {
     const val = Math.max(0, Math.min(100, value));
     const radius = 80;
     const circumference = 2 * Math.PI * radius;
@@ -156,7 +156,7 @@ function createGauge(container, value, label, colorVar, gaugeClass) {
  * @param {number} value
  * @param {string} classification
  */
-function createFngGauge(container, value, classification) {
+function createFngGauge_index(container, value, classification) {
     let colorVar;
     if (value <= 24) colorVar = 'var(--fng-extreme-fear-color)';
     else if (value <= 49) colorVar = 'var(--fng-fear-color)';
@@ -164,7 +164,7 @@ function createFngGauge(container, value, classification) {
     else if (value <= 74) colorVar = 'var(--fng-greed-color)';
     else colorVar = 'var(--fng-extreme-greed-color)';
     
-    createGauge(container, value, classification || 'N/A', colorVar, 'gauge__fill--fng');
+    createGauge_index(container, value, classification || 'N/A', colorVar, 'gauge__fill--fng');
 }
 
 /**
@@ -172,7 +172,7 @@ function createFngGauge(container, value, classification) {
  * @param {HTMLElement} container
  * @param {number} value
  */
-function createRsiGauge(container, value) {
+function createRsiGauge_index(container, value) {
     let label = 'Trung tính';
     let colorVar = 'var(--rsi-neutral-color)';
     if (value >= 70) {
@@ -183,7 +183,7 @@ function createRsiGauge(container, value) {
         colorVar = 'var(--rsi-oversold-color)';
     }
     
-    createGauge(container, value, label, colorVar, 'gauge__fill--rsi');
+    createGauge_index(container, value, label, colorVar, 'gauge__fill--rsi');
 }
 
 
@@ -242,10 +242,14 @@ async function loadReportAndCreateNav() {
         });
 
         // Gọi hàm vẽ các biểu đồ từ report.js SAU KHI nội dung đã được tải.
-        // Điều này đảm bảo các phần tử DOM (`.gauge-container`) đã tồn tại.
-        if (typeof initializeAllGauges === 'function') {
-            initializeAllGauges();
+        // Điều này đảm bảo các phần tử DOM đã tồn tại để các biểu đồ có thể được vẽ.
+        if (typeof initializeAllVisuals === 'function') {
+            initializeAllVisuals();
         }
+        else if (typeof initializeAllVisuals_report === 'function') {
+            initializeAllVisuals_report();
+        }
+
 
     } catch (error) {
         console.error('Lỗi tải báo cáo:', error);
@@ -261,11 +265,11 @@ function init() {
     
     fetchCryptoData();
     fetchBtcAndFearGreed();
-    fetchBtcRsi(); 
+    fetchBtcRsi_index(); 
     
     setInterval(fetchCryptoData, 300000); 
     setInterval(fetchBtcAndFearGreed, 300000); 
-    setInterval(fetchBtcRsi, 900000); 
+    setInterval(fetchBtcRsi_index, 900000); 
 }
 
 

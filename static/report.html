@@ -1,165 +1,156 @@
-<!DOCTYPE html>
-<!-- FILE: report.html -->
-<!-- This file is intended to be loaded dynamically. -->
-<!-- It contains only the report sections. -->
-
-<!-- Phần I: Bối cảnh Vĩ mô và Tổng quan Thị trường -->
 <section id="macro-overview">
-    <h2><i class="fas fa-globe-americas icon"></i>Bối cảnh Vĩ mô và Tổng quan Thị trường</h2>
-    <div class="section-content">
-        <h3>Tóm tắt Diễn biến Thị trường</h3>
-        <p>Tính đến ngày 24 tháng 7 năm 2025, thị trường tiền điện tử toàn cầu đang thể hiện một sức mạnh đáng kể, với tổng vốn hóa dao động trong khoảng từ 3.08 nghìn tỷ USD đến trên 3.9 nghìn tỷ USD. Sự khác biệt nhỏ này phản ánh các phương pháp tính toán và thời điểm lấy dữ liệu khác nhau. Khối lượng giao dịch trong 24 giờ qua duy trì ở mức ổn định, khoảng 80.2 tỷ USD, cho thấy hoạt động thị trường vẫn sôi động.</p>
-        <p>Tỷ lệ thống trị của Bitcoin (BTC.D) hiện đang ở mức khoảng 60-61%, một chỉ số quan trọng cho thấy Bitcoin vẫn là tài sản dẫn dắt thị trường. Trong khi đó, tỷ lệ thống trị của Ethereum (ETH.D) chiếm khoảng 7.11%. Đáng chú ý, các hệ sinh thái như Polkadot và XRP Ledger đang cho thấy những mức tăng trưởng mạnh mẽ nhất, báo hiệu sự quan tâm của nhà đầu tư đang lan tỏa ra ngoài các đồng tiền hàng đầu.</p>
-        
-        <h3>Phân tích Sâu về Môi trường Chính trị & Vĩ mô: Đạo luật GENIUS là Tâm điểm</h3>
-        <p>Yếu tố có ảnh hưởng sâu sắc nhất đến thị trường trong thời gian gần đây là môi trường pháp lý, đặc biệt là tại Hoa Kỳ. Việc Tổng thống Donald Trump ký thành luật Đạo luật GENIUS (Guiding and Establishing National Innovation for US Stablecoins) vào ngày 18 tháng 7 năm 2025 được coi là một "chiến thắng mang tính bước ngoặt" và là "cột mốc quan trọng" cho toàn bộ ngành công nghiệp. Sự kiện này được xem là chất xúc tác trực tiếp cho đợt tăng giá ngoạn mục của Bitcoin vượt mốc 123,000 USD.</p>
-        <p>Các điều khoản cốt lõi của Đạo luật GENIUS bao gồm:</p>
-        <ul>
-            <li><strong>Yêu cầu về cấp phép và giám sát:</strong> Các công ty phát hành stablecoin phải đăng ký với một cơ quan liên bang. Các nhà phát hành có quy mô lớn sẽ chịu sự giám sát trực tiếp của liên bang.</li>
-            <li><strong>Tiêu chuẩn về tài sản thế chấp:</strong> Yêu cầu các nhà phát hành phải duy trì 100% tài sản dự trữ bằng tiền mặt hoặc các chứng khoán có tính thanh khoản cao, đảm bảo tỷ lệ bảo chứng 1:1. Các stablecoin thuật toán bị cấm.</li>
-            <li><strong>Bảo vệ người tiêu dùng:</strong> Ưu tiên quyền lợi cho người nắm giữ stablecoin trong trường hợp nhà phát hành phá sản, một thay đổi đáng kể so với luật phá sản hiện hành.</li>
-        </ul>
-        <p>Đạo luật này được kỳ vọng sẽ hoạt động như một "đường dẫn" (on-ramp), thu hút mạnh mẽ dòng vốn từ các tổ chức tài chính truyền thống. Tuy nhiên, điều khoản ưu tiên người nắm giữ stablecoin cũng làm dấy lên những lo ngại về "rủi ro đạo đức" và khả năng chính phủ phải "cứu trợ" (bailout) trong tương lai.</p>
+    <h2><i class="fas fa-globe-americas"></i> Bối cảnh Vĩ mô và Tổng quan Thị trường</h2>
+    <div class="stat-grid">
+        <div class="stat-card">
+            <span class="stat-value">$3.08T - $3.9T</span>
+            <span class="stat-label">Tổng Vốn hóa Thị trường</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-value">$80.2B</span>
+            <span class="stat-label">Khối lượng Giao dịch (24h)</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-value">~60-61%</span>
+            <span class="stat-label">Tỷ lệ Thống trị Bitcoin (BTC.D)</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-value">~7.11%</span>
+            <span class="stat-label">Tỷ lệ Thống trị Ethereum (ETH.D)</span>
+        </div>
     </div>
+    <p>Các hệ sinh thái như <strong>Polkadot</strong> và <strong>XRP Ledger</strong> đang cho thấy những mức tăng trưởng mạnh mẽ nhất, báo hiệu sự quan tâm của nhà đầu tư đang lan tỏa ra ngoài các đồng tiền hàng đầu.</p>
 </section>
 
-<!-- Phần II: Phân tích Chuyên sâu về Bitcoin (BTC) -->
+<section id="political-analysis">
+    <h2><i class="fas fa-landmark"></i> Phân tích Môi trường Chính trị & Vĩ mô: Đạo luật GENIUS</h2>
+    <p>Việc Tổng thống Donald Trump ký thành luật <strong>Đạo luật GENIUS</strong> vào ngày 18/07/2025 là một "chiến thắng mang tính bước ngoặt", trở thành chất xúc tác trực tiếp cho đợt tăng giá của Bitcoin vượt mốc <strong>$123,000</strong>.</p>
+    <h3><i class="fas fa-file-contract"></i> Điều khoản Cốt lõi của Đạo luật GENIUS</h3>
+    <ul class="key-points">
+        <li><strong>Cấp phép & Giám sát:</strong> Các nhà phát hành stablecoin phải đăng ký với cơ quan liên bang. Các nhà phát hành lớn (>$10B) chịu sự giám sát trực tiếp của liên bang.</li>
+        <li><strong>Tài sản Thế chấp:</strong> Yêu cầu dự trữ 100% bằng tiền mặt hoặc chứng khoán Kho bạc Mỹ. <em>Stablecoin thuật toán bị cấm.</em></li>
+        <li><strong>Bảo vệ Người tiêu dùng:</strong> Người nắm giữ stablecoin được ưu tiên nhận lại tài sản khi nhà phát hành phá sản.</li>
+    </ul>
+    <h3><i class="fas fa-balance-scale"></i> Tác động và Rủi ro</h3>
+    <p><strong>Tác động tích cực:</strong> Tạo "đường dẫn" (on-ramp) an toàn, thu hút vốn từ các tổ chức tài chính truyền thống.</p>
+    <p><strong>Rủi ro tiềm ẩn:</strong> Việc ưu tiên người tiêu dùng có thể dẫn đến "rủi ro đạo đức", có khả năng gây ra một cuộc "cứu trợ" (bailout) bằng tiền thuế nếu một nhà phát hành lớn sụp đổ.</p>
+</section>
+
 <section id="btc-analysis">
-    <h2><i class="fab fa-bitcoin icon"></i>Phân tích Chuyên sâu về Bitcoin (BTC)</h2>
-    <div class="section-content">
-        <h3>Phân tích Kỹ thuật Biểu đồ Nến Tuần</h3>
-        <p>Trên biểu đồ tuần, Bitcoin (BTC) đang thể hiện một xu hướng tăng giá mạnh mẽ và bền vững, di chuyển trong một kênh tăng giá rõ rệt. Các mô hình giá tích cực như cờ hiệu tăng giá (bullish pennant) và nêm hướng lên (upward wedge) càng củng cố cho kịch bản tăng giá.</p>
-        <ul>
-            <li><strong>Hỗ trợ:</strong> Mức hỗ trợ ngắn hạn quan trọng nhất đang được thử thách tại vùng 118,000 USD. Các vùng hỗ trợ tiếp theo là 116,000 USD và 105,000 - 106,000 USD.</li>
-            <li><strong>Kháng cự và Mục tiêu:</strong> Sau khi vượt qua các ngưỡng kháng cự cũ, biểu đồ giá không cho thấy một rào cản rõ ràng nào, mở ra khả năng khám phá các đỉnh cao mới. Các mục tiêu tiềm năng dựa trên Fibonacci extension bao gồm 150,000 USD, 180,000 USD và thậm chí là 200,000 USD.</li>
-        </ul>
-        <h3>Phân tích các Chỉ báo Động lượng (RSI)</h3>
-        <p>Chỉ số Sức mạnh Tương đối (RSI) trên khung thời gian ngày hiện đang ở mức trung tính, khoảng 54.86, cho thấy thị trường đã "nguội" lại sau giai đoạn tăng nóng. Tuy nhiên, trên các khung thời gian dài hơn, đường cong RSI vẫn cho thấy xu hướng tăng rõ rệt. Trong một xu hướng tăng mạnh, RSI có thể duy trì ở vùng quá mua trong thời gian dài mà giá vẫn tiếp tục đi lên.</p>
-        
-        <!-- Placeholder for RSI Gauge -->
-        <div id="rsi-gauge-container" class="gauge-wrapper"></div>
-        
-        <h3>Động lực từ các Quỹ Bitcoin ETF Giao ngay</h3>
-        <p>Một trong những động lực tăng trưởng quan trọng nhất của chu kỳ này là dòng vốn khổng lồ từ các quỹ Spot Bitcoin ETF, như iShares Bitcoin Trust (IBIT) của BlackRock. Dòng vốn này không chỉ đẩy giá lên mà còn tạo ra một "sàn" hỗ trợ giá vững chắc bằng cách các tổ chức mua và nắm giữ tài sản dài hạn, làm giảm nguồn cung lưu thông. Sự tham gia của họ làm cho xu hướng tăng hiện tại trở nên bền vững hơn so với các chu kỳ trước đây.</p>
+    <h2><i class="fab fa-bitcoin"></i> Phân tích Chuyên sâu về Bitcoin (BTC)</h2>
+    <div class="analysis-grid">
+        <div class="analysis-card">
+            <h3><i class="fas fa-chart-line"></i> Phân tích Kỹ thuật</h3>
+            <p>BTC đang di chuyển trong một <strong>kênh tăng giá</strong> rõ rệt trên biểu đồ tuần, củng cố bởi các mô hình như <em>cờ hiệu tăng giá (bullish pennant)</em>.</p>
+            <h4>Hỗ trợ & Kháng cự:</h4>
+            <ul>
+                <li><strong>Hỗ trợ mạnh:</strong> $118,000, $116,000, và $105,000 - $106,000.</li>
+                <li><strong>Mục tiêu giá tiềm năng (Fibonacci):</strong> $150,000, $180,000, và $200,000.</li>
+            </ul>
+        </div>
+        <div class="analysis-card">
+            <h3><i class="fas fa-tachometer-alt"></i> Chỉ báo Động lượng (RSI)</h3>
+            <p>Chỉ số RSI(14) trên khung ngày đang ở mức trung tính, cho thấy thị trường đã "nguội" lại sau giai đoạn tăng nóng. Tuy nhiên, xu hướng RSI trên khung dài hạn vẫn đang tăng.</p>
+            <div id="rsi-gauge-container" class="gauge-container">
+                <!-- Biểu đồ RSI sẽ được vẽ ở đây bởi JS -->
+            </div>
+        </div>
+        <div class="analysis-card full-width">
+            <h3><i class="fas fa-university"></i> Động lực từ các Quỹ Bitcoin ETF</h3>
+            <p>Dòng vốn khổng lồ và bền vững từ các quỹ Spot Bitcoin ETF (ví dụ: <strong>IBIT của BlackRock</strong>) đang tạo ra một "sàn" hỗ trợ giá vững chắc. Sự tham gia của các tổ chức làm cho xu hướng tăng hiện tại có nền tảng vững chắc hơn so với các chu kỳ trước đây.</p>
+        </div>
     </div>
 </section>
 
-<!-- Phần III: Đánh giá Động lực và Tâm lý Thị trường -->
 <section id="market-sentiment">
-    <h2><i class="fas fa-tachometer-alt icon"></i>Đánh giá Động lực và Tâm lý Thị trường</h2>
-    <div class="section-content">
-        <h3>Chỉ số Thống trị của Bitcoin (BTC.D): Tín hiệu cho "Mùa Altcoin"?</h3>
-        <p>Chỉ số thống trị của Bitcoin (BTC.D) đã sụt giảm đáng kể, từ gần 66% xuống dưới 60%. Đây thường được coi là tín hiệu cho thấy dòng vốn đang bắt đầu luân chuyển từ Bitcoin sang các altcoin, có khả năng khởi đầu một "mùa altcoin" (altcoin season). Tuy nhiên, rủi ro về một "fakeout" (bẫy giảm giá) vẫn tồn tại, có thể trì hoãn mùa tăng trưởng của altcoin nếu BTC.D đảo chiều tăng trở lại.</p>
-        
-        <h3>Chỉ số Sợ hãi và Tham lam (Fear & Greed Index)</h3>
-        <p>Chỉ số Sợ hãi và Tham lam hiện đang ở mức "Tham lam" (Greed), với giá trị khoảng 70-74, giảm nhẹ từ mức "Tham lam cực độ". Chỉ số này là công cụ đo lường tâm lý ngược: sự tham lam quá mức có thể báo hiệu một đợt điều chỉnh. Việc chỉ số hạ nhiệt nhẹ là một diễn biến lành mạnh, cho thấy thị trường đang xây dựng nền tảng vững chắc hơn.</p>
-
-        <!-- Placeholder for Fear & Greed Gauge -->
-        <div id="fng-gauge-container" class="gauge-wrapper"></div>
+    <h2><i class="fas fa-heartbeat"></i> Đánh giá Động lực và Tâm lý Thị trường</h2>
+    <div class="analysis-grid">
+        <div class="analysis-card">
+            <h3><i class="fas fa-percentage"></i> Chỉ số Thống trị của Bitcoin (BTC.D)</h3>
+            <p>BTC.D đã giảm từ gần <strong>66% xuống dưới 60%</strong>, một tín hiệu kinh điển cho thấy dòng vốn có thể đang luân chuyển sang altcoin và khởi đầu cho một <strong>"mùa altcoin"</strong>.</p>
+            <div id="btc-dominance-chart-container" class="chart-placeholder">
+                <!-- Biểu đồ đường về BTC.D sẽ được vẽ ở đây -->
+            </div>
+        </div>
+        <div class="analysis-card">
+            <h3><i class="fas fa-smile-beam"></i> Chỉ số Sợ hãi và Tham lam</h3>
+            <p>Chỉ số hiện ở mức <strong>"Tham lam" (Greed)</strong>, hạ nhiệt nhẹ so với mức "Tham lam cực độ". Điều này cho thấy sự hưng phấn nhưng cũng là một tín hiệu cho thấy thị trường đang "tiêu hóa" các mức tăng giá gần đây một cách lành mạnh.</p>
+            <div id="fear-greed-gauge-container" class="gauge-container">
+                <!-- Biểu đồ Fear & Greed sẽ được vẽ ở đây bởi JS -->
+            </div>
+        </div>
     </div>
 </section>
 
-<!-- Phần IV: Phân tích các Altcoin Hàng đầu -->
 <section id="altcoin-analysis">
-    <h2><i class="fas fa-layer-group icon"></i>Phân tích các Altcoin Hàng đầu</h2>
-    <div class="section-content">
-        <p>Khi dòng vốn luân chuyển từ Bitcoin, các altcoin hàng đầu với nền tảng vững chắc đang thu hút sự chú ý. Dòng tiền của các tổ chức có xu hướng chọn lọc, tập trung vào các dự án chất lượng hơn.</p>
-        
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Altcoin</th>
-                        <th>Vốn hóa Thị trường (USD)</th>
-                        <th>Giá (USD)</th>
-                        <th>Biến động 7d (%)</th>
-                        <th>Yếu tố Xúc tác Chính</th>
-                        <th>Mục tiêu Giá Kỹ thuật (USD)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Ethereum (ETH)</strong></td>
-                        <td>~454 tỷ</td>
-                        <td>~3,800</td>
-                        <td class="positive">+25%</td>
-                        <td>Dòng tiền ETF, cá voi tích lũy</td>
-                        <td>4,000; 6,000-8,000</td>
-                    </tr>
-                    <tr>
-                        <td><strong>XRP (XRP)</strong></td>
-                        <td>~212 tỷ</td>
-                        <td>~3.6</td>
-                        <td class="positive">+21%</td>
-                        <td>Vụ kiện SEC, tin đồn ETF</td>
-                        <td>4.20; 5.00-8.00</td>
-                    </tr>
-                    <tr>
-                        <td><strong>BNB (BNB)</strong></td>
-                        <td>~110 tỷ</td>
-                        <td>~800</td>
-                        <td class="positive">+12.61%</td>
-                        <td>Đóng cửa tuần cao, OI tăng</td>
-                        <td>793; 956</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Solana (SOL)</strong></td>
-                        <td>~109 tỷ</td>
-                        <td>~204</td>
-                        <td class="positive">+23.39%</td>
-                        <td>Doanh nghiệp mua vào, ETF</td>
-                        <td>209; 220; 240</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        
-        <h3>Chi tiết các Altcoin</h3>
-        <h4>Ethereum (ETH): Ngọn đuốc dẫn dắt Altcoin</h4>
-        <p>ETH đang hình thành mô hình tam giác tăng dần với kháng cự quan trọng ở mức 4,000 USD. Dòng tiền mạnh từ ETF và sự tích lũy của "cá voi" củng cố dự báo tăng giá lên 10,000 - 15,000 USD.</p>
-        <h4>XRP (XRP): Bùng nổ sau Gông cùm Pháp lý</h4>
-        <p>Sau khi giải quyết vụ kiện với SEC, XRP đã hình thành mô hình cờ hiệu tăng giá và tín hiệu "Golden Cross", mở ra tiềm năng tăng trưởng lên 5-8 USD.</p>
-        <h4>BNB (BNB): Sức mạnh từ Hệ sinh thái</h4>
-        <p>BNB đã ghi nhận mức giá đóng cửa tuần cao kỷ lục. Hợp đồng mở (Open Interest) tăng mạnh cho thấy niềm tin của nhà đầu tư, hướng tới mục tiêu 956 USD sau khi vượt đỉnh cũ.</p>
-        <h4>Solana (SOL): Đối thủ đáng gờm</h4>
-        <p>SOL đã phá vỡ mô hình "cup-and-handle" mạnh mẽ. Sự quan tâm từ các công ty và sản phẩm staking ETF đang thúc đẩy giá hướng tới các mục tiêu 209 USD, 220 USD và 240 USD.</p>
+    <h2><i class="fas fa-layer-group"></i> Phân tích các Altcoin Hàng đầu</h2>
+    <p>Khi BTC.D giảm, dòng vốn của tổ chức có xu hướng chọn lọc, tập trung vào các dự án chất lượng. Dưới đây là tóm tắt so sánh:</p>
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Altcoin</th>
+                    <th>Giá (USD)</th>
+                    <th>Biến động (7d)</th>
+                    <th>Yếu tố Xúc tác Chính</th>
+                    <th>Mục tiêu Giá Kỹ thuật (USD)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Ethereum (ETH)</strong></td>
+                    <td class="price">$3,600 - $3,800</td>
+                    <td class="positive">+25%</td>
+                    <td>Dòng tiền ETF, cá voi tích lũy, nâng cấp mạng lưới</td>
+                    <td>4k, 6-8k, 10-15k</td>
+                </tr>
+                <tr>
+                    <td><strong>XRP (XRP)</strong></td>
+                    <td class="price">$3.2 - $3.6</td>
+                    <td class="positive">+21%</td>
+                    <td>Giải quyết kiện SEC, tin đồn ETF, Golden Cross</td>
+                    <td>4.20, 5-8</td>
+                </tr>
+                <tr>
+                    <td><strong>BNB (BNB)</strong></td>
+                    <td class="price">$760 - $800</td>
+                    <td class="positive">+12.61%</td>
+                    <td>Đóng cửa tuần cao kỷ lục, OI phái sinh tăng</td>
+                    <td>793 (ATH), 956</td>
+                </tr>
+                <tr>
+                    <td><strong>Solana (SOL)</strong></td>
+                    <td class="price">$190 - $204</td>
+                    <td class="positive">+23.39%</td>
+                    <td>Doanh nghiệp mua vào, ETF staking, hệ sinh thái phát triển</td>
+                    <td>209, 220, 240</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </section>
 
-<!-- Phần V: Tổng hợp, Đánh giá và Triển vọng -->
-<section id="outlook">
-    <h2><i class="fas fa-binoculars icon"></i>Tổng hợp, Đánh giá và Triển vọng</h2>
-    <div class="section-content">
-        <div class="outlook-container">
-            <div class="bull-case card">
-                <h3><i class="fas fa-arrow-up"></i>Luận điểm Tăng giá (Bull Case)</h3>
-                <ul>
-                    <li><strong>Cơ sở hạ tầng pháp lý:</strong> Đạo luật GENIUS tạo hành lang an toàn.</li>
-                    <li><strong>Dòng vốn tổ chức:</strong> Dòng tiền bền vững từ các quỹ ETF.</li>
-                    <li><strong>Tín hiệu kỹ thuật:</strong> Các mô hình giá tăng trên khung thời gian lớn.</li>
-                    <li><strong>Sự luân chuyển vốn:</strong> Dòng tiền chảy sang altcoin, tạo hưng phấn.</li>
-                </ul>
-            </div>
-            <div class="bear-case card">
-                <h3><i class="fas fa-arrow-down"></i>Rủi ro & Luận điểm Giảm giá (Bear Case)</h3>
-                <ul>
-                    <li><strong>Tín hiệu quá mua:</strong> Tâm lý FOMO và các chỉ báo RSI ngắn hạn.</li>
-                    <li><strong>Khả năng điều chỉnh kỹ thuật:</strong> Cần thiết sau đợt tăng mạnh.</li>
-                    <li><strong>Rủi ro vĩ mô:</strong> Lập trường "diều hâu" của Fed về lãi suất.</li>
-                    <li><strong>Rủi ro "Fakeout" của BTC.D:</strong> Có thể dập tắt đà tăng của altcoin.</li>
-                </ul>
-            </div>
+<section id="summary-outlook">
+    <h2><i class="fas fa-binoculars"></i> Tổng hợp, Đánh giá và Triển vọng</h2>
+    <div class="summary-grid">
+        <div class="summary-column bull-case">
+            <h3><i class="fas fa-arrow-up"></i> Luận điểm Tăng giá (Bull Case)</h3>
+            <ul>
+                <li><strong>Cơ sở pháp lý:</strong> Đạo luật GENIUS tạo hành lang an toàn.</li>
+                <li><strong>Dòng vốn tổ chức:</strong> Dòng tiền mạnh mẽ và bền vững từ các quỹ ETF.</li>
+                <li><strong>Tín hiệu kỹ thuật:</strong> Các mô hình giá tăng trên khung thời gian lớn.</li>
+                <li><strong>Luân chuyển vốn:</strong> BTC.D giảm, báo hiệu mùa altcoin.</li>
+            </ul>
         </div>
-
-        <h3>Đánh giá của Chuyên gia và Triển vọng</h3>
-        <p>Thị trường đang trong giai đoạn tăng trưởng mạnh mẽ, được củng cố bởi sự chấp nhận của các tổ chức và hành lang pháp lý rõ ràng. Kịch bản có khả năng xảy ra nhất là thị trường tiếp tục xu hướng tăng, dẫn đầu bởi Bitcoin, sau đó là sự luân chuyển sang các altcoin "blue-chip". Các đợt điều chỉnh ngắn hạn (pullbacks) có thể được xem là cơ hội tích lũy.</p>
-        <p><strong>Các chỉ báo quan trọng cần theo dõi:</strong></p>
-        <ul>
-            <li>Hành động giá của Bitcoin tại mức hỗ trợ 118,000 USD.</li>
-            <li>Diễn biến của chỉ số BTC.D.</li>
-            <li>Dữ liệu dòng tiền vào/ra hàng tuần của các quỹ ETF.</li>
-            <li>Các quyết định chính sách từ Cục Dự trữ Liên bang Mỹ.</li>
-        </ul>
-        <p>Tóm lại, dù triển vọng rất tích cực, nhà đầu tư cần duy trì sự thận trọng, quản lý rủi ro và tránh bị cuốn theo tâm lý FOMO. Việc kết hợp phân tích đa chiều sẽ là chìa khóa để điều hướng thành công trong giai đoạn này.</p>
+        <div class="summary-column bear-case">
+            <h3><i class="fas fa-arrow-down"></i> Rủi ro & Luận điểm Giảm giá (Bear Case)</h3>
+            <ul>
+                <li><strong>Tâm lý FOMO:</strong> Chỉ số tham lam cao, rủi ro điều chỉnh.</li>
+                <li><strong>Điều chỉnh kỹ thuật:</strong> Khả năng "hạ nhiệt" sau đợt tăng nóng.</li>
+                <li><strong>Rủi ro vĩ mô:</strong> Lập trường "diều hâu" của FED về lãi suất.</li>
+                <li><strong>Rủi ro "Fakeout" BTC.D:</strong> BTC.D có thể đảo chiều tăng trở lại.</li>
+            </ul>
+        </div>
     </div>
+    <h3><i class="fas fa-compass"></i> Triển vọng</h3>
+    <p>Kịch bản có khả năng nhất là thị trường tiếp tục xu hướng tăng, dẫn đầu bởi Bitcoin và sau đó là sự luân chuyển sang các altcoin "blue-chip". Các đợt điều chỉnh ngắn hạn có thể được xem là cơ hội tích lũy. Nhà đầu tư cần duy trì sự thận trọng và quản lý rủi ro chặt chẽ.</p>
 </section>

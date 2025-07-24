@@ -1,88 +1,60 @@
-/* FILE: report.css */
-/* Styles for the dynamically loaded crypto report. */
-/* All styles are scoped to the #report-container element. */
+/* --- report.css --- */
+/* Tất cả các style đều được giới hạn trong #report-container */
 
 #report-container {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.7;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     color: var(--text-primary);
+    line-height: 1.6;
 }
 
 #report-container section {
     background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
+    padding: 2rem;
     margin-bottom: 2rem;
-    padding: 2rem 2.5rem;
-    box-shadow: var(--card-shadow);
-    border: 1px solid var(--card-border);
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease-in-out;
 }
 
 #report-container section:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -4px rgba(0, 0, 0, 0.07);
+    transform: translateY(-3px);
 }
 
 #report-container h2 {
-    display: flex;
-    align-items: center;
-    font-size: 2rem;
+    font-size: 1.75rem;
     font-weight: 700;
-    color: var(--text-accent);
+    color: var(--text-primary);
     margin-top: 0;
     margin-bottom: 1.5rem;
-    padding-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
     border-bottom: 2px solid var(--border-color);
+    padding-bottom: 0.75rem;
 }
 
-#report-container h2 .icon {
-    font-size: 1.8rem;
-    margin-right: 1rem;
-    padding: 0.6rem;
-    border-radius: 8px;
-    color: #fff;
+#report-container h2 .fas,
+#report-container h2 .fab {
+    color: var(--accent-color);
+    font-size: 1.5rem;
 }
-
-#report-container #macro-overview h2 .icon { background-color: var(--icon-color-macro-legal); }
-#report-container #btc-analysis h2 .icon { background-color: var(--icon-color-btc-analysis); }
-#report-container #market-sentiment h2 .icon { background-color: var(--icon-color-on-chain-sentiment); }
-#report-container #altcoin-analysis h2 .icon { background-color: var(--icon-color-eth-analysis); }
-#report-container #outlook h2 .icon { background-color: var(--icon-color-outlook); }
 
 #report-container h3 {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 600;
-    color: var(--text-primary);
+    color: var(--text-accent);
     margin-top: 1.5rem;
     margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
 }
 
-#report-container h4 {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    margin-top: 1.5rem;
-    margin-bottom: 0.5rem;
-}
-
-#report-container p, #report-container li {
-    font-size: 1rem;
-    color: var(--text-secondary);
+#report-container p {
     margin-bottom: 1rem;
-}
-
-#report-container ul {
-    list-style-type: none;
-    padding-left: 20px;
-}
-
-#report-container li::before {
-    content: "\2022";
-    color: var(--accent-color);
-    font-weight: bold;
-    display: inline-block;
-    width: 1em;
-    margin-left: -1em;
+    color: var(--text-secondary);
 }
 
 #report-container strong {
@@ -90,105 +62,193 @@
     font-weight: 600;
 }
 
-/* Table Styles */
-#report-container .table-container {
-    overflow-x: auto;
-    margin-top: 1.5rem;
-}
-
-#report-container table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.95rem;
-}
-
-#report-container th, #report-container td {
-    padding: 12px 15px;
-    text-align: left;
-    border-bottom: 1px solid var(--border-color);
-}
-
-#report-container thead th {
-    background-color: var(--bg-primary);
-    font-weight: 600;
+#report-container em {
     color: var(--text-accent);
+    font-style: italic;
 }
 
-#report-container tbody tr:hover {
-    background-color: var(--table-row-hover-bg);
+/* Stat Grid Styling */
+#report-container .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
 }
 
-#report-container td.positive { color: var(--positive-color); font-weight: 600; }
-#report-container td.negative { color: var(--negative-color); font-weight: 600; }
-
-/* Gauge Styles */
-#report-container .gauge-wrapper {
-    max-width: 400px;
-    margin: 2rem auto;
+#report-container .stat-card {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.25rem;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
-#report-container .gauge-container {
+#report-container .stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--accent-color);
+    line-height: 1.2;
+}
+
+#report-container .stat-label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+}
+
+/* Key Points List Styling */
+#report-container .key-points {
+    list-style: none;
+    padding-left: 0;
+}
+
+#report-container .key-points li {
+    position: relative;
+    padding-left: 1.5rem;
+    margin-bottom: 0.75rem;
+    color: var(--text-secondary);
+}
+
+#report-container .key-points li::before {
+    content: '\f058'; /* Font Awesome check-circle */
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    position: absolute;
+    left: 0;
+    top: 4px;
+    color: var(--positive-color);
+}
+
+/* Analysis Grid Layout */
+#report-container .analysis-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+#report-container .analysis-card {
+    background-color: var(--bg-primary);
+    border-radius: 8px;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+}
+
+#report-container .analysis-card.full-width {
+    grid-column: 1 / -1;
+}
+
+/* Placeholders for visuals */
+#report-container .gauge-container,
+#report-container .chart-placeholder {
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
-    height: auto;
-}
-
-#report-container .gauge-label {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: var(--text-primary);
     margin-top: 1rem;
 }
 
-/* Outlook Section Cards */
-#report-container .outlook-container {
-    display: flex;
+#report-container .chart-placeholder {
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+/* Table Styling */
+#report-container .table-container {
+    overflow-x: auto;
+}
+
+#report-container .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.5rem;
+}
+
+#report-container .data-table th,
+#report-container .data-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    text-align: left;
+    vertical-align: middle;
+}
+
+#report-container .data-table thead th {
+    background-color: var(--bg-primary);
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+#report-container .data-table tbody tr:hover {
+    background-color: var(--bg-primary);
+}
+
+#report-container .data-table .price {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 600;
+}
+
+#report-container .data-table .positive {
+    color: var(--positive-color);
+    font-weight: 600;
+}
+
+#report-container .data-table .negative {
+    color: var(--negative-color);
+    font-weight: 600;
+}
+
+/* Summary Layout */
+#report-container .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 2rem;
     margin-top: 1.5rem;
 }
 
-#report-container .card {
-    flex: 1;
-    padding: 1.5rem;
-    border-radius: 8px;
-    border: 1px solid transparent;
+#report-container .summary-column ul {
+    list-style: none;
+    padding-left: 0;
 }
 
-#report-container .card h3 {
-    margin-top: 0;
-    border-bottom: 1px solid;
-    padding-bottom: 0.75rem;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
+#report-container .summary-column li {
+    padding-left: 1.75rem;
+    position: relative;
+    margin-bottom: 0.75rem;
 }
 
-#report-container .card h3 i {
-    margin-right: 0.75rem;
+#report-container .summary-column li::before {
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    position: absolute;
+    left: 0;
+    top: 4px;
+    font-size: 1rem;
 }
 
-#report-container .bull-case {
-    background-color: var(--bull-card-bg);
-    border-color: var(--positive-color);
-}
-#report-container .bull-case h3 { color: var(--positive-color); border-color: #a7f3d0; }
+#report-container .bull-case h3 { color: var(--positive-color); }
+#report-container .bear-case h3 { color: var(--negative-color); }
 
-#report-container .bear-case {
-    background-color: var(--bear-card-bg);
-    border-color: var(--negative-color);
+#report-container .bull-case li::before {
+    content: '\f062'; /* arrow-up */
+    color: var(--positive-color);
 }
-#report-container .bear-case h3 { color: var(--negative-color); border-color: #fecaca; }
+#report-container .bear-case li::before {
+    content: '\f063'; /* arrow-down */
+    color: var(--negative-color);
+}
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
     #report-container section {
         padding: 1.5rem;
     }
-    #report-container h2 {
-        font-size: 1.75rem;
-    }
-    #report-container .outlook-container {
-        flex-direction: column;
-        gap: 1.5rem;
+    #report-container .analysis-grid,
+    #report-container .summary-grid {
+        grid-template-columns: 1fr;
     }
 }

@@ -1,48 +1,64 @@
-Tạo file report.html và report.css, report.js chỉ gồm các section, không tạo thêm file khác 3 file này.
+# YÊU CẦU: TẠO GIAO DIỆN BÁO CÁO PHÂN TÍCH
 
-Nội dung của file report.html dùng để tải lên file index.html qua file main.js.
+## 1. Vai trò (Persona)
 
-Mỗi heading 2 của file word  là 1 section của file report.html
+Bạn là một lập trình viên frontend và nhà thiết kế dữ liệu, có khả năng biến những báo cáo dày đặc chữ thành một giao diện web trực quan, sinh động và dễ hiểu.
 
-Các section cập nhật theo file word.
+## 2. Bối cảnh (Context)
 
-Số section bằng số heading 2 của file word.
+Nhiệm vụ là tạo ra một bộ tệp (`HTML`, `CSS`, `JS`) để hiển thị một báo cáo phân tích chi tiết.
 
+-   **Mục đích chính:** Nội dung của tệp `report.html` sẽ được tệp `main.js` tải động vào bên trong tệp `index.html`. Điều này giúp trang chính tải nhanh hơn và nội dung báo cáo có thể được cập nhật độc lập.
+-   **Tệp `report.html`**: Chỉ chứa cấu trúc HTML của báo cáo, không bao gồm `<html>`, `<head>`, `<body>`.
+-   **Tệp `report.css`**: Chứa các style tùy chỉnh cho báo cáo.
+-   **Tệp `report.js`**: Chứa các hàm để vẽ biểu đồ, đồ thị.
 
-Bỏ [cite_start] để khi trình bày trên web dễ nhìn hơn.
-File report.html có các section có tiêu đề h2 là phần heading 2 của file word, có icon phía trước.
-Ví dụ
-    <section id="macro-background">
-        <h2><i class="fas fa-landmark icon"></i>Phần I: Bối Cảnh Vĩ Mô và Tâm Lý Thị Trường</h2>
+## 3. Mục tiêu & Tệp cần tạo
 
+Tạo chính xác 3 tệp sau:
+1.  `report.html`
+2.  `report.css`
+3.  `report.js`
 
-File report.css dùng Bảng màu
-/* --- Bảng màu (Mặc định) --- */ Bảng màu không có trong file report.css, bảng màu thuộc file style.css
+## 4. Quy tắc xử lý nội dung
+
+-   **Quan trọng:** Khi xử lý nội dung nguồn (ví dụ từ file Word, text), phải **loại bỏ hoàn toàn** tất cả các thẻ đánh dấu trích dẫn như ``, `[1]`, `[2]`, ``, v.v. Kết quả HTML cuối cùng phải sạch sẽ và chỉ chứa nội dung chính.
+-   Trình bày thông tin một cách **súc tích, nhấn mạnh các chỉ số, con số**. Sử dụng các list, thẻ `<strong>`, `<em>` để làm nổi bật các điểm chính thay vì các đoạn văn dài.
+
+## 5. Yêu cầu chi tiết
+
+### 5.1. `report.html`
+
+-   **Tự động tạo Section:** Dựa trên các tiêu đề chính (ví dụ: Heading 2 trong file Word) của tài liệu báo cáo nguồn để tạo các thẻ `<section>`.
+-   **Sáng tạo và linh hoạt:** Tự động gán một `id` duy nhất và một icon Font Awesome phù hợp cho tiêu đề `<h2>` của mỗi section. Không có cấu trúc cố định; hãy để nội dung báo cáo quyết định cấu trúc.
+-   **Trực quan hóa dữ liệu:**
+    -   Đối với các chỉ số quan trọng (như RSI, Fear & Greed), hãy tạo các placeholder `<div>` với `id` rõ ràng để JavaScript có thể vẽ biểu đồ vào đó. Ví dụ: `<div id="rsi-gauge-container"></div>`.
+    -   Đối với các bảng dữ liệu, hãy biến chúng thành các bảng HTML (`<table>`) gọn gàng.
+
+### 5.2. `report.css`
+
+-   **Bảng màu chung (Theme Light/Dark):** Sử dụng các biến CSS dưới đây làm nền tảng cho việc thiết kế. Các biến này phải được đặt trong selector `:root` của tệp CSS chính (`style.css`), và `report.css` sẽ kế thừa chúng.
+
+```css
+/* --- Bảng màu cho Light Mode (Mặc định) --- */
 :root {
     --bg-primary: #f3f4f6;
     --bg-secondary: #ffffff;
-    --bg-gradient-start: #f3f4f6;
-    --bg-gradient-end: #eef2ff;
     --text-primary: #1f2937;
     --text-secondary: #4b5563;
     --text-accent: #4338ca;
     --border-color: #e5e7eb;
-    --card-bg: rgba(255, 255, 255, 0.7);
-    --card-border: rgba(229, 231, 235, 0.8);
-    --card-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.07);
-    --nav-link-bg-active: #eef2ff;
     --accent-color: #6366f1;
     --positive-color: #16a34a;
     --negative-color: #dc2626;
     --neutral-color: #f59e0b;
-    --bull-card-bg: #f0fdf4;
-    --bear-card-bg: #fef2f2;
-    --table-row-hover-bg: #f0f9ff;
+
     /* Màu cho thước đo RSI */
     --rsi-track-color: #e5e7eb;
     --rsi-overbought-color: #ef4444;
     --rsi-oversold-color: #22c55e;
     --rsi-neutral-color: #f59e0b;
+
     /* Màu cho thước đo Fear & Greed */
     --fng-track-color: #e5e7eb;
     --fng-extreme-fear-color: #dc2626;
@@ -50,23 +66,35 @@ File report.css dùng Bảng màu
     --fng-neutral-color: #6b7280;
     --fng-greed-color: #84cc16;
     --fng-extreme-greed-color: #22c55e;
-    /* THÊM MỚI: Màu cho các Icon H2 */
-    --icon-color-summary: #3b82f6;      /* Blue */
-    --icon-color-macro-legal: #f59e0b;   /* Amber */
-    --icon-color-on-chain-sentiment: #14b8a6; /* Teal */
-    --icon-color-btc-analysis: #f97316;  /* Orange */
-    --icon-color-eth-analysis: #6366f1;  /* Indigo */
-    --icon-color-market-activity: #22c55e; /* Green */
-    --icon-color-expert-outlook: #8b5cf6;/* Violet */
-    --icon-color-outlook: #d946ef;      /* Fuchsia */
 }
 
+/* --- Bảng màu cho Dark Mode --- */
+[data-theme="dark"] {
+    --bg-primary: #0d1117;
+    --bg-secondary: #161b22;
+    --text-primary: #e5e7eb;
+    --text-secondary: #9ca3af;
+    --text-accent: #818cf8;
+    --border-color: #30363d;
+    --accent-color: #818cf8;
+    --positive-color: #22c55e;
+    --negative-color: #ef4444;
+    --neutral-color: #f59e0b;
+}
+```
+-   **Phạm vi (Scope):** Tất cả các selector trong report.css phải được giới hạn trong #report-container (ví dụ: #report-container h2).
+### 5.3. report.js
+-   **Thư viện đồ họa:** Sẵn sàng sử dụng các thư viện vẽ biểu đồ phổ biến (như Chart.js, D3.js, hoặc vẽ SVG thủ công) để tạo ra các đồ thị trực quan.
 
-file report.css các biến có thêm #report-container
-ví du: #report-container section
-        #report-container h2
-        #report-container h3
+-   **Đa dạng hóa biểu đồ:** Không chỉ giới hạn ở biểu đồ dạng đồng hồ đo (gauge). Hãy xem xét việc sử dụng:
 
-file report.js chỉ gồm các hàm vẽ biểu đồ, vẽ chỉ số,..
-    có hàm initializeAllGauges(); để file main.js gọi sau khi load các section xong.
-Trình bày đẹp, trực quan.
+    -   **Biểu đồ đường (Line Chart):** Cho dữ liệu theo chuỗi thời gian.
+
+    -   **Biểu đồ cột (Bar Chart):** Để so sánh các hạng mục.
+
+    -   **Biểu đồ tròn (Pie/Doughnut Chart):** Cho dữ liệu về tỷ lệ, phân bổ.
+
+    -   **Sparklines:** Các biểu đồ đường nhỏ gọn nằm bên trong bảng dữ liệu.
+
+-   **Hàm khởi tạo:** Cung cấp một hàm chính gọi là initializeAllVisuals(), để gọi và vẽ tất cả các biểu đồ cần thiết.
+-   **Hàm trong report.js thêm hậu tố :** Các hàm trong report.js thêm _report để tránh trùng tên hàm, ví dụ: createGauge_report, createRsiGauge_report.
