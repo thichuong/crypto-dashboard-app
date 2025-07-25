@@ -1,59 +1,69 @@
-/* --- Styles cho Báo cáo --- */
+/* --- report.css --- */
+/* Tất cả style đều được giới hạn trong #report-container */
 
-#report-container .report-section {
+#report-container {
+    padding: 1rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text-primary);
+}
+
+#report-container section {
     background-color: var(--bg-secondary);
     border: 1px solid var(--border-color);
     border-radius: 12px;
+    padding: 1.5rem;
     margin-bottom: 2rem;
-    padding: 1.5rem 2rem;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease-in-out;
 }
 
 #report-container .section-title {
     font-size: 1.75rem;
-    font-weight: 700;
     color: var(--text-primary);
-    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--border-color);
     padding-bottom: 0.75rem;
-    border-bottom: 2px solid var(--accent-color);
+    margin-top: 0;
+    margin-bottom: 1.5rem;
     display: flex;
     align-items: center;
+    gap: 0.75rem;
 }
 
-#report-container .section-title i {
-    margin-right: 0.75rem;
-    color: var(--text-accent);
-    font-size: 1.5rem;
+#report-container .section-title .icon {
+    color: var(--accent-color);
 }
 
 #report-container h3 {
     font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--text-primary);
+    color: var(--text-accent);
     margin-top: 1.5rem;
     margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
 }
 
-#report-container h3 i {
-    margin-right: 0.5rem;
-    font-size: 1.1rem;
-    color: var(--text-secondary);
-}
-
-#report-container p, #report-container li {
-    color: var(--text-secondary);
+#report-container p,
+#report-container li {
     line-height: 1.6;
+    color: var(--text-secondary);
 }
 
 #report-container ul {
-    padding-left: 20px;
+    list-style-type: none;
+    padding-left: 0;
 }
 
-#report-container li {
+#report-container ul li {
+    padding-left: 1.5rem;
+    position: relative;
     margin-bottom: 0.5rem;
+}
+
+#report-container ul li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--accent-color);
+    font-weight: bold;
+    font-size: 1.2rem;
+    line-height: 1.6;
 }
 
 #report-container strong {
@@ -61,146 +71,117 @@
     font-weight: 600;
 }
 
-/* Stat Grid */
-#report-container .stat-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    margin: 1.5rem 0;
-}
-
-#report-container .stat-card {
-    background-color: var(--bg-primary);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 1rem;
-    text-align: center;
-}
-
-#report-container .stat-card h4 {
-    margin: 0 0 0.5rem 0;
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    font-weight: 500;
-}
-
-#report-container .stat-card .value {
-    margin: 0;
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--text-primary);
-}
-
-#report-container .stat-card .change {
-    margin: 0.25rem 0 0 0;
-    font-size: 0.9rem;
-}
-
-/* Chart Layout */
-#report-container .chart-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-    margin: 1.5rem 0;
-}
-
-#report-container .chart-card {
-    background: var(--bg-primary);
-    border: 1px solid var(--border-color);
-    padding: 1.5rem;
-    border-radius: 8px;
-}
-#report-container .chart-card.wide {
-    grid-column: 1 / -1;
-}
-
-#report-container .chart-card h3 {
-    margin-top: 0;
-}
-
-/* Table */
-#report-container .table-container {
-    overflow-x: auto;
-    margin-top: 1.5rem;
-}
-
-#report-container .data-table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 600px;
-}
-
-#report-container .data-table caption {
-    caption-side: bottom;
-    text-align: right;
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-    margin-top: 0.5rem;
-}
-
-#report-container .data-table th, #report-container .data-table td {
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid var(--border-color);
-    text-align: left;
-}
-
-#report-container .data-table thead th {
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
+#report-container .positive {
+    color: var(--positive-color);
     font-weight: 600;
 }
 
-#report-container .data-table tbody tr:hover {
+#report-container .negative {
+    color: var(--negative-color);
+    font-weight: 600;
+}
+
+/* --- Table Styles --- */
+#report-container .table-wrapper {
+    overflow-x: auto;
+}
+#report-container .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+#report-container .data-table th,
+#report-container .data-table td {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    text-align: left;
+    vertical-align: middle;
+}
+
+#report-container .data-table thead {
     background-color: var(--bg-primary);
 }
 
-/* Utilities */
-#report-container .positive { color: var(--positive-color); }
-#report-container .negative { color: var(--negative-color); }
-#report-container .neutral { color: var(--neutral-color); }
+#report-container .data-table th {
+    font-weight: 600;
+    color: var(--text-primary);
+}
 
-/* Dual Column Layout */
-#report-container .dual-column {
+#report-container .data-table tbody tr:nth-child(even) {
+    background-color: var(--bg-primary);
+}
+
+/* --- Visual and Panel Styles --- */
+.dual-panel {
     display: flex;
     gap: 2rem;
-    flex-wrap: wrap;
-    margin-top: 1.5rem;
+    align-items: center;
+}
+.panel-content { flex: 1; }
+.panel-visual {
+    flex: 0 0 250px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
-#report-container .dual-column .column {
-    flex: 1;
-    min-width: 300px;
-    border: 1px solid var(--border-color);
-    padding: 1.5rem;
-    border-radius: 8px;
-    background: var(--bg-primary);
+#fear-greed-gauge-container,
+#rsi-gauge-container,
+#dominance-doughnut-container,
+#etf-flow-bar-chart-container {
+    width: 100%;
+    min-height: 200px;
 }
 
-/* Legend for Doughnut Chart */
-#report-container .legend {
+.doughnut-legend {
     display: flex;
     justify-content: center;
     gap: 1rem;
     margin-top: 1rem;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
 }
-#report-container .legend div {
-    display: flex;
-    align-items: center;
-}
-#report-container .legend .dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    margin-right: 0.5rem;
-}
-#report-container .legend .dot.btc { background-color: var(--neutral-color); }
-#report-container .legend .dot.altcoin { background-color: var(--accent-color); }
+.doughnut-legend span { display: flex; align-items: center; gap: 0.3rem; }
 
-/* Responsive table columns */
-@media (max-width: 992px) {
-    .d-none.d-lg-table-cell { display: none !important; }
+/* --- Special Box Styles --- */
+.info-box, .expert-opinion {
+    background-color: var(--bg-primary);
+    border-left: 4px solid var(--accent-color);
+    padding: 1rem 1.5rem;
+    margin: 1.5rem 0;
+    border-radius: 0 8px 8px 0;
 }
-@media (max-width: 768px) {
-    .d-none.d-md-table-cell { display: none !important; }
+.info-box h4, .expert-opinion h4 { margin-top: 0; color: var(--text-primary); }
+.info-box p, .expert-opinion p { margin-bottom: 0; }
+
+/* --- Scenarios Grid --- */
+.scenarios-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+.scenario-box {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+.scenario-box h3 { margin-top: 0; }
+.scenario-box h3 .fa-solid { margin-right: 0.5rem; }
+
+/* --- Responsive Design --- */
+@media (max-width: 992px) {
+    .dual-panel {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .panel-visual {
+        flex: 1;
+        margin-top: 2rem;
+    }
+    .scenarios-grid {
+        grid-template-columns: 1fr;
+    }
 }

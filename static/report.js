@@ -1,132 +1,98 @@
 /**
  * report.js
- * Chứa logic trực quan hóa dữ liệu cho báo cáo thị trường.
- * Các hàm vẽ biểu đồ thực tế (createGauge, createBarChart, etc.) được giả định là có sẵn trong một file khác (vd: chart.js).
+ * Chứa các hàm để vẽ biểu đồ cho báo cáo phân tích thị trường crypto.
+ * Phụ thuộc vào chart.js để vẽ các biểu đồ thực tế.
  */
 
-/**
- * Khởi tạo biểu đồ đồng hồ đo cho Chỉ số Sợ hãi và Tham lam.
- * @private
- */
-function initializeFearGreedGauge_report() {
-    const container = document.getElementById('fear-greed-gauge-container');
-    if (!container) return;
-
-    const value = 71; // Giá trị "Tham lam" từ báo cáo
-    const config = {
-        min: 0,
-        max: 100,
-        segments: [
-            { limit: 25, color: 'var(--fng-extreme-fear-color)', label: 'Sợ Hãi Tột Độ' },
-            { limit: 45, color: 'var(--fng-fear-color)', label: 'Sợ Hãi' },
-            { limit: 55, color: 'var(--fng-neutral-color)', label: 'Trung Lập' },
-            { limit: 75, color: 'var(--fng-greed-color)', label: 'Tham Lam' },
-            { limit: 100, color: 'var(--fng-extreme-greed-color)', label: 'Tham Lam Tột Độ' }
-        ]
-    };
-    
-    // Giả định hàm createGauge tồn tại
-    if (typeof createGauge === 'function') {
-        createGauge(container, value, config);
-    } else {
-        container.innerHTML = `<p>Lỗi: Không tìm thấy hàm createGauge().</p>`;
-    }
-}
-
-/**
- * Khởi tạo biểu đồ đồng hồ đo cho Chỉ số Sức mạnh Tương đối (RSI).
- * @private
- */
-function initializeRsiGauge_report() {
-    const container = document.getElementById('rsi-gauge-container');
-    if (!container) return;
-
-    const value = 75; // Giá trị "Hơi quá mua" trong khoảng 70-80 từ báo cáo
-    const config = {
-        min: 0,
-        max: 100,
-        segments: [
-            { limit: 30, color: 'var(--rsi-oversold-color)', label: 'Quá Bán' },
-            { limit: 70, color: 'var(--rsi-neutral-color)', label: 'Trung Lập' },
-            { limit: 100, color: 'var(--rsi-overbought-color)', label: 'Quá Mua' }
-        ]
-    };
-
-    if (typeof createGauge === 'function') {
-        createGauge(container, value, config);
-    }
-}
-
-/**
- * Khởi tạo biểu đồ tròn cho Tỷ lệ thống trị của Bitcoin.
- * @private
- */
-function initializeBtcDominanceChart_report() {
-    const container = document.getElementById('btc-dominance-chart-container');
-    if (!container) return;
-    
-    // Dựa trên dữ liệu báo cáo (~59-61%), lấy trung bình là 59%
-    const data = [
-        { value: 59, color: 'var(--neutral-color)' }, // Bitcoin
-        { value: 41, color: 'var(--accent-color)' }    // Altcoins
-    ];
-
-    if (typeof createDoughnutChart === 'function') {
-        createDoughnutChart(container, data);
-    }
-}
-
-/**
- * Khởi tạo biểu đồ cột cho dòng vốn ETF.
- * @private
- */
-function initializeEtfFlowChart_report() {
-    const container = document.getElementById('etf-flow-chart-container');
-    if (!container) return;
-
-    // Dữ liệu từ báo cáo (tính đến ngày 21-23/7)
-    const data = [
-        { label: 'Bitcoin ETFs', value: 5.65, color: 'var(--neutral-color)' },
-        { label: 'Ethereum ETFs', value: 4.07, color: 'var(--accent-color)' }
-    ];
-    
-    // Ghi chú: Trục Y biểu thị Tỷ USD
-    if (typeof createBarChart === 'function') {
-        createBarChart(container, data, { valueSuffix: 'B', title: 'Dòng vốn ròng (Tỷ USD)' });
-    }
-}
-
-/**
- * Khởi tạo biểu đồ đường cho giá Bitcoin giả định.
- * @private
- */
-function initializeBtcPriceChart_report() {
-    const container = document.getElementById('btc-price-chart-container');
-    if (!container) return;
-    
-    // Dữ liệu giả định dựa trên mô tả trong báo cáo (tăng và củng cố)
-    const data = [118500, 119200, 121500, 120800, 122500, 119000, 120000];
-    const options = {
-        valuePrefix: '$',
-        color: 'var(--accent-color)'
-    };
-    
-    if (typeof createLineChart === 'function') {
-        createLineChart(container, data, options);
-    }
-}
-
-
-/**
- * Hàm chính để khởi tạo tất cả các thành phần trực quan hóa trong báo cáo.
- * Sẽ được gọi sau khi report.html được tải vào DOM.
- */
+// Hàm khởi tạo chính cho tất cả các hình ảnh trong báo cáo
 function initializeAllVisuals_report() {
-    console.log("Initializing report visuals...");
-    initializeFearGreedGauge_report();
-    initializeRsiGauge_report();
-    initializeBtcDominanceChart_report();
-    initializeEtfFlowChart_report();
-    initializeBtcPriceChart_report();
-    console.log("Report visuals initialized.");
+    try {
+        setupFearGreedGauge_report();
+        setupRsiGauge_report();
+        setupDominanceDoughnut_report();
+        setupEtfFlowBarChart_report();
+    } catch (error) {
+        console.error("Lỗi khi khởi tạo các biểu đồ báo cáo:", error);
+    }
 }
+
+/**
+ * Thiết lập biểu đồ đồng hồ cho Chỉ số Sợ hãi & Tham lam.
+ */
+function setupFearGreedGauge_report() {
+    const container = document.getElementById('fear-greed-gauge-container');
+    if (!container || typeof createGauge !== 'function') return;
+
+    const value = 71; // Tham lam
+    const config = {
+        min: 0,
+        max: 100,
+        segments: [
+            { limit: 25, color: 'var(--fng-extreme-fear-color)', label: 'Sợ hãi Cực độ' },
+            { limit: 45, color: 'var(--fng-fear-color)', label: 'Sợ hãi' },
+            { limit: 55, color: 'var(--fng-neutral-color)', label: 'Trung tính' },
+            { limit: 75, color: 'var(--fng-greed-color)', label: 'Tham lam' },
+            { limit: 100, color: 'var(--fng-extreme-greed-color)', label: 'Tham lam Cực độ' }
+        ]
+    };
+    createGauge(container, value, config);
+}
+
+/**
+ * Thiết lập biểu đồ đồng hồ cho Chỉ số Sức mạnh Tương đối (RSI).
+ */
+function setupRsiGauge_report() {
+    const container = document.getElementById('rsi-gauge-container');
+    if (!container || typeof createGauge !== 'function') return;
+    
+    const value = 55; // Trung tính
+    const config = {
+        min: 0,
+        max: 100,
+        segments: [
+            { limit: 30, color: 'var(--rsi-oversold-color)', label: 'Quá bán' },
+            { limit: 70, color: 'var(--rsi-neutral-color)', label: 'Trung tính' },
+            { limit: 100, color: 'var(--rsi-overbought-color)', label: 'Quá mua' }
+        ]
+    };
+    createGauge(container, value, config);
+}
+
+/**
+ * Thiết lập biểu đồ tròn (Doughnut) cho Tỷ lệ Thống trị Thị trường.
+ */
+function setupDominanceDoughnut_report() {
+    const container = document.getElementById('dominance-doughnut-container');
+    if (!container || typeof createDoughnutChart !== 'function') return;
+
+    // Định nghĩa một vài màu đặc trưng trong CSS chính nếu cần, vd:
+    // :root { --btc-color: #f7931a; --eth-color: #627eea; --alt-color: #9ca3af; }
+    const data = [
+        { value: 59.7, color: 'var(--neutral-color)' }, // BTC
+        { value: 11.5, color: 'var(--accent-color)' }, // ETH
+        { value: 100 - 59.7 - 11.5, color: 'var(--text-secondary)' } // Others
+    ];
+
+    createDoughnutChart(container, data);
+}
+
+/**
+ * Thiết lập biểu đồ cột so sánh dòng vốn ròng ETF.
+ */
+function setupEtfFlowBarChart_report() {
+    const container = document.getElementById('etf-flow-bar-chart-container');
+    if (!container || typeof createBarChart !== 'function') return;
+
+    const data = [
+        { label: 'Bitcoin ETFs', value: 827, color: 'var(--neutral-color)'},
+        { label: 'Ethereum ETFs', value: 2400, color: 'var(--accent-color)'}
+    ];
+
+    createBarChart(container, data);
+}
+
+
+// Chạy hàm khởi tạo chính khi nội dung DOM đã được tải hoàn toàn
+// Điều này đảm bảo các phần tử HTML đã tồn tại trước khi script cố gắng truy cập chúng.
+// Trong dự án thực tế, hàm này sẽ được gọi bởi main.js sau khi tải report.html.
+// document.addEventListener('DOMContentLoaded', initializeAllVisuals_report);
