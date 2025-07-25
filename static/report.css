@@ -1,60 +1,59 @@
-/* --- report.css --- */
-/* Tất cả các style đều được giới hạn trong #report-container */
+/* --- Styles cho Báo cáo --- */
 
-#report-container {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    color: var(--text-primary);
-    line-height: 1.6;
-}
-
-#report-container section {
+#report-container .report-section {
     background-color: var(--bg-secondary);
     border: 1px solid var(--border-color);
     border-radius: 12px;
-    padding: 2rem;
     margin-bottom: 2rem;
+    padding: 1.5rem 2rem;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
     transition: all 0.3s ease-in-out;
 }
 
-#report-container section:hover {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -4px rgba(0, 0, 0, 0.07);
-    transform: translateY(-3px);
-}
-
-#report-container h2 {
+#report-container .section-title {
     font-size: 1.75rem;
     font-weight: 700;
     color: var(--text-primary);
-    margin-top: 0;
     margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--accent-color);
     display: flex;
     align-items: center;
-    gap: 0.8rem;
-    border-bottom: 2px solid var(--border-color);
-    padding-bottom: 0.75rem;
 }
 
-#report-container h2 .fas,
-#report-container h2 .fab {
-    color: var(--accent-color);
+#report-container .section-title i {
+    margin-right: 0.75rem;
+    color: var(--text-accent);
     font-size: 1.5rem;
 }
 
 #report-container h3 {
     font-size: 1.25rem;
     font-weight: 600;
-    color: var(--text-accent);
+    color: var(--text-primary);
     margin-top: 1.5rem;
     margin-bottom: 1rem;
     display: flex;
     align-items: center;
-    gap: 0.6rem;
 }
 
-#report-container p {
-    margin-bottom: 1rem;
+#report-container h3 i {
+    margin-right: 0.5rem;
+    font-size: 1.1rem;
     color: var(--text-secondary);
+}
+
+#report-container p, #report-container li {
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+#report-container ul {
+    padding-left: 20px;
+}
+
+#report-container li {
+    margin-bottom: 0.5rem;
 }
 
 #report-container strong {
@@ -62,193 +61,146 @@
     font-weight: 600;
 }
 
-#report-container em {
-    color: var(--text-accent);
-    font-style: italic;
-}
-
-/* Stat Grid Styling */
+/* Stat Grid */
 #report-container .stat-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
 }
 
 #report-container .stat-card {
     background-color: var(--bg-primary);
     border: 1px solid var(--border-color);
     border-radius: 8px;
-    padding: 1.25rem;
+    padding: 1rem;
     text-align: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
 }
 
-#report-container .stat-value {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: var(--accent-color);
-    line-height: 1.2;
-}
-
-#report-container .stat-label {
+#report-container .stat-card h4 {
+    margin: 0 0 0.5rem 0;
     font-size: 0.9rem;
     color: var(--text-secondary);
-    margin-top: 0.5rem;
+    font-weight: 500;
 }
 
-/* Key Points List Styling */
-#report-container .key-points {
-    list-style: none;
-    padding-left: 0;
+#report-container .stat-card .value {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
 }
 
-#report-container .key-points li {
-    position: relative;
-    padding-left: 1.5rem;
-    margin-bottom: 0.75rem;
-    color: var(--text-secondary);
+#report-container .stat-card .change {
+    margin: 0.25rem 0 0 0;
+    font-size: 0.9rem;
 }
 
-#report-container .key-points li::before {
-    content: '\f058'; /* Font Awesome check-circle */
-    font-family: 'Font Awesome 5 Free';
-    font-weight: 900;
-    position: absolute;
-    left: 0;
-    top: 4px;
-    color: var(--positive-color);
-}
-
-/* Analysis Grid Layout */
-#report-container .analysis-grid {
+/* Chart Layout */
+#report-container .chart-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 1.5rem;
+    margin: 1.5rem 0;
 }
 
-#report-container .analysis-card {
-    background-color: var(--bg-primary);
-    border-radius: 8px;
-    padding: 1.5rem;
+#report-container .chart-card {
+    background: var(--bg-primary);
     border: 1px solid var(--border-color);
+    padding: 1.5rem;
+    border-radius: 8px;
 }
-
-#report-container .analysis-card.full-width {
+#report-container .chart-card.wide {
     grid-column: 1 / -1;
 }
 
-/* Placeholders for visuals */
-#report-container .gauge-container,
-#report-container .chart-placeholder {
-    min-height: 200px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    margin-top: 1rem;
+#report-container .chart-card h3 {
+    margin-top: 0;
 }
 
-#report-container .chart-placeholder {
-    background-color: var(--bg-secondary);
-    border-radius: 8px;
-    padding: 1rem;
-}
-
-/* Table Styling */
+/* Table */
 #report-container .table-container {
     overflow-x: auto;
+    margin-top: 1.5rem;
 }
 
 #report-container .data-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 1.5rem;
+    min-width: 600px;
 }
 
-#report-container .data-table th,
-#report-container .data-table td {
+#report-container .data-table caption {
+    caption-side: bottom;
+    text-align: right;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+}
+
+#report-container .data-table th, #report-container .data-table td {
     padding: 0.75rem 1rem;
     border-bottom: 1px solid var(--border-color);
     text-align: left;
-    vertical-align: middle;
 }
 
 #report-container .data-table thead th {
     background-color: var(--bg-primary);
+    color: var(--text-primary);
     font-weight: 600;
-    font-size: 0.9rem;
-    color: var(--text-secondary);
 }
 
 #report-container .data-table tbody tr:hover {
     background-color: var(--bg-primary);
 }
 
-#report-container .data-table .price {
-    font-family: 'Courier New', Courier, monospace;
-    font-weight: 600;
-}
+/* Utilities */
+#report-container .positive { color: var(--positive-color); }
+#report-container .negative { color: var(--negative-color); }
+#report-container .neutral { color: var(--neutral-color); }
 
-#report-container .data-table .positive {
-    color: var(--positive-color);
-    font-weight: 600;
-}
-
-#report-container .data-table .negative {
-    color: var(--negative-color);
-    font-weight: 600;
-}
-
-/* Summary Layout */
-#report-container .summary-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+/* Dual Column Layout */
+#report-container .dual-column {
+    display: flex;
     gap: 2rem;
+    flex-wrap: wrap;
     margin-top: 1.5rem;
 }
 
-#report-container .summary-column ul {
-    list-style: none;
-    padding-left: 0;
+#report-container .dual-column .column {
+    flex: 1;
+    min-width: 300px;
+    border: 1px solid var(--border-color);
+    padding: 1.5rem;
+    border-radius: 8px;
+    background: var(--bg-primary);
 }
 
-#report-container .summary-column li {
-    padding-left: 1.75rem;
-    position: relative;
-    margin-bottom: 0.75rem;
+/* Legend for Doughnut Chart */
+#report-container .legend {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    font-size: 0.9rem;
 }
-
-#report-container .summary-column li::before {
-    font-family: 'Font Awesome 5 Free';
-    font-weight: 900;
-    position: absolute;
-    left: 0;
-    top: 4px;
-    font-size: 1rem;
+#report-container .legend div {
+    display: flex;
+    align-items: center;
 }
-
-#report-container .bull-case h3 { color: var(--positive-color); }
-#report-container .bear-case h3 { color: var(--negative-color); }
-
-#report-container .bull-case li::before {
-    content: '\f062'; /* arrow-up */
-    color: var(--positive-color);
+#report-container .legend .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 0.5rem;
 }
-#report-container .bear-case li::before {
-    content: '\f063'; /* arrow-down */
-    color: var(--negative-color);
-}
+#report-container .legend .dot.btc { background-color: var(--neutral-color); }
+#report-container .legend .dot.altcoin { background-color: var(--accent-color); }
 
-/* Responsive adjustments */
+/* Responsive table columns */
+@media (max-width: 992px) {
+    .d-none.d-lg-table-cell { display: none !important; }
+}
 @media (max-width: 768px) {
-    #report-container section {
-        padding: 1.5rem;
-    }
-    #report-container .analysis-grid,
-    #report-container .summary-grid {
-        grid-template-columns: 1fr;
-    }
+    .d-none.d-md-table-cell { display: none !important; }
 }

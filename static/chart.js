@@ -41,7 +41,7 @@ function describeArc(x, y, radius, startAngle, endAngle) {
  * Thiết kế mới tinh tế hơn, kim chỉ mượt mà và có hiệu ứng.
  * @param {HTMLElement} container - Element DOM để chứa biểu đồ.
  * @param {number} value - Giá trị hiện tại.
- * @param {object} cccc - Cấu hình chi tiết cho biểu đồ.
+ * @param {object} config - Cấu hình chi tiết cho biểu đồ.
  */
 function createGauge(container, value, config) {
     if (!container) return;
@@ -256,7 +256,14 @@ function createBarChart(container, data) {
  */
 function createDoughnutChart(container, data) {
     if (!container) return;
-    const width = 150, height = 150, radius = 70, hole = 50;
+    // [SỬA LỖI] Tăng kích thước để viền không bị cắt và căn giữa.
+    // Bán kính đường tròn (radius) là 70, độ dày stroke là 20. Cạnh ngoài cùng của stroke
+    // sẽ ở bán kính 70 + (20/2) = 80. Do đó, viewBox cần có kích thước 160x160.
+    const width = 160, height = 160, radius = 70, hole = 50;
+    const strokeWidth = radius - hole;
+    const cx = width / 2;
+    const cy = height / 2;
+
     const total = data.reduce((sum, d) => sum + d.value, 0);
     const circumference = 2 * Math.PI * radius;
     let startAngle = 0;
@@ -264,21 +271,22 @@ function createDoughnutChart(container, data) {
 
     data.forEach((d, i) => {
         const percentage = d.value / total;
-        const dashoffset = circumference * (1 - percentage);
+        const finalDashoffset = circumference * (1 - percentage);
         const rotation = startAngle;
         segments += `
-            <circle r="${radius}" cx="${width/2}" cy="${height/2}"
-                    fill="transparent" stroke="${d.color}" stroke-width="${radius - hole}"
+            <circle r="${radius}" cx="${cx}" cy="${cy}"
+                    fill="transparent" stroke="${d.color}" stroke-width="${strokeWidth}"
                     stroke-dasharray="${circumference}"
                     stroke-dashoffset="${circumference}"
-                    transform="rotate(${rotation - 90} ${width/2} ${height/2})"
+                    transform="rotate(${rotation - 90} ${cx} ${cy})"
                     class="doughnut-segment"
-                    style="animation-delay: ${i * 150}ms;" />`;
+                    style="--final-offset: ${finalDashoffset}; animation-delay: ${i * 150}ms;" />`;
         startAngle += percentage * 360;
     });
 
+    // Thêm `margin: auto` để căn giữa biểu đồ trong container cha.
     container.innerHTML = `
-        <div style="position: relative; width: ${width}px; height: ${height}px;">
+        <div style="position: relative; width: ${width}px; height: ${height}px; margin: auto;">
             <svg viewBox="0 0 ${width} ${height}" style="position: absolute; top: 0; left: 0;">${segments}</svg>
             <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
                 <span style="font-size: 24px; font-weight: 700; color: var(--text-primary);">${total.toLocaleString()}</span>
@@ -289,7 +297,7 @@ function createDoughnutChart(container, data) {
                 animation: fill-doughnut 1s forwards cubic-bezier(0.4, 0, 0.2, 1);
             }
             @keyframes fill-doughnut {
-                to { stroke-dashoffset: 0; }
+                to { stroke-dashoffset: var(--final-offset); }
             }
         </style>
     `;
