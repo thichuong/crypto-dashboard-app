@@ -59,21 +59,23 @@ function setupRsiGauge_report() {
 }
 
 /**
- * Thiết lập biểu đồ tròn (Doughnut) cho Tỷ lệ Thống trị Thị trường.
+ * [ĐÃ SỬA] Thiết lập biểu đồ tròn (Doughnut) cho Tỷ lệ Thống trị Thị trường.
  */
 function setupDominanceDoughnut_report() {
     const container = document.getElementById('dominance-doughnut-container');
     if (!container || typeof createDoughnutChart !== 'function') return;
 
-    // Định nghĩa một vài màu đặc trưng trong CSS chính nếu cần, vd:
-    // :root { --btc-color: #f7931a; --eth-color: #627eea; --alt-color: #9ca3af; }
+    const btcDominance = 59.7;
+    const ethDominance = 11.5;
+    const otherDominance = 100 - btcDominance - ethDominance;
+
     const data = [
-        { value: 59.7, color: 'var(--neutral-color)' }, // BTC
-        { value: 11.5, color: 'var(--accent-color)' }, // ETH
-        { value: 100 - 59.7 - 11.5, color: 'var(--text-secondary)' } // Others
+        { value: btcDominance, color: 'var(--neutral-color)', label: 'Bitcoin' },
+        { value: ethDominance, color: 'var(--accent-color)', label: 'Ethereum' },
+        { value: otherDominance, color: 'var(--text-secondary)', label: 'Altcoins khác' }
     ];
 
-    createDoughnutChart(container, data);
+    createDoughnutChart(container, data, 'Tỷ lệ Thống trị');
 }
 
 /**
@@ -90,9 +92,3 @@ function setupEtfFlowBarChart_report() {
 
     createBarChart(container, data);
 }
-
-
-// Chạy hàm khởi tạo chính khi nội dung DOM đã được tải hoàn toàn
-// Điều này đảm bảo các phần tử HTML đã tồn tại trước khi script cố gắng truy cập chúng.
-// Trong dự án thực tế, hàm này sẽ được gọi bởi main.js sau khi tải report.html.
-// document.addEventListener('DOMContentLoaded', initializeAllVisuals_report);

@@ -249,30 +249,37 @@ function createBarChart(container, data) {
 }
 
 /**
- * [CẢI TIẾN] TẠO BIỂU ĐỒ TRÒN (DOUGHNUT CHART)
- * Thêm hiệu ứng và hiển thị tổng giá trị ở giữa.
- * @param {HTMLElement} container - Element DOM.
- * @param {Array<object>} data - Dữ liệu, vd: [{value: 10, color: 'blue'}]
+ * [ĐÃ SỬA] TẠO BIỂU ĐỒ TRÒN (DOUGHNUT CHART)
+ * Hiển thị tiêu đề ở giữa, chú giải động và bỏ giá trị trên các phần.
+ * @param {HTMLElement} container - Element DOM để chứa biểu đồ.
+ * @param {Array<object>} data - Dữ liệu, vd: [{value: 10, color: 'blue', label: 'Mục A'}]
+ * @param {string} [title=''] - Tiêu đề hiển thị ở giữa biểu đồ.
  */
-function createDoughnutChart(container, data) {
-    if (!container) return;
-    // [SỬA LỖI] Tăng kích thước để viền không bị cắt và căn giữa.
-    // Bán kính đường tròn (radius) là 70, độ dày stroke là 20. Cạnh ngoài cùng của stroke
-    // sẽ ở bán kính 70 + (20/2) = 80. Do đó, viewBox cần có kích thước 160x160.
-    const width = 160, height = 160, radius = 70, hole = 50;
+function createDoughnutChart(container, data, title = '') {
+    if (!container || !data || data.length === 0) return;
+
+    const width = 180, height = 180, hole = 55;
+    const radius = Math.min(width, height) / 2 - 5;
     const strokeWidth = radius - hole;
     const cx = width / 2;
     const cy = height / 2;
 
     const total = data.reduce((sum, d) => sum + d.value, 0);
+    if (total === 0) return;
+
     const circumference = 2 * Math.PI * radius;
     let startAngle = 0;
     let segments = '';
+    let legendItems = '';
 
     data.forEach((d, i) => {
         const percentage = d.value / total;
+        if (percentage === 0) return;
+
         const finalDashoffset = circumference * (1 - percentage);
         const rotation = startAngle;
+        const endAngle = startAngle + percentage * 360;
+
         segments += `
             <circle r="${radius}" cx="${cx}" cy="${cy}"
                     fill="transparent" stroke="${d.color}" stroke-width="${strokeWidth}"
@@ -281,16 +288,31 @@ function createDoughnutChart(container, data) {
                     transform="rotate(${rotation - 90} ${cx} ${cy})"
                     class="doughnut-segment"
                     style="--final-offset: ${finalDashoffset}; animation-delay: ${i * 150}ms;" />`;
-        startAngle += percentage * 360;
+
+        const displayValue = (percentage * 100).toFixed(1) + '%';
+
+        legendItems += `
+            <span class="legend-item">
+                <span class="legend-color-box" style="background-color: ${d.color};"></span>
+                <span>${d.label}: <strong>${displayValue}</strong></span>
+            </span>`;
+        
+        startAngle = endAngle;
     });
 
-    // Thêm `margin: auto` để căn giữa biểu đồ trong container cha.
     container.innerHTML = `
         <div style="position: relative; width: ${width}px; height: ${height}px; margin: auto;">
-            <svg viewBox="0 0 ${width} ${height}" style="position: absolute; top: 0; left: 0;">${segments}</svg>
-            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
-                <span style="font-size: 24px; font-weight: 700; color: var(--text-primary);">${total.toLocaleString()}</span>
+            <svg viewBox="0 0 ${width} ${height}" style="position: absolute; top: 0; left: 0; overflow: visible;">
+                ${segments}
+            </svg>
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: ${hole * 2 * 0.85}px; pointer-events: none;">
+                <span style="font-size: 1rem; font-weight: 600; color: var(--text-primary); line-height: 1.25;">
+                    ${title}
+                </span>
             </div>
+        </div>
+        <div class="doughnut-legend">
+            ${legendItems}
         </div>
         <style>
             .doughnut-segment {
@@ -298,6 +320,26 @@ function createDoughnutChart(container, data) {
             }
             @keyframes fill-doughnut {
                 to { stroke-dashoffset: var(--final-offset); }
+            }
+            .doughnut-legend {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                gap: 0.6rem;
+                margin-top: 1.25rem;
+                font-size: 0.85rem;
+                color: var(--text-secondary);
+            }
+            .legend-item {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            .legend-color-box {
+                width: 12px;
+                height: 12px;
+                border-radius: 3px;
+                flex-shrink: 0;
             }
         </style>
     `;

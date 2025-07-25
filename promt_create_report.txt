@@ -150,6 +150,9 @@ function createBarChart(container, data) { /* ... */ }
  * @param {Array<object>} data - **Đầu vào:** Mảng các đối tượng, mỗi đối tượng đại diện cho một phần của biểu đồ.
  * - {number} value: Giá trị của phần đó, dùng để tính tỷ lệ.
  * - {string} color: Màu của phần đó.
- * @returns {void} **Đầu ra:** Hàm này không trả về giá trị. Nó sẽ vẽ một biểu đồ doughnut SVG vào bên trong `container`.
+ * - {string} label: Nhãn văn bản cho phần đó, sẽ được hiển thị trong chú giải.
+ * @param {string} [title=''] - **Đầu vào:** (Tùy chọn) Tiêu đề để hiển thị ở giữa biểu đồ.
+ * @returns {void} **Đầu ra:** Hàm này không trả về giá trị.
+ * Nó sẽ vẽ một biểu đồ doughnut SVG với tiêu đề ở giữa và một phần chú giải chi tiết vào trong `container`.
  */
-function createDoughnutChart(container, data) { /* ... */ }
+function createDoughnutChart(container, data, title = '') { /* ... */ }
