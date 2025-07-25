@@ -79,10 +79,21 @@ async function fetchBtcAndFearGreed() {
             <p class="text-sm font-semibold ${changeClass}">${change !== null ? change.toFixed(2) : 'N/A'}% (24h)</p>
         `;
 
-        // Cập nhật chỉ số Sợ hãi & Tham lam bằng đồng hồ đo
+        // Cập nhật chỉ số Sợ hãi & Tham lam bằng hàm createGauge
         const fngValue = parseInt(data.fng_value, 10);
         if (!isNaN(fngValue)) {
-            createFngGauge_index(fngContainer, fngValue, data.fng_classification);
+            const fngConfig = {
+                min: 0,
+                max: 100,
+                segments: [
+                    { limit: 24, color: 'var(--fng-extreme-fear-color)', label: 'Sợ hãi Cực độ' },
+                    { limit: 49, color: 'var(--fng-fear-color)', label: 'Sợ hãi' },
+                    { limit: 54, color: 'var(--fng-neutral-color)', label: 'Trung tính' },
+                    { limit: 74, color: 'var(--fng-greed-color)', label: 'Tham lam' },
+                    { limit: 100, color: 'var(--fng-extreme-greed-color)', label: 'Tham lam Cực độ' }
+                ]
+            };
+            createGauge(fngContainer, fngValue, fngConfig);
         } else {
             throw new Error('Giá trị F&G không hợp lệ.');
         }
@@ -112,78 +123,21 @@ async function fetchBtcRsi_index() {
             throw new Error('Không nhận được giá trị RSI.');
         }
         
-        createRsiGauge_index(container, rsiValue);
+        const rsiConfig = {
+            min: 0,
+            max: 100,
+            segments: [
+                { limit: 30, color: 'var(--rsi-oversold-color)', label: 'Quá bán' },
+                { limit: 70, color: 'var(--rsi-neutral-color)', label: 'Trung tính' },
+                { limit: 100, color: 'var(--rsi-overbought-color)', label: 'Quá mua' }
+            ]
+        };
+        createGauge(container, rsiValue, rsiConfig);
 
     } catch (error) {
         console.error('Lỗi fetchBtcRsi_index:', error);
         displayError('rsi-container', error.message);
     }
-}
-
-/**
- * Hàm chung để tạo đồng hồ đo
- * @param {HTMLElement} container - Element chứa biểu đồ
- * @param {number} value - Giá trị (0-100)
- * @param {string} label - Nhãn hiển thị
- * @param {string} colorVar - Biến màu CSS
- * @param {string} gaugeClass - Lớp CSS riêng cho đồng hồ đo
- */
-function createGauge_index(container, value, label, colorVar, gaugeClass) {
-    const val = Math.max(0, Math.min(100, value));
-    const radius = 80;
-    const circumference = 2 * Math.PI * radius;
-    const offset = circumference - (val / 100) * circumference;
-
-    container.innerHTML = `
-        <div class="gauge">
-            <svg class="gauge__body" viewBox="0 0 180 180">
-                <circle class="gauge__track" r="${radius}" cx="90" cy="90" style="stroke-dasharray: ${circumference};"></circle>
-                <circle class="gauge__fill ${gaugeClass}" r="${radius}" cx="90" cy="90" 
-                        style="stroke: ${colorVar}; stroke-dasharray: ${circumference}; stroke-dashoffset: ${offset};">
-                </circle>
-            </svg>
-            <div class="gauge__cover">
-                <div class="gauge__value">${Math.round(val)}</div>
-                <div class="gauge__label" style="color: ${colorVar};">${label}</div>
-            </div>
-        </div>
-    `;
-}
-
-/**
- * Tạo đồng hồ đo cho Fear & Greed Index
- * @param {HTMLElement} container
- * @param {number} value
- * @param {string} classification
- */
-function createFngGauge_index(container, value, classification) {
-    let colorVar;
-    if (value <= 24) colorVar = 'var(--fng-extreme-fear-color)';
-    else if (value <= 49) colorVar = 'var(--fng-fear-color)';
-    else if (value <= 54) colorVar = 'var(--fng-neutral-color)';
-    else if (value <= 74) colorVar = 'var(--fng-greed-color)';
-    else colorVar = 'var(--fng-extreme-greed-color)';
-    
-    createGauge_index(container, value, classification || 'N/A', colorVar, 'gauge__fill--fng');
-}
-
-/**
- * Tạo đồng hồ đo cho RSI
- * @param {HTMLElement} container
- * @param {number} value
- */
-function createRsiGauge_index(container, value) {
-    let label = 'Trung tính';
-    let colorVar = 'var(--rsi-neutral-color)';
-    if (value >= 70) {
-        label = 'Quá mua';
-        colorVar = 'var(--rsi-overbought-color)';
-    } else if (value <= 30) {
-        label = 'Quá bán';
-        colorVar = 'var(--rsi-oversold-color)';
-    }
-    
-    createGauge_index(container, value, label, colorVar, 'gauge__fill--rsi');
 }
 
 

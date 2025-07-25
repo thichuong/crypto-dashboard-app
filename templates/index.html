@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='report.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="{{ url_for('static', filename='chart.js') }}" defer></script>
     <script src="{{ url_for('static', filename='report.js') }}" defer></script>
     <script src="{{ url_for('static', filename='main.js') }}" defer></script>
 </head>
@@ -65,14 +66,14 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="card">
                     <h3 class="text-lg font-semibold text-gray-700 mb-4 text-center">Chỉ số Sợ hãi & Tham lam</h3>
-                    <div id="fear-greed-container" class="flex justify-center items-center">
-                        <div class="skeleton h-40 w-40 rounded-full"></div>
+                    <div id="fear-greed-container" class="w-72 h-72 mx-auto">
+                        <div class="skeleton h-full w-full rounded-full"></div>
                     </div>
                 </div>
                 <div class="card">
                     <h3 class="text-lg font-semibold text-gray-700 mb-4 text-center">Chỉ số Sức mạnh Tương đối (RSI 14) - BTC</h3>
-                    <div id="rsi-container" class="flex justify-center items-center">
-                        <div class="skeleton h-40 w-40 rounded-full"></div>
+                    <div id="rsi-container" class="w-72 h-72 mx-auto">
+                        <div class="skeleton h-full w-full rounded-full"></div>
                     </div>
                 </div>
             </div>

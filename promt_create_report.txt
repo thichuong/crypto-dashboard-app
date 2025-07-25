@@ -83,18 +83,73 @@ Tạo chính xác 3 tệp sau:
 }
 ```
 -   **Phạm vi (Scope):** Tất cả các selector trong report.css phải được giới hạn trong #report-container (ví dụ: #report-container h2).
-### 5.3. report.js
--   **Thư viện đồ họa:** Sẵn sàng sử dụng các thư viện vẽ biểu đồ phổ biến (như Chart.js, D3.js, hoặc vẽ SVG thủ công) để tạo ra các đồ thị trực quan.
+### 5.3. `report.js`
 
--   **Đa dạng hóa biểu đồ:** Không chỉ giới hạn ở biểu đồ dạng đồng hồ đo (gauge). Hãy xem xét việc sử dụng:
+-   **Thư viện đồ họa:** Sử dụng các hàm vẽ biểu đồ có sẵn trong tệp `chart.js`. Không cần viết lại logic vẽ.
+-   **Đa dạng hóa biểu đồ:** Không chỉ giới hạn ở biểu đồ dạng đồng hồ đo (gauge). Hãy xem xét việc sử dụng các loại biểu đồ khác được cung cấp bởi `chart.js`.
+-   **Hàm khởi tạo:** Cung cấp một hàm chính gọi là `initializeAllVisuals_report()`, để gọi và vẽ tất cả các biểu đồ cần thiết cho báo cáo.
+-   **Hàm trong `report.js` thêm hậu tố:** Các hàm trong `report.js` nên có hậu tố `_report` để tránh trùng tên với các hàm trong `main.js` (ví dụ: `initializeAllVisuals_report`).
 
-    -   **Biểu đồ đường (Line Chart):** Cho dữ liệu theo chuỗi thời gian.
+### 5.4. Quy ước về Hàm vẽ Biểu đồ (chart.js)
 
-    -   **Biểu đồ cột (Bar Chart):** Để so sánh các hạng mục.
+Tất cả các hàm vẽ biểu đồ đều nằm trong `chart.js`. Khi gọi các hàm này, hãy tuân thủ đúng cấu trúc tham số đầu vào.
 
-    -   **Biểu đồ tròn (Pie/Doughnut Chart):** Cho dữ liệu về tỷ lệ, phân bổ.
+---
 
-    -   **Sparklines:** Các biểu đồ đường nhỏ gọn nằm bên trong bảng dữ liệu.
+/**
+ * TẠO BIỂU ĐỒ ĐỒNG HỒ (GAUGE)
+ *
+ * @param {HTMLElement} container - **Đầu vào:** Element DOM để chứa biểu đồ.
+ * @param {number} value - **Đầu vào:** Giá trị số hiện tại để hiển thị.
+ * @param {object} config - **Đầu vào:** Đối tượng cấu hình.
+ * @param {number} [config.min=0] - (Tùy chọn) Giá trị tối thiểu của thang đo.
+ * @param {number} [config.max=100] - (Tùy chọn) Giá trị tối đa của thang đo.
+ * @param {Array<object>} config.segments - Mảng các đoạn màu. Mỗi object chứa:
+ * - {number} limit: Giá trị giới hạn trên của đoạn.
+ * - {string} color: Màu của đoạn (biến CSS hoặc mã màu).
+ * - {string} label: Nhãn phân loại cho giá trị khi rơi vào đoạn này.
+ * @returns {void} **Đầu ra:** Hàm này không trả về giá trị. Nó sẽ vẽ một biểu đồ SVG vào bên trong `container` được cung cấp.
+ */
+function createGauge(container, value, config) { /* ... */ }
 
--   **Hàm khởi tạo:** Cung cấp một hàm chính gọi là initializeAllVisuals(), để gọi và vẽ tất cả các biểu đồ cần thiết.
--   **Hàm trong report.js thêm hậu tố :** Các hàm trong report.js thêm _report để tránh trùng tên hàm, ví dụ: createGauge_report, createRsiGauge_report.
+---
+
+/**
+ * TẠO BIỂU ĐỒ ĐƯỜNG (LINE CHART)
+ *
+ * @param {HTMLElement} container - **Đầu vào:** Element DOM để chứa biểu đồ.
+ * @param {Array<number>} data - **Đầu vào:** Một mảng các giá trị số để vẽ đường kẻ.
+ * @param {object} [options] - **Đầu vào:** (Tùy chọn) Đối tượng cấu hình bổ sung.
+ * @param {string} [options.color] - Màu của đường kẻ và vùng nền. Mặc định là 'var(--accent-color)'.
+ * @param {string} [options.valuePrefix] - Tiền tố thêm vào trước mỗi giá trị nhãn (vd: '$').
+ * @param {string} [options.valueSuffix] - Hậu tố thêm vào sau mỗi giá trị nhãn (vd: '%').
+ * @returns {void} **Đầu ra:** Hàm này không trả về giá trị. Nó sẽ vẽ một biểu đồ đường SVG, bao gồm các điểm dữ liệu và nhãn giá trị, vào bên trong `container`.
+ */
+function createLineChart(container, data, options = {}) { /* ... */ }
+
+---
+
+/**
+ * TẠO BIỂU ĐỒ CỘT (BAR CHART)
+ *
+ * @param {HTMLElement} container - **Đầu vào:** Element DOM để chứa biểu đồ.
+ * @param {Array<object>} data - **Đầu vào:** Mảng các đối tượng, mỗi đối tượng đại diện cho một cột.
+ * - {number} value: Giá trị (chiều cao) của cột.
+ * - {string} label: Nhãn hiển thị bên dưới cột.
+ * - {string} color: (Tùy chọn) Màu của cột.
+ * @returns {void} **Đầu ra:** Hàm này không trả về giá trị. Nó sẽ vẽ một biểu đồ cột SVG vào bên trong `container`.
+ */
+function createBarChart(container, data) { /* ... */ }
+
+---
+
+/**
+ * TẠO BIỂU ĐỒ TRÒN (DOUGHNUT CHART)
+ *
+ * @param {HTMLElement} container - **Đầu vào:** Element DOM để chứa biểu đồ.
+ * @param {Array<object>} data - **Đầu vào:** Mảng các đối tượng, mỗi đối tượng đại diện cho một phần của biểu đồ.
+ * - {number} value: Giá trị của phần đó, dùng để tính tỷ lệ.
+ * - {string} color: Màu của phần đó.
+ * @returns {void} **Đầu ra:** Hàm này không trả về giá trị. Nó sẽ vẽ một biểu đồ doughnut SVG vào bên trong `container`.
+ */
+function createDoughnutChart(container, data) { /* ... */ }
