@@ -33,7 +33,7 @@ def get_btc_and_fng_data():
 
 
 @crypto_bp.route('/btc-rsi')
-@cache.cached(timeout=900)
+@cache.cached(timeout=3600)
 def get_btc_rsi():
     """Lấy chỉ số RSI(14) của Bitcoin."""
     data, error, status_code = taapi.get_btc_rsi()
