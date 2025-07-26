@@ -103,7 +103,6 @@ Một ứng dụng web dashboard cung cấp cái nhìn tổng quan theo thời g
 |   |-- create_report.py
 |   |-- promt_create_report.txt
 |   `-- Phân tích thị trường Crypto hôm nay_.docx
-|-- .env
 |-- requirements.txt
 |-- run.py
 `-- vercel.json
