@@ -22,8 +22,8 @@ Tạo chính xác 3 tệp sau:
 
 ## 4. Quy tắc xử lý nội dung
 
--   **Quan trọng:** Khi xử lý nội dung nguồn (ví dụ từ file Word, text), phải **loại bỏ hoàn toàn** tất cả các thẻ đánh dấu trích dẫn như ``, `[1]`, `[2]`, ``, v.v. Kết quả HTML cuối cùng phải sạch sẽ và chỉ chứa nội dung chính.
--   Trình bày thông tin một cách **súc tích, nhấn mạnh các chỉ số, con số**. Sử dụng các list, thẻ `<strong>`, `<em>` để làm nổi bật các điểm chính thay vì các đoạn văn dài.
+-   **Quan trọng:** Khi xử lý nội dung nguồn (ví dụ từ file Word, text), phải **loại bỏ hoàn toàn** tất cả các thẻ đánh dấu trích dẫn như ``, `[1]`, `[2]`, ``, v.v. 
+-   Trình bày thông tin một cách **rõ ràng, nhấn mạnh các chỉ số, con số**. Sử dụng các list, thẻ `<strong>`, `<em>` để làm nổi bật các điểm chính thay vì các đoạn văn dài.
 
 ## 5. Yêu cầu chi tiết
 

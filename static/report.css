@@ -1,11 +1,9 @@
-/* Các style cho báo cáo được tải động */
+/* --- Các style tùy chỉnh cho báo cáo --- */
+/* Đảm bảo tất cả style chỉ áp dụng bên trong container của báo cáo */
 
-#report-container section {
-    background-color: var(--bg-primary);
-    padding: 2rem;
-    margin-bottom: 2rem;
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
+#report-container {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    color: var(--text-primary);
 }
 
 #report-container h2 {
@@ -13,8 +11,8 @@
     font-weight: 700;
     color: var(--text-primary);
     margin-bottom: 1.5rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 2px solid var(--accent-color);
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--border-color);
     display: flex;
     align-items: center;
 }
@@ -22,13 +20,15 @@
 #report-container h2 .fas,
 #report-container h2 .fab {
     margin-right: 0.75rem;
-    color: var(--text-accent);
+    color: var(--accent-color);
     font-size: 1.5rem;
 }
 
 #report-container h3 {
     font-size: 1.25rem;
+    font-weight: 600;
     color: var(--text-accent);
+    margin-top: 0;
     margin-bottom: 1rem;
     display: flex;
     align-items: center;
@@ -36,140 +36,184 @@
 
 #report-container h3 .fas,
 #report-container h3 .fab {
-    margin-right: 0.5rem;
-}
-
-#report-container .card h3.positive { color: var(--positive-color); }
-#report-container .card h3.negative { color: var(--negative-color); }
-
-#report-container .content-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
+    margin-right: 0.6rem;
+    font-size: 1.1rem;
 }
 
 #report-container .card {
     background-color: var(--bg-secondary);
+    border-radius: 12px;
     padding: 1.5rem;
-    border-radius: 8px;
     border: 1px solid var(--border-color);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
 #report-container .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -4px rgba(0, 0, 0, 0.07);
 }
 
-#report-container .card.wide-card {
-    grid-column: 1 / -1;
+#report-container .wide-card {
+    grid-column: 1 / -1; /* For use inside a grid if needed */
 }
 
-#report-container .card p {
-    margin-bottom: 1rem;
-    line-height: 1.6;
+#report-container .content-grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+#report-container .key-metric {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+#report-container .metric-label {
+    font-size: 0.9rem;
     color: var(--text-secondary);
+    margin-bottom: 0.25rem;
 }
 
-#report-container .card ul {
-    list-style-type: none;
+#report-container .metric-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-accent);
+    line-height: 1.1;
+}
+
+#report-container .metric-change {
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-top: 0.25rem;
+}
+
+#report-container .positive, #report-container .positive-text {
+    color: var(--positive-color) !important;
+}
+
+#report-container .negative, #report-container .negative-text {
+    color: var(--negative-color) !important;
+}
+
+#report-container .neutral {
+    color: var(--neutral-color) !important;
+}
+
+#report-container ul {
+    list-style: none;
     padding-left: 0;
     margin: 0;
 }
 
-#report-container .card li {
-    padding: 0.5rem 0;
-    color: var(--text-primary);
-    border-bottom: 1px solid var(--border-color);
+#report-container ul li {
     position: relative;
-    padding-left: 1.5rem;
+    padding-left: 1.75rem;
+    margin-bottom: 0.75rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
 }
 
-#report-container .card li::before {
-    content: '•';
-    color: var(--accent-color);
-    font-weight: bold;
-    display: inline-block;
+#report-container ul li::before {
+    content: '\f138'; /* Font Awesome "angle-right" icon */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
     position: absolute;
     left: 0;
-    top: 0.5rem;
+    top: 2px;
+    color: var(--accent-color);
+    font-size: 0.9em;
 }
 
-#report-container .card li:last-child {
-    border-bottom: none;
-}
-
-#report-container .card strong {
+#report-container ul li strong {
     color: var(--text-primary);
     font-weight: 600;
 }
 
-/* Styles cho bảng dữ liệu */
 #report-container .table-container {
-    overflow-x: auto;
     width: 100%;
+    overflow-x: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
 }
 
 #report-container table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 1rem;
+    min-width: 600px;
+}
+
+#report-container table caption {
+    caption-side: top;
+    text-align: left;
+    font-weight: 600;
+    padding: 0.75rem 1rem;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    background-color: #f9fafb; /* Light gray background for caption */
 }
 
 #report-container th, #report-container td {
     padding: 0.75rem 1rem;
     text-align: left;
     border-bottom: 1px solid var(--border-color);
-    white-space: nowrap;
+    vertical-align: middle;
 }
 
 #report-container th {
     background-color: var(--bg-primary);
     font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
     color: var(--text-secondary);
 }
 
-#report-container tbody tr:nth-child(even) {
-    background-color: var(--bg-primary);
+#report-container tbody tr:last-child th,
+#report-container tbody tr:last-child td {
+    border-bottom: none;
 }
 
-#report-container .positive { color: var(--positive-color); }
-#report-container .negative { color: var(--negative-color); }
-#report-container .neutral { color: var(--text-secondary); }
-
-#report-container .table-ellipsis {
-    text-align: center;
-    color: var(--text-secondary);
-    font-style: italic;
+#report-container tbody tr:hover {
+    background-color: #f9fafb;
 }
 
-/* Styles cho biểu đồ */
-#fng-gauge-container, 
-#rsi-gauge-container-btc,
-#rsi-gauge-container-eth,
-#btc-dominance-chart,
-#etf-flow-chart {
-    min-height: 180px;
-    margin-top: 1rem;
+#report-container .section-divider {
+    border: 0;
+    height: 1px;
+    background-color: var(--border-color);
+    margin: 3rem 0;
 }
 
-/* Sub-cards */
-#report-container .sub-card {
+#report-container .warning-box {
+    background-color: #fffbeb;
+    border-left: 4px solid var(--neutral-color);
     padding: 1rem;
-    border-radius: 6px;
-    background-color: var(--bg-primary);
-    border-left: 4px solid;
+    margin-top: 1rem;
+    border-radius: 4px;
+    color: #92400e;
 }
-#report-container .sub-card.positive-border { border-color: var(--positive-color); }
-#report-container .sub-card.negative-border { border-color: var(--negative-color); }
-#report-container .sub-card h4 {
-    margin: 0 0 0.5rem 0;
-    font-size: 1.1rem;
-    color: var(--text-primary);
+
+#report-container .warning-box i {
+    color: var(--neutral-color);
+    margin-right: 0.5rem;
 }
-#report-container .sub-card p {
-    font-size: 0.9rem;
-    margin-bottom: 0;
-    color: var(--text-secondary);
+
+/* Chart container styling */
+#report-container #fear-greed-gauge-container,
+#report-container #rsi-gauge-container,
+#report-container #btc-dominance-chart-container,
+#report-container #scenario-probability-chart-container {
+    min-height: 180px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#report-container #btc-dominance-chart-container {
+    min-height: 150px;
 }

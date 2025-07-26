@@ -25,7 +25,7 @@ genai.configure(api_key=api_key)
 
 # --- Các hàm trợ giúp ---
 
-def find_docx_file(directory="."):
+def find_docx_file(directory="./create_report"):
     """Tìm tệp .docx đầu tiên trong thư mục được chỉ định."""
     files = glob.glob(os.path.join(directory, "*.docx"))
     if not files:
@@ -40,7 +40,7 @@ def read_text_from_docx(file_path):
     except Exception as e:
         raise IOError(f"Lỗi khi đọc tệp {file_path}: {e}")
 
-def read_prompt_file(file_path="promt_create_report.txt"):
+def read_prompt_file(file_path="./create_report/promt_create_report.txt"):
     """Đọc nội dung từ tệp prompt."""
     try:
         with open(file_path, 'r', encoding='utf-8') as f:

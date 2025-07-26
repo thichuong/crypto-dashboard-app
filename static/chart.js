@@ -326,7 +326,8 @@ function createDoughnutChart(container, data, title = '') {
                 flex-direction: column;
                 justify-content: center;
                 gap: 0.6rem;
-                margin-top: 1.25rem;
+                margin-top: 1.5rem; /* Tăng khoảng cách từ 1.25rem lên 1.5rem */
+                margin-left: 1rem;
                 font-size: 0.85rem;
                 color: var(--text-secondary);
             }
