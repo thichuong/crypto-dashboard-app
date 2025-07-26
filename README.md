@@ -68,9 +68,6 @@ Một ứng dụng web dashboard cung cấp cái nhìn tổng quan theo thời g
     ```
     Các tệp kết quả (`report.html`, `report.css`, `report.js`) sẽ được tạo trong thư mục `app/static`.
 
-## 📁 Cấu trúc dự án
-
-(Nội dung cấu trúc dự án như đã mô tả ở trên)
 
 ## 📁 Cấu trúc dự án
 
