@@ -34,7 +34,7 @@ Tạo chính xác 3 tệp sau:
 -   **Bố cục lưới lồng nhau thông minh (Smart Nested Grid):**
     -   **Nguyên tắc chính:** Để kiểm soát bố cục chính xác, hãy sử dụng kết hợp giữa các thẻ `div` làm container và lớp `content-grid` có sẵn.
     -   **Khi có 2 hoặc 3 mục cần nằm trên một hàng:** **Bắt buộc** phải nhóm các thẻ `div.card` này vào trong một `div` container chung có class `content-grid`. Việc này sẽ buộc chúng phải chia sẻ không gian hàng đó một cách cân đối và tránh tạo ra khoảng trống lớn.
-    -   **Khi có mục cần chiếm cả hàng:** Đối với các thẻ cần chiếm toàn bộ chiều rộng (như bảng dữ liệu lớn hoặc thẻ tóm tắt quan trọng), hãy đặt nó bên ngoài `div.content-grid` hoặc sử dụng class `wide-card` nếu nó vẫn nằm trong grid.
+    -   **Khi có mục cần chiếm cả hàng:** Đối với các thẻ cần chiếm toàn bộ chiều rộng (như bảng dữ liệu lớn hoặc thẻ tóm tắt quan trọng), hãy đặt nó bên ngoài `div.content-grid` và sử dụng class `wide-card`.
     -   *Ví dụ cấu trúc:*
         ```html
         <section>
@@ -46,9 +46,21 @@ Tạo chính xác 3 tệp sau:
             <div class="card" style="margin-top: 1.5rem;">...</div>
         </section>
         ```
+        ```html
+        <section>
+            <h2>...</h2>
+            <div class="content-grid">
+                <div class="card">...</div>
+                <div class="card">...</div>
+            </div>
+            <div class="card wide-card" style="margin-top: 1.5rem;">...</div>
+        </section>
+        ```
 -   **Trực quan hóa dữ liệu:**
     -   Đối với các chỉ số quan trọng (như RSI, Fear & Greed), hãy tạo các placeholder `<div>` với `id` rõ ràng để JavaScript có thể vẽ biểu đồ vào đó. Ví dụ: `<div id="rsi-gauge-container"></div>`.
     -   Đối với các bảng dữ liệu, hãy biến chúng thành các bảng HTML (`<table>`) gọn gàng và đặt chúng trong một container cho phép cuộn ngang nếu cần (`<div class="table-container">`).
+    -   Đối với các chỉ số như Tỷ lệ Thống trị của Bitcoin, hãy tạo các placeholder `<div>` với `id` rõ ràng để JavaScript có thể vẽ biểu đồ vào đó. Ví dụ: `<div id="btc-ratio-container"></div>`.
+
 
 
 ### 5.2. `report.css`
@@ -95,7 +107,8 @@ Tạo chính xác 3 tệp sau:
 ### 5.4. Quy ước về Hàm vẽ Biểu đồ (chart.js)
 
 Tất cả các hàm vẽ biểu đồ đều nằm trong `chart.js`. Khi gọi các hàm này, hãy tuân thủ đúng cấu trúc tham số đầu vào.
-
+-   Với chỉ số như RSI, Fear & Greed dùng GAUGE
+-   Với chỉ số tỉ lệ như BTC.D dùng DOUGHNUT CHART
 ---
 
 /**
