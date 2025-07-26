@@ -1,77 +1,46 @@
-/* --- Styles cho Báo cáo Phân tích --- */
-
-#report-container {
-    padding: 1rem;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-}
+/* Các style cho báo cáo được tải động */
 
 #report-container section {
-    background-color: var(--bg-secondary);
-    border-radius: 12px;
-    padding: 1.5rem;
+    background-color: var(--bg-primary);
+    padding: 2rem;
     margin-bottom: 2rem;
+    border-radius: 12px;
     border: 1px solid var(--border-color);
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.04);
 }
 
 #report-container h2 {
     font-size: 1.75rem;
     font-weight: 700;
     color: var(--text-primary);
-    margin: 0 0 1.5rem 0;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--accent-color);
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    border-bottom: 2px solid var(--accent-color);
-    padding-bottom: 0.75rem;
 }
 
-#report-container h2 .fas, #report-container h2 .fab {
-    color: var(--accent-color);
+#report-container h2 .fas,
+#report-container h2 .fab {
+    margin-right: 0.75rem;
+    color: var(--text-accent);
     font-size: 1.5rem;
 }
 
-
 #report-container h3 {
-    font-size: 1.2rem;
-    font-weight: 600;
+    font-size: 1.25rem;
     color: var(--text-accent);
-    margin: 0 0 1rem 0;
+    margin-bottom: 1rem;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
 }
 
-#report-container p {
-    line-height: 1.6;
-    color: var(--text-secondary);
-    margin-bottom: 1rem;
+#report-container h3 .fas,
+#report-container h3 .fab {
+    margin-right: 0.5rem;
 }
 
-#report-container ul {
-    list-style: none;
-    padding-left: 0;
-    margin: 0;
-}
-
-#report-container li {
-    color: var(--text-secondary);
-    line-height: 1.7;
-    padding-left: 1.5rem;
-    position: relative;
-    margin-bottom: 0.5rem;
-}
-
-#report-container li::before {
-    content: '\f105'; /* Font Awesome arrow-right */
-    font-family: 'Font Awesome 5 Free';
-    font-weight: 900;
-    color: var(--accent-color);
-    position: absolute;
-    left: 0;
-    top: 2px;
-}
-
+#report-container .card h3.positive { color: var(--positive-color); }
+#report-container .card h3.negative { color: var(--negative-color); }
 
 #report-container .content-grid {
     display: grid;
@@ -80,102 +49,127 @@
 }
 
 #report-container .card {
-    background-color: var(--bg-primary);
-    border: 1px solid var(--border-color);
+    background-color: var(--bg-secondary);
+    padding: 1.5rem;
     border-radius: 8px;
-    padding: 1.25rem;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+#report-container .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
 }
 
 #report-container .card.wide-card {
     grid-column: 1 / -1;
 }
 
-#report-container .card.card-positive {
-    border-left: 4px solid var(--positive-color);
-}
-#report-container .card.card-positive h3 {
-    color: var(--positive-color);
-}
-
-#report-container .card.card-negative {
-    border-left: 4px solid var(--negative-color);
-}
-#report-container .card.card-negative h3 {
-    color: var(--negative-color);
+#report-container .card p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
 }
 
-#report-container strong {
-    font-weight: 600;
+#report-container .card ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#report-container .card li {
+    padding: 0.5rem 0;
     color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+    position: relative;
+    padding-left: 1.5rem;
 }
 
-#report-container em {
-    font-style: italic;
-    color: var(--text-accent);
+#report-container .card li::before {
+    content: '•';
+    color: var(--accent-color);
+    font-weight: bold;
+    display: inline-block;
+    position: absolute;
+    left: 0;
+    top: 0.5rem;
 }
 
-#report-container .positive {
-    color: var(--positive-color) !important;
-    font-weight: 500;
+#report-container .card li:last-child {
+    border-bottom: none;
 }
 
-#report-container .negative {
-    color: var(--negative-color) !important;
-    font-weight: 500;
+#report-container .card strong {
+    color: var(--text-primary);
+    font-weight: 600;
 }
 
-/* --- Table Styles --- */
+/* Styles cho bảng dữ liệu */
 #report-container .table-container {
     overflow-x: auto;
+    width: 100%;
 }
 
-#report-container .data-table {
+#report-container table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 1rem;
 }
 
-#report-container .data-table th, 
-#report-container .data-table td {
+#report-container th, #report-container td {
     padding: 0.75rem 1rem;
     text-align: left;
     border-bottom: 1px solid var(--border-color);
-    vertical-align: middle;
+    white-space: nowrap;
 }
 
-#report-container .data-table th {
+#report-container th {
     background-color: var(--bg-primary);
     font-weight: 600;
     color: var(--text-secondary);
-    font-size: 0.85rem;
-    text-transform: uppercase;
 }
 
-#report-container .data-table tbody tr {
-    transition: background-color 0.2s ease;
-}
-
-#report-container .data-table tbody tr:hover {
+#report-container tbody tr:nth-child(even) {
     background-color: var(--bg-primary);
 }
 
-/* --- Chart Containers --- */
-#report-container .gauge-container {
-    width: 100%;
-    max-width: 300px;
-    margin: 1rem auto 0;
-    min-height: 150px;
+#report-container .positive { color: var(--positive-color); }
+#report-container .negative { color: var(--negative-color); }
+#report-container .neutral { color: var(--text-secondary); }
+
+#report-container .table-ellipsis {
+    text-align: center;
+    color: var(--text-secondary);
+    font-style: italic;
 }
 
-#report-container .doughnut-chart-container {
-    width: 100%;
-    max-width: 400px;
-    margin: 1rem auto 0;
-    min-height: 250px;
-}
-
-#report-container .bar-chart-container {
-    width: 100%;
+/* Styles cho biểu đồ */
+#fng-gauge-container, 
+#rsi-gauge-container-btc,
+#rsi-gauge-container-eth,
+#btc-dominance-chart,
+#etf-flow-chart {
+    min-height: 180px;
     margin-top: 1rem;
-    min-height: 250px;
+}
+
+/* Sub-cards */
+#report-container .sub-card {
+    padding: 1rem;
+    border-radius: 6px;
+    background-color: var(--bg-primary);
+    border-left: 4px solid;
+}
+#report-container .sub-card.positive-border { border-color: var(--positive-color); }
+#report-container .sub-card.negative-border { border-color: var(--negative-color); }
+#report-container .sub-card h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+}
+#report-container .sub-card p {
+    font-size: 0.9rem;
+    margin-bottom: 0;
+    color: var(--text-secondary);
 }

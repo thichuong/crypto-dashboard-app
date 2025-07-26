@@ -1,229 +1,246 @@
+<!-- BẮT ĐẦU NỘI DUNG BÁO CÁO -->
+
 <section id="market-overview">
-    <h2><i class="fas fa-globe-americas"></i>Tổng Quan Thị Trường và Tâm Lý Nhà Đầu Tư</h2>
+    <h2><i class="fas fa-chart-pie"></i> Phần I: Tổng Quan Thị Trường & Tâm Lý</h2>
     <div class="content-grid">
         <div class="card">
-            <h3><i class="fas fa-chart-line"></i>Diễn Biến Chính</h3>
+            <h3><i class="fas fa-dollar-sign"></i> Vốn Hóa Thị Trường</h3>
+            <p>Sau khi vượt mốc <strong>4 nghìn tỷ USD</strong>, thị trường đã điều chỉnh mạnh, giảm khoảng <strong>160 tỷ USD</strong> giá trị.</p>
             <ul>
-                <li>Vốn hóa thị trường đạt đỉnh kỷ lục: <strong>trên 4 nghìn tỷ USD</strong>.</li>
-                <li>Điều chỉnh mạnh sau đó, vốn hóa giảm xuống: <strong>~3.7 - 3.83 nghìn tỷ USD</strong> (bốc hơi ~160 tỷ USD).</li>
-                <li>Nguyên nhân chính: Sự kiện <strong>giảm đòn bẩy quy mô lớn</strong>, thanh lý hơn <strong>500 triệu USD</strong> vị thế mua.</li>
-                <li>BTC dẫn đầu với <strong>~160 triệu USD</strong> bị thanh lý, theo sau là ETH và SOL.</li>
+                <li><strong>Đỉnh Vốn Hóa:</strong> > 4 nghìn tỷ USD</li>
+                <li><strong>Vốn Hóa Hiện Tại:</strong> ~3.7 - 3.83 nghìn tỷ USD</li>
+                <li><strong>Nguyên Nhân Chính:</strong> Sự kiện giảm đòn bẩy quy mô lớn.</li>
             </ul>
         </div>
         <div class="card">
-            <h3><i class="fas fa-tachometer-alt"></i>Chỉ Số Sợ Hãi & Tham Lam</h3>
-            <p>Chỉ số đã giảm từ mức <em>"Tham lam"</em> 74 xuống còn <strong>70</strong>, cho thấy sự thận trọng gia tăng nhưng tâm lý chung vẫn lạc quan.</p>
-            <div id="fear-greed-gauge-container" class="gauge-container"></div>
+            <h3><i class="fas fa-fire"></i> Thanh Lý Đòn Bẩy</h3>
+            <p>Các vị thế mua sử dụng đòn bẩy bị thanh lý hàng loạt, gây ra cú sốc ngắn hạn cho thị trường.</p>
+            <ul>
+                <li><strong>Tổng Thanh Lý (24h):</strong> > 500 triệu USD (đỉnh điểm 967 triệu USD)</li>
+                <li><strong>BTC Dẫn Đầu:</strong> ~160 triệu USD</li>
+                <li><strong>Tác Động:</strong> Gây ra chuỗi thanh lý dây chuyền, đẩy nhanh đà giảm.</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3><i class="fas fa-tachometer-alt"></i> Chỉ Số Sợ Hãi & Tham Lam</h3>
+            <p>Tâm lý thị trường hạ nhiệt nhưng vẫn ở mức "Tham Lam", cho thấy sự thận trọng sau giai đoạn hưng phấn.</p>
+            <!-- Placeholder cho biểu đồ Gauge -->
+            <div id="fng-gauge-container"></div>
         </div>
     </div>
-</section>
-
-<section id="top-coins-ranking">
-    <h2><i class="fas fa-trophy"></i>Bảng Xếp Hạng Các Đồng Tiền Hàng Đầu</h2>
-    <div class="table-container">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Tên (Ký hiệu)</th>
-                    <th>Giá (USD)</th>
-                    <th>24h %</th>
-                    <th>7D %</th>
-                    <th>Vốn Hóa Thị Trường (USD)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Bitcoin (BTC)</td>
-                    <td>116,116.87</td>
-                    <td class="negative">-1.90%</td>
-                    <td class="positive">+2.19%</td>
-                    <td>2,294,722,933,300</td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Ethereum (ETH)</td>
-                    <td>3,637.50</td>
-                    <td class="negative">-1.86%</td>
-                    <td class="positive">+19.13%</td>
-                    <td>436,722,716,864</td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>XRP (XRP)</td>
-                    <td>3.11</td>
-                    <td class="negative">-0.96%</td>
-                    <td class="positive">+21.65%</td>
-                    <td>178,486,266,080</td>
-                </tr>
-                <tr>
-                    <td>4</td>
-                    <td>Tether (USDT)</td>
-                    <td>1.00</td>
-                    <td>0.00%</td>
-                    <td>0.00%</td>
-                    <td>141,925,329,576</td>
-                </tr>
-                <tr>
-                    <td>5</td>
-                    <td>Binance Coin (BNB)</td>
-                    <td>764.48</td>
-                    <td class="negative">-0.94%</td>
-                    <td></td>
-                    <td>120,441,515,722</td>
-                </tr>
-                 <tr>
-                    <td>6</td>
-                    <td>Solana (SOL)</td>
-                    <td>179.13</td>
-                    <td class="negative">-1.97%</td>
-                    <td></td>
-                    <td>87,114,016,941</td>
-                </tr>
-                <tr>
-                    <td>7</td>
-                    <td>USD Coin (USDC)</td>
-                    <td>0.9998</td>
-                    <td>0.00%</td>
-                    <td></td>
-                    <td>56,090,902,100</td>
-                </tr>
-                 <tr>
-                    <td>8</td>
-                    <td>Dogecoin (DOGE)</td>
-                    <td>0.22865</td>
-                    <td class="negative">-1.38%</td>
-                    <td></td>
-                    <td>33,653,487,208</td>
-                </tr>
-                <tr>
-                    <td>9</td>
-                    <td>Cardano (ADA)</td>
-                    <td>0.8094</td>
-                    <td class="positive">+0.50%</td>
-                    <td></td>
-                    <td>28,896,140,628</td>
-                </tr>
-                <tr>
-                    <td>10</td>
-                    <td>TRON (TRX)</td>
-                    <td>0.314177</td>
-                    <td class="positive">+0.05%</td>
-                    <td></td>
-                    <td>27,022,039,324</td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="card wide-card" style="margin-top: 1.5rem;">
+        <h3><i class="fas fa-trophy"></i> Top 20 Đồng Tiền Hàng Đầu</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Tên</th>
+                        <th>Ký Hiệu</th>
+                        <th>Vốn Hóa Thị Trường</th>
+                        <th>Giá</th>
+                        <th>Thay Đổi (24h)</th>
+                        <th>Thay Đổi (7d)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Bitcoin</td>
+                        <td>BTC</td>
+                        <td>$2.25T</td>
+                        <td>$115,800</td>
+                        <td class="negative">-1.5%</td>
+                        <td class="positive">+2.0%</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Ethereum</td>
+                        <td>ETH</td>
+                        <td>$450B</td>
+                        <td>$3,750</td>
+                        <td class="positive">+5.2%</td>
+                        <td class="positive">+19.1%</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Tether</td>
+                        <td>USDT</td>
+                        <td>$120B</td>
+                        <td>$1.00</td>
+                        <td class="neutral">0.0%</td>
+                        <td class="neutral">0.0%</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Solana</td>
+                        <td>SOL</td>
+                        <td>$95B</td>
+                        <td>$210</td>
+                        <td class="negative">-2.1%</td>
+                        <td class="positive">+8.5%</td>
+                    </tr>
+                    <tr><td colspan="7" class="table-ellipsis">... và 16 đồng tiền khác</td></tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </section>
 
 <section id="btc-analysis">
-    <h2><i class="fab fa-bitcoin"></i>Phân Tích Chuyên Sâu Bitcoin (BTC)</h2>
+    <h2><i class="fab fa-bitcoin"></i> Phần II: Phân Tích Chuyên Sâu Bitcoin (BTC)</h2>
     <div class="content-grid">
         <div class="card">
-            <h3><i class="fas fa-ruler-combined"></i>Phân Tích Kỹ Thuật</h3>
+            <h3><i class="fas fa-chart-line"></i> Phân Tích Kỹ Thuật</h3>
             <ul>
-                <li><strong>Kháng cự chính:</strong> $120,000 - $121,000.</li>
-                <li><strong>Hỗ trợ tức thời:</strong> $115,000 - $116,000.</li>
-                <li><strong>Hỗ trợ sâu hơn:</strong> $112,000 và $105,000 - $106,000.</li>
-                <li><strong>Cảnh báo:</strong> RSI ngắn hạn cho thấy xu hướng giảm, khối lượng giao dịch giao ngay cũng sụt giảm.</li>
+                <li><strong>Nến Tuần:</strong> Do dự, mẫu hình "Spinning Top" / "Doji" dưới ngưỡng kháng cự.</li>
+                <li><strong>Kháng cự chính:</strong> <strong>$120,000 - $121,000</strong>. ATH tại <strong>$123,000</strong>.</li>
+                <li><strong>Hỗ trợ chính:</strong> Đang thử thách tại <strong>$115,000</strong>. Hỗ trợ sâu hơn tại <strong>$112,000</strong> & <strong>$105,000</strong>.</li>
             </ul>
         </div>
         <div class="card">
-            <h3><i class="fas fa-pie-chart"></i>Tỷ Lệ Thống Trị (BTC.D)</h3>
-             <p>Chỉ số BTC.D đang ở mức <strong>60.6%</strong>, tích lũy trong vùng quan trọng 60-62%. Nếu phá vỡ xuống dưới 60%, có thể báo hiệu một "mùa altcoin" tập trung vào các tài sản cấp tổ chức như ETH.</p>
-            <div id="btc-dominance-chart-container" class="doughnut-chart-container"></div>
+            <h3><i class="fas fa-cogs"></i> Chỉ Báo & Khối Lượng</h3>
+             <p>RSI ngắn hạn đang có xu hướng giảm, cảnh báo khả năng giá giảm. Khối lượng giao dịch giao ngay (spot) giảm đáng kể.</p>
+            <div id="rsi-gauge-container-btc"></div>
         </div>
-         <div class="card wide-card">
-            <h3><i class="fas fa-fish"></i>Hoạt Động On-Chain & Cá Voi</h3>
-            <p>Thị trường đang có sự phân hóa rõ rệt:</p>
-            <ul>
-                <li><strong class="positive">Nhà đầu tư dài hạn (LTH):</strong> Kiên định nắm giữ, tạo ra một sàn giá vững chắc. Hơn 90% nguồn cung BTC đang có lãi.</li>
-                <li><strong class="negative">Cá voi & Tổ chức:</strong> Áp lực bán ngắn hạn đáng kể từ các thực thể như Galaxy Digital, gây biến động giá.</li>
-            </ul>
+        <div class="card">
+            <h3><i class="fas fa-pie-chart"></i> Tỷ Lệ Thống Trị (BTC.D)</h3>
+            <p>BTC.D đang tích lũy trong vùng <strong>60-62%</strong>, gợi nhớ mô hình 2021. Một sự phá vỡ xuống dưới có thể khởi đầu "mùa altcoin".</p>
+            <div id="btc-dominance-chart"></div>
+        </div>
+    </div>
+    <div class="card wide-card" style="margin-top: 1.5rem;">
+        <h3><i class="fas fa-balance-scale"></i> Phân Tích On-Chain: LTH vs. Cá Voi</h3>
+        <p>Thị trường đang có sự phân hóa: niềm tin dài hạn vững chắc đối mặt với áp lực bán ngắn hạn từ các tổ chức lớn.</p>
+        <div class="content-grid">
+            <div class="sub-card positive-border">
+                <h4><i class="fas fa-shield-alt"></i> Nhà Đầu Tư Dài Hạn (LTH)</h4>
+                <p>Kiên định nắm giữ, không phân phối tài sản. >90% nguồn cung BTC đang có lãi nhưng chưa chốt lời ồ ạt.</p>
+            </div>
+            <div class="sub-card negative-border">
+                <h4><i class="fas fa-whale"></i> Hoạt Động Cá Voi</h4>
+                <p>Áp lực bán đáng kể từ các thực thể lớn (ví dụ: Galaxy Digital), di chuyển >1.1 tỷ USD BTC lên sàn.</p>
+            </div>
         </div>
     </div>
 </section>
 
 <section id="eth-analysis">
-    <h2><i class="fab fa-ethereum"></i>Phân Tích Chuyên Sâu Ethereum (ETH)</h2>
+    <h2><i class="fab fa-ethereum"></i> Phần III: Phân Tích Chuyên Sâu Ethereum (ETH)</h2>
     <div class="content-grid">
-         <div class="card">
-            <h3><i class="fas fa-rocket"></i>Hiệu Suất Vượt Trội</h3>
-            <ul>
-                <li>Tăng trưởng hàng tuần: <strong class="positive">+19%</strong> (so với +2% của BTC).</li>
-                <li>Động lực: Dòng vốn ETF kỷ lục và sự tích lũy mạnh mẽ từ cá voi (mua hơn <strong>4.18 tỷ USD</strong> trong 2 tuần).</li>
-                <li>Tín hiệu kỹ thuật: RSI hàng ngày ở vùng "quá mua" (<strong>~78</strong>), cảnh báo khả năng điều chỉnh ngắn hạn.</li>
-            </ul>
+        <div class="card">
+            <h3><i class="fas fa-rocket"></i> Hiệu Suất Vượt Trội</h3>
+            <p>ETH dẫn đầu thị trường với mức tăng hàng tuần <strong>>19%</strong> so với 2% của BTC, được thúc đẩy bởi dòng vốn ETF và sự tích lũy của cá voi.</p>
         </div>
         <div class="card">
-            <h3><i class="fas fa-landmark"></i>Luận Điểm "Trái Phiếu Internet"</h3>
-            <p>Các tổ chức xem ETH là một tài sản sinh lợi, mang lại lợi suất <strong>2-4%</strong> từ staking, hấp dẫn trong môi trường lãi suất thấp.</p>
-            <p>Ethereum dẫn đầu trong lĩnh vực <strong>Tài sản Thế giới Thực (RWA)</strong> và stablecoin (chiếm <strong>>54%</strong> thị phần), được củng cố bởi luật pháp mới.</p>
+            <h3><i class="fas fa-thermometer-three-quarters"></i> Tín Hiệu Kỹ Thuật (Quá Mua)</h3>
+            <p>RSI hàng ngày và tuần đã đi sâu vào vùng "quá mua", cảnh báo khả năng điều chỉnh ngắn hạn.</p>
+            <div id="rsi-gauge-container-eth"></div>
+        </div>
+        <div class="card">
+            <h3><i class="fas fa-university"></i> Luận Điểm "Trái Phiếu Internet"</h3>
+            <p>Các tổ chức xem ETH là tài sản sinh lời (staking ~2-4%) và là nền tảng thống trị cho RWA & Stablecoin.</p>
         </div>
     </div>
 </section>
 
-<section id="institutional-flow">
-    <h2><i class="fas fa-building-columns"></i>Dòng Vốn Tổ Chức và Phái Sinh</h2>
+<section id="institutional-flows">
+    <h2><i class="fas fa-landmark"></i> Phần IV: Dòng Vốn Tổ Chức & Phái Sinh</h2>
     <div class="content-grid">
         <div class="card">
-            <h3><i class="fas fa-exchange-alt"></i>Dòng Tiền ETF: Xoay Chuyển Vốn</h3>
-            <p>Dữ liệu gần đây cho thấy sự luân chuyển vốn rõ rệt từ Bitcoin sang Ethereum.</p>
-            <div id="etf-flow-bar-chart-container" class="bar-chart-container"></div>
+            <h3><i class="fas fa-exchange-alt"></i> Dòng Tiền ETF Giao Ngay</h3>
+            <p>Sự luân chuyển vốn rõ rệt từ Bitcoin sang Ethereum. Dữ liệu gần đây:</p>
+            <!-- Placeholder cho biểu đồ Bar -->
+            <div id="etf-flow-chart"></div>
         </div>
         <div class="card">
-             <h3><i class="fas fa-bomb"></i>Thị Trường Phái Sinh: Rủi Ro Đòn Bẩy</h3>
+            <h3><i class="fas fa-file-contract"></i> Thị Trường Phái Sinh</h3>
             <ul>
-                <li>Lãi suất mở (Open Interest) của BTC đạt kỷ lục: <strong>44.5 tỷ USD</strong>.</li>
-                <li>Cấu trúc thị trường mong manh, dễ bị tổn thương bởi các đợt thanh lý dây chuyền.</li>
-                <li>Tỷ lệ Put/Call cho thấy các nhà giao dịch chuyên nghiệp đang phòng ngừa rủi ro giảm giá.</li>
+                <li><strong>Lãi Suất Mở (OI):</strong> Kỷ lục <strong>44.5 tỷ USD</strong> ở BTC, cho thấy thị trường đòn bẩy cao, dễ tổn thương.</li>
+                <li><strong>Funding Rates:</strong> Dương (lạc quan) nhưng không ở mức cực đoan.</li>
+                <li><strong>Tỷ lệ Put/Call:</strong> Thận trọng, có dấu hiệu phòng ngừa rủi ro giảm giá.</li>
             </ul>
         </div>
     </div>
 </section>
 
-<section id="macro-political">
-    <h2><i class="fas fa-landmark-flag"></i>Bối Cảnh Vĩ Mô và Chính Trị</h2>
+<section id="macro-context">
+    <h2><i class="fas fa-globe-americas"></i> Phần V: Bối Cảnh Vĩ Mô và Chính Trị</h2>
     <div class="content-grid">
-         <div class="card">
-            <h3><i class="fas fa-file-signature"></i>Pháp Lý Thuận Lợi tại Hoa Kỳ</h3>
-            <p>Môi trường pháp lý đang trở thành động lực tích cực mạnh mẽ:</p>
+        <div class="card">
+            <h3><i class="fas fa-gavel"></i> Pháp Lý Hoa Kỳ: Gió Thuận Chiều</h3>
+            <p>Làn sóng quy định tích cực là chất xúc tác mạnh mẽ:</p>
             <ul>
-                <li>Tổng thống Trump ký <strong>Đạo luật GENIUS</strong>, tạo khuôn khổ pháp lý cho stablecoin.</li>
-                <li>Các dự luật ủng hộ tiền điện tử khác được thông qua.</li>
-                <li>Sự rõ ràng về pháp lý giúp giảm rủi ro, mở đường cho sự chấp nhận của các tổ chức lớn.</li>
+                <li><strong>Đạo luật GENIUS:</strong> Hợp pháp hóa stablecoin, mang lại lợi ích lớn cho Ethereum.</li>
+                <li><strong>Lập trường chính quyền:</strong> Thân thiện, khuyến khích ngành phát triển tại Mỹ.</li>
             </ul>
         </div>
         <div class="card">
-            <h3><i class="fas fa-university"></i>Triển Vọng Lãi Suất (FED)</h3>
-            <p>Thị trường chờ đợi cuộc họp của FED vào ngày <strong>30 tháng 7</strong>. Bất kỳ tín hiệu nào về việc cắt giảm lãi suất sẽ là một chất xúc tác cực kỳ lạc quan cho các tài sản rủi ro như tiền điện tử.</p>
+            <h3><i class="fas fa-building-columns"></i> Triển Vọng Lãi Suất (Fed)</h3>
+            <p>Thị trường chờ đợi cuộc họp Fed ngày 30/07. Bất kỳ tín hiệu nới lỏng hoặc cắt giảm lãi suất nào cũng sẽ là một cú hích lớn cho tài sản rủi ro.</p>
         </div>
     </div>
 </section>
 
 <section id="summary-outlook">
-    <h2><i class="fas fa-binoculars"></i>Tổng Hợp và Kịch Bản Tương Lai</h2>
+    <h2><i class="fas fa-binoculars"></i> Phần VI: Tổng Hợp & Kịch Bản</h2>
     <div class="content-grid">
-        <div class="card card-positive">
-            <h3><i class="fas fa-arrow-up"></i>Kịch Bản Tăng Giá</h3>
+        <div class="card">
+            <h3 class="positive"><i class="fas fa-arrow-up"></i> Kịch Bản Tăng Giá</h3>
             <ul>
-                <li><strong>Động lực chính:</strong> Dòng vốn ETF mạnh mẽ, sự rõ ràng về pháp lý tại Mỹ, khả năng FED cắt giảm lãi suất, và nền tảng on-chain vững chắc.</li>
-                <li>Các nhà phân tích lớn đưa ra dự báo đầy tham vọng.</li>
+                <li>Dòng vốn ETF mạnh mẽ</li>
+                <li>Môi trường pháp lý thuận lợi</li>
+                <li>Khả năng Fed cắt giảm lãi suất</li>
+                <li>Nền tảng On-chain vững chắc</li>
             </ul>
         </div>
-        <div class="card card-negative">
-            <h3><i class="fas fa-arrow-down"></i>Kịch Bản Giảm Giá</h3>
+        <div class="card">
+            <h3 class="negative"><i class="fas fa-arrow-down"></i> Kịch Bản Giảm Giá</h3>
             <ul>
-                 <li><strong>Rủi ro chính:</strong> Thị trường phái sinh quá nóng, nguy cơ thanh lý dây chuyền, và hoạt động chốt lời từ các cá voi.</li>
-                 <li>Các chỉ báo kỹ thuật quá mua đòi hỏi sự cẩn trọng trong ngắn hạn.</li>
+                <li>Thị trường phái sinh quá nóng</li>
+                <li>Áp lực chốt lời từ cá voi</li>
+                <li>Các chỉ báo kỹ thuật quá mua</li>
+                <li>Rủi ro thanh lý dây chuyền</li>
             </ul>
         </div>
-        <div class="card wide-card">
-            <h3><i class="fas fa-bullseye"></i>Mục Tiêu Giá từ Chuyên Gia (Cuối 2025)</h3>
-            <p>Các tổ chức hàng đầu dự báo tiềm năng tăng trưởng mạnh mẽ cho BTC.</p>
-            <div id="btc-price-target-chart-container" class="bar-chart-container"></div>
+    </div>
+    <div class="card wide-card" style="margin-top: 1.5rem;">
+        <h3><i class="fas fa-bullseye"></i> Mục Tiêu Giá từ Chuyên Gia (Cuối 2025)</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tài Sản</th>
+                        <th>Tổ Chức</th>
+                        <th>Dự Báo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td rowspan="3"><strong>Bitcoin (BTC)</strong></td>
+                        <td>Standard Chartered</td>
+                        <td>$200,000</td>
+                    </tr>
+                    <tr>
+                        <td>Bernstein</td>
+                        <td>$200,000</td>
+                    </tr>
+                    <tr>
+                        <td>Citigroup (Cơ sở)</td>
+                        <td>$135,000</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2"><strong>Ethereum (ETH)</strong></td>
+                        <td>Fundstrat (Tom Lee)</td>
+                        <td>$10,000 - $15,000</td>
+                    </tr>
+                    <tr>
+                        <td>ARK Invest (2030)</td>
+                        <td>$170,000 - $180,000</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </section>
+<!-- KẾT THÚC NỘI DUNG BÁO CÁO -->

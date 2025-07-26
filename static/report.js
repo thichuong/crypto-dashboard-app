@@ -1,114 +1,74 @@
 /**
- * Hàm chính để khởi tạo tất cả các thành phần trực quan cho báo cáo.
- * Sẽ được gọi từ main.js sau khi report.html được tải.
+ * Khởi tạo tất cả các thành phần trực quan hóa dữ liệu cho báo cáo.
+ * Hàm này sẽ được gọi bởi main.js sau khi nội dung report.html được tải.
+ * Các hàm vẽ biểu đồ (createGauge, createDoughnutChart, createBarChart) được giả định là tồn tại trong file chart.js
  */
 function initializeAllVisuals_report() {
     console.log("Initializing report visuals...");
-    initFearAndGreedGauge_report();
-    initBtcDominanceChart_report();
-    initEtfFlowChart_report();
-    initBtcPriceTargetChart_report();
-}
 
-/**
- * Khởi tạo biểu đồ đồng hồ đo cho Chỉ số Sợ hãi & Tham lam.
- */
-function initFearAndGreedGauge_report() {
-    try {
-        const container = document.getElementById('fear-greed-gauge-container');
-        if (!container) return;
-
-        const value = 70;
-        const config = {
+    // 1. Biểu đồ Gauge: Chỉ số Sợ hãi & Tham lam
+    const fngGaugeContainer = document.getElementById('fng-gauge-container');
+    if (fngGaugeContainer) {
+        createGauge(fngGaugeContainer, 71, {
             min: 0,
             max: 100,
             segments: [
-                { limit: 25, color: 'var(--fng-extreme-fear-color)', label: 'Sợ Hãi Tột Độ' },
-                { limit: 45, color: 'var(--fng-fear-color)', label: 'Sợ Hãi' },
-                { limit: 55, color: 'var(--fng-neutral-color)', label: 'Trung Lập' },
-                { limit: 75, color: 'var(--fng-greed-color)', label: 'Tham Lam' },
-                { limit: 100, color: 'var(--fng-extreme-greed-color)', label: 'Tham Lam Tột Độ' }
+                { limit: 25, color: 'var(--fng-extreme-fear-color)', label: 'Sợ hãi Tột độ' },
+                { limit: 45, color: 'var(--fng-fear-color)', label: 'Sợ hãi' },
+                { limit: 55, color: 'var(--fng-neutral-color)', label: 'Trung lập' },
+                { limit: 75, color: 'var(--fng-greed-color)', label: 'Tham lam' },
+                { limit: 100, color: 'var(--fng-extreme-greed-color)', label: 'Tham lam Tột độ' }
             ]
-        };
-        // Giả sử hàm createGauge tồn tại trong chart.js
-        createGauge(container, value, config);
-    } catch (error) {
-        console.error("Error initializing Fear & Greed gauge:", error);
+        });
     }
-}
 
-/**
- * Khởi tạo biểu đồ tròn cho Tỷ lệ thống trị của Bitcoin.
- */
-function initBtcDominanceChart_report() {
-    try {
-        const container = document.getElementById('btc-dominance-chart-container');
-        if (!container) return;
+    // 2. Biểu đồ Gauge: RSI cho Bitcoin (BTC)
+    const rsiGaugeBtcContainer = document.getElementById('rsi-gauge-container-btc');
+    if (rsiGaugeBtcContainer) {
+        createGauge(rsiGaugeBtcContainer, 65, {
+            min: 0,
+            max: 100,
+            segments: [
+                { limit: 30, color: 'var(--rsi-oversold-color)', label: 'Quá Bán' },
+                { limit: 70, color: 'var(--rsi-neutral-color)', label: 'Trung Lập' },
+                { limit: 100, color: 'var(--rsi-overbought-color)', label: 'Quá Mua' }
+            ]
+        });
+    }
+    
+    // 3. Biểu đồ Gauge: RSI cho Ethereum (ETH)
+    const rsiGaugeEthContainer = document.getElementById('rsi-gauge-container-eth');
+    if (rsiGaugeEthContainer) {
+        createGauge(rsiGaugeEthContainer, 79, {
+            min: 0,
+            max: 100,
+            segments: [
+                { limit: 30, color: 'var(--rsi-oversold-color)', label: 'Quá Bán' },
+                { limit: 70, color: 'var(--rsi-neutral-color)', label: 'Trung Lập' },
+                { limit: 100, color: 'var(--rsi-overbought-color)', label: 'Quá Mua' }
+            ]
+        });
+    }
 
-        const data = [
+    // 4. Biểu đồ Doughnut: Tỷ lệ thống trị của Bitcoin
+    const btcDominanceContainer = document.getElementById('btc-dominance-chart');
+    if (btcDominanceContainer) {
+        const btcDominanceData = [
             { value: 60.6, label: 'Bitcoin', color: 'var(--neutral-color)' },
-            { value: 39.4, label: 'Altcoins', color: 'var(--text-accent)' }
+            { value: 100 - 60.6, label: 'Altcoins', color: 'var(--accent-color)' }
         ];
-        const title = '60.6%';
-
-        // Giả sử hàm createDoughnutChart tồn tại trong chart.js
-        createDoughnutChart(container, data, title);
-    } catch (error) {
-        console.error("Error initializing BTC Dominance chart:", error);
+        createDoughnutChart(btcDominanceContainer, btcDominanceData, '60.6%');
     }
-}
-
-/**
- * Khởi tạo biểu đồ cột cho Dòng vốn ETF.
- */
-function initEtfFlowChart_report() {
-     try {
-        const container = document.getElementById('etf-flow-bar-chart-container');
-        if (!container) return;
-
-        const data = [
-            { 
-                label: 'Bitcoin ETF', 
-                value: -131.35, 
-                color: 'var(--negative-color)' 
-            },
-            { 
-                label: 'Ethereum ETF', 
-                value: 296.60, 
-                color: 'var(--positive-color)' 
-            }
+    
+    // 5. Biểu đồ cột: Dòng vốn ETF
+    const etfFlowContainer = document.getElementById('etf-flow-chart');
+    if (etfFlowContainer) {
+        const etfFlowData = [
+            { label: 'Bitcoin ETF (Dòng ra)', value: 131, color: 'var(--negative-color)' },
+            { label: 'Ethereum ETF (Dòng vào)', value: 296, color: 'var(--positive-color)' }
         ];
-        
-        // Giả sử hàm createBarChart tồn tại trong chart.js
-        // Lưu ý: Cần một phiên bản createBarChart có thể xử lý giá trị âm.
-        createBarChart(container, data);
-    } catch (error) {
-        console.error("Error initializing ETF Flow chart:", error);
+        createBarChart(etfFlowContainer, etfFlowData);
     }
+
+    console.log("Report visuals initialized.");
 }
-
-/**
- * Khởi tạo biểu đồ cột cho Mục tiêu giá BTC của các chuyên gia.
- */
-function initBtcPriceTargetChart_report() {
-     try {
-        const container = document.getElementById('btc-price-target-chart-container');
-        if (!container) return;
-        
-        const data = [
-            { label: 'Standard Chartered', value: 200000, color: '#6366f1' },
-            { label: 'Bernstein', value: 200000, color: '#818cf8' },
-            { label: 'Citigroup (Base)', value: 135000, color: '#a5b4fc' }
-        ];
-
-        // Giả sử hàm createLineChart tồn tại trong chart.js
-        createBarChart(container, data);
-    } catch (error) {
-        console.error("Error initializing BTC Price Target chart:", error);
-    }
-}
-
-// Hàm giả định (để kiểm tra độc lập nếu cần)
-// function createGauge(container, value, config) { container.innerHTML = `<p>Gauge: ${value}</p>`; }
-// function createDoughnutChart(container, data, title) { container.innerHTML = `<p>Doughnut: ${title}</p>`; }
-// function createBarChart(container, data) { container.innerHTML = `<p>Bar Chart with ${data.length} bars</p>`; }
