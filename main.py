@@ -6,17 +6,26 @@ import requests
 from dotenv import load_dotenv
 from requests.exceptions import RequestException, HTTPError, ConnectionError, Timeout
 
-# Tải các biến môi trường từ file .env (chỉ cần cho phát triển cục bộ)
 load_dotenv()
 
-# Cấu hình cache: lưu trữ trong bộ nhớ đơn giản
-config = {
-    "DEBUG": True,
-    "CACHE_TYPE": "SimpleCache",
-    "CACHE_DEFAULT_TIMEOUT": 300  # Thời gian cache mặc định là 300 giây (5 phút)
-}
+# Cấu hình cache: Chuyển sang sử dụng Redis từ Vercel KV
+# Kiểm tra xem biến môi trường KV_URL có tồn tại không
+if 'KV_URL' in os.environ:
+    # Cấu hình cho môi trường Vercel (production)
+    config = {
+        "DEBUG": False,
+        "CACHE_TYPE": "RedisCache",
+        "CACHE_DEFAULT_TIMEOUT": 3600, # Tăng cache lên 1 giờ
+        "CACHE_REDIS_URL": os.environ['KV_URL']
+    }
+else:
+    # Cấu hình cho môi trường local
+    config = {
+        "DEBUG": True,
+        "CACHE_TYPE": "SimpleCache",
+        "CACHE_DEFAULT_TIMEOUT": 3600
+    }
 
-# Khởi tạo Flask
 app = Flask(__name__)
 app.config.from_mapping(config)
 
