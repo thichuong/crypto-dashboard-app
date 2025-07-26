@@ -98,12 +98,6 @@ function createGauge(container, value, config) {
                 ${classification}
             </text>
         </svg>
-        <style>
-            .gauge-needle {
-                /* Hiệu ứng xoay mượt mà cho kim */
-                transition: transform 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            }
-        </style>
     `;
     container.innerHTML = svg;
 }
@@ -177,28 +171,6 @@ function createLineChart(container, data, options = {}) {
 
             <g class="value-labels-group">${valueLabels}</g>
         </svg>
-
-        <style>
-            .line-path {
-                stroke-dasharray: 1000;
-                stroke-dashoffset: 1000;
-                animation: draw-path 1.2s 0.2s forwards cubic-bezier(0.45, 0.05, 0.55, 0.95);
-            }
-            @keyframes draw-path { to { stroke-dashoffset: 0; } }
-
-            .line-dot, .value-label {
-                opacity: 0;
-                transform: translateY(10px);
-                animation: fade-in-up 0.5s forwards cubic-bezier(0.34, 1.56, 0.64, 1);
-            }
-             .value-label { animation-delay: 0.8s; }
-            @keyframes fade-in-up {
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-        </style>
     `;
     container.innerHTML = svg;
 }
@@ -237,14 +209,6 @@ function createBarChart(container, data) {
             <line x1="${p}" y1="${height-p}" x2="${width-p}" y2="${height-p}" stroke="var(--border-color)" />
             ${bars}
         </svg>
-        <style>
-            .bar-rect {
-                transform: scaleY(0);
-                transform-origin: bottom;
-                animation: grow-bar 0.7s forwards cubic-bezier(0.34, 1.56, 0.64, 1);
-            }
-            @keyframes grow-bar { to { transform: scaleY(1); } }
-        </style>
     `;
 }
 
@@ -314,34 +278,5 @@ function createDoughnutChart(container, data, title = '') {
         <div class="doughnut-legend">
             ${legendItems}
         </div>
-        <style>
-            .doughnut-segment {
-                animation: fill-doughnut 1s forwards cubic-bezier(0.4, 0, 0.2, 1);
-            }
-            @keyframes fill-doughnut {
-                to { stroke-dashoffset: var(--final-offset); }
-            }
-            .doughnut-legend {
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                gap: 0.6rem;
-                margin-top: 1.5rem; /* Tăng khoảng cách từ 1.25rem lên 1.5rem */
-                margin-left: 1rem;
-                font-size: 0.85rem;
-                color: var(--text-secondary);
-            }
-            .legend-item {
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-            }
-            .legend-color-box {
-                width: 12px;
-                height: 12px;
-                border-radius: 3px;
-                flex-shrink: 0;
-            }
-        </style>
     `;
 }
