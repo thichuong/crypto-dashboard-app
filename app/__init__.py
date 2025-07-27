@@ -76,14 +76,24 @@ def create_app():
     @app.route('/upload-report', methods=['POST'])
     def generate_report_from_upload():
         """Xử lý việc tải lên file docx và tạo một báo cáo HTML duy nhất."""
-        if 'report_file' not in request.files:
+        if 'file' not in request.files:
             flash('Không có tệp nào được chọn.')
             return redirect(url_for('upload_page'))
 
-        file = request.files['report_file']
+        file = request.files['file']
+        api_key = request.form.get('gemini_key')
 
+        # --- 1. Xác thực đầu vào ---
         if file.filename == '':
-            flash('Không có tệp nào được chọn.')
+            flash('Chưa chọn tệp nào. Vui lòng tải lên một tệp .txt.', 'error')
+            return redirect(url_for('upload_page'))
+
+        if not api_key:
+            flash('Thiếu Gemini API Key. Vui lòng cung cấp khóa của bạn.', 'error')
+            return redirect(url_for('upload_page'))
+
+        if not file.filename.endswith('.docx'):
+            flash('Định dạng tệp không hợp lệ. Chỉ chấp nhận tệp .txt.', 'error')
             return redirect(url_for('upload_page'))
 
         if file and file.filename.endswith('.docx'):
@@ -101,6 +111,7 @@ def create_app():
                 full_request = f"{system_prompt}\n\n---\n\n**NỘI DUNG BÁO CÁO CẦN XỬ LÝ:**\n\n{report_content}"
                 
                 # **Quan trọng: Sử dụng model gemini-2.5-pro theo yêu cầu**
+                genai.configure(api_key=api_key)
                 model = genai.GenerativeModel("gemini-2.5-pro")
                 response = model.generate_content(full_request)
                 
