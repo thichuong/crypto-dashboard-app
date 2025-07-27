@@ -1,33 +1,38 @@
 /**
  * Khởi tạo tất cả các thành phần trực quan hóa cho báo cáo.
- * Hàm này sẽ được gọi sau khi report.html được tải vào DOM.
+ * Hàm này sẽ được gọi bởi main.js sau khi nội dung báo cáo được tải.
  */
 function initializeAllVisuals_report() {
-    console.log("Initializing report visuals...");
-    
-    // An toàn: chỉ chạy các hàm nếu element tồn tại
-    const runIfPresent = (id, func) => {
-        const element = document.getElementById(id);
-        if (element) {
-            func(element);
-        } else {
-            console.warn(`Element with ID #${id} not found. Skipping visualization.`);
+    try {
+        // Kiểm tra xem thư viện chart đã được tải chưa
+        if (typeof createGauge === 'undefined' || typeof createDoughnutChart === 'undefined' || typeof createBarChart === 'undefined') {
+            console.error("Lỗi: Thư viện 'chart.js' chưa được tải. Không thể vẽ biểu đồ.");
+            return;
         }
-    };
 
-    runIfPresent('fearGreedGaugeContainer', initializeFearGreedGauge_report);
-    runIfPresent('btcDominanceDoughnut', initializeBtcDominanceDoughnut_report);
-    runIfPresent('btcRsiGaugeContainer', initializeBtcRsiGauge_report);
-    runIfPresent('etfFlowsBarChart', initializeEtfFlowsBarChart_report);
+        console.log("Đang khởi tạo các biểu đồ cho báo cáo...");
+
+        initializeFearGreedGauge_report();
+        initializeBtcDominanceDoughnut_report();
+        initializeRsiGauge_report();
+        initializeEtfInflowBarChart_report();
+
+        console.log("Tất cả biểu đồ đã được khởi tạo thành công.");
+
+    } catch (error) {
+        console.error("Đã xảy ra lỗi trong quá trình khởi tạo biểu đồ báo cáo:", error);
+    }
 }
 
 /**
- * Vẽ biểu đồ Gauge cho Chỉ số Sợ hãi & Tham lam.
- * @param {HTMLElement} container - Element để vẽ biểu đồ.
+ * Vẽ biểu đồ đồng hồ đo Chỉ số Sợ hãi & Tham lam.
  */
-function initializeFearGreedGauge_report(container) {
-    const value = 70; // Giá trị ví dụ từ báo cáo (64-74)
-    const config = {
+function initializeFearGreedGauge_report() {
+    const container = document.getElementById('fear-greed-gauge-container');
+    if (!container) return;
+
+    const fearGreedValue = 70; // Giá trị từ báo cáo
+    const fearGreedConfig = {
         min: 0,
         max: 100,
         segments: [
@@ -38,30 +43,34 @@ function initializeFearGreedGauge_report(container) {
             { limit: 100, color: 'var(--fng-extreme-greed-color)', label: 'Tham lam Tột độ' }
         ]
     };
-    // Giả sử hàm createGauge có sẵn trong chart.js
-    createGauge(container, value, config);
+
+    createGauge(container, fearGreedValue, fearGreedConfig);
 }
 
 /**
- * Vẽ biểu đồ Doughnut cho Tỷ lệ Thống trị của Bitcoin.
- * @param {HTMLElement} container - Element để vẽ biểu đồ.
+ * Vẽ biểu đồ tròn Tỷ lệ Thống trị của Bitcoin (BTC.D).
  */
-function initializeBtcDominanceDoughnut_report(container) {
-    const data = [
-        { value: 61, color: 'var(--icon-color-btc)', label: 'Bitcoin (BTC)' },
-        { value: 39, color: 'var(--text-secondary)', label: 'Altcoins' }
+function initializeBtcDominanceDoughnut_report() {
+    const container = document.getElementById('btc-dominance-doughnut-container');
+    if (!container) return;
+
+    const btcDominanceData = [
+        { label: 'Bitcoin', value: 61, color: 'var(--icon-color-btc)' },
+        { label: 'Altcoins', value: 39, color: 'var(--text-secondary)' }
     ];
-    // Giả sử hàm createDoughnutChart có sẵn trong chart.js
-    createDoughnutChart(container, data, '61%');
+
+    createDoughnutChart(container, btcDominanceData, 'BTC.D');
 }
 
 /**
- * Vẽ biểu đồ Gauge cho chỉ số RSI của Bitcoin.
- * @param {HTMLElement} container - Element để vẽ biểu đồ.
+ * Vẽ biểu đồ đồng hồ đo Chỉ số Sức mạnh Tương đối (RSI).
  */
-function initializeBtcRsiGauge_report(container) {
-    const value = 68; // Giá trị ví dụ "gần 70" từ báo cáo
-    const config = {
+function initializeRsiGauge_report() {
+    const container = document.getElementById('rsi-gauge-container');
+    if (!container) return;
+
+    const rsiValue = 68; // Giá trị "tiến gần 70" từ báo cáo
+    const rsiConfig = {
         min: 0,
         max: 100,
         segments: [
@@ -70,31 +79,26 @@ function initializeBtcRsiGauge_report(container) {
             { limit: 100, color: 'var(--rsi-overbought-color)', label: 'Quá mua' }
         ]
     };
-    // Giả sử hàm createGauge có sẵn trong chart.js
-    createGauge(container, value, config);
+    createGauge(container, rsiValue, rsiConfig);
 }
 
 /**
- * Vẽ biểu đồ cột cho Dòng tiền vào các Quỹ ETF.
- * @param {HTMLElement} container - Element để vẽ biểu đồ.
+ * Vẽ biểu đồ cột Dòng tiền vào các Quỹ ETF.
  */
-function initializeEtfFlowsBarChart_report(container) {
-    const data = [
-        { value: 19, label: 'BTC ETF Tổng', color: 'var(--icon-color-btc)' },
-        { value: 8, label: 'BTC ETF (Tháng qua)', color: 'var(--icon-color-btc-analysis)' },
-        { value: 3, label: 'ETH ETF (Gần đây)', color: 'var(--icon-color-eth)' }
-    ];
+function initializeEtfInflowBarChart_report() {
+    const container = document.getElementById('etf-inflow-bar-chart-container');
+    if (!container) return;
 
-    // Giả sử hàm createBarChart có sẵn trong chart.js
-    // Chúng ta cần một phiên bản của createBarChart hỗ trợ giá trị
-    // hoặc một hàm khác như createLineChart. Ở đây, ta dùng Bar Chart để so sánh.
-    createBarChart(container, data);
-    // Thêm một ghi chú về đơn vị
-    const note = document.createElement('p');
-    note.textContent = 'Đơn vị: Tỷ USD ($B)';
-    note.style.textAlign = 'center';
-    note.style.fontSize = '0.8rem';
-    note.style.color = 'var(--text-secondary)';
-    note.style.marginTop = '0.5rem';
-    container.appendChild(note);
+    const etfData = [
+        { label: 'BTC ETF (Tổng)', value: 19, color: 'var(--icon-color-btc)' },
+        { label: 'BTC ETF (Tháng qua)', value: 8, color: 'hsla(36, 96%, 53%, 0.7)' },
+        { label: 'ETH ETF (Tháng qua)', value: 3, color: 'var(--icon-color-eth)' }
+    ];
+    
+    const etfOptions = {
+        valueSuffix: ' Tỷ USD',
+        yAxisLabel: 'Dòng tiền ròng'
+    };
+
+    createBarChart(container, etfData, etfOptions);
 }

@@ -107,45 +107,84 @@ function createGauge(container, value, config) {
  * [CẢI TIẾN] TẠO BIỂU ĐỒ CỘT (BAR CHART)
  * Thêm hiệu ứng, nhãn giá trị cho các cột và tương tác khi di chuột.
  * @param {HTMLElement} container - Element DOM.
- * @param {Array<object>} data - Dữ liệu, vd: [{value: 10, label: 'A', color: 'red'}]
+ * @param {Array<object>} data - Dữ liệu, vd: [{value: 10, label: 'A', color: 'red'}].
+ * @param {object} [options] - Các tùy chọn, vd: { valuePrefix: '$', valueSuffix: 'M', yAxisLabel: 'Triệu USD' }.
  */
-function createBarChart(container, data) {
-    if (!container) return;
-    const width = 300, height = 180, pTop = 25, pBottom = 30, pX = 20;
+function createBarChart(container, data, options = {}) {
+    if (!container || !data || data.length === 0) return;
+
+    const { valuePrefix = '', valueSuffix = '', yAxisLabel = '' } = options;
+
+    const width = 300, height = 180, pTop = 25, pBottom = 30;
+    const pLeft = yAxisLabel ? 45 : 20; // Tăng padding trái nếu có nhãn trục Y
+    const pRight = 20;
+
+    const chartWidth = width - pLeft - pRight;
     const maxValue = Math.max(...data.map(d => d.value));
-    const barWidth = (width - 2 * pX) / data.length * 0.65;
-    const gap = (width - 2 * pX) / data.length * 0.35;
+    const barWidth = chartWidth / data.length * 0.65;
+    const gap = chartWidth / data.length * 0.35;
 
     let bars = '';
     let labels = '';
+    let yAxisUnit = '';
+
+    if (yAxisLabel) {
+        yAxisUnit = `
+            <text x="${-(pTop + (height - pTop - pBottom) / 2)}" y="15" 
+                  transform="rotate(-90)" text-anchor="middle" font-size="12px" 
+                  font-weight="500" fill="var(--text-secondary)">
+                ${yAxisLabel}
+            </text>
+        `;
+    }
+
     data.forEach((d, i) => {
         const barHeight = (d.value / maxValue) * (height - pTop - pBottom);
-        const x = pX + i * (barWidth + gap) + gap / 2;
+        const x = pLeft + i * (barWidth + gap) + gap / 2;
         const y = height - pBottom - barHeight;
         bars += `
             <g transform="translate(${x}, ${y})" class="bar-group">
                 <rect width="${barWidth}" height="${barHeight}"
                       fill="${d.color || 'var(--accent-color)'}" rx="3" class="bar-rect"
                       style="animation-delay: ${i * 100}ms;" />
-                <text x="${barWidth / 2}" y="-8" text-anchor="middle" font-size="11" font-weight="600"
-                      fill="var(--text-primary)" class="bar-value-label">${d.value}</text>
+                <text x="${barWidth / 2}" y="-8" text-anchor="middle" font-size="12px" font-weight="600"
+                      fill="var(--text-primary)" class="bar-value-label">${valuePrefix}${d.value}${valueSuffix}</text>
             </g>
         `;
+
+        const words = d.label.split(/\s+/);
+        const lines = [];
+        if (words.length > 0) {
+            let currentLine = words[0];
+            for (let j = 1; j < words.length; j++) {
+                if ((currentLine + " " + words[j]).length > 12 && currentLine.length > 0) {
+                    lines.push(currentLine);
+                    currentLine = words[j];
+                } else { currentLine += " " + words[j]; }
+            }
+            lines.push(currentLine);
+        }
+
+        const labelX = x + barWidth / 2;
+        const tspans = lines.map((line, lineIndex) =>
+            `<tspan x="${labelX}" dy="${lineIndex > 0 ? '1.2em' : '0'}">${line}</tspan>`
+        ).join('');
+
         labels += `
-            <text x="${x + barWidth/2}" y="${height - pBottom + 15}" text-anchor="middle" font-size="6" fill="var(--text-secondary)">
-                ${d.label}
+            <text y="${height - pBottom + 15}" text-anchor="middle" font-size="12px" fill="var(--text-secondary)">
+                ${tspans}
             </text>
         `;
     });
 
     container.innerHTML = `
         <svg viewBox="0 0 ${width} ${height}" style="width:100%; height:auto; overflow: visible;">
-            <line x1="${pX}" y1="${height - pBottom}" x2="${width - pX}" y2="${height - pBottom}" stroke="var(--border-color)" />
+            ${yAxisUnit}
+            <line x1="${pLeft}" y1="${height - pBottom}" x2="${width - pRight}" y2="${height - pBottom}" stroke="var(--border-color)" />
             ${bars}
             <g>${labels}</g>
         </svg>
     `;
-    // Gán một class riêng để CSS có thể nhắm mục tiêu chính xác
     container.classList.add('bar-chart-container');
 }
 
@@ -194,7 +233,7 @@ function createLineChart(container, data, options = {}) {
                      <circle cx="${toX(i)}" cy="${toY(d)}" r="4" fill="${color}"
                             stroke="var(--bg-secondary)" stroke-width="2" class="line-dot"
                             style="animation-delay: ${i * 80}ms"/>
-                    <text x="${toX(i)}" y="${toY(d) - 15}" text-anchor="middle" font-size="11px"
+                    <text x="${toX(i)}" y="${toY(d) - 15}" text-anchor="middle" font-size="12px"
                           fill="var(--text-primary)" font-weight="600" class="value-label">
                         ${valuePrefix}${d.toFixed(1)}${valueSuffix}
                     </text>

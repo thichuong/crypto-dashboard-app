@@ -1,283 +1,244 @@
-/* --- CSS CHO BÁO CÁO PHÂN TÍCH --- */
+/* --- BÁO CÁO PHÂN TÍCH - REPORT.CSS --- */
 
-/* Đảm bảo tất cả style chỉ áp dụng bên trong container của báo cáo */
 #report-container {
-    padding: 2rem;
-    font-family: 'Inter', sans-serif; /* Giả sử font này được load từ file css chính */
-}
-
-/* Header báo cáo */
-#report-container .report-header {
-    text-align: center;
-    margin-bottom: 3rem;
-    border-bottom: 2px solid var(--border-color);
-    padding-bottom: 1.5rem;
-}
-
-#report-container .report-header h1 {
-    font-size: 2.25rem;
-    font-weight: 800;
+    font-family: 'Inter', sans-serif;
     color: var(--text-primary);
-    line-height: 1.2;
 }
 
-#report-container .report-header .report-date {
-    font-size: 1rem;
-    color: var(--text-secondary);
-    margin-top: 0.5rem;
-}
-
-/* Cấu trúc Section */
-#report-container .report-section {
-    margin-bottom: 3.5rem;
-}
-
-#report-container .report-section h2 {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--text-primary);
+/* --- Cấu trúc và Bố cục chính --- */
+#report-container .report-section-header {
     margin-bottom: 1.5rem;
     padding-bottom: 0.75rem;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 2px solid var(--border-color);
+}
+
+#report-container h1,
+#report-container h2 {
+    font-weight: 700;
+    color: var(--text-accent);
+}
+
+#report-container h1 {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+#report-container h2 {
+    font-size: 1.75rem;
+    line-height: 2.25rem;
     display: flex;
     align-items: center;
     gap: 0.75rem;
 }
 
-#report-container .report-section h2 i {
-    font-size: 1.5rem;
-    width: 32px;
-    text-align: center;
+#report-container h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
-/* --- MÀU SẮC CHO ICON H2 --- */
-#report-container #summary-title i { color: var(--icon-color-summary); }
-#report-container #btc-analysis-title i { color: var(--icon-color-btc); }
-#report-container #macro-legal-title i { color: var(--icon-color-macro-legal); }
-#report-container #top-coins-title i { color: var(--icon-color-market-activity); }
-#report-container #outlook-title i { color: var(--icon-color-outlook); }
-
-/* --- Bố cục Lưới --- */
 #report-container .content-grid {
     display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     gap: 1.5rem;
-    grid-template-columns: 1fr;
 }
 
-@media (min-width: 768px) {
-    #report-container .content-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    #report-container .stat-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
+#report-container .mt-6 {
+    margin-top: 1.5rem;
 }
 
-@media (min-width: 1024px) {
-    #report-container .stat-grid {
-        grid-template-columns: repeat(4, 1fr);
-    }
-    #report-container .top-coins-grid {
-         grid-template-columns: repeat(4, 1fr);
-    }
-}
-
-/* --- Thẻ Báo cáo (Card) --- */
+/* --- Kiểu dáng thẻ (Card) --- */
 #report-container .report-card {
     background-color: var(--card-bg);
     border: 1px solid var(--card-border);
     border-radius: 12px;
     padding: 1.5rem;
     box-shadow: var(--card-shadow);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    height: 100%; /* Đảm bảo các card trong grid có chiều cao bằng nhau */
 }
 
 #report-container .report-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
 }
 
-#report-container .wide-card {
-    grid-column: 1 / -1; /* Chiếm toàn bộ hàng */
-    margin-top: 1.5rem;
+#report-container .bull-card {
+    background-color: var(--bull-card-bg);
+    border-left: 4px solid var(--positive-color);
+}
+#report-container .bull-card h3 { color: var(--positive-color); }
+
+
+#report-container .bear-card {
+    background-color: var(--bear-card-bg);
+    border-left: 4px solid var(--negative-color);
+}
+#report-container .bear-card h3 { color: var(--negative-color); }
+
+
+/* --- Các thành phần nội dung --- */
+#report-container p {
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
 }
 
-#report-container .report-card .card-title {
-    font-size: 1.25rem;
-    font-weight: 600;
+#report-container .highlight-list {
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 1rem;
+    space-y: 0.75rem;
+}
+
+#report-container .highlight-list li {
+    position: relative;
+    padding-left: 1.5rem;
+    color: var(--text-secondary);
+}
+
+#report-container .highlight-list li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--accent-color);
+    font-weight: bold;
+}
+
+#report-container .highlight-list ul {
+    list-style-type: none;
+    padding-left: 1rem;
+    margin-top: 0.5rem;
+}
+
+#report-container .highlight-list ul li::before {
+    content: '•';
+    color: var(--text-secondary);
+}
+
+#report-container strong {
     color: var(--text-primary);
-    margin: 0;
+    font-weight: 600;
+}
+
+#report-container em {
+    font-style: italic;
+    color: var(--text-accent);
+}
+
+/* --- Component Trực quan hóa Dữ liệu --- */
+#report-container .gauge-container,
+#report-container .doughnut-container,
+#report-container .bar-chart-container {
+    width: 100%;
+    min-height: 200px; /* Đảm bảo có không gian ban đầu */
+    height: auto; /* Chiều cao linh hoạt */
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#report-container .doughnut-container {
+    min-height: 250px;
+}
+
+/* --- Card Hỗ trợ & Kháng cự --- */
+#report-container .levels-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#report-container .level-card {
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+#report-container .level-card.resistance {
+    background-color: #fff5f5;
+    border-left: 4px solid var(--negative-color);
+}
+#report-container .level-card.resistance h4 { color: var(--negative-color); }
+
+#report-container .level-card.support {
+    background-color: #f0fdf4;
+    border-left: 4px solid var(--positive-color);
+}
+#report-container .level-card.support h4 { color: var(--positive-color); }
+
+
+#report-container .level-card h4 {
+    margin: 0 0 0.5rem 0;
+    font-weight: 600;
     display: flex;
     align-items: center;
     gap: 0.5rem;
 }
 
-/* Các thẻ stat nhỏ */
-#report-container .stat-card {
-    background: var(--bg-primary);
-    padding: 1rem;
-    border-radius: 8px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-}
-
-#report-container .stat-value {
+#report-container .level-card .price {
     font-size: 1.5rem;
     font-weight: 700;
     color: var(--text-primary);
-}
-
-#report-container .stat-label {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-    margin-top: 0.25rem;
-}
-
-/* Các list điểm chính */
-#report-container .key-points {
-    list-style: none;
-    padding-left: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    font-size: 0.95rem;
-    color: var(--text-secondary);
-}
-
-#report-container .key-points li {
-    display: flex;
-    gap: 0.75rem;
-    align-items: flex-start;
-}
-
-#report-container .key-points li i {
-    margin-top: 4px;
-    color: var(--text-accent);
-}
-
-#report-container .key-points strong {
-    color: var(--text-primary);
-    font-weight: 600;
-}
-
-/* Biểu đồ */
-#report-container .gauge-chart-container,
-#report-container .doughnut-chart-container,
-#report-container .bar-chart-container {
-    min-height: 220px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* Mức Hỗ trợ & Kháng cự */
-#report-container .support-resistance-container {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-#report-container .level {
-    padding: 1rem;
-    border-radius: 8px;
-    border-left: 5px solid;
-}
-#report-container .level.resistance {
-    background-color: var(--bear-card-bg);
-    border-color: var(--negative-color);
-}
-#report-container .level.support {
-    background-color: var(--bull-card-bg);
-    border-color: var(--positive-color);
-}
-#report-container .level.support-critical {
-    background-color: #fffbeb; /* amber-50 */
-    border-color: var(--neutral-color);
-}
-#report-container .level-label {
-    font-weight: 600;
-    color: var(--text-primary);
-    display: block;
-}
-#report-container .level-value {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    display: block;
-    margin: 0.25rem 0;
-}
-#report-container .level-desc {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-}
-
-/* Thẻ coin */
-#report-container .coin-card .coin-price {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--text-primary);
     margin: 0;
 }
-#report-container .icon-eth { color: var(--icon-color-eth); }
-#report-container .icon-sol { color: var(--icon-color-sol); }
-#report-container .icon-xrp { color: var(--icon-color-xrp); }
-#report-container .icon-bnb { color: var(--icon-color-bnb); }
 
-/* Bảng */
+#report-container .level-card .description {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin: 0.25rem 0 0 0;
+}
+
+
+/* --- Bảng biểu --- */
 #report-container .table-container {
     width: 100%;
     overflow-x: auto;
+    margin-top: 1rem;
+    -webkit-overflow-scrolling: touch;
 }
 
 #report-container table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.9rem;
+    min-width: 600px;
 }
 
-#report-container th, #report-container td {
+#report-container th,
+#report-container td {
     padding: 0.75rem 1rem;
     text-align: left;
     border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
 }
 
-#report-container th {
-    background-color: var(--bg-primary);
+#report-container thead th {
+    background-color: #f9fafb;
     font-weight: 600;
-    color: var(--text-primary);
+    color: var(--text-secondary);
+    position: sticky;
+    top: 0;
 }
 
 #report-container tbody tr:hover {
     background-color: var(--table-row-hover-bg);
 }
 
-#report-container td i {
-    font-size: 1.2rem;
+#report-container .crypto-icon {
+    font-size: 1.5rem;
     margin-right: 0.5rem;
     vertical-align: middle;
 }
 
-/* Luận điểm Tăng/Giảm */
-#report-container .bull-case {
-    border-left: 5px solid var(--positive-color);
-    background-color: var(--bull-card-bg);
+#report-container td:first-child {
+    display: flex;
+    align-items: center;
 }
-#report-container .bull-case h3 { color: var(--positive-color); }
-#report-container .bull-case .key-points li i { color: var(--positive-color); }
-
-#report-container .bear-case {
-    border-left: 5px solid var(--negative-color);
-    background-color: var(--bear-card-bg);
-}
-#report-container .bear-case h3 { color: var(--negative-color); }
-#report-container .bear-case .key-points li i { color: var(--negative-color); }
-
-
-/* Các lớp tiện ích */
-.positive-text { color: var(--positive-color); }
-.negative-text { color: var(--negative-color); }
-.neutral-text { color: var(--neutral-color); }
