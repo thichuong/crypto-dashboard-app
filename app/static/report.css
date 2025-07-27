@@ -1,140 +1,233 @@
-/* --- Styles for Report Content --- */
+/* --- CSS CHO BÁO CÁO PHÂN TÍCH --- */
 
-/* --- General Structure & Typography --- */
-#report-container section {
+/* Đảm bảo tất cả style chỉ áp dụng bên trong container của báo cáo */
+#report-container {
+    padding: 2rem;
+    font-family: 'Inter', sans-serif; /* Giả sử font này được load từ file css chính */
+}
+
+/* Header báo cáo */
+#report-container .report-header {
+    text-align: center;
     margin-bottom: 3rem;
-    padding-bottom: 2rem;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 1.5rem;
 }
 
-#report-container section:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
+#report-container .report-header h1 {
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.2;
 }
 
-#report-container h2 {
+#report-container .report-header .report-date {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+}
+
+/* Cấu trúc Section */
+#report-container .report-section {
+    margin-bottom: 3.5rem;
+}
+
+#report-container .report-section h2 {
     font-size: 1.75rem;
+    font-weight: 700;
     color: var(--text-primary);
     margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    font-weight: 600;
 }
 
-#report-container h2 .fas,
-#report-container h2 .fa-brands {
+#report-container .report-section h2 i {
     font-size: 1.5rem;
+    width: 32px;
+    text-align: center;
 }
 
-#report-container h3 {
-    font-size: 1.25rem;
-    color: var(--text-accent);
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
+/* --- MÀU SẮC CHO ICON H2 --- */
+#report-container #summary-title i { color: var(--icon-color-summary); }
+#report-container #btc-analysis-title i { color: var(--icon-color-btc); }
+#report-container #macro-legal-title i { color: var(--icon-color-macro-legal); }
+#report-container #top-coins-title i { color: var(--icon-color-market-activity); }
+#report-container #outlook-title i { color: var(--icon-color-outlook); }
 
-#report-container h4 {
-    font-size: 1.1rem;
-    color: var(--text-primary);
-    margin: 0;
-}
-
-#report-container p {
-    line-height: 1.6;
-    color: var(--text-secondary);
-    margin-bottom: 1rem;
-}
-
-#report-container ul {
-    list-style-type: none;
-    padding-left: 0;
-    margin: 0;
-}
-
-#report-container li {
-    position: relative;
-    padding-left: 1.5rem;
-    margin-bottom: 0.75rem;
-    color: var(--text-secondary);
-}
-
-#report-container li::before {
-    content: '\f105'; /* Font Awesome chevron-right */
-    font-family: 'Font Awesome 6 Free';
-    font-weight: 900;
-    position: absolute;
-    left: 0;
-    top: 2px;
-    color: var(--accent-color);
-}
-
-#report-container strong {
-    color: var(--text-primary);
-    font-weight: 600;
-}
-
-#report-container em {
-    color: var(--text-accent);
-    font-style: italic;
-}
-
-/* --- Icon Colors for H2 --- */
-#report-container .icon-summary { color: var(--icon-color-summary); }
-#report-container .icon-macro-legal { color: var(--icon-color-macro-legal); }
-#report-container .icon-on-chain-sentiment { color: var(--icon-color-on-chain-sentiment); }
-#report-container .icon-btc-analysis { color: var(--icon-color-btc-analysis); }
-#report-container .icon-eth-analysis { color: var(--icon-color-eth-analysis); }
-#report-container .icon-market-activity { color: var(--icon-color-market-activity); }
-#report-container .icon-expert-outlook { color: var(--icon-color-expert-outlook); }
-
-/* --- Layout Grids --- */
+/* --- Bố cục Lưới --- */
 #report-container .content-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 1.5rem;
+    grid-template-columns: 1fr;
 }
 
-#report-container .content-grid.four-cols {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+@media (min-width: 768px) {
+    #report-container .content-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    #report-container .stat-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
+@media (min-width: 1024px) {
+    #report-container .stat-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    #report-container .top-coins-grid {
+         grid-template-columns: repeat(4, 1fr);
+    }
+}
 
-/* --- Card Styles --- */
-#report-container .card {
+/* --- Thẻ Báo cáo (Card) --- */
+#report-container .report-card {
     background-color: var(--card-bg);
     border: 1px solid var(--card-border);
     border-radius: 12px;
     padding: 1.5rem;
     box-shadow: var(--card-shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
-#report-container .card:hover {
+#report-container .report-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
 #report-container .wide-card {
-    grid-column: 1 / -1; /* Makes the card span all columns */
+    grid-column: 1 / -1; /* Chiếm toàn bộ hàng */
+    margin-top: 1.5rem;
 }
 
-/* --- Special Card Variants --- */
-#report-container .bull-card {
-    background-color: var(--bull-card-bg);
-    border-left: 5px solid var(--positive-color);
+#report-container .report-card .card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
-#report-container .bull-card h3 { color: var(--positive-color); }
 
-#report-container .bear-card {
+/* Các thẻ stat nhỏ */
+#report-container .stat-card {
+    background: var(--bg-primary);
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+#report-container .stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+#report-container .stat-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
+}
+
+/* Các list điểm chính */
+#report-container .key-points {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+}
+
+#report-container .key-points li {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+}
+
+#report-container .key-points li i {
+    margin-top: 4px;
+    color: var(--text-accent);
+}
+
+#report-container .key-points strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* Biểu đồ */
+#report-container .gauge-chart-container,
+#report-container .doughnut-chart-container,
+#report-container .bar-chart-container {
+    min-height: 220px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Mức Hỗ trợ & Kháng cự */
+#report-container .support-resistance-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+#report-container .level {
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 5px solid;
+}
+#report-container .level.resistance {
     background-color: var(--bear-card-bg);
-    border-left: 5px solid var(--negative-color);
+    border-color: var(--negative-color);
 }
-#report-container .bear-card h3 { color: var(--negative-color); }
+#report-container .level.support {
+    background-color: var(--bull-card-bg);
+    border-color: var(--positive-color);
+}
+#report-container .level.support-critical {
+    background-color: #fffbeb; /* amber-50 */
+    border-color: var(--neutral-color);
+}
+#report-container .level-label {
+    font-weight: 600;
+    color: var(--text-primary);
+    display: block;
+}
+#report-container .level-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: block;
+    margin: 0.25rem 0;
+}
+#report-container .level-desc {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
 
-/* --- Table Styles --- */
+/* Thẻ coin */
+#report-container .coin-card .coin-price {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+#report-container .icon-eth { color: var(--icon-color-eth); }
+#report-container .icon-sol { color: var(--icon-color-sol); }
+#report-container .icon-xrp { color: var(--icon-color-xrp); }
+#report-container .icon-bnb { color: var(--icon-color-bnb); }
+
+/* Bảng */
 #report-container .table-container {
     width: 100%;
     overflow-x: auto;
@@ -143,117 +236,48 @@
 #report-container table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 600px;
+    font-size: 0.9rem;
 }
 
 #report-container th, #report-container td {
-    padding: 1rem;
+    padding: 0.75rem 1rem;
     text-align: left;
     border-bottom: 1px solid var(--border-color);
-    vertical-align: middle;
 }
 
 #report-container th {
     background-color: var(--bg-primary);
-    color: var(--text-secondary);
     font-weight: 600;
+    color: var(--text-primary);
 }
 
 #report-container tbody tr:hover {
     background-color: var(--table-row-hover-bg);
 }
 
-#report-container td i.fa-brands {
-    margin-right: 8px;
-    font-size: 1.2em;
+#report-container td i {
+    font-size: 1.2rem;
+    margin-right: 0.5rem;
     vertical-align: middle;
 }
 
-/* --- Text Color Utilities --- */
-#report-container .text-positive { color: var(--positive-color); }
-#report-container .text-negative { color: var(--negative-color); }
-#report-container .text-neutral { color: var(--neutral-color); }
-
-
-/* --- Specific Component Styles --- */
-#report-container .stat-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-    margin: 1.5rem 0;
+/* Luận điểm Tăng/Giảm */
+#report-container .bull-case {
+    border-left: 5px solid var(--positive-color);
+    background-color: var(--bull-card-bg);
 }
-#report-container .stat-grid.vertical {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-}
+#report-container .bull-case h3 { color: var(--positive-color); }
+#report-container .bull-case .key-points li i { color: var(--positive-color); }
 
-#report-container .stat-item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
+#report-container .bear-case {
+    border-left: 5px solid var(--negative-color);
+    background-color: var(--bear-card-bg);
 }
-
-#report-container .stat-label {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-}
-
-#report-container .stat-value {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--text-primary);
-}
-#report-container .stat-value small {
-    font-size: 0.9rem;
-    font-weight: 500;
-}
+#report-container .bear-case h3 { color: var(--negative-color); }
+#report-container .bear-case .key-points li i { color: var(--negative-color); }
 
 
-#report-container p.insight, #report-container p.conclusion {
-    background-color: var(--bg-primary);
-    border-left: 4px solid var(--accent-color);
-    padding: 1rem;
-    border-radius: 4px;
-    margin-top: 1.5rem;
-}
-
-#report-container ul.price-levels strong {
-    font-size: 1.5rem;
-    font-weight: 700;
-    display: block;
-    margin-top: 4px;
-}
-#report-container ul.price-levels .resistance strong { color: var(--negative-color); }
-#report-container ul.price-levels .support strong { color: var(--positive-color); }
-#report-container ul.price-levels li::before { content: ''; } /* Remove default icon */
-
-
-#report-container .crypto-card .crypto-header {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 1rem;
-}
-#report-container .crypto-card .crypto-header i {
-    font-size: 2rem;
-}
-
-/* Crypto Icon Colors */
-#report-container .icon-btc { color: var(--icon-color-btc); }
-#report-container .icon-eth { color: var(--icon-color-eth); }
-#report-container .icon-sol { color: var(--icon-color-sol); }
-#report-container .icon-xrp { color: var(--icon-color-xrp); }
-#report-container .icon-bnb { color: var(--icon-color-bnb); }
-
-/* Placeholders for Charts */
-#report-container #fear-greed-gauge-container,
-#report-container #btc-dominance-doughnut-container,
-#report-container #btc-rsi-gauge-container {
-    min-height: 180px;
-    width: 100%;
-    margin-bottom: 1rem;
-}
-
-#report-container #btc-dominance-doughnut-container {
-    min-height: 220px;
-}
+/* Các lớp tiện ích */
+.positive-text { color: var(--positive-color); }
+.negative-text { color: var(--negative-color); }
+.neutral-text { color: var(--neutral-color); }

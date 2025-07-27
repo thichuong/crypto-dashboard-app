@@ -53,7 +53,7 @@ def create_app():
             return redirect(url_for('upload_page'))
         
         try:
-            prompt_path = os.path.join(app.root_path, '..', 'create_report', 'promt_create_report.txt')
+            prompt_path = os.path.join(app.root_path, '..', 'create_report', 'prompt_create_report.md')
             
             # Gọi hàm xử lý logic từ service
             code_blocks = create_report_from_content(file.stream, api_key, prompt_path)

@@ -41,7 +41,7 @@ def read_text_from_docx(file_path):
     except Exception as e:
         raise IOError(f"Lỗi khi đọc tệp {file_path}: {e}")
 
-def read_prompt_file(file_path="./promt_create_report.txt"):
+def read_prompt_file(file_path="./prompt_create_report.md"):
     """Đọc nội dung từ tệp prompt."""
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
@@ -98,7 +98,7 @@ def main():
         print(f"Đang sử dụng tệp báo cáo: {os.path.basename(docx_path)}")
         
         report_content = read_text_from_docx(docx_path)
-        system_prompt = read_prompt_file(os.path.join(current_dir, "promt_create_report.txt"))
+        system_prompt = read_prompt_file(os.path.join(current_dir, "prompt_create_report.md"))
         
         # 2. Tạo yêu cầu hoàn chỉnh cho Gemini
         full_request = f"{system_prompt}\n\n---\n\n**NỘI DUNG BÁO CÁO CẦN XỬ LÝ:**\n\n{report_content}"
