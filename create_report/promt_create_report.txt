@@ -15,10 +15,10 @@ Nhiệm vụ là tạo ra một bộ tệp (`HTML`, `CSS`, `JS`) để hiển th
 
 ## 3. Mục tiêu & Tệp cần tạo
 
-Tạo chính xác 3 tệp sau:
-1.  `report.html`
-2.  `report.css`
-3.  `report.js`
+Bạn PHẢI trả về 3 khối mã riêng biệt và đầy đủ, được bao bọc chính xác như sau:
+1.  Một khối mã ````html`...````
+2.  Một khối mã ````css`...````
+3.  Một khối mã ````javascript`...````
 
 ## 4. Quy tắc xử lý nội dung
 
@@ -30,7 +30,8 @@ Tạo chính xác 3 tệp sau:
 
 ### 5.1. `report.html`
 
--   **Tự động tạo Section:** Dựa trên các tiêu đề chính (ví dụ: Heading 2 trong file Word) của tài liệu báo cáo nguồn để tạo các thẻ `<section>`.
+-   **Cấu trúc Semantics:** Sử dụng các thẻ HTML có ý nghĩa (ví dụ: `<section>`, `<article>`, `<h2>`, `<p>`).
+-   **Tư duy Component:** Hãy coi mỗi biểu đồ hoặc khối thông tin là một "card" riêng. Bọc mỗi card trong một thẻ `<div>` với một class chung, ví dụ: `<div class="report-card">`.
 -   **Sáng tạo và linh hoạt:** Tự động gán một `id` duy nhất và một icon Font Awesome phù hợp cho tiêu đề `<h2>` của mỗi section, ưu tiên dùng icon của BTC, ETH khi tiêu đề nhắc đến.
 -   **Bố cục lưới lồng nhau thông minh (Smart Nested Grid):**
     -   **Nguyên tắc chính:** Để kiểm soát bố cục chính xác, hãy sử dụng kết hợp giữa các thẻ `div` làm container và lớp `content-grid` có sẵn.
@@ -38,13 +39,18 @@ Tạo chính xác 3 tệp sau:
     -   **Khi có mục cần chiếm cả hàng:** Đối với các thẻ cần chiếm toàn bộ chiều rộng (như bảng dữ liệu lớn hoặc thẻ tóm tắt quan trọng), hãy đặt nó bên ngoài `div.content-grid` và sử dụng class `wide-card`.
     -   *Ví dụ cấu trúc:*
         ```html
-        <section>
-            <h2>...</h2>
-            <div class="content-grid">
-                <div class="card">...</div>
-                <div class="card">...</div>
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="report-card">
+                <h2>Chỉ số Sợ hãi & Tham lam</h2>
+                <canvas id="fearGreedChart"></canvas>
+                <div id="fearGreedTextAnalysis"></div>
             </div>
-            <div class="card" style="margin-top: 1.5rem;">...</div>
+
+            <div class="report-card">
+                <h2>Tỷ lệ Thống trị của Bitcoin (BTC.D)</h2>
+                <canvas id="btcDominanceChart"></canvas>
+                <div id="btcDominanceTextAnalysis"></div>
+            </div>
         </section>
         ```
         ```html
@@ -126,13 +132,21 @@ Tạo chính xác 3 tệp sau:
 }
 ```
 -   **Phạm vi (Scope):** Tất cả các selector trong report.css phải được giới hạn trong #report-container (ví dụ: #report-container h2).
+* **Layout:**
+    * **BẮT BUỘC SỬ DỤNG Flexbox hoặc CSS Grid** để sắp xếp các "report-card" trên trang. Đây là yêu cầu quan trọng nhất để đảm bảo bố cục linh hoạt và không bị vỡ.
+    * **TUYỆT ĐỐI KHÔNG SỬ DỤNG `position: absolute` hoặc `position: fixed`** cho mục đích layout chính của các card. Chỉ sử dụng chúng cho các chi tiết nhỏ bên trong một card nếu thực sự cần thiết (ví dụ: tooltip), và phải đảm bảo phần tử cha có `position: relative`.
+    * **KHÔNG GÂY CHỒNG CHÉO:** Đảm bảo 100% rằng các phần tử (đặc biệt là văn bản và biểu đồ) không bị chồng lên nhau. Các phần tử phải có khoảng cách hợp lý.
+* **Styling:**
+    * Tạo kiểu cho class `.report-card` với các thuộc tính như `background-color: #ffffff;`, `border-radius`, `box-shadow`, và `padding` để tạo giao diện sạch sẽ, hiện đại.
+    * Sử dụng các biến CSS (CSS Variables) cho màu sắc chính nếu có thể để dễ bảo trì.
+    * Đảm bảo văn bản dễ đọc, font chữ và kích thước phù hợp.
 ### 5.3. `report.js`
 
 -   **Thư viện đồ họa:** Sử dụng các hàm vẽ biểu đồ có sẵn trong tệp `chart.js`. Không cần viết lại logic vẽ.
 -   **Đa dạng hóa biểu đồ:** Không chỉ giới hạn ở biểu đồ dạng đồng hồ đo (gauge). Hãy xem xét việc sử dụng các loại biểu đồ khác được cung cấp bởi `chart.js`.
 -   **Hàm khởi tạo:** Cung cấp một hàm chính gọi là `initializeAllVisuals_report()`, để gọi và vẽ tất cả các biểu đồ cần thiết cho báo cáo.
 -   **Hàm trong `report.js` thêm hậu tố:** Các hàm trong `report.js` nên có hậu tố `_report` để tránh trùng tên với các hàm trong `main.js` (ví dụ: `initializeAllVisuals_report`).
-
+-   ** Mã nguồn phải sạch sẽ, không có lỗi console.**
 ### 5.4. Quy ước về Hàm vẽ Biểu đồ (chart.js)
 
 Tất cả các hàm vẽ biểu đồ đều nằm trong `chart.js`. Khi gọi các hàm này, hãy tuân thủ đúng cấu trúc tham số đầu vào.
