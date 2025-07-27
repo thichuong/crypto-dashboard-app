@@ -5,7 +5,7 @@
 
 Một ứng dụng web dashboard cung cấp cái nhìn tổng quan theo thời gian thực về thị trường tiền mã hóa và hiển thị các báo cáo phân tích chuyên sâu được tạo tự động bằng AI.
 
-**(Tùy chọn) Link xem trực tiếp:** [https://crypto-dashboard-app-sooty.vercel.app/](https://crypto-dashboard-app-sooty.vercel.app/)
+**(Tùy chọn) Link xem trực tiếp:** [https://crypto-dashboard-app-thichuong.vercel.app/](https://crypto-dashboard-app-thichuong.vercel.app/)
 
 ## ✨ Tính năng nổi bật
 
