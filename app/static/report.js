@@ -1,85 +1,122 @@
-// BẮT ĐẦU NỘI DUNG REPORT.JS
+/**
+ * =================================================================
+ * SCRIPT FOR REPORT VISUALIZATIONS
+ * Contains functions to draw charts and visuals for the report.
+ * Assumes a chart library (chart.js) with createGauge, createDoughnutChart, etc. is available.
+ * =================================================================
+ */
 
 /**
- * Khởi tạo tất cả các thành phần trực quan hóa cho báo cáo.
- * Hàm này sẽ tìm các placeholder trong report.html và vẽ biểu đồ vào đó.
- * Cần được gọi sau khi report.html đã được tải vào DOM.
+ * Main initialization function to be called after the report HTML is loaded.
+ * It orchestrates the creation of all visual elements in the report.
  */
 function initializeAllVisuals_report() {
     console.log("Initializing report visuals...");
 
-    // 1. Vẽ biểu đồ Fear & Greed Gauge
-    drawFearAndGreedGauge_report();
+    // Call individual chart creation functions
+    createFearAndGreedGauge_report();
+    createBtcRsiGauge_report();
+    createBtcDominanceDoughnut_report();
+    createEtfInflowChart_report();
 
-    // 2. Vẽ biểu đồ RSI Gauge
-    drawRsiGauge_report();
-
-    // 3. Vẽ biểu đồ BTC Dominance Doughnut
-    drawBtcDominanceChart_report();
+    console.log("Report visuals initialized successfully.");
 }
 
 /**
- * Vẽ biểu đồ đồng hồ đo cho chỉ số Sợ hãi & Tham lam.
+ * Creates the Fear & Greed Index gauge chart.
  */
-function drawFearAndGreedGauge_report() {
+function createFearAndGreedGauge_report() {
     const container = document.getElementById('fng-gauge-container');
-    if (container && typeof createGauge === 'function') {
-        const value = 70; // Giá trị "Tham lam" từ báo cáo
-        const config = {
-            min: 0,
-            max: 100,
-            segments: [
-                { limit: 25, color: 'var(--fng-extreme-fear-color)', label: 'Sợ hãi Cùng cực' },
-                { limit: 45, color: 'var(--fng-fear-color)', label: 'Sợ hãi' },
-                { limit: 55, color: 'var(--fng-neutral-color)', label: 'Trung tính' },
-                { limit: 75, color: 'var(--fng-greed-color)', label: 'Tham lam' },
-                { limit: 100, color: 'var(--fng-extreme-greed-color)', label: 'Tham lam Cùng cực' }
-            ]
-        };
-        createGauge(container, value, config);
-    } else {
-        console.error("Container #fng-gauge-container not found or createGauge function is not available.");
-    }
+    if (!container) return;
+
+    // Value from the report text (oscillating around 70)
+    const value = 70; 
+
+    const config = {
+        min: 0,
+        max: 100,
+        segments: [
+            { limit: 25, color: 'var(--fng-extreme-fear-color)', label: 'Sợ hãi Tột độ' },
+            { limit: 45, color: 'var(--fng-fear-color)', label: 'Sợ hãi' },
+            { limit: 55, color: 'var(--fng-neutral-color)', label: 'Trung lập' },
+            { limit: 75, color: 'var(--fng-greed-color)', label: 'Tham lam' },
+            { limit: 100, color: 'var(--fng-extreme-greed-color)', label: 'Tham lam Tột độ' }
+        ]
+    };
+
+    // Assuming createGauge is globally available from chart.js
+    createGauge(container, value, config);
 }
 
 /**
- * Vẽ biểu đồ đồng hồ đo cho chỉ số RSI.
+ * Creates the Bitcoin RSI gauge chart.
  */
-function drawRsiGauge_report() {
-    const container = document.getElementById('rsi-gauge-container');
-    if (container && typeof createGauge === 'function') {
-        const value = 58; // Giá trị RSI khung ngày từ báo cáo
-        const config = {
-            min: 0,
-            max: 100,
-            segments: [
-                { limit: 30, color: 'var(--rsi-oversold-color)', label: 'Quá bán' },
-                { limit: 70, color: 'var(--rsi-neutral-color)', label: 'Trung tính' },
-                { limit: 100, color: 'var(--rsi-overbought-color)', label: 'Quá mua' }
-            ]
-        };
-        createGauge(container, value, config);
-    } else {
-        console.error("Container #rsi-gauge-container not found or createGauge function is not available.");
-    }
+function createBtcRsiGauge_report() {
+    const container = document.getElementById('btc-rsi-gauge');
+    if (!container) return;
+
+    // Value from the report text ("nearing 70")
+    const value = 68;
+
+    const config = {
+        min: 0,
+        max: 100,
+        segments: [
+            { limit: 30, color: 'var(--rsi-oversold-color)', label: 'Quá bán (Oversold)' },
+            { limit: 70, color: 'var(--rsi-neutral-color)', label: 'Trung lập (Neutral)' },
+            { limit: 100, color: 'var(--rsi-overbought-color)', label: 'Quá mua (Overbought)' }
+        ]
+    };
+
+    createGauge(container, value, config);
 }
+
 
 /**
- * Vẽ biểu đồ tròn cho Tỷ lệ Thống trị của Bitcoin (BTC.D).
+ * Creates the Bitcoin Dominance doughnut chart.
  */
-function drawBtcDominanceChart_report() {
-    const container = document.getElementById('btc-dominance-chart-container');
-    if (container && typeof createDoughnutChart === 'function') {
-        const btcDominance = 61; // Lấy giá trị trung bình từ báo cáo (60.5% - 61.2%)
-        const data = [
-            { value: btcDominance, color: 'var(--accent-color)', label: 'Bitcoin' },
-            { value: 100 - btcDominance, color: 'var(--neutral-color)', label: 'Altcoins' }
-        ];
-        const title = `${btcDominance}%`;
-        createDoughnutChart(container, data, title);
-    } else {
-        console.error("Container #btc-dominance-chart-container not found or createDoughnutChart function is not available.");
-    }
+function createBtcDominanceDoughnut_report() {
+    const container = document.getElementById('btc-dominance-doughnut');
+    if (!container) return;
+
+    // Data based on the report text (BTC.D ~60-61%, with ETH and others making up the rest)
+    const data = [
+        { value: 61, label: 'Bitcoin (BTC)', color: '#F7931A' },
+        { value: 21, label: 'Ethereum (ETH)', color: '#627EEA' },
+        { value: 18, label: 'Các Altcoin khác', color: 'var(--text-secondary)' }
+    ];
+
+    const title = 'BTC.D ~61%';
+
+    // Assuming createDoughnutChart is globally available from chart.js
+    createDoughnutChart(container, data, title);
 }
 
-// KẾT THÚC NỘI DUNG REPORT.JS
+
+/**
+ * Creates the ETF Net Inflow bar chart.
+ */
+function createEtfInflowChart_report() {
+    const container = document.getElementById('etf-inflow-bar-chart');
+    if (!container) return;
+
+    // Data derived from report text, in Billions USD
+    const data = [
+        { label: 'Tổng Net Inflow (BTC)', value: 19, color: 'var(--positive-color)' },
+        { label: 'BTC (Tháng qua)', value: 8, color: 'var(--accent-color)' },
+        { label: 'IBIT (Tháng qua)', value: 6, color: 'var(--text-primary)' },
+        { label: 'ETH (Tháng qua)', value: 3, color: '#627EEA' }
+    ];
+    
+    // Assuming createBarChart is globally available from chart.js
+    createBarChart(container, data);
+    
+    // Add a small note about the units
+    const note = document.createElement('p');
+    note.textContent = 'Ghi chú: Giá trị được tính bằng tỷ đô la Mỹ ($B).';
+    note.style.textAlign = 'center';
+    note.style.fontSize = '0.8rem';
+    note.style.color = 'var(--text-secondary)';
+    note.style.marginTop = '1rem';
+    container.appendChild(note);
+}

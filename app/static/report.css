@@ -1,8 +1,32 @@
-/* BẮT ĐẦU NỘI DUNG REPORT.CSS */
+/* =================================================================
+   STYLES FOR DYNAMICALLY LOADED REPORT
+   All selectors are scoped to #report-container
+================================================================= */
 
+/* --- GENERAL LAYOUT & TYPOGRAPHY --- */
 #report-container {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Inter', sans-serif;
     color: var(--text-primary);
+    padding: 1rem 0;
+}
+
+#report-container .report-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1.5rem;
+}
+
+#report-container .report-header h1 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+#report-container .report-header .report-date {
+    font-size: 1rem;
+    color: var(--text-secondary);
 }
 
 #report-container section {
@@ -10,234 +34,189 @@
 }
 
 #report-container h2 {
-    font-size: 2rem;
-    font-weight: 700;
+    font-size: 1.75rem;
+    font-weight: 600;
     color: var(--text-accent);
     margin-bottom: 1.5rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--accent-color);
     display: flex;
     align-items: center;
+    gap: 0.75rem;
 }
 
 #report-container h2 i {
-    margin-right: 1rem;
-    color: var(--accent-color);
+    font-size: 1.5rem;
+    opacity: 0.8;
 }
 
 #report-container h3 {
     font-size: 1.25rem;
+    font-weight: 600;
     margin-bottom: 1rem;
     color: var(--text-primary);
-    font-weight: 600;
     display: flex;
     align-items: center;
+    gap: 0.5rem;
 }
 
 #report-container h3 i {
-    margin-right: 0.75rem;
+    color: var(--text-accent);
+}
+
+#report-container p {
+    line-height: 1.6;
+    margin-bottom: 1rem;
     color: var(--text-secondary);
 }
 
-#report-container .section-intro {
-    font-size: 1.1rem;
+#report-container ul {
+    list-style-position: outside;
+    padding-left: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+#report-container ul li {
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
     color: var(--text-secondary);
-    margin-bottom: 1.5rem;
+}
+
+#report-container strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+#report-container em {
+    color: var(--text-accent);
+    font-style: italic;
+}
+
+/* --- GRID & CARD SYSTEM --- */
+#report-container .content-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
 }
 
 #report-container .card {
     background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 1.5rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
 #report-container .card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -4px rgba(0, 0, 0, 0.07);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
-#report-container .card.wide-card {
-    grid-column: 1 / -1; /* For use inside a grid if needed */
+#report-container .wide-card {
+    grid-column: 1 / -1; /* Span full width in a grid context if needed */
 }
 
-#report-container .card.highlight {
-    border-left: 5px solid var(--accent-color);
-}
+/* --- SPECIFIC COMPONENTS --- */
 
-#report-container .content-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 1.5rem;
-    margin-top: 1.5rem;
-    margin-bottom: 1.5rem;
-}
-
-#report-container ul {
-    list-style-type: none;
-    padding-left: 0;
-}
-
-#report-container ul li {
-    padding-left: 1.5rem;
-    position: relative;
-    margin-bottom: 0.75rem;
-    color: var(--text-secondary);
-}
-
-#report-container ul li::before {
-    content: '\f058'; /* Font Awesome check-circle icon */
-    font-family: 'Font Awesome 5 Free';
-    font-weight: 900;
-    position: absolute;
-    left: 0;
-    top: 2px;
-    color: var(--accent-color);
-}
-
-#report-container .kpi-group {
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 1rem;
-    text-align: center;
-}
-
-#report-container .kpi {
-    display: flex;
-    flex-direction: column;
-}
-
-#report-container .kpi-value {
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--text-accent);
-}
-
-#report-container .kpi-value-small-negative {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--negative-color);
-}
-
-#report-container .kpi-label {
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-}
-
+/* Key Levels (Support/Resistance) */
 #report-container .key-levels {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 1.5rem;
-    gap: 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
 }
 
 #report-container .level {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 1rem;
+    text-align: center;
+    padding: 1.5rem;
     border-radius: 8px;
-    width: 100%;
+    border: 2px solid;
 }
-#report-container .level.support { background-color: rgba(22, 163, 74, 0.1); }
-#report-container .level.resistance { background-color: rgba(220, 38, 38, 0.1); }
 
-#report-container .level i {
-    font-size: 1.5rem;
+#report-container .level h4 {
     margin-bottom: 0.5rem;
-}
-#report-container .level.support i { color: var(--positive-color); }
-#report-container .level.resistance i { color: var(--negative-color); }
-
-#report-container .level span {
-    font-size: 0.8rem;
-    color: var(--text-secondary);
+    font-size: 1rem;
+    font-weight: 500;
     text-transform: uppercase;
-}
-#report-container .level strong {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-top: 0.25rem;
+    letter-spacing: 0.5px;
 }
 
-#report-container .small-text {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    margin-top: 1rem;
+#report-container .level .price {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
 }
+
+#report-container .level p {
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+
+#report-container .level.resistance {
+    border-color: var(--negative-color);
+    color: var(--negative-color);
+}
+
+#report-container .level.support {
+    border-color: var(--positive-color);
+    color: var(--positive-color);
+}
+
+#report-container .level.support-strong {
+    border-color: var(--neutral-color);
+    color: var(--neutral-color);
+}
+
 
 /* Table Styles */
 #report-container .table-container {
     width: 100%;
     overflow-x: auto;
-    margin-top: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
 }
 
 #report-container table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 600px;
+    min-width: 600px; /* Ensure table has a minimum width for scrolling */
 }
 
 #report-container th, #report-container td {
-    padding: 0.75rem 1rem;
+    padding: 1rem;
     text-align: left;
     border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
 }
 
-#report-container thead th {
+#report-container th {
     background-color: var(--bg-primary);
     font-weight: 600;
+    font-size: 0.9rem;
     color: var(--text-primary);
+}
+
+#report-container tbody tr:last-child td {
+    border-bottom: none;
 }
 
 #report-container tbody tr:nth-child(even) {
     background-color: var(--bg-primary);
 }
 
-#report-container .positive-text { color: var(--positive-color); font-weight: 600; }
-#report-container .negative-text { color: var(--negative-color); font-weight: 600; }
+#report-container td.positive { color: var(--positive-color); }
+#report-container td.negative { color: var(--negative-color); }
+#report-container td.neutral { color: var(--text-secondary); }
 
-/* Outlook section */
-#report-container .bullish { color: var(--positive-color); }
-#report-container .bearish { color: var(--negative-color); }
-
-#report-container .scenarios {
+/* --- CHART PLACEHOLDERS --- */
+#report-container #fng-gauge-container,
+#report-container #btc-rsi-gauge,
+#report-container #btc-dominance-doughnut,
+#report-container #etf-inflow-bar-chart {
+    min-height: 220px;
     display: flex;
-    justify-content: space-around;
-    gap: 1rem;
+    align-items: center;
+    justify-content: center;
     margin: 1.5rem 0;
-    flex-wrap: wrap;
 }
-
-#report-container .scenario {
-    padding: 0.75rem 1.25rem;
-    border-radius: 20px;
-    font-weight: 600;
-    border: 1px solid var(--border-color);
-}
-#report-container .scenario.positive { background-color: rgba(22, 163, 74, 0.1); color: var(--positive-color); }
-#report-container .scenario.neutral { background-color: rgba(245, 158, 11, 0.1); color: var(--neutral-color); }
-#report-container .scenario.negative { background-color: rgba(220, 38, 38, 0.1); color: var(--negative-color); }
-
-#report-container .strategy-recommendation {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    margin-top: 1rem;
-}
-#report-container .strategy-recommendation h4 {
-    font-size: 1.1rem;
-    margin-bottom: 0.5rem;
-}
-
-@media (max-width: 768px) {
-    #report-container .strategy-recommendation {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* KẾT THÚC NỘI DUNG REPORT.CSS */

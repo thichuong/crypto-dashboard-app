@@ -1,215 +1,303 @@
-<!-- BẮT ĐẦU NỘI DUNG REPORT.HTML -->
+<!-- BÁO CÁO PHÂN TÍCH TOÀN DIỆN THỊ TRƯỜNG TIỀN ĐIỆN TỬ - 26/07/2025 -->
+<div class="report-header">
+    <h1>Báo cáo Phân tích Toàn diện Thị trường Tiền điện tử</h1>
+    <p class="report-date">Tổng hợp Dữ liệu Kỹ thuật, Tâm lý và Vĩ mô - 26/07/2025</p>
+</div>
 
-<section id="macro-overview">
-    <h2><i class="fas fa-globe-americas"></i> Bối cảnh Vĩ mô & Tổng quan Thị trường</h2>
-    <div class="card wide-card">
-        <p>Thị trường tiền điện tử đang vận hành trong một môi trường phức tạp, nơi các yếu tố vĩ mô tích cực dài hạn đối đầu với những cơn gió ngược ngắn hạn. Sự rõ ràng về quy định tại Hoa Kỳ đang định hình một tương lai tươi sáng hơn, trong khi các chỉ số kỹ thuật và tâm lý thị trường lại cho thấy sự thận trọng ngày càng tăng.</p>
-    </div>
+<!-- =================================================================
+PHẦN 1: TỔNG QUAN THỊ TRƯỜNG VÀ CÁC CHỈ SỐ VĨ MÔ
+================================================================== -->
+<section id="section-overview">
+    <h2 id="market-overview"><i class="fas fa-chart-line"></i>Tổng quan Thị trường và Các Chỉ số Vĩ mô</h2>
 
     <div class="content-grid">
+        <!-- Card: Tóm tắt Diễn biến Thị trường -->
         <div class="card">
-            <h3><i class="fas fa-landmark"></i> Toàn cảnh Pháp lý tại Hoa Kỳ</h3>
-            <p>Những tiến bộ pháp lý mang tính bước ngoặt tại Hoa Kỳ là một trong những động lực tăng trưởng quan trọng nhất.</p>
+            <h3><i class="fas fa-satellite-dish"></i>1.1. Tóm tắt Diễn biến Thị trường</h3>
+            <p>Thị trường thể hiện bức tranh không đồng nhất, phản ánh sự trưởng thành và phân mảnh của ngành:</p>
             <ul>
-                <li><strong>Đạo luật GENIUS:</strong> Tạo khung pháp lý liên bang cho stablecoin, tăng cường sự ổn định và tin cậy.</li>
-                <li><strong>Đạo luật Rõ ràng về Thị trường Tài sản Kỹ thuật số:</strong> Được Hạ viện thông qua, đang được Thượng viện tinh chỉnh để phân định rõ vai trò của SEC và CFTC.</li>
-                <li><strong>Kỳ vọng sắp tới:</strong> Báo cáo từ Nhà Trắng và cuộc họp của Fed là các sự kiện quan trọng, có thể gây biến động theo kịch bản "bán khi có tin".</li>
+                <li><strong>Tổng Vốn hóa (Kraken, Forbes):</strong> Khoảng <strong>$3.97 nghìn tỷ</strong> (giảm 3.03% trong 24h).</li>
+                <li><strong>Tổng Vốn hóa (CoinGecko):</strong> Khoảng <strong>$3.08 nghìn tỷ</strong> (tăng 1.7% trong 24h).</li>
+                <li><strong>Tổng Vốn hóa (Coinbase):</strong> Khoảng <strong>$3.67 nghìn tỷ</strong> (giảm 1.36% so với tuần trước).</li>
+                <li><strong>Khối lượng Giao dịch (24h):</strong> <strong>$80.2 tỷ</strong> (theo CoinGecko), cho thấy hoạt động sôi động nhưng không ở mức đỉnh.</li>
             </ul>
+            <p><em>Ghi chú: Sự chênh lệch dữ liệu do phương pháp luận và số lượng tài sản được theo dõi khác nhau giữa các nền tảng.</em></p>
         </div>
+
+        <!-- Card: Chỉ số Sợ hãi & Tham lam -->
         <div class="card">
-            <h3><i class="fas fa-tachometer-alt"></i> Ảnh chụp nhanh & Tâm lý Thị trường</h3>
-            <div class="kpi-group">
-                <div class="kpi">
-                    <span class="kpi-value">~3.5N USD</span>
-                    <span class="kpi-label">Tổng vốn hóa thị trường</span>
-                </div>
-                <div class="kpi">
-                    <span class="kpi-value-small-negative">-1.36%</span>
-                    <span class="kpi-label">Thay đổi (7 ngày)</span>
-                </div>
-            </div>
-            <p><strong>Chỉ số Sợ hãi & Tham lam:</strong></p>
+            <h3><i class="fas fa-brain"></i>1.2. Chỉ số Sợ hãi & Tham lam</h3>
+            <p>Tâm lý thị trường đang ở mức <strong>"Tham lam"</strong> nhưng có dấu hiệu hạ nhiệt.</p>
             <div id="fng-gauge-container"></div>
-            <p class="small-text">Chỉ số ở mức <strong>70 (Tham lam)</strong>, giảm nhẹ so với các ngày trước. Điều này cho thấy sự lạc quan vẫn còn nhưng sự thận trọng đang tăng lên sau đợt tăng giá.</p>
-        </div>
-    </div>
-</section>
-
-<section id="bitcoin-analysis">
-    <h2><i class="fab fa-bitcoin"></i> Phân tích Chuyên sâu về Bitcoin (BTC)</h2>
-    <p class="section-intro">Bitcoin, với vai trò dẫn dắt, đang ở thời điểm quyết định. Phân tích kỹ thuật, chỉ báo và dòng tiền ETF đều cho thấy một cuộc giằng co giữa phe mua và phe bán.</p>
-    
-    <div class="content-grid">
-        <div class="card">
-            <h3><i class="fas fa-chart-line"></i> Phân tích Kỹ thuật</h3>
             <ul>
-                <li><strong>Khung Tuần:</strong> Vẫn trong kênh tăng giá dài hạn nhưng nến tuần gần nhất là nến đỏ, cho thấy áp lực chốt lời tại đỉnh.</li>
-                <li><strong>Khung Ngày:</strong> Đang trong giai đoạn củng cố (consolidation) quanh <strong>$115,000 - $117,000</strong> sau khi phá vỡ kênh tăng giá ngắn hạn.</li>
+                <li><strong>Mức hiện tại:</strong> Dao động từ <strong>64 đến 74</strong>.</li>
+                <li><strong>Xu hướng:</strong> Giảm nhẹ từ các mức cao hơn (ví dụ: từ 74 xuống 70).</li>
+                <li><strong>Nhận định:</strong> Đây là "sự tạm dừng tự nhiên" trong xu hướng tăng. Nhà đầu tư đang chuyển từ "tham lam mù quáng" sang "tham lam có tính toán". Rủi ro điều chỉnh gia tăng.</li>
             </ul>
-            <div class="key-levels">
-                <div class="level support">
-                    <i class="fas fa-arrow-down"></i>
-                    <span>Hỗ trợ chính</span>
-                    <strong>$114,600</strong>
-                </div>
-                <div class="level resistance">
-                    <i class="fas fa-arrow-up"></i>
-                    <span>Kháng cự chính</span>
-                    <strong>$120,000</strong>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <h3><i class="fas fa-cogs"></i> Các Chỉ báo Then chốt</h3>
-            <p><strong>Chỉ số Sức mạnh Tương đối (RSI):</strong></p>
-            <div id="rsi-gauge-container"></div>
-            <p class="small-text">RSI Khung ngày ở mức trung tính (quanh 58), nhưng RSI Khung tuần đang suy yếu từ vùng quá mua, một tín hiệu cảnh báo sớm về đà tăng dài hạn.</p>
         </div>
         
+        <!-- Card: Tỷ lệ Thống trị của Bitcoin -->
         <div class="card">
-            <h3><i class="fas fa-chart-pie"></i> Tỷ lệ Thống trị (BTC.D)</h3>
-             <div id="btc-dominance-chart-container"></div>
-            <p class="small-text">BTC.D đang ở mức cao (khoảng 61%) nhưng có xu hướng giảm. Điều này không còn đảm bảo một "mùa altcoin" toàn diện mà cho thấy dòng vốn đang chảy có chọn lọc vào các dự án mạnh.</p>
-        </div>
-    </div>
-    
-    <div class="card wide-card">
-        <h3><i class="fas fa-exchange-alt"></i> Tác động từ Dòng tiền ETF Giao ngay</h3>
-        <p>Các quỹ ETF Bitcoin đã thu hút gần <strong>50 tỷ USD</strong> vốn ròng, nhưng động lực đang chững lại với dòng tiền ra ròng nhẹ trong tuần gần nhất, phá vỡ chuỗi 6 tuần vào liên tiếp.</p>
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Quỹ ETF</th>
-                        <th>Mã</th>
-                        <th>Dòng tiền ròng (16/07/2025)</th>
-                        <th>Đặc điểm</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>iShares Bitcoin Trust</td>
-                        <td>IBIT</td>
-                        <td class="positive-text">+$150.2M</td>
-                        <td>Dẫn đầu dòng vốn vào, phí thấp</td>
-                    </tr>
-                    <tr>
-                        <td>Fidelity Wise Origin Bitcoin</td>
-                        <td>FBTC</td>
-                        <td class="positive-text">+$85.5M</td>
-                        <td>Thu hút mạnh mẽ dòng vốn mới</td>
-                    </tr>
-                    <tr>
-                        <td>Grayscale Bitcoin Trust</td>
-                        <td>GBTC</td>
-                        <td class="negative-text">-$215.7M</td>
-                        <td>Liên tục ghi nhận dòng tiền ra</td>
-                    </tr>
-                     <tr>
-                        <td><strong>Tổng cộng</strong></td>
-                        <td><strong>-</strong></td>
-                        <td class="negative-text"><strong>-$58.64M</strong></td>
-                        <td><strong>Dòng ra ròng nhẹ</strong></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <p class="small-text" style="margin-top: 1rem;">Sự thống trị của các quỹ TradFi khiến giá Bitcoin nhạy cảm hơn với các yếu tố kinh tế vĩ mô như lãi suất Fed và dữ liệu lạm phát.</p>
-    </div>
-</section>
-
-<section id="altcoin-focus">
-    <h2><i class="fas fa-layer-group"></i> Tiêu điểm Altcoin: Kẻ Mạnh và Kẻ Yếu</h2>
-    <div class="content-grid">
-        <div class="card highlight">
-            <h3><i class="fab fa-ethereum"></i> Ethereum (ETH): Vững Vàng Dẫn Đầu</h3>
-            <p>ETH thể hiện sức mạnh vượt trội nhờ nhu cầu từ tổ chức và dòng tiền vào các quỹ ETF. Giá ổn định quanh <strong>$3,600 - $3,700</strong>.</p>
-            <p>Các chuyên gia dự báo giá có thể đạt <strong>$10,000 - $15,000</strong> trong trung hạn nhờ "cú sốc nguồn cung".</p>
-        </div>
-        <div class="card">
-            <h3><i class="fas fa-rocket"></i> Solana (SOL): Ngôi Sao Sáng</h3>
-            <p>Hiệu suất vượt trội với mức tăng <strong>~5.0%</strong> trong 7 ngày. Giá giao dịch quanh <strong>$186</strong>.</p>
-            <p>Động lực đến từ tin tức về ETF, nâng cấp hệ sinh thái và sự bùng nổ của DeFi/memecoin.</p>
-        </div>
-        <div class="card">
-            <h3><i class="fas fa-wave-square"></i> XRP: Điều chỉnh sau Bùng nổ</h3>
-            <p>Giá giảm <strong>~9.8%</strong> trong 7 ngày (quanh <strong>$3.14</strong>) do áp lực chốt lời sau đợt tăng giá mạnh nhờ các tin tức pháp lý tích cực.</p>
-        </div>
-    </div>
-    
-    <div class="card wide-card">
-        <h3><i class="fas fa-sort-amount-down"></i> Bảng xếp hạng Top 20 Tiền điện tử</h3>
-        <p>Cung cấp cái nhìn toàn cảnh về sự phân bổ vốn hóa trên thị trường.</p>
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Tên</th>
-                        <th>Mã</th>
-                        <th>Giá (USD)</th>
-                        <th>Vốn hóa thị trường (USD)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>1</td><td>Bitcoin</td><td>BTC</td><td>$116,500.00</td><td>$2.3T</td></tr>
-                    <tr><td>2</td><td>Ethereum</td><td>ETH</td><td>$3,650.00</td><td>$438B</td></tr>
-                    <tr><td>3</td><td>Tether</td><td>USDT</td><td>$1.00</td><td>$112B</td></tr>
-                    <tr><td>4</td><td>Solana</td><td>SOL</td><td>$186.26</td><td>$83B</td></tr>
-                    <tr><td>5</td><td>Binance Coin</td><td>BNB</td><td>$575.00</td><td>$81B</td></tr>
-                    <tr><td>6</td><td>USD Coin</td><td>USDC</td><td>$1.00</td><td>$33B</td></tr>
-                    <tr><td>7</td><td>XRP</td><td>XRP</td><td>$3.14</td><td>$31.4B</td></tr>
-                    <tr><td>8</td><td>Dogecoin</td><td>DOGE</td><td>$0.12</td><td>$17B</td></tr>
-                    <tr><td>9</td><td>Toncoin</td><td>TON</td><td>$7.50</td><td>$16.5B</td></tr>
-                    <tr><td>10</td><td>Cardano</td><td>ADA</td><td>$0.82</td><td>$15B</td></tr>
-                    <!-- Các coin khác có thể được thêm vào đây -->
-                </tbody>
-            </table>
+            <h3><i class="fas fa-pie-chart"></i>1.3. Tỷ lệ Thống trị của Bitcoin (BTC.D)</h3>
+            <p>BTC.D đang đứng trước ngã rẽ quan trọng, quyết định "mùa altcoin".</p>
+            <div id="btc-dominance-doughnut"></div>
+            <ul>
+                <li><strong>Mức hiện tại:</strong> Dao động quanh <strong>60-61%</strong>, giảm từ gần 66%.</li>
+                <li><strong>Kịch bản 1 (Tăng cho Altcoin):</strong> Nếu BTC.D bị từ chối tại mức kháng cự ~62%, sẽ xác nhận bắt đầu "mùa altcoin".</li>
+                <li><strong>Kịch bản 2 (Giảm cho Altcoin):</strong> Nếu BTC.D tăng mạnh trở lại, có thể là "cú lừa" (fakeout), gây tiêu cực cho altcoin.</li>
+            </ul>
+             <p><em>Lưu ý: "Mùa altcoin" có thể sẽ phân hóa, tập trung vào các dự án blue-chip có câu chuyện ETF.</em></p>
         </div>
     </div>
 </section>
 
-<section id="outlook">
-    <h2><i class="fas fa-balance-scale"></i> Tổng hợp Quan điểm & Triển vọng</h2>
+<!-- =================================================================
+PHẦN 2: PHÂN TÍCH CHUYÊN SÂU VỀ BITCOIN (BTC)
+================================================================== -->
+<section id="section-btc-analysis">
+    <h2 id="btc-deep-dive"><i class="fab fa-bitcoin"></i>Phân tích Chuyên sâu về Bitcoin (BTC)</h2>
+
     <div class="content-grid">
+        <!-- Card: Phân tích Kỹ thuật Biểu đồ Tuần -->
         <div class="card">
-            <h3 class="bullish"><i class="fas fa-chart-line"></i> Luận điểm Tăng giá (Bullish)</h3>
+            <h3><i class="fas fa-chart-bar"></i>2.1. Phân tích Kỹ thuật Biểu đồ Tuần</h3>
+            <p>Tín hiệu trái chiều cho thấy sự giằng co quyết liệt giữa phe mua và bán.</p>
             <ul>
-                <li><strong>Chất xúc tác pháp lý:</strong> Sự rõ ràng tại Mỹ tiếp tục thu hút vốn tổ chức.</li>
-                <li><strong>Chu kỳ dài hạn:</strong> Các chỉ báo như MVRV Z-Score cho thấy chu kỳ tăng chưa kết thúc.</li>
-                <li><strong>Kỹ thuật:</strong> Vượt qua mốc <strong>$120,000</strong> sẽ mở đường cho đợt tăng giá mạnh.</li>
+                <li><strong>Xu hướng dài hạn (Tuần):</strong> Vẫn trong kênh <strong>tăng giá</strong> rõ ràng.</li>
+                <li><strong>Tín hiệu cảnh báo (Tuần):</strong> Xuất hiện các mẫu nến giảm giá như <em>"Advance Block Bearish"</em> và <em>"Doji Star Bearish"</em>.</li>
+                <li><strong>Tín hiệu hỗ trợ (Ngày):</strong> Xuất hiện mẫu nến <em>"Bullish Hammer"</em> cho thấy lực bắt đáy.</li>
+                <li><strong>Khối lượng giao dịch:</strong> Có xu hướng giảm, thể hiện sự thận trọng gia tăng.</li>
             </ul>
         </div>
+        
+        <!-- Card: Các Chỉ báo Động lượng -->
         <div class="card">
-            <h3 class="bearish"><i class="fas fa-chart-area"></i> Luận điểm Giảm giá (Bearish)</h3>
+            <h3><i class="fas fa-tachometer-alt"></i>2.2. Các Chỉ báo Động lượng (RSI & MACD)</h3>
+            <p>Các chỉ báo phát đi tín hiệu cảnh báo rủi ro điều chỉnh trong ngắn hạn.</p>
+            <div id="btc-rsi-gauge"></div>
             <ul>
-                <li><strong>Thị trường quá nóng:</strong> Áp lực chốt lời từ "cá voi" và dòng tiền ETF ra ròng.</li>
-                <li><strong>Suy yếu động lượng:</strong> RSI tuần giảm là tín hiệu cảnh báo đáng lo ngại.</li>
-                <li><strong>Nguy cơ kỹ thuật:</strong> Phá vỡ hỗ trợ <strong>$114,600</strong> có thể kích hoạt bán tháo.</li>
+                <li><strong>RSI (Ngày):</strong> Đang tiến gần vùng <strong>quá mua (overbought)</strong> ở mức 70.</li>
+                <li><strong>MACD:</strong> Histogram đang ngắn lại, cho thấy động lượng tăng giá đang <strong>chậm lại</strong>.</li>
+                <li><strong>Rủi ro:</strong> Nguy cơ xuất hiện <strong>phân kỳ giảm giá tiềm ẩn</strong> (giá tăng nhưng chỉ báo yếu đi), cảnh báo một đợt điều chỉnh sâu.</li>
             </ul>
         </div>
     </div>
-    <div class="card wide-card">
-        <h3><i class="fas fa-compass"></i> Đánh giá Tổng thể & Khuyến nghị Chiến lược</h3>
-        <p>Thị trường đang trong "cuộc giằng co" giữa nền tảng dài hạn tích cực và tín hiệu kỹ thuật ngắn hạn suy yếu.</p>
-        <div class="scenarios">
-            <div class="scenario positive"><strong>Tăng giá (45%):</strong> Bứt phá qua $120k nhờ tin tức tốt.</div>
-            <div class="scenario neutral"><strong>Đi ngang (35%):</strong> Giao dịch trong biên độ $110k - $120k.</div>
-            <div class="scenario negative"><strong>Giảm giá (20%):</strong> Phá vỡ $114.6k, điều chỉnh về vùng $105k.</div>
-        </div>
-        <hr>
-        <div class="strategy-recommendation">
-            <div>
-                <h4><i class="fas fa-user-clock"></i> Nhà giao dịch ngắn hạn (Trader)</h4>
-                <p>Thận trọng cao độ. Chỉ vào lệnh mua khi có xác nhận mạnh mẽ tại các mức hỗ trợ/kháng cự quan trọng. Luôn đặt stop-loss.</p>
+
+    <!-- Card: Các Mức Hỗ trợ và Kháng cự Chính (Wide Card) -->
+    <div class="card wide-card" style="margin-top: 1.5rem;">
+        <h3><i class="fas fa-layer-group"></i>2.3. Các Mức Hỗ trợ và Kháng cự Chính</h3>
+        <div class="key-levels">
+            <div class="level resistance">
+                <h4>Kháng cự Tối quan trọng</h4>
+                <div class="price">$120,000</div>
+                <p>Đỉnh cao mọi thời đại (ATH). Vượt qua mức này sẽ mở ra giai đoạn "khám phá giá".</p>
             </div>
-            <div>
-                <h4><i class="fas fa-landmark"></i> Nhà đầu tư dài hạn (Holder)</h4>
-                <p>Xem xét đợt điều chỉnh là cơ hội tích lũy thêm. Sử dụng chiến lược DCA và đa dạng hóa vào các dự án nền tảng mạnh như ETH, SOL.</p>
+            <div class="level support">
+                <h4>Hỗ trợ Gần</h4>
+                <div class="price">$115,000</div>
+                <p>Vùng đệm kỹ thuật đầu tiên. Giữ vững mức này giúp duy trì cấu trúc tăng giá ngắn hạn.</p>
+            </div>
+            <div class="level support-strong">
+                <h4>Hỗ trợ Xa (Chiến lược)</h4>
+                <div class="price">$111,000</div>
+                <p>Kháng cự cũ trở thành hỗ trợ mạnh. Thủng mức này sẽ gây tổn hại nghiêm trọng cho xu hướng tăng.</p>
             </div>
         </div>
     </div>
 </section>
 
-<!-- KẾT THÚC NỘI DUNG REPORT.HTML -->
+<!-- =================================================================
+PHẦN 3: DÒNG VỐN ETF VÀ TÁC ĐỘNG TỪ MÔI TRƯỜNG CHÍNH TRỊ
+================================================================== -->
+<section id="section-etf-politics">
+    <h2 id="etf-flow"><i class="fas fa-landmark"></i>Dòng vốn ETF và Môi trường Chính trị</h2>
+
+    <!-- Card: Phân tích Dòng tiền vào các Quỹ Spot ETF (Wide Card) -->
+    <div class="card wide-card">
+        <h3><i class="fas fa-money-bill-wave"></i>3.1. Phân tích Dòng tiền vào các Quỹ Spot ETF</h3>
+        <p>Dòng vốn từ ETF đang tạo ra một <strong>"cú sốc cầu"</strong> và là động lực tăng trưởng bền vững nhất.</p>
+        <div id="etf-inflow-bar-chart"></div>
+        <ul>
+            <li><strong>Spot Bitcoin ETF:</strong> Thu hút tổng cộng <strong>> $19 tỷ</strong>. Chỉ riêng tháng qua đã vào ròng <strong>~ $8 tỷ</strong>.</li>
+            <li><strong>Spot Ethereum ETF:</strong> Tăng tốc ấn tượng, thu hút <strong>$2.7 - $3 tỷ</strong> trong tuần/tháng gần nhất.</li>
+            <li><strong>Tác động:</strong> Các quỹ liên tục mua tài sản cơ sở, làm giảm nguồn cung lưu hành và tạo ra một "sàn đỡ giá" vững chắc.</li>
+            <li><strong>Triển vọng:</strong> Các đề xuất cho Solana ETF, XRP ETF đang được đệ trình.</li>
+        </ul>
+    </div>
+
+    <div class="content-grid" style="margin-top: 1.5rem;">
+        <!-- Card: Cập nhật Môi trường Pháp lý Hoa Kỳ -->
+        <div class="card">
+            <h3><i class="fas fa-gavel"></i>3.2. Cập nhật Môi trường Pháp lý Hoa Kỳ</h3>
+            <p>Môi trường pháp lý tại Mỹ có những bước chuyển mình lịch sử, trở nên thuận lợi hơn.</p>
+            <ul>
+                <li><strong>Đạo luật GENIUS:</strong> Được ký thành luật, tạo khuôn khổ rõ ràng cho stablecoin.</li>
+                <li><strong>"Tuần lễ Crypto":</strong> Thể hiện lập trường ủng hộ crypto từ chính quyền.</li>
+                <li><strong>Các dự luật khác:</strong> <em>CLARITY Act</em> (phân định SEC/CFTC) và <em>Anti-CBDC Act</em> đang được xem xét.</li>
+                <li><strong>Kết quả:</strong> Giảm rủi ro pháp lý, thu hút nhà đầu tư truyền thống.</li>
+            </ul>
+        </div>
+        
+        <!-- Card: So sánh với Quy định của Châu Âu (MiCA) -->
+        <div class="card">
+            <h3><i class="fab fa--E"></i><i class="fas fa-balance-scale"></i>3.3. So sánh với Quy định của Châu Âu (MiCA)</h3>
+            <p>EU đi trước với khuôn khổ toàn diện, trong khi Mỹ đang tăng tốc để bắt kịp.</p>
+            <ul>
+                <li><strong>MiCA (EU):</strong> Một bộ quy tắc toàn diện, bao trùm toàn bộ ngành, được xem là "tiêu chuẩn vàng".</li>
+                <li><strong>GENIUS Act (Mỹ):</strong> Hiện chỉ tập trung vào stablecoin, có phần rời rạc hơn.</li>
+                <li><strong>Cuộc đua pháp lý:</strong> Sự cạnh tranh giữa Mỹ và EU sẽ định hình tương lai ngành. Các công ty tuân thủ được cả hai sẽ có lợi thế lớn.</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- =================================================================
+PHẦN 4: PHÂN TÍCH CÁC ALTCOIN HÀNG ĐẦU
+================================================================== -->
+<section id="section-altcoins">
+    <h2 id="top-altcoins"><i class="fas fa-coins"></i>Phân tích các Altcoin Hàng đầu (Top Coins)</h2>
+    
+    <div class="content-grid">
+        <!-- Card: Ethereum (ETH) -->
+        <div class="card">
+            <h3><i class="fab fa-ethereum"></i>4.1. Ethereum (ETH)</h3>
+            <ul>
+                <li><strong>Hiệu suất:</strong> Tăng <strong>> 25%</strong> trong tuần, <strong>> 50%</strong> từ đầu tháng 7.</li>
+                <li><strong>Động lực chính:</strong> "Cú sốc cầu" từ Spot ETH ETF (<strong>$2.18 tỷ</strong> vốn vào trong 1 tuần).</li>
+                <li><strong>Hoạt động On-chain:</strong> "Cá voi" tích lũy mạnh (> 500,000 ETH).</li>
+                <li><strong>Phân tích Kỹ thuật:</strong> Phá vỡ xu hướng giảm dài hạn.</li>
+                <li><strong>Mục tiêu giá tiếp theo:</strong> <strong>$4,000</strong>.</li>
+            </ul>
+        </div>
+
+        <!-- Card: Solana (SOL) -->
+        <div class="card">
+            <h3><i class="fas fa-wave-square"></i>4.2. Solana (SOL)</h3>
+            <ul>
+                <li><strong>Hiệu suất:</strong> Tăng <strong>> 24%</strong> trong tuần, vượt mốc $205.</li>
+                <li><strong>Động lực chính:</strong> Kỳ vọng vào việc phê duyệt <strong>Spot Solana ETF</strong>.</li>
+                <li><strong>Sức mạnh nội tại:</strong> Hoạt động on-chain sôi động (meme coin, NFT, dApps).</li>
+                <li><strong>Dự báo:</strong> Có thể đạt <strong>$600+</strong> vào cuối 2025 nếu ETF được duyệt.</li>
+            </ul>
+        </div>
+        
+        <!-- Card: XRP -->
+        <div class="card">
+            <h3><i class="fas fa-circle-notch"></i>4.3. XRP</h3>
+            <ul>
+                <li><strong>Biến động:</strong> Tăng vọt lên <strong>$3.65</strong> rồi điều chỉnh mạnh, hiện ổn định quanh <strong>$3.17</strong>.</li>
+                <li><strong>Hỗ trợ then chốt:</strong> <strong>$2.90</strong>.</li>
+                <li><strong>Kháng cự cần chinh phục:</strong> <strong>$3.40 - $3.65</strong>.</li>
+                <li><strong>Rủi ro ngắn hạn:</strong> Áp lực bán từ việc chốt lời và di chuyển token của nhà sáng lập.</li>
+                <li><strong>Dự báo (2025):</strong> <strong>$5.00 - $6.50</strong>, có thể cao hơn nếu có ETF.</li>
+            </ul>
+        </div>
+        
+        <!-- Card: BNB -->
+        <div class="card">
+            <h3><i class="fas fa-bold"></i>4.4. BNB</h3>
+            <ul>
+                <li><strong>Hiệu suất:</strong> Phá vỡ ATH, thiết lập đỉnh mới tại <strong>$804</strong>.</li>
+                <li><strong>Động lực nền tảng:</strong>
+                    <ul>
+                        <li>Hoạt động on-chain mạnh (<strong>>5 triệu</strong> giao dịch/ngày).</li>
+                        <li>Cơ chế đốt token hiệu quả (đã đốt <strong>$1.6 tỷ</strong> giá trị BNB).</li>
+                        <li>Cam kết nâng cấp mạng lưới (mục tiêu 5,000 TPS).</li>
+                    </ul>
+                </li>
+                <li><strong>Giai đoạn:</strong> "Khám phá giá", mục tiêu tiếp theo có thể là <strong>$1,000</strong>.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Card: Bảng So sánh (Wide Card) -->
+    <div class="card wide-card" style="margin-top: 1.5rem;">
+        <h3><i class="fas fa-table"></i>Bảng So sánh Hiệu suất và Động lực</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Altcoin</th>
+                        <th>Hiệu suất Gần đây</th>
+                        <th>Động lực Chính</th>
+                        <th>Mục tiêu/Kháng cự Quan trọng</th>
+                        <th>Rủi ro Ngắn hạn</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong><i class="fab fa-ethereum"></i> ETH</strong></td>
+                        <td class="positive">+25% (Tuần)</td>
+                        <td>Dòng vốn ETF, Tích lũy của "cá voi"</td>
+                        <td>$4,000</td>
+                        <td>Chốt lời quanh vùng kháng cự</td>
+                    </tr>
+                    <tr>
+                        <td><strong><i class="fas fa-wave-square"></i> SOL</strong></td>
+                        <td class="positive">+24% (Tuần)</td>
+                        <td>Kỳ vọng ETF, Hệ sinh thái mạnh</td>
+                        <td>$205+ (khám phá đỉnh mới)</td>
+                        <td>Điều chỉnh kỹ thuật sau tăng nóng</td>
+                    </tr>
+                    <tr>
+                        <td><strong><i class="fas fa-circle-notch"></i> XRP</strong></td>
+                        <td class="neutral">Biến động mạnh</td>
+                        <td>Kỳ vọng ETF, Quan hệ đối tác</td>
+                        <td>$3.65 (Kháng cự)</td>
+                        <td>Áp lực bán, giữ hỗ trợ $2.90</td>
+                    </tr>
+                    <tr>
+                        <td><strong><i class="fas fa-bold"></i> BNB</strong></td>
+                        <td class="positive">Vượt ATH</td>
+                        <td>Cơ chế đốt token, Nâng cấp mạng lưới</td>
+                        <td>$1,000 (Tâm lý)</td>
+                        <td>Thị trường chung điều chỉnh</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- =================================================================
+PHẦN 5: TỔNG HỢP ĐÁNH GIÁ VÀ TRIỂN VỌNG THỊ TRƯỜNG
+================================================================== -->
+<section id="section-outlook">
+    <h2 id="market-outlook"><i class="fas fa-binoculars"></i>Tổng hợp Đánh giá và Triển vọng Thị trường</h2>
+    <div class="content-grid">
+        <!-- Card: Luận điểm Tăng giá -->
+        <div class="card">
+            <h3><i class="fas fa-chart-arrow-up" style="color: var(--positive-color);"></i>5.1. Luận điểm Tăng giá (The Bull Case)</h3>
+            <ul>
+                <li><strong>Dòng vốn ETF:</strong> Tạo lực mua bền vững, có hệ thống và giảm cung lưu hành.</li>
+                <li><strong>Pháp lý thuận lợi:</strong> Sự rõ ràng pháp lý tại Mỹ khuyến khích nhà đầu tư tổ chức tham gia.</li>
+                <li><strong>Sự trưởng thành của Altcoin:</strong> Các dự án lớn có câu chuyện tăng trưởng riêng, không chỉ phụ thuộc vào Bitcoin.</li>
+                <li><strong>Phân tích Kỹ thuật:</strong> Xu hướng tăng trên khung thời gian lớn vẫn còn nguyên vẹn.</li>
+                <li><strong>Dự báo chuyên gia:</strong> Bernstein dự báo BTC đạt <strong>$200,000</strong> đầu năm 2026.</li>
+            </ul>
+        </div>
+        
+        <!-- Card: Luận điểm Giảm giá và Rủi ro -->
+        <div class="card">
+            <h3><i class="fas fa-chart-arrow-down" style="color: var(--negative-color);"></i>5.2. Luận điểm Giảm giá và Rủi ro (The Bear Case)</h3>
+            <ul>
+                <li><strong>Chỉ báo kỹ thuật:</strong> RSI ở vùng quá mua, cảnh báo rủi ro điều chỉnh kỹ thuật.</li>
+                <li><strong>Tâm lý thị trường:</strong> Chỉ số "Tham lam" ở mức cao, là tín hiệu rủi ro theo nguyên lý đầu tư đối nghịch.</li>
+                <li><strong>Rủi ro BTC.D "Fakeout":</strong> Nếu BTC.D tăng mạnh trở lại, có thể dập tắt "mùa altcoin".</li>
+                <li><strong>Rủi ro Vĩ mô:</strong> Các sự kiện địa chính trị, kinh tế xấu đi hoặc quy định bất lợi đột ngột.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Card: Nhận định của Chuyên gia (Wide Card) -->
+    <div class="card wide-card" style="margin-top: 1.5rem;">
+        <h3><i class="fas fa-user-tie"></i>5.3. Nhận định của Chuyên gia: Một Thị trường Trưởng thành hơn</h3>
+        <p>Thị trường 2025 đã bước vào giai đoạn trưởng thành hơn, với các động lực khác biệt so với các chu kỳ trước.</p>
+        <ul>
+            <li><strong>Bản chất thay đổi:</strong> Sự tham gia của các tổ chức qua ETF đang tạo ra một quỹ đạo tăng trưởng <strong>bền vững hơn</strong>, thay thế cho các chu kỳ "tăng trưởng parabol và thị trường gấu tàn khốc".</li>
+            <li><strong>Kịch bản khả thi:</strong> Một giai đoạn đi ngang hoặc điều chỉnh nhẹ để "hạ nhiệt" thị trường, sau đó xu hướng tăng dài hạn sẽ tiếp tục.</li>
+            <li><strong>Điểm nhấn quan trọng:</strong> Sự <strong>phân hóa</strong> ngày càng rõ rệt giữa các altcoin. Các dự án có nền tảng vững chắc và câu chuyện rõ ràng sẽ vượt trội.</li>
+        </ul>
+        <p><em>Kết luận: Nhà đầu tư cần có sự chọn lọc kỹ lưỡng và phân tích sâu sắc hơn bao giờ hết để điều hướng thành công trong một thị trường ngày càng phức tạp và trưởng thành.</em></p>
+    </div>
+</section>

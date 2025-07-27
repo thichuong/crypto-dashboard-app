@@ -24,6 +24,7 @@ Tạo chính xác 3 tệp sau:
 
 -   **Quan trọng:** Khi xử lý nội dung nguồn (ví dụ từ file Word, text), phải **loại bỏ hoàn toàn** tất cả các thẻ đánh dấu trích dẫn như ``, `[1]`, `[2]`, ``, v.v. 
 -   Trình bày thông tin một cách **rõ ràng, nhấn mạnh các chỉ số, con số**. Sử dụng các list, thẻ `<strong>`, `<em>` để làm nổi bật các điểm chính thay vì các đoạn văn dài.
+-   Phân tích nội dung để tạo ra các thành phần giao diện phù hợp như thẻ (cards), biểu đồ, bảng biểu, danh sách, v.v.
 
 ## 5. Yêu cầu chi tiết
 
