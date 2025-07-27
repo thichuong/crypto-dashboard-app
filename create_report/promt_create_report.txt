@@ -31,7 +31,7 @@ Tạo chính xác 3 tệp sau:
 ### 5.1. `report.html`
 
 -   **Tự động tạo Section:** Dựa trên các tiêu đề chính (ví dụ: Heading 2 trong file Word) của tài liệu báo cáo nguồn để tạo các thẻ `<section>`.
--   **Sáng tạo và linh hoạt:** Tự động gán một `id` duy nhất và một icon Font Awesome phù hợp cho tiêu đề `<h2>` của mỗi section.
+-   **Sáng tạo và linh hoạt:** Tự động gán một `id` duy nhất và một icon Font Awesome phù hợp cho tiêu đề `<h2>` của mỗi section, ưu tiên dùng icon của BTC, ETH khi tiêu đề nhắc đến.
 -   **Bố cục lưới lồng nhau thông minh (Smart Nested Grid):**
     -   **Nguyên tắc chính:** Để kiểm soát bố cục chính xác, hãy sử dụng kết hợp giữa các thẻ `div` làm container và lớp `content-grid` có sẵn.
     -   **Khi có 2 hoặc 3 mục cần nằm trên một hàng:** **Bắt buộc** phải nhóm các thẻ `div.card` này vào trong một `div` container chung có class `content-grid`. Việc này sẽ buộc chúng phải chia sẻ không gian hàng đó một cách cân đối và tránh tạo ra khoảng trống lớn.
@@ -67,27 +67,34 @@ Tạo chính xác 3 tệp sau:
 ### 5.2. `report.css`
 
 -   **Bảng màu chung (Theme Light/Dark):** Sử dụng các biến CSS dưới đây làm nền tảng cho việc thiết kế. Các biến này phải được đặt trong selector `:root` của tệp CSS chính (`style.css`), và `report.css` sẽ kế thừa chúng.
-
+-   Dùng màu với các icon Crypto đúng với màu mẫu.
 ```css
 /* --- Bảng màu cho Light Mode (Mặc định) --- */
 :root {
     --bg-primary: #f3f4f6;
     --bg-secondary: #ffffff;
+    --bg-gradient-start: #f3f4f6;
+    --bg-gradient-end: #eef2ff;
     --text-primary: #1f2937;
     --text-secondary: #4b5563;
     --text-accent: #4338ca;
     --border-color: #e5e7eb;
+    --card-bg: rgba(255, 255, 255, 0.7);
+    --card-border: rgba(229, 231, 235, 0.8);
+    --card-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.07);
+    --nav-link-bg-active: #eef2ff;
     --accent-color: #6366f1;
     --positive-color: #16a34a;
     --negative-color: #dc2626;
     --neutral-color: #f59e0b;
-
+    --bull-card-bg: #f0fdf4;
+    --bear-card-bg: #fef2f2;
+    --table-row-hover-bg: #f0f9ff;
     /* Màu cho thước đo RSI */
     --rsi-track-color: #e5e7eb;
     --rsi-overbought-color: #ef4444;
     --rsi-oversold-color: #22c55e;
     --rsi-neutral-color: #f59e0b;
-
     /* Màu cho thước đo Fear & Greed */
     --fng-track-color: #e5e7eb;
     --fng-extreme-fear-color: #dc2626;
@@ -95,6 +102,27 @@ Tạo chính xác 3 tệp sau:
     --fng-neutral-color: #6b7280;
     --fng-greed-color: #84cc16;
     --fng-extreme-greed-color: #22c55e;
+    /* THÊM MỚI: Màu cho các Icon H2 */
+    --icon-color-summary: #3b82f6;      /* Blue */
+    --icon-color-macro-legal: #f59e0b;   /* Amber */
+    --icon-color-on-chain-sentiment: #14b8a6; /* Teal */
+    --icon-color-btc-analysis: #f97316;  /* Orange */
+    --icon-color-eth-analysis: #6366f1;  /* Indigo */
+    --icon-color-market-activity: #22c55e; /* Green */
+    --icon-color-expert-outlook: #8b5cf6;/* Violet */
+    --icon-color-outlook: #d946ef;      /* Fuchsia */
+    
+    /* --- CẬP NHẬT: Màu cho các Icon Crypto Hàng đầu --- */
+    --icon-color-btc: #F7931A;
+    --icon-color-eth: #627EEA;
+    --icon-color-usdt: #26A17B;
+    --icon-color-bnb: #F3BA2F;
+    --icon-color-sol: #9945FF;
+    --icon-color-xrp: #00A3FF;
+    --icon-color-usdc: #2775CA;
+    --icon-color-doge: #C3A634;
+    --icon-color-ada: #0033AD;
+    --icon-color-trx: #EF0027;
 }
 ```
 -   **Phạm vi (Scope):** Tất cả các selector trong report.css phải được giới hạn trong #report-container (ví dụ: #report-container h2).

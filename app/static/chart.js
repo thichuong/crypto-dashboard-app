@@ -9,7 +9,7 @@
  *
  * - Sử dụng các biến CSS (--text-primary, --accent-color, v.v.) để tự động
  * thích ứng với Light/Dark mode.
- * - Thêm hiệu ứng chuyển động khi vẽ.
+ * - Thêm hiệu ứng chuyển động khi vẽ và hiệu ứng tương tác khi di chuột.
  * - Cải thiện thẩm mỹ và độ rõ ràng của các biểu đồ.
  */
 
@@ -48,14 +48,14 @@ function createGauge(container, value, config) {
 
     // --- CẤU HÌNH GAUGE ---
     const { min = 0, max = 100, segments } = config;
-    const GAUGE_START_ANGLE = -120; // Bắt đầu từ -120 độ (phía dưới bên trái)
-    const GAUGE_END_ANGLE = 120;   // Kết thúc ở 120 độ (phía dưới bên phải)
-    const ANGLE_SPAN = GAUGE_END_ANGLE - GAUGE_START_ANGLE; // Tổng số độ của vòng cung (240)
+    const GAUGE_START_ANGLE = -120;
+    const GAUGE_END_ANGLE = 120;
+    const ANGLE_SPAN = GAUGE_END_ANGLE - GAUGE_START_ANGLE;
 
     // --- TÍNH TOÁN ---
     const clampedValue = Math.max(min, Math.min(max, value));
     const percentage = (clampedValue - min) / (max - min);
-    const valueAngle = GAUGE_START_ANGLE + (percentage * ANGLE_SPAN); // Góc của kim chỉ báo
+    const valueAngle = GAUGE_START_ANGLE + (percentage * ANGLE_SPAN);
 
     const currentSegment = segments.find(s => clampedValue <= s.limit) || segments[segments.length - 1];
     const valueColor = currentSegment.color;
@@ -67,8 +67,6 @@ function createGauge(container, value, config) {
 
     segments.forEach(segment => {
         const segmentEndPercentage = (segment.limit - min) / (max - min);
-        // [SỬA LỖI CỐT LÕI] Tính toán góc bắt đầu và kết thúc cho mỗi đoạn
-        // dựa trên tỷ lệ của nó trong toàn bộ vòng cung 240 độ.
         const start = GAUGE_START_ANGLE + (lastPercentage * ANGLE_SPAN);
         const end = GAUGE_START_ANGLE + (segmentEndPercentage * ANGLE_SPAN);
 
@@ -78,7 +76,7 @@ function createGauge(container, value, config) {
     });
 
     const svg = `
-        <svg viewBox="0 0 200 165" style="width: 100%; height: auto; overflow: visible;">
+        <svg viewBox="0 0 200 165" style="width: 100%; height: auto; overflow: visible;" class="gauge-interactive">
             <path d="${describeArc(100, 100, 85, GAUGE_START_ANGLE, GAUGE_END_ANGLE)}"
                   fill="none" stroke="var(--bg-primary)" stroke-width="22" stroke-linecap="round"/>
 
@@ -90,67 +88,94 @@ function createGauge(container, value, config) {
             </g>
 
             <text x="100" y="105" text-anchor="middle" font-size="32px" font-weight="800"
-                  fill="var(--text-primary)">
+                  fill="var(--text-primary)" class="gauge-value-text">
                 ${value.toFixed(1)}
             </text>
             <text x="100" y="130" text-anchor="middle" font-size="16px" font-weight="600"
-                  fill="${valueColor}">
+                  fill="${valueColor}" class="gauge-label-text">
                 ${classification}
             </text>
         </svg>
     `;
     container.innerHTML = svg;
+    // Gán một class riêng để CSS có thể nhắm mục tiêu chính xác
+    container.classList.add('gauge-container');
 }
+
+
+/**
+ * [CẢI TIẾN] TẠO BIỂU ĐỒ CỘT (BAR CHART)
+ * Thêm hiệu ứng, nhãn giá trị cho các cột và tương tác khi di chuột.
+ * @param {HTMLElement} container - Element DOM.
+ * @param {Array<object>} data - Dữ liệu, vd: [{value: 10, label: 'A', color: 'red'}]
+ */
+function createBarChart(container, data) {
+    if (!container) return;
+    const width = 300, height = 180, pTop = 25, pBottom = 30, pX = 20;
+    const maxValue = Math.max(...data.map(d => d.value));
+    const barWidth = (width - 2 * pX) / data.length * 0.65;
+    const gap = (width - 2 * pX) / data.length * 0.35;
+
+    let bars = '';
+    let labels = '';
+    data.forEach((d, i) => {
+        const barHeight = (d.value / maxValue) * (height - pTop - pBottom);
+        const x = pX + i * (barWidth + gap) + gap / 2;
+        const y = height - pBottom - barHeight;
+        bars += `
+            <g transform="translate(${x}, ${y})" class="bar-group">
+                <rect width="${barWidth}" height="${barHeight}"
+                      fill="${d.color || 'var(--accent-color)'}" rx="3" class="bar-rect"
+                      style="animation-delay: ${i * 100}ms;" />
+                <text x="${barWidth / 2}" y="-8" text-anchor="middle" font-size="11" font-weight="600"
+                      fill="var(--text-primary)" class="bar-value-label">${d.value}</text>
+            </g>
+        `;
+        labels += `
+            <text x="${x + barWidth/2}" y="${height - pBottom + 15}" text-anchor="middle" font-size="6" fill="var(--text-secondary)">
+                ${d.label}
+            </text>
+        `;
+    });
+
+    container.innerHTML = `
+        <svg viewBox="0 0 ${width} ${height}" style="width:100%; height:auto; overflow: visible;">
+            <line x1="${pX}" y1="${height - pBottom}" x2="${width - pX}" y2="${height - pBottom}" stroke="var(--border-color)" />
+            ${bars}
+            <g>${labels}</g>
+        </svg>
+    `;
+    // Gán một class riêng để CSS có thể nhắm mục tiêu chính xác
+    container.classList.add('bar-chart-container');
+}
+
 
 /**
  * [CẢI TIẾN] TẠO BIỂU ĐỒ ĐƯỜNG (LINE CHART)
- * Phiên bản mới này sẽ hiển thị giá trị tại mỗi điểm dữ liệu trên biểu đồ.
+ * Phiên bản mới này sẽ hiển thị giá trị tại mỗi điểm dữ liệu và có hiệu ứng hover.
  * @param {HTMLElement} container - Element DOM.
  * @param {Array<number>} data - Mảng dữ liệu.
  * @param {object} options - Các tùy chọn bổ sung.
- * @param {string} [options.color='var(--accent-color)'] - Màu chính của biểu đồ.
- * @param {string} [options.valuePrefix=''] - Tiền tố cho giá trị (vd: '$').
- * @param {string} [options.valueSuffix=''] - Hậu tố cho giá trị (vd: '%').
  */
 function createLineChart(container, data, options = {}) {
     if (!container || !data || data.length === 0) return;
 
-    // --- Cấu hình và Tùy chọn ---
-    const {
-        color = 'var(--accent-color)',
-        valuePrefix = '',
-        valueSuffix = ''
-    } = options;
-    const width = 320, height = 160, p = 35; // Tăng padding để có không gian cho nhãn
+    const { color = 'var(--accent-color)', valuePrefix = '', valueSuffix = '' } = options;
+    const width = 320, height = 160, p = 35;
 
-    // --- Tính toán Tọa độ ---
     const maxValue = Math.max(...data);
     const minValue = Math.min(...data);
-    // Thêm một khoảng đệm nhỏ vào dải giá trị để nhãn không bị cắt ở đỉnh và đáy
     const valueRange = (maxValue - minValue) * 1.2 || 1;
     const rangeMin = minValue - (maxValue - minValue) * 0.1;
 
     const toX = i => (i / (data.length - 1)) * (width - 2 * p) + p;
     const toY = val => height - p - ((val - rangeMin) / valueRange) * (height - 2 * p);
 
-    // --- Tạo các thành phần SVG ---
     const points = data.map((d, i) => `${toX(i)},${toY(d)}`).join(' ');
     const areaPoints = `${p},${height - p} ${points} ${width - p},${height - p}`;
 
-    let valueLabels = '';
-    data.forEach((d, i) => {
-        const x = toX(i);
-        const y = toY(d);
-        valueLabels += `
-            <text x="${x}" y="${y - 10}" text-anchor="middle" font-size="11px"
-                  fill="var(--text-primary)" font-weight="600" class="value-label">
-                ${valuePrefix}${d.toFixed(1)}${valueSuffix}
-            </text>
-        `;
-    });
-
     const svg = `
-        <svg viewBox="0 0 ${width} ${height}" style="width: 100%; height: auto; overflow: visible;">
+        <svg viewBox="0 0 ${width} ${height}" style="width: 100%; height: auto; overflow: visible;" class="line-chart-interactive">
             <defs>
                 <linearGradient id="areaGradient-${container.id}" x1="0" x2="0" y1="0" y2="1">
                     <stop offset="0%" stop-color="${color}" stop-opacity="0.25" />
@@ -164,60 +189,31 @@ function createLineChart(container, data, options = {}) {
                       stroke-linejoin="round" points="${points}" class="line-path" />
 
             ${data.map((d, i) => `
-                <circle cx="${toX(i)}" cy="${toY(d)}" r="4" fill="${color}"
-                        stroke="var(--bg-secondary)" stroke-width="2" class="line-dot"
-                        style="animation-delay: ${i * 80}ms"/>
+                <g class="line-point-group">
+                    <circle cx="${toX(i)}" cy="${toY(d)}" r="9" fill="transparent" />
+                     <circle cx="${toX(i)}" cy="${toY(d)}" r="4" fill="${color}"
+                            stroke="var(--bg-secondary)" stroke-width="2" class="line-dot"
+                            style="animation-delay: ${i * 80}ms"/>
+                    <text x="${toX(i)}" y="${toY(d) - 15}" text-anchor="middle" font-size="11px"
+                          fill="var(--text-primary)" font-weight="600" class="value-label">
+                        ${valuePrefix}${d.toFixed(1)}${valueSuffix}
+                    </text>
+                </g>
             `).join('')}
-
-            <g class="value-labels-group">${valueLabels}</g>
         </svg>
     `;
     container.innerHTML = svg;
+    // Gán một class riêng để CSS có thể nhắm mục tiêu chính xác
+    container.classList.add('line-chart-container');
 }
 
-/**
- * [CẢI TIẾN] TẠO BIỂU ĐỒ CỘT (BAR CHART)
- * Thêm hiệu ứng và nhãn cho các cột.
- * @param {HTMLElement} container - Element DOM.
- * @param {Array<object>} data - Dữ liệu, vd: [{value: 10, label: 'A', color: 'red'}]
- */
-function createBarChart(container, data) {
-    if (!container) return;
-    const width = 300, height = 150, p = 20;
-    const maxValue = Math.max(...data.map(d => d.value));
-    const barWidth = (width - 2 * p) / data.length * 0.7;
-    const gap = (width - 2 * p) / data.length * 0.3;
-
-    let bars = '';
-    data.forEach((d, i) => {
-        const barHeight = (d.value / maxValue) * (height - 2 * p);
-        const x = p + i * (barWidth + gap) + gap/2;
-        const y = height - p - barHeight;
-        bars += `
-            <g transform="translate(${x}, ${y})">
-                <rect width="${barWidth}" height="${barHeight}"
-                      fill="${d.color || 'var(--accent-color)'}" rx="2" class="bar-rect"
-                      style="animation-delay: ${i * 100}ms;" />
-                <text x="${barWidth/2}" y="-5" text-anchor="middle" font-size="10"
-                      fill="var(--text-primary)">${d.value}</text>
-            </g>
-        `;
-    });
-
-    container.innerHTML = `
-        <svg viewBox="0 0 ${width} ${height}" style="width:100%; height:auto;">
-            <line x1="${p}" y1="${height-p}" x2="${width-p}" y2="${height-p}" stroke="var(--border-color)" />
-            ${bars}
-        </svg>
-    `;
-}
 
 /**
- * [ĐÃ SỬA] TẠO BIỂU ĐỒ TRÒN (DOUGHNUT CHART)
- * Hiển thị tiêu đề ở giữa, chú giải động và bỏ giá trị trên các phần.
+ * [ĐÃ SỬA & CẢI TIẾN] TẠO BIỂU ĐỒ TRÒN (DOUGHNUT CHART)
+ * Hiển thị tiêu đề ở giữa, chú giải động và hiệu ứng hover tương tác hai chiều.
  * @param {HTMLElement} container - Element DOM để chứa biểu đồ.
- * @param {Array<object>} data - Dữ liệu, vd: [{value: 10, color: 'blue', label: 'Mục A'}]
- * @param {string} [title=''] - Tiêu đề hiển thị ở giữa biểu đồ.
+ * @param {Array<object>} data - Dữ liệu.
+ * @param {string} [title=''] - Tiêu đề hiển thị ở giữa.
  */
 function createDoughnutChart(container, data, title = '') {
     if (!container || !data || data.length === 0) return;
@@ -243,20 +239,23 @@ function createDoughnutChart(container, data, title = '') {
         const finalDashoffset = circumference * (1 - percentage);
         const rotation = startAngle;
         const endAngle = startAngle + percentage * 360;
+        const segmentId = `segment-${container.id}-${i}`;
+        const legendId = `legend-${container.id}-${i}`;
 
         segments += `
-            <circle r="${radius}" cx="${cx}" cy="${cy}"
+            <circle id="${segmentId}" r="${radius}" cx="${cx}" cy="${cy}"
                     fill="transparent" stroke="${d.color}" stroke-width="${strokeWidth}"
                     stroke-dasharray="${circumference}"
                     stroke-dashoffset="${circumference}"
                     transform="rotate(${rotation - 90} ${cx} ${cy})"
                     class="doughnut-segment"
+                    data-legend-id="${legendId}"
                     style="--final-offset: ${finalDashoffset}; animation-delay: ${i * 150}ms;" />`;
 
         const displayValue = (percentage * 100).toFixed(1) + '%';
 
         legendItems += `
-            <span class="legend-item">
+            <span id="${legendId}" class="legend-item" data-segment-id="${segmentId}">
                 <span class="legend-color-box" style="background-color: ${d.color};"></span>
                 <span>${d.label}: <strong>${displayValue}</strong></span>
             </span>`;
@@ -279,4 +278,35 @@ function createDoughnutChart(container, data, title = '') {
             ${legendItems}
         </div>
     `;
+
+    // --- [THÊM MỚI] LOGIC TƯƠNG TÁC HAI CHIỀU KHI HOVER ---
+    // Lấy tất cả các segment của biểu đồ và các mục chú giải
+    const allSegments = container.querySelectorAll('.doughnut-segment');
+    const allLegends = container.querySelectorAll('.legend-item');
+
+    // Hàm để highlight cặp segment-legend tương ứng
+    const highlightPair = (element) => {
+        // Dựa vào data-attributes để tìm ID của các thành phần liên quan
+        const segmentId = element.dataset.segmentId || element.id;
+        const legendId = element.dataset.legendId || element.id;
+
+        const segment = container.querySelector(`#${segmentId}`);
+        const legend = container.querySelector(`#${legendId}`);
+
+        // Thêm class 'highlight' để CSS có thể áp dụng hiệu ứng
+        if (segment) segment.classList.add('highlight');
+        if (legend) legend.classList.add('highlight');
+    };
+
+    // Hàm để xóa tất cả các highlight
+    const clearHighlights = () => {
+        allSegments.forEach(s => s.classList.remove('highlight'));
+        allLegends.forEach(l => l.classList.remove('highlight'));
+    };
+
+    // Gán sự kiện 'mouseenter' và 'mouseleave' cho cả segment và legend
+    [...allSegments, ...allLegends].forEach(el => {
+        el.addEventListener('mouseenter', () => highlightPair(el));
+        el.addEventListener('mouseleave', clearHighlights);
+    });
 }

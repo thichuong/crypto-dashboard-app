@@ -59,3 +59,52 @@
     border-radius: 3px;
     flex-shrink: 0;
 }
+
+/* --- HIỆU ỨNG TƯƠNG TÁC KHI DI CHUỘT (HOVER EFFECTS) --- */
+
+/* [CHUNG] Thêm transition cho các thành phần sẽ có hiệu ứng */
+.bar-rect,
+.line-dot,
+.doughnut-segment,
+.legend-item {
+    transition: all 0.25s ease-in-out;
+}
+
+/* Thêm transition riêng cho các text element */
+.value-label,
+.gauge-value-text,
+.gauge-label-text {
+    transition: transform 0.25s ease-in-out, fill 0.25s ease-in-out;
+    transform-origin: center;
+}
+
+/* [Bar Chart] Làm sáng và nhấc nhẹ cột lên khi di chuột vào */
+.bar-group:hover .bar-rect {
+    filter: brightness(1.2);
+    transform: translateY(-3px);
+}
+
+/* [Line Chart] Phóng to điểm và nhãn giá trị */
+.line-point-group:hover .line-dot {
+    transform: scale(1.6);
+}
+.line-point-group:hover .value-label {
+    transform: translateY(-5px) scale(1.1);
+    fill: var(--accent-color);
+}
+
+/* [Doughnut Chart] Style cho phần được highlight (từ JS) */
+.doughnut-segment.highlight {
+    filter: brightness(1.15); /* Làm sáng segment khi hover */
+}
+.legend-item.highlight {
+    color: var(--text-primary);
+    font-weight: 600;
+    transform: translateX(4px);
+}
+
+/* [Gauge Chart] Nhấn mạnh giá trị ở trung tâm */
+.gauge-interactive:hover .gauge-value-text {
+    transform: scale(1.08);
+    fill: var(--accent-color);
+}

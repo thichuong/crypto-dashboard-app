@@ -1,85 +1,74 @@
-/* =================================================================
-   STYLES FOR DYNAMICALLY LOADED REPORT
-   All selectors are scoped to #report-container
-================================================================= */
+/* --- Styles for Report Content --- */
 
-/* --- GENERAL LAYOUT & TYPOGRAPHY --- */
-#report-container {
-    font-family: 'Inter', sans-serif;
-    color: var(--text-primary);
-    padding: 1rem 0;
-}
-
-#report-container .report-header {
-    text-align: center;
-    margin-bottom: 2.5rem;
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 1.5rem;
-}
-
-#report-container .report-header h1 {
-    font-size: 2.25rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin-bottom: 0.5rem;
-}
-
-#report-container .report-header .report-date {
-    font-size: 1rem;
-    color: var(--text-secondary);
-}
-
+/* --- General Structure & Typography --- */
 #report-container section {
     margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+#report-container section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
 }
 
 #report-container h2 {
     font-size: 1.75rem;
-    font-weight: 600;
-    color: var(--text-accent);
+    color: var(--text-primary);
     margin-bottom: 1.5rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 2px solid var(--accent-color);
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    font-weight: 600;
 }
 
-#report-container h2 i {
+#report-container h2 .fas,
+#report-container h2 .fa-brands {
     font-size: 1.5rem;
-    opacity: 0.8;
 }
 
 #report-container h3 {
     font-size: 1.25rem;
-    font-weight: 600;
+    color: var(--text-accent);
     margin-bottom: 1rem;
-    color: var(--text-primary);
     display: flex;
     align-items: center;
     gap: 0.5rem;
 }
 
-#report-container h3 i {
-    color: var(--text-accent);
+#report-container h4 {
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    margin: 0;
 }
 
 #report-container p {
     line-height: 1.6;
-    margin-bottom: 1rem;
     color: var(--text-secondary);
+    margin-bottom: 1rem;
 }
 
 #report-container ul {
-    list-style-position: outside;
-    padding-left: 1.25rem;
-    margin-bottom: 1rem;
+    list-style-type: none;
+    padding-left: 0;
+    margin: 0;
 }
 
-#report-container ul li {
+#report-container li {
+    position: relative;
+    padding-left: 1.5rem;
     margin-bottom: 0.75rem;
-    line-height: 1.6;
     color: var(--text-secondary);
+}
+
+#report-container li::before {
+    content: '\f105'; /* Font Awesome chevron-right */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    position: absolute;
+    left: 0;
+    top: 2px;
+    color: var(--accent-color);
 }
 
 #report-container strong {
@@ -92,95 +81,69 @@
     font-style: italic;
 }
 
-/* --- GRID & CARD SYSTEM --- */
+/* --- Icon Colors for H2 --- */
+#report-container .icon-summary { color: var(--icon-color-summary); }
+#report-container .icon-macro-legal { color: var(--icon-color-macro-legal); }
+#report-container .icon-on-chain-sentiment { color: var(--icon-color-on-chain-sentiment); }
+#report-container .icon-btc-analysis { color: var(--icon-color-btc-analysis); }
+#report-container .icon-eth-analysis { color: var(--icon-color-eth-analysis); }
+#report-container .icon-market-activity { color: var(--icon-color-market-activity); }
+#report-container .icon-expert-outlook { color: var(--icon-color-expert-outlook); }
+
+/* --- Layout Grids --- */
 #report-container .content-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 1.5rem;
 }
 
+#report-container .content-grid.four-cols {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+
+/* --- Card Styles --- */
 #report-container .card {
-    background-color: var(--bg-secondary);
-    border: 1px solid var(--border-color);
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
     border-radius: 12px;
     padding: 1.5rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--card-shadow);
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
 #report-container .card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
 #report-container .wide-card {
-    grid-column: 1 / -1; /* Span full width in a grid context if needed */
+    grid-column: 1 / -1; /* Makes the card span all columns */
 }
 
-/* --- SPECIFIC COMPONENTS --- */
-
-/* Key Levels (Support/Resistance) */
-#report-container .key-levels {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-    margin-top: 1rem;
+/* --- Special Card Variants --- */
+#report-container .bull-card {
+    background-color: var(--bull-card-bg);
+    border-left: 5px solid var(--positive-color);
 }
+#report-container .bull-card h3 { color: var(--positive-color); }
 
-#report-container .level {
-    text-align: center;
-    padding: 1.5rem;
-    border-radius: 8px;
-    border: 2px solid;
+#report-container .bear-card {
+    background-color: var(--bear-card-bg);
+    border-left: 5px solid var(--negative-color);
 }
+#report-container .bear-card h3 { color: var(--negative-color); }
 
-#report-container .level h4 {
-    margin-bottom: 0.5rem;
-    font-size: 1rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-#report-container .level .price {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 0.75rem;
-}
-
-#report-container .level p {
-    font-size: 0.9rem;
-    margin-bottom: 0;
-}
-
-#report-container .level.resistance {
-    border-color: var(--negative-color);
-    color: var(--negative-color);
-}
-
-#report-container .level.support {
-    border-color: var(--positive-color);
-    color: var(--positive-color);
-}
-
-#report-container .level.support-strong {
-    border-color: var(--neutral-color);
-    color: var(--neutral-color);
-}
-
-
-/* Table Styles */
+/* --- Table Styles --- */
 #report-container .table-container {
     width: 100%;
     overflow-x: auto;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
 }
 
 #report-container table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 600px; /* Ensure table has a minimum width for scrolling */
+    min-width: 600px;
 }
 
 #report-container th, #report-container td {
@@ -192,31 +155,105 @@
 
 #report-container th {
     background-color: var(--bg-primary);
+    color: var(--text-secondary);
     font-weight: 600;
+}
+
+#report-container tbody tr:hover {
+    background-color: var(--table-row-hover-bg);
+}
+
+#report-container td i.fa-brands {
+    margin-right: 8px;
+    font-size: 1.2em;
+    vertical-align: middle;
+}
+
+/* --- Text Color Utilities --- */
+#report-container .text-positive { color: var(--positive-color); }
+#report-container .text-negative { color: var(--negative-color); }
+#report-container .text-neutral { color: var(--neutral-color); }
+
+
+/* --- Specific Component Styles --- */
+#report-container .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+}
+#report-container .stat-grid.vertical {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+#report-container .stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+#report-container .stat-label {
     font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+#report-container .stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
     color: var(--text-primary);
 }
-
-#report-container tbody tr:last-child td {
-    border-bottom: none;
+#report-container .stat-value small {
+    font-size: 0.9rem;
+    font-weight: 500;
 }
 
-#report-container tbody tr:nth-child(even) {
+
+#report-container p.insight, #report-container p.conclusion {
     background-color: var(--bg-primary);
+    border-left: 4px solid var(--accent-color);
+    padding: 1rem;
+    border-radius: 4px;
+    margin-top: 1.5rem;
 }
 
-#report-container td.positive { color: var(--positive-color); }
-#report-container td.negative { color: var(--negative-color); }
-#report-container td.neutral { color: var(--text-secondary); }
+#report-container ul.price-levels strong {
+    font-size: 1.5rem;
+    font-weight: 700;
+    display: block;
+    margin-top: 4px;
+}
+#report-container ul.price-levels .resistance strong { color: var(--negative-color); }
+#report-container ul.price-levels .support strong { color: var(--positive-color); }
+#report-container ul.price-levels li::before { content: ''; } /* Remove default icon */
 
-/* --- CHART PLACEHOLDERS --- */
-#report-container #fng-gauge-container,
-#report-container #btc-rsi-gauge,
-#report-container #btc-dominance-doughnut,
-#report-container #etf-inflow-bar-chart {
-    min-height: 220px;
+
+#report-container .crypto-card .crypto-header {
     display: flex;
     align-items: center;
-    justify-content: center;
-    margin: 1.5rem 0;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+#report-container .crypto-card .crypto-header i {
+    font-size: 2rem;
+}
+
+/* Crypto Icon Colors */
+#report-container .icon-btc { color: var(--icon-color-btc); }
+#report-container .icon-eth { color: var(--icon-color-eth); }
+#report-container .icon-sol { color: var(--icon-color-sol); }
+#report-container .icon-xrp { color: var(--icon-color-xrp); }
+#report-container .icon-bnb { color: var(--icon-color-bnb); }
+
+/* Placeholders for Charts */
+#report-container #fear-greed-gauge-container,
+#report-container #btc-dominance-doughnut-container,
+#report-container #btc-rsi-gauge-container {
+    min-height: 180px;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+#report-container #btc-dominance-doughnut-container {
+    min-height: 220px;
 }
