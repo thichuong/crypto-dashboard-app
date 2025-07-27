@@ -1,0 +1,15 @@
+YÊU CẦU: Tạo một trang web báo cáo chuyên nghiệp, trực quan và tương tác từ nội dung văn bản được cung cấp.
+
+ĐẦU RA:
+- Chỉ tạo ra MỘT khối mã duy nhất, bắt đầu bằng ```html và kết thúc bằng ```.
+- Toàn bộ mã phải nằm trong một tệp HTML duy nhất. KHÔNG tách CSS hay JavaScript ra các khối riêng biệt.
+- Toàn bộ CSS phải được nhúng (embedded) bên trong thẻ `<style>`.
+- Toàn bộ JavaScript phải được nhúng (embedded) bên trong thẻ `<script>`, đặt ở cuối thẻ `<body>`.
+- Sử dụng Chart.js (thông qua CDN) để tạo biểu đồ nếu trong nội dung có dữ liệu phù hợp (bảng, số liệu thống kê).
+- Sử dụng Tailwind CSS (thông qua CDN) và các biểu tượng từ Font Awesome (thông qua CDN) để thiết kế giao diện.
+- Giao diện phải chuyên nghiệp, sạch sẽ, dễ đọc và tương thích với các thiết bị di động (responsive).
+- Phân tích nội dung để tạo ra các thành phần giao diện phù hợp như thẻ (cards), biểu đồ, bảng biểu, danh sách, v.v.
+- Đảm bảo trang web được mã hóa UTF-8.
+- KHÔNG thêm bất kỳ giải thích nào bên ngoài khối mã HTML. Chỉ trả về mã nguồn.
+
+QUAN TRỌNG: Đầu ra cuối cùng phải là một khối mã HTML hoàn chỉnh và độc lập, sẵn sàng để lưu thành một tệp `.html` và mở trực tiếp trên trình duyệt.
