@@ -41,7 +41,7 @@ Bạn PHẢI trả về 3 khối mã riêng biệt và đầy đủ, được ba
     -   **Khi có mục cần chiếm cả hàng:** Đối với các thẻ cần chiếm toàn bộ chiều rộng (như bảng dữ liệu lớn hoặc thẻ tóm tắt quan trọng), hãy đặt nó bên ngoài `div.content-grid` và sử dụng class `wide-card`.
     -   *Ví dụ cấu trúc:*
         ```html
-        <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-6" id="sumary-section">
             <div class="report-card">
                 <h2>Chỉ số Sợ hãi & Tham lam</h2>
                 <canvas id="fearGreedChart"></canvas>
@@ -56,7 +56,7 @@ Bạn PHẢI trả về 3 khối mã riêng biệt và đầy đủ, được ba
         </section>
         ```
         ```html
-        <section>
+        <section id="example-section">
             <h2>...</h2>
             <div class="content-grid">
                 <div class="card">...</div>

@@ -115,8 +115,8 @@ function createBarChart(container, data, options = {}) {
 
     const { valuePrefix = '', valueSuffix = '', yAxisLabel = '' } = options;
 
-    const width = 300, height = 180, pTop = 25, pBottom = 30;
-    const pLeft = yAxisLabel ? 45 : 20; // Tăng padding trái nếu có nhãn trục Y
+    const width = 300, height = 180, pTop = 25, pBottom = 10; // Giảm padding dưới vì không còn nhãn trục X
+    const pLeft = yAxisLabel ? 45 : 20;
     const pRight = 20;
 
     const chartWidth = width - pLeft - pRight;
@@ -125,13 +125,13 @@ function createBarChart(container, data, options = {}) {
     const gap = chartWidth / data.length * 0.35;
 
     let bars = '';
-    let labels = '';
+    let legendItems = '';
     let yAxisUnit = '';
 
     if (yAxisLabel) {
         yAxisUnit = `
-            <text x="${-(pTop + (height - pTop - pBottom) / 2)}" y="15" 
-                  transform="rotate(-90)" text-anchor="middle" font-size="12px" 
+            <text x="${-(pTop + (height - pTop - pBottom) / 2)}" y="15"
+                  transform="rotate(-90)" text-anchor="middle" font-size="12px"
                   font-weight="500" fill="var(--text-secondary)">
                 ${yAxisLabel}
             </text>
@@ -152,38 +152,27 @@ function createBarChart(container, data, options = {}) {
             </g>
         `;
 
-        const words = d.label.split(/\s+/);
-        const lines = [];
-        if (words.length > 0) {
-            let currentLine = words[0];
-            for (let j = 1; j < words.length; j++) {
-                if ((currentLine + " " + words[j]).length > 12 && currentLine.length > 0) {
-                    lines.push(currentLine);
-                    currentLine = words[j];
-                } else { currentLine += " " + words[j]; }
-            }
-            lines.push(currentLine);
-        }
-
-        const labelX = x + barWidth / 2;
-        const tspans = lines.map((line, lineIndex) =>
-            `<tspan x="${labelX}" dy="${lineIndex > 0 ? '1.2em' : '0'}">${line}</tspan>`
-        ).join('');
-
-        labels += `
-            <text y="${height - pBottom + 15}" text-anchor="middle" font-size="12px" fill="var(--text-secondary)">
-                ${tspans}
-            </text>
+        legendItems += `
+            <span class="legend-item">
+                <span class="legend-color-box" style="background-color: ${d.color || 'var(--accent-color)'};"></span>
+                <span>${d.label}</span>
+            </span>
         `;
     });
 
     container.innerHTML = `
-        <svg viewBox="0 0 ${width} ${height}" style="width:100%; height:auto; overflow: visible;">
-            ${yAxisUnit}
-            <line x1="${pLeft}" y1="${height - pBottom}" x2="${width - pRight}" y2="${height - pBottom}" stroke="var(--border-color)" />
-            ${bars}
-            <g>${labels}</g>
-        </svg>
+        <div class="bar-chart-layout">
+            <div class="bar-chart-svg-wrapper">
+                <svg viewBox="0 0 ${width} ${height}" style="width:100%; height:auto; overflow: visible;">
+                    ${yAxisUnit}
+                    <line x1="${pLeft}" y1="${height - pBottom}" x2="${width - pRight}" y2="${height - pBottom}" stroke="var(--border-color)" />
+                    ${bars}
+                </svg>
+            </div>
+            <div class="bar-chart-legend doughnut-legend">
+                ${legendItems}
+            </div>
+        </div>
     `;
     container.classList.add('bar-chart-container');
 }

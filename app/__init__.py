@@ -47,6 +47,9 @@ def create_app():
 
         file = request.files['file']
         api_key = request.form.get('gemini_key')
+        if not api_key:
+            flash('Vui lòng cung cấp API Key.')
+            return redirect(url_for('upload_page'))
 
         if file.filename == '' or not api_key or not file.filename.endswith('.docx'):
             flash('Dữ liệu đầu vào không hợp lệ. Vui lòng kiểm tra lại API Key và tệp .docx.')

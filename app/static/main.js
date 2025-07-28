@@ -153,22 +153,38 @@ async function loadReportAndCreateNav() {
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = reportHtml;
 
-        const navLinksContainer = document.getElementById('report-nav-links');
         const reportContainer = document.getElementById('report-container');
-        reportContainer.innerHTML = '';
+        const navLinksContainer = document.getElementById('report-nav-links');
 
-        const sections = tempDiv.querySelectorAll('section');
+        // Thoát sớm nếu các container chính không tồn tại để tránh lỗi
+        if (!reportContainer || !navLinksContainer) {
+            console.error("Không tìm thấy container cho báo cáo (#report-container) hoặc mục lục (#report-nav-links).");
+            return;
+        }
+        
+        // Xóa nội dung cũ của mục lục trước khi tạo mới để tránh trùng lặp
+        navLinksContainer.innerHTML = '';
 
-        sections.forEach(section => {
+        // để giữ nguyên cấu trúc và các lớp CSS của nó.
+        const articleElement = tempDiv.querySelector('article');
+        if (articleElement) {
+            reportContainer.innerHTML = '';
+            reportContainer.appendChild(articleElement);
+        } else {
+            // Fallback nếu không có <article>, dùng toàn bộ nội dung.
+            reportContainer.innerHTML = reportHtml;
+        }
+
+        const reportSections = reportContainer.querySelectorAll('section');
+
+        reportSections.forEach(section => {
             const h2 = section.querySelector('h2');
             if (h2 && section.id) {
-                reportContainer.appendChild(section);
-
                 const li = document.createElement('li');
                 const a = document.createElement('a');
                 a.href = `#${section.id}`;
                 const h2Text = h2.cloneNode(true);
-                h2Text.querySelector('.icon')?.remove();
+                h2Text.querySelector('i')?.remove(); // Sửa selector cho icon để chính xác hơn
                 a.textContent = h2Text.textContent.trim();
                 li.appendChild(a);
                 navLinksContainer.appendChild(li);
@@ -176,7 +192,6 @@ async function loadReportAndCreateNav() {
         });
 
         const navLinks = navLinksContainer.querySelectorAll('a');
-        const reportSections = reportContainer.querySelectorAll('section');
 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {

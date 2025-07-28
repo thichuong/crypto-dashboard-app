@@ -108,3 +108,41 @@
     transform: scale(1.08);
     fill: var(--accent-color);
 }
+
+/* --- Bố cục cho Biểu đồ Cột (Bar Chart) --- */
+.bar-chart-layout {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    width: 100%;
+}
+
+.bar-chart-svg-wrapper {
+    flex-grow: 1;
+    min-width: 0; /* Ngăn SVG co lại không đúng cách */
+}
+
+.bar-chart-legend {
+    flex-shrink: 0;
+    margin: 0 !important; /* Ghi đè margin từ .doughnut-legend */
+    align-self: center;
+}
+
+/* --- Responsive cho Biểu đồ Cột --- */
+/* Trên màn hình nhỏ hơn 640px (ví dụ: điện thoại) */
+@media (max-width: 640px) {
+    .bar-chart-layout {
+        flex-direction: column; /* Chuyển sang bố cục cột */
+        align-items: stretch;   /* Căn chỉnh các mục theo chiều rộng */
+        gap: 1rem;
+    }
+
+    .bar-chart-legend {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center; /* Căn giữa các mục chú thích */
+        gap: 0.5rem 1rem; /* Khoảng cách dọc và ngang */
+        margin-top: 0.75rem !important; /* Thêm khoảng cách với biểu đồ */
+        align-self: initial; /* Reset align-self */
+    }
+}
