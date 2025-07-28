@@ -1,9 +1,3 @@
-Đã hiểu, tôi đã cập nhật lại tên file `promt_create_report.txt` thành `promt_create_report.md` trong tài liệu.
-
-Dưới đây là nội dung file `README.md` hoàn chỉnh đã được sửa đổi.
-
------
-
 # 📊 Bảng Điều Khiển Crypto & Trình Tạo Báo Cáo AI
 
 Một ứng dụng web Flask toàn diện, cung cấp bảng điều khiển dữ liệu thị trường tiền mã hóa theo thời gian thực và một hệ thống tạo báo cáo phân tích tự động bằng AI, sử dụng API của Google Gemini.
