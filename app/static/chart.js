@@ -265,101 +265,171 @@ function createLineChart(container, data, options = {}) {
  * [ĐÃ SỬA & CẢI TIẾN] TẠO BIỂU ĐỒ TRÒN (DOUGHNUT CHART)
  * Hiển thị tiêu đề ở giữa, chú giải động và hiệu ứng hover tương tác hai chiều.
  * @param {HTMLElement} container - Element DOM để chứa biểu đồ.
- * @param {Array<object>} data - Dữ liệu.
+ * @param {Array<object>} data - Dữ liệu  `value`, `label`, and `color`.
  * @param {string} [title=''] - Tiêu đề hiển thị ở giữa.
  */
-function createDoughnutChart(container, data, title = '') {
-    if (!container || !data || data.length === 0) return;
+/**
+ * [REWRITTEN] TẠO BIỂU ĐỒ TRÒN (DOUGHNUT CHART)
+ * Tạo biểu đồ tròn với tiêu đề ở giữa, chú giải động và hiệu ứng tương tác hai chiều khi di chuột.
+ *
+ * @param {HTMLElement} container - The DOM element to render the chart into.
+ * @param {Array<object>} data - The dataset. Example: [{ value: 30, label: 'A', color: '#FF6384' }]
+ * @param {string} [title=''] - The title to display in the center of the chart.
+ */
+/**
+ * HÀM TRỢ GIÚP
+ * Chuyển đổi tọa độ cực sang Descartes.
+ */
+function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
+    const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
+    return {
+        x: centerX + radius * Math.cos(angleInRadians),
+        y: centerY + radius * Math.sin(angleInRadians),
+    };
+}
 
-    const width = 180, height = 180, hole = 55;
-    const radius = Math.min(width, height) / 2 - 5;
-    const strokeWidth = radius - hole;
-    const cx = width / 2;
-    const cy = height / 2;
+/**
+ * HÀM TRỢ GIÚP [MỚI]
+ * Tạo chuỗi path data 'd' cho một cung tròn của biểu đồ Doughnut.
+ * @returns {string} - Chuỗi 'd' để dùng trong thuộc tính path của SVG.
+ */
+function describeDoughnutArc(x, y, outerRadius, innerRadius, startAngle, endAngle) {
+    const startOuter = polarToCartesian(x, y, outerRadius, endAngle);
+    const endOuter = polarToCartesian(x, y, outerRadius, startAngle);
+    const startInner = polarToCartesian(x, y, innerRadius, endAngle);
+    const endInner = polarToCartesian(x, y, innerRadius, startAngle);
+
+    const largeArcFlag = endAngle - startAngle <= 180 ? '0' : '1';
+
+    // Path: Di chuyển đến điểm bắt đầu bên ngoài -> Vẽ cung bên ngoài ->
+    // Đi thẳng vào cung bên trong -> Vẽ cung bên trong ngược lại -> Đóng path.
+    const d = [
+        'M', startOuter.x, startOuter.y,
+        'A', outerRadius, outerRadius, 0, largeArcFlag, 0, endOuter.x, endOuter.y,
+        'L', endInner.x, endInner.y,
+        'A', innerRadius, innerRadius, 0, largeArcFlag, 1, startInner.x, startInner.y,
+        'Z'
+    ].join(' ');
+
+    return d;
+}
+
+
+/**
+ * [VIẾT LẠI] TẠO BIỂU ĐỒ TRÒN (DOUGHNUT CHART)
+ * Phiên bản cải tiến sử dụng <path> để vẽ các cung tròn, giúp mã nguồn rõ ràng hơn.
+ * Giữ nguyên hiệu ứng tương tác hai chiều và chú giải động.
+ *
+ * @param {HTMLElement} container - Element DOM để chứa biểu đồ.
+ * @param {Array<object>} data - Dữ liệu. Vd: [{ value: 30, label: 'A', color: '#FF6384' }]
+ * @param {string} [title=''] - Tiêu đề hiển thị ở giữa biểu đồ.
+ */
+function createDoughnutChart(container, data, title = '') {
+    // --- 1. KIỂM TRA ĐẦU VÀO ---
+    if (!container || !data || data.length === 0) {
+        if (container) container.innerHTML = 'Không có dữ liệu để hiển thị.';
+        return;
+    }
 
     const total = data.reduce((sum, d) => sum + d.value, 0);
-    if (total === 0) return;
+    if (total === 0) {
+        if (container) container.innerHTML = 'Tổng giá trị bằng 0, không thể vẽ biểu đồ.';
+        return;
+    }
 
-    const circumference = 2 * Math.PI * radius;
+    // --- 2. CẤU HÌNH BIỂU ĐỒ ---
+    const width = 180, height = 180;
+    const cx = width / 2;
+    const cy = height / 2;
+    const outerRadius = 80;
+    const innerRadius = 50;
+    // ID duy nhất cho biểu đồ để tránh xung đột khi có nhiều biểu đồ trên trang
+    const chartId = `doughnut-${Math.random().toString(36).substring(2, 9)}`;
+
+    // --- 3. TẠO CÁC SEGMENT SVG VÀ CHÚ GIẢI HTML ---
     let startAngle = 0;
-    let segments = '';
-    let legendItems = '';
+    let segmentsHTML = '';
+    let legendHTML = '';
 
     data.forEach((d, i) => {
+        if (d.value <= 0) return; // Bỏ qua các segment có giá trị bằng 0 hoặc âm
+
         const percentage = d.value / total;
-        if (percentage === 0) return;
+        const angleSpan = percentage * 360;
+        const endAngle = startAngle + angleSpan;
+        
+        // ID để liên kết segment và chú giải
+        const segmentId = `${chartId}-segment-${i}`;
+        const legendId = `${chartId}-legend-${i}`;
 
-        const finalDashoffset = circumference * (1 - percentage);
-        const rotation = startAngle;
-        const endAngle = startAngle + percentage * 360;
-        const segmentId = `segment-${container.id}-${i}`;
-        const legendId = `legend-${container.id}-${i}`;
+        // Tạo path cho segment
+        const pathData = describeDoughnutArc(cx, cy, outerRadius, innerRadius, startAngle, endAngle);
+        segmentsHTML += `
+            <path
+                id="${segmentId}"
+                class="doughnut-segment"
+                d="${pathData}"
+                fill="${d.color}"
+                data-legend-id="${legendId}"
+                style="--animation-delay: ${i * 100}ms;"
+            />`;
 
-        segments += `
-            <circle id="${segmentId}" r="${radius}" cx="${cx}" cy="${cy}"
-                    fill="transparent" stroke="${d.color}" stroke-width="${strokeWidth}"
-                    stroke-dasharray="${circumference}"
-                    stroke-dashoffset="${circumference}"
-                    transform="rotate(${rotation - 90} ${cx} ${cy})"
-                    class="doughnut-segment"
-                    data-legend-id="${legendId}"
-                    style="--final-offset: ${finalDashoffset}; animation-delay: ${i * 150}ms;" />`;
-
-        const displayValue = (percentage * 100).toFixed(1) + '%';
-
-        legendItems += `
-            <span id="${legendId}" class="legend-item" data-segment-id="${segmentId}">
+        // Tạo chú giải tương ứng
+        const percentageDisplay = (percentage * 100).toFixed(1);
+        legendHTML += `
+            <div id="${legendId}" class="legend-item" data-segment-id="${segmentId}">
                 <span class="legend-color-box" style="background-color: ${d.color};"></span>
-                <span>${d.label}: <strong>${displayValue}</strong></span>
-            </span>`;
+                <span>${d.label}: <strong>${percentageDisplay}%</strong></span>
+            </div>`;
         
         startAngle = endAngle;
     });
 
+    // --- 4. GHÉP VÀ HIỂN THỊ HTML ---
     container.innerHTML = `
-        <div style="position: relative; width: ${width}px; height: ${height}px; margin: auto;">
-            <svg viewBox="0 0 ${width} ${height}" style="position: absolute; top: 0; left: 0; overflow: visible;">
-                ${segments}
-            </svg>
-            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: ${hole * 2 * 0.85}px; pointer-events: none;">
-                <span style="font-size: 1rem; font-weight: 600; color: var(--text-primary); line-height: 1.25;">
+        <div class="doughnut-chart-container">
+            <div class="doughnut-svg-wrapper">
+                <svg viewBox="0 0 ${width} ${height}" class="doughnut-svg">
+                    <g class="doughnut-segments-group">
+                        ${segmentsHTML}
+                    </g>
+                </svg>
+                <div class="doughnut-title">
                     ${title}
-                </span>
+                </div>
             </div>
-        </div>
-        <div class="doughnut-legend">
-            ${legendItems}
-        </div>
-    `;
+            <div class="doughnut-legend">
+                ${legendHTML}
+            </div>
+        </div>`;
+    
+    // --- 5. THIẾT LẬP SỰ KIỆN TƯƠNG TÁC (HOVER) ---
+    const chartContainer = container.querySelector('.doughnut-chart-container');
+    const interactiveElements = container.querySelectorAll('.doughnut-segment, .legend-item');
 
-    // --- [THÊM MỚI] LOGIC TƯƠNG TÁC HAI CHIỀU KHI HOVER ---
-    // Lấy tất cả các segment của biểu đồ và các mục chú giải
-    const allSegments = container.querySelectorAll('.doughnut-segment');
-    const allLegends = container.querySelectorAll('.legend-item');
+    const handleMouseEnter = (event) => {
+        // Thêm class để kích hoạt trạng thái "đang tương tác"
+        if (chartContainer) chartContainer.classList.add('is-highlighted');
 
-    // Hàm để highlight cặp segment-legend tương ứng
-    const highlightPair = (element) => {
-        // Dựa vào data-attributes để tìm ID của các thành phần liên quan
-        const segmentId = element.dataset.segmentId || element.id;
-        const legendId = element.dataset.legendId || element.id;
+        const target = event.currentTarget;
+        const segmentId = target.dataset.segmentId || target.id;
+        const legendId = target.dataset.legendId || target.id;
 
-        const segment = container.querySelector(`#${segmentId}`);
-        const legend = container.querySelector(`#${legendId}`);
+        const segment = container.querySelector('#' + segmentId);
+        const legend = container.querySelector('#' + legendId);
 
-        // Thêm class 'highlight' để CSS có thể áp dụng hiệu ứng
         if (segment) segment.classList.add('highlight');
         if (legend) legend.classList.add('highlight');
     };
 
-    // Hàm để xóa tất cả các highlight
-    const clearHighlights = () => {
-        allSegments.forEach(s => s.classList.remove('highlight'));
-        allLegends.forEach(l => l.classList.remove('highlight'));
+    const handleMouseLeave = () => {
+        // Xóa tất cả các class highlight và trạng thái "đang tương tác"
+        if (chartContainer) chartContainer.classList.remove('is-highlighted');
+        container.querySelectorAll('.highlight').forEach(el => el.classList.remove('highlight'));
     };
 
-    // Gán sự kiện 'mouseenter' và 'mouseleave' cho cả segment và legend
-    [...allSegments, ...allLegends].forEach(el => {
-        el.addEventListener('mouseenter', () => highlightPair(el));
-        el.addEventListener('mouseleave', clearHighlights);
+    interactiveElements.forEach(el => {
+        el.addEventListener('mouseenter', handleMouseEnter);
+        el.addEventListener('mouseleave', handleMouseLeave);
     });
 }
