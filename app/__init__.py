@@ -105,7 +105,18 @@ def create_app():
         # 5. Render trang index chính như bình thường với dữ liệu báo cáo mới nhất
         return render_template('index.html', report=latest_report)
 
+    @app.route('/report/<int:report_id>')
+    def view_report(report_id):
+        """Hiển thị một báo cáo cụ thể bằng ID."""
+        report = db.get_or_404(Report, report_id)
+        return render_template('index.html', report=report)
 
+    @app.route('/reports')
+    def report_list():
+        """Hiển thị danh sách tất cả các báo cáo đã lưu."""
+        all_reports = Report.query.order_by(Report.created_at.desc()).all()
+        return render_template('report_list.html', reports=all_reports)
+    
     @app.route('/upload')
     def upload_page():
         """Hiển thị trang tải lên file báo cáo."""
