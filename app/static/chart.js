@@ -104,7 +104,8 @@ function createGauge(container, value, config) {
 
 
 /**
- * [CẢI TIẾN] TẠO BIỂU ĐỒ CỘT (BAR CHART)
+ * [CẢI TIẾN & NÂNG CẤP] TẠO BIỂU ĐỒ CỘT (BAR CHART) HỖ TRỢ GIÁ TRỊ ÂM
+ * Cho phép vẽ biểu đồ với các giá trị âm. Cột âm sẽ được dựng theo hướng ngược lại với cột dương.
  * Thêm hiệu ứng, nhãn giá trị cho các cột và tương tác khi di chuột.
  * @param {HTMLElement} container - Element DOM.
  * @param {Array<object>} data - Dữ liệu, vd: [{value: 10, label: 'A', color: 'red'}].
@@ -115,14 +116,28 @@ function createBarChart(container, data, options = {}) {
 
     const { valuePrefix = '', valueSuffix = '', yAxisLabel = '' } = options;
 
-    const width = 300, height = 180, pTop = 25, pBottom = 10; // Giảm padding dưới vì không còn nhãn trục X
+    const width = 300, height = 180, pTop = 25, pBottom = 20;
     const pLeft = yAxisLabel ? 45 : 20;
     const pRight = 20;
 
+    // --- [THAY ĐỔI] TÍNH TOÁN DẢI GIÁ TRỊ ĐỂ HỖ TRỢ SỐ ÂM ---
+    const allValues = data.map(d => d.value);
+    const minValue = Math.min(0, ...allValues); // Luôn bao gồm 0
+    const maxValue = Math.max(0, ...allValues); // Luôn bao gồm 0
+    const totalRange = maxValue - minValue;
+    
+    // Nếu không có sự thay đổi (tất cả giá trị là 0), không cần vẽ
+    if (totalRange === 0) return;
+
+    const chartAreaHeight = height - pTop - pBottom;
     const chartWidth = width - pLeft - pRight;
-    const maxValue = Math.max(...data.map(d => d.value));
+
+    // --- [THAY ĐỔI] TÍNH TOÁN VỊ TRÍ TRỤC ZERO ---
+    const zeroY = pTop + (maxValue / totalRange) * chartAreaHeight;
+
     const barWidth = chartWidth / data.length * 0.65;
     const gap = chartWidth / data.length * 0.35;
+    const scale = chartAreaHeight / totalRange;
 
     let bars = '';
     let legendItems = '';
@@ -130,7 +145,7 @@ function createBarChart(container, data, options = {}) {
 
     if (yAxisLabel) {
         yAxisUnit = `
-            <text x="${-(pTop + (height - pTop - pBottom) / 2)}" y="15"
+            <text x="${-(pTop + chartAreaHeight / 2)}" y="15"
                   transform="rotate(-90)" text-anchor="middle" font-size="12px"
                   font-weight="500" fill="var(--text-secondary)">
                 ${yAxisLabel}
@@ -139,15 +154,26 @@ function createBarChart(container, data, options = {}) {
     }
 
     data.forEach((d, i) => {
-        const barHeight = (d.value / maxValue) * (height - pTop - pBottom);
+        const barHeight = Math.abs(d.value) * scale;
         const x = pLeft + i * (barWidth + gap) + gap / 2;
-        const y = height - pBottom - barHeight;
+        
+        // --- [THAY ĐỔI] XÁC ĐỊNH VỊ TRÍ Y VÀ NHÃN DỰA TRÊN GIÁ TRỊ ÂM/DƯƠNG ---
+        let y, labelY, labelAnchor;
+
+        if (d.value >= 0) {
+            y = zeroY - barHeight;
+            labelY = -8; // Phía trên cột
+        } else {
+            y = zeroY;
+            labelY = barHeight + 15; // Phía dưới cột
+        }
+
         bars += `
             <g transform="translate(${x}, ${y})" class="bar-group">
                 <rect width="${barWidth}" height="${barHeight}"
                       fill="${d.color || 'var(--accent-color)'}" rx="3" class="bar-rect"
                       style="animation-delay: ${i * 100}ms;" />
-                <text x="${barWidth / 2}" y="-8" text-anchor="middle" font-size="12px" font-weight="600"
+                <text x="${barWidth / 2}" y="${labelY}" text-anchor="middle" font-size="12px" font-weight="600"
                       fill="var(--text-primary)" class="bar-value-label">${valuePrefix}${d.value}${valueSuffix}</text>
             </g>
         `;
@@ -165,7 +191,7 @@ function createBarChart(container, data, options = {}) {
             <div class="bar-chart-svg-wrapper">
                 <svg viewBox="0 0 ${width} ${height}" style="width:100%; height:auto; overflow: visible;">
                     ${yAxisUnit}
-                    <line x1="${pLeft}" y1="${height - pBottom}" x2="${width - pRight}" y2="${height - pBottom}" stroke="var(--border-color)" />
+                    <line x1="${pLeft}" y1="${zeroY}" x2="${width - pRight}" y2="${zeroY}" stroke="var(--border-color)" />
                     ${bars}
                 </svg>
             </div>
@@ -176,7 +202,6 @@ function createBarChart(container, data, options = {}) {
     `;
     container.classList.add('bar-chart-container');
 }
-
 
 /**
  * [CẢI TIẾN] TẠO BIỂU ĐỒ ĐƯỜNG (LINE CHART)

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiểm tra Thư viện Biểu đồ (chart.js)</title>
+    <link rel="stylesheet" href="colors.css">
+    <link rel="stylesheet" href="chart.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            max-width: 900px;
+        }
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 2rem;
+            width: 100%;
+            max-width: 1400px; /* Tăng chiều rộng tối đa */
+        }
+        .chart-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.07);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+        .chart-placeholder {
+            width: 100%;
+            min-height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .doughnut-container-wrapper {
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             gap: 1.5rem;
+             width: 100%;
+        }
+        
+        /* --- Kiểu cho phần nhập liệu --- */
+        .input-section {
+            width: 100%;
+            margin-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            padding-top: 1.5rem;
+        }
+        h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            text-align: center;
+        }
+        .input-instructions {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .manual-input {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            width: 100%;
+        }
+        .manual-input textarea, .manual-input input {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: monospace;
+            box-sizing: border-box; /* Quan trọng */
+        }
+        .manual-input textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        .button-group {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .action-button {
+            padding: 0.6rem 1.2rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #fff;
+            background-color: var(--accent-color);
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .action-button:hover {
+            filter: brightness(1.1);
+        }
+        .action-button.secondary {
+            background-color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Trình Kiểm tra Biểu đồ</h1>
+        <p>Tạo dữ liệu ngẫu nhiên hoặc nhập thủ công để kiểm tra các thành phần biểu đồ từ <code>chart.js</code>.</p>
+    </div>
+
+    <div class="chart-grid">
+        <div class="chart-card">
+            <h2>Biểu đồ Đồng hồ (Gauge)</h2>
+            <div id="gauge-test-container" class="chart-placeholder"></div>
+            
+            <div class="input-section">
+                <h3>Nhập dữ liệu thủ công</h3>
+                <p class="input-instructions">Nhập một giá trị số từ 0 đến 100.</p>
+                <div class="manual-input">
+                    <input type="number" id="gauge-input" value="75" min="0" max="100">
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button id="draw-gauge" class="action-button">Vẽ biểu đồ</button>
+                <button id="regen-gauge" class="action-button secondary">Tạo ngẫu nhiên</button>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <h2>Biểu đồ Tròn (Doughnut)</h2>
+            <div id="doughnut-test-container" class="chart-placeholder doughnut-container-wrapper"></div>
+
+             <div class="input-section">
+                <h3>Nhập dữ liệu thủ công</h3>
+                <p class="input-instructions">Mỗi dòng là một mục, theo định dạng: <b>Nhãn,Giá trị</b></p>
+                <div class="manual-input">
+                    <textarea id="doughnut-input">Bitcoin,45
+Ethereum,30
+Solana,15
+BNB,10</textarea>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button id="draw-doughnut" class="action-button">Vẽ biểu đồ</button>
+                <button id="regen-doughnut" class="action-button secondary">Tạo ngẫu nhiên</button>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <h2>Biểu đồ Đường (Line)</h2>
+            <div id="line-test-container" class="chart-placeholder"></div>
+
+             <div class="input-section">
+                <h3>Nhập dữ liệu thủ công</h3>
+                <p class="input-instructions">Nhập các giá trị số, cách nhau bởi dấu phẩy.</p>
+                <div class="manual-input">
+                    <textarea id="line-input">55, 60, 75, 70, 85, 95, 110</textarea>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button id="draw-line" class="action-button">Vẽ biểu đồ</button>
+                <button id="regen-line" class="action-button secondary">Tạo ngẫu nhiên</button>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <h2>Biểu đồ Cột (Bar)</h2>
+            <div id="bar-test-container" class="chart-placeholder"></div>
+
+             <div class="input-section">
+                <h3>Nhập dữ liệu thủ công</h3>
+                <p class="input-instructions">Mỗi dòng là một cột, theo định dạng: <b>Nhãn,Giá trị</b></p>
+                <div class="manual-input">
+                    <textarea id="bar-input">Quý 1,15
+Quý 2,25
+Quý 3,20
+Quý 4,40</textarea>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button id="draw-bar" class="action-button">Vẽ biểu đồ</button>
+                <button id="regen-bar" class="action-button secondary">Tạo ngẫu nhiên</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="chart.js"></script>
+
+    <script>
+    // --- HÀM TẠO DỮ LIỆU NGẪU NHIÊN ---
+
+    function getRandom(min, max) {
+        return Math.random() * (max - min) + min;
+    }
+
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    const colorPalette = [
+        'var(--icon-color-btc)', 'var(--icon-color-eth)', 'var(--icon-color-sol)',
+        'var(--icon-color-bnb)', 'var(--icon-color-xrp)', 'var(--icon-color-ada)',
+        'var(--accent-color)', 'var(--positive-color)', 'var(--neutral-color)'
+    ];
+    
+    // --- CÁC HÀM VẼ BIỂU ĐỒ ---
+
+    const gaugeConfig = {
+        min: 0, max: 100,
+        segments: [
+            { limit: 30, color: 'var(--rsi-oversold-color)', label: 'Yếu' },
+            { limit: 70, color: 'var(--rsi-neutral-color)', label: 'Trung bình' },
+            { limit: 100, color: 'var(--rsi-overbought-color)', label: 'Mạnh' }
+        ]
+    };
+
+    const lineOptions = { valuePrefix: '$', valueSuffix: 'k' };
+    const barOptions = { yAxisLabel: 'Tỷ USD', valueSuffix: 'B' };
+
+    // --- CÁC HÀM KIỂM THỬ VÀ VẼ ---
+
+    function handleGaugeChart(fromInput = false) {
+        const container = document.getElementById('gauge-test-container');
+        let value;
+        if (fromInput) {
+            value = parseFloat(document.getElementById('gauge-input').value);
+            if (isNaN(value)) {
+                alert('Giá trị cho biểu đồ Gauge không hợp lệ.');
+                return;
+            }
+        } else {
+            value = getRandom(0, 100);
+        }
+        createGauge(container, value, gaugeConfig);
+    }
+
+    function handleDoughnutChart(fromInput = false) {
+        const container = document.getElementById('doughnut-test-container');
+        let data = [];
+        if (fromInput) {
+            const rawData = document.getElementById('doughnut-input').value.trim().split('\n');
+            rawData.forEach((line, index) => {
+                const parts = line.split(',');
+                if (parts.length === 2) {
+                    const label = parts[0].trim();
+                    const value = parseFloat(parts[1].trim());
+                    if (label && !isNaN(value)) {
+                        data.push({
+                            value: value,
+                            color: colorPalette[index % colorPalette.length],
+                            label: label
+                        });
+                    }
+                }
+            });
+            if (data.length === 0) {
+                alert('Không có dữ liệu hợp lệ cho biểu đồ Doughnut. Định dạng: Nhãn,Giá trị');
+                return;
+            }
+        } else {
+            const numSegments = getRandomInt(3, 5);
+            const labels = ['A', 'B', 'C', 'D', 'E'];
+            for (let i = 0; i < numSegments; i++) {
+                data.push({
+                    value: getRandom(10, 50),
+                    color: colorPalette[i % colorPalette.length],
+                    label: `Mục ${labels[i]}`
+                });
+            }
+        }
+        createDoughnutChart(container, data, `Tổng quan`);
+    }
+
+    function handleLineChart(fromInput = false) {
+        const container = document.getElementById('line-test-container');
+        let data = [];
+        if (fromInput) {
+             const rawData = document.getElementById('line-input').value.trim();
+             data = rawData.split(',').map(val => parseFloat(val.trim())).filter(num => !isNaN(num));
+             if (data.length === 0) {
+                 alert('Không có dữ liệu hợp lệ cho biểu đồ Line. Định dạng: số1, số2, ...');
+                 return;
+             }
+        } else {
+            const numPoints = 7;
+            for (let i = 0; i < numPoints; i++) {
+                data.push(getRandom(50, 200));
+            }
+        }
+        createLineChart(container, data, lineOptions);
+    }
+
+    function handleBarChart(fromInput = false) {
+        const container = document.getElementById('bar-test-container');
+        let data = [];
+        if (fromInput) {
+            const rawData = document.getElementById('bar-input').value.trim().split('\n');
+             rawData.forEach((line, index) => {
+                const parts = line.split(',');
+                if (parts.length === 2) {
+                    const label = parts[0].trim();
+                    const value = parseFloat(parts[1].trim());
+                    if (label && !isNaN(value)) {
+                        data.push({
+                            value: value,
+                            label: label,
+                            color: colorPalette[index % colorPalette.length]
+                        });
+                    }
+                }
+            });
+            if (data.length === 0) {
+                alert('Không có dữ liệu hợp lệ cho biểu đồ Bar. Định dạng: Nhãn,Giá trị');
+                return;
+            }
+        } else {
+            const numBars = getRandomInt(4, 6);
+            const labels = ['Quý 1', 'Quý 2', 'Quý 3', 'Quý 4', 'Quý 5', 'Quý 6'];
+            for (let i = 0; i < numBars; i++) {
+                data.push({
+                    value: getRandomInt(-50, 80),
+                    label: labels[i],
+                    color: colorPalette[i % colorPalette.length]
+                });
+            }
+        }
+        createBarChart(container, data, barOptions);
+    }
+
+    // --- GÁN SỰ KIỆN VÀ CHẠY LẦN ĐẦU ---
+    document.addEventListener('DOMContentLoaded', () => {
+        // Nút vẽ từ dữ liệu nhập
+        document.getElementById('draw-gauge').addEventListener('click', () => handleGaugeChart(true));
+        document.getElementById('draw-doughnut').addEventListener('click', () => handleDoughnutChart(true));
+        document.getElementById('draw-line').addEventListener('click', () => handleLineChart(true));
+        document.getElementById('draw-bar').addEventListener('click', () => handleBarChart(true));
+        
+        // Nút tạo dữ liệu ngẫu nhiên
+        document.getElementById('regen-gauge').addEventListener('click', () => handleGaugeChart(false));
+        document.getElementById('regen-doughnut').addEventListener('click', () => handleDoughnutChart(false));
+        document.getElementById('regen-line').addEventListener('click', () => handleLineChart(false));
+        document.getElementById('regen-bar').addEventListener('click', () => handleBarChart(false));
+
+        // Vẽ tất cả các biểu đồ lần đầu khi tải trang (từ dữ liệu mặc định trong ô input)
+        handleGaugeChart(true);
+        handleDoughnutChart(true);
+        handleLineChart(true);
+        handleBarChart(true);
+    });
+    </script>
+</body>
+</html>

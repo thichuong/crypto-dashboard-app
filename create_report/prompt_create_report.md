@@ -158,5 +158,5 @@ Tất cả các hàm vẽ biểu đồ đều nằm trong `chart.js`. Khi gọi 
  * @param `{string}` [title=''] - **Đầu vào:** (Tùy chọn) Tiêu đề để hiển thị ở giữa biểu đồ. Ví dụ: BTC.D
  * @returns `{void}` **Đầu ra:** Hàm này không trả về giá trị.
  * Nó sẽ vẽ một biểu đồ doughnut SVG với tiêu đề ở giữa và một phần chú giải chi tiết vào trong `container`.
-
+ * Chú ý: chọn màu tương phản nhau co các đối tượng khác nhau
 `function createDoughnutChart(container, data, title = '') { /* ... */ }`
