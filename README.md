@@ -1,142 +1,118 @@
 # 📊 Bảng Điều Khiển Crypto & Trình Tạo Báo Cáo AI
 
-Một ứng dụng web Flask toàn diện, cung cấp bảng điều khiển dữ liệu thị trường tiền mã hóa theo thời gian thực và một hệ thống tạo báo cáo phân tích tự động bằng AI, sử dụng API của Google Gemini.
+Một ứng dụng web Flask toàn diện, cung cấp bảng điều khiển dữ liệu thị trường tiền mã hóa theo thời gian thực và một công cụ cho phép người dùng tự tạo báo cáo phân tích bằng AI từ tài liệu của riêng họ.
 
-**(Xem trực tiếp tại)** [https://crypto-dashboard-app-thichuong.vercel.app/](https://crypto-dashboard-app-thichuong.vercel.app/)
+**Xem trực tiếp tại:** [https://crypto-dashboard-app-thichuong.vercel.app/](https://crypto-dashboard-app-thichuong.vercel.app/)
 
 ## ✨ Các Tính Năng Chính
 
-  * **Dashboard Dữ Liệu Sống:** Theo dõi các chỉ số quan trọng được cập nhật tự động:
+  * **Dashboard Dữ Liệu Sống:** Theo dõi các chỉ số quan trọng được cập nhật tự động, với cơ chế caching để tối ưu hiệu suất:
       * Giá **Bitcoin (BTC)** và biến động trong 24 giờ.
       * Tổng vốn hóa thị trường và khối lượng giao dịch toàn cầu.
-      * Chỉ số **Sợ hãi & Tham lam (Fear & Greed Index)** từ Alternative.me.
-      * Chỉ số **Sức mạnh Tương đối (RSI)** của BTC từ TAAPI.IO.
+      * Chỉ số **Sợ hãi & Tham lam (Fear & Greed Index)** từ nhiều nguồn.
+      * Chỉ số **Sức mạnh Tương đối (RSI)** của BTC.
   * **Tạo Báo Cáo Tự Động Bằng AI:**
-      * **Tích hợp vào Dashboard:** Tải và hiển thị một báo cáo phân tích chi tiết, được tạo tự động từ tệp `.docx`, ngay trên trang chính.
-      * **Báo Cáo Độc Lập:** Cung cấp trang cho phép người dùng tải lên tệp `.docx` và nhập API Key của Gemini để tạo và xem ngay một báo cáo hoàn chỉnh.
+      * Một công cụ mạnh mẽ cho phép bất kỳ ai cũng có thể biến một tài liệu văn bản (`.docx` hoặc `.odt`) thành một trang web báo cáo hoàn chỉnh chỉ trong vài cú nhấp chuột.
+  * **Lưu Trữ và Xem Lại Lịch Sử:**
+      * Mỗi báo cáo được tạo ra sẽ được lưu trữ an toàn trong cơ sở dữ liệu.
+      * Trang `/reports` cho phép xem lại toàn bộ lịch sử các báo cáo đã được tạo.
   * **Giao Diện Người Dùng Hiện Đại:**
-      * Thiết kế responsive, tương thích trên máy tính và thiết bị di động.
+      * Thiết kế responsive, sử dụng Tailwind CSS.
       * Hỗ trợ **chế độ Sáng/Tối (Light/Dark mode)**.
-      * Sử dụng biểu đồ SVG động, có hiệu ứng tương tác để trực quan hóa dữ liệu.
-  * **Backend Hiệu Quả:**
-      * Sử dụng **Flask** và các blueprint để tổ chức code gọn gàng.
-      * Tích hợp **caching** để tối ưu hiệu suất và giảm số lần gọi API không cần thiết.
+      * Sử dụng các biểu đồ SVG động, có hiệu ứng tương tác được viết bằng JavaScript thuần túy để trực quan hóa dữ liệu.
+
+---
 
 ## 🤖 Luồng Hoạt Động Của Trình Tạo Báo Cáo AI
 
-Dự án triển khai hai phương pháp riêng biệt để biến tài liệu `.docx` thành báo cáo web bằng Google Gemini, phục vụ các nhu cầu khác nhau.
+Tính năng cốt lõi của dự án là cho phép người dùng cuối tự tạo ra các báo cáo phân tích dưới dạng trang web một cách nhanh chóng.
 
-### 1\. Phương pháp Tích hợp (Cập nhật Dashboard chính)
+* **Cách hoạt động:**
+    1.  **Truy cập:** Người dùng truy cập vào trang `/upload` trên ứng dụng.
+    2.  **Cung cấp thông tin:** Trên trang này, người dùng cần điền hai thông tin:
+        * **Gemini API Key:** Khóa API cá nhân của họ từ Google AI Studio để có quyền sử dụng mô hình Gemini.
+        * **Tải tệp lên:** Người dùng chọn và tải lên một tệp tài liệu từ máy tính. Hệ thống hỗ trợ hai định dạng phổ biến: **`.docx`** (Microsoft Word) và **`.odt`** (OpenDocument Text).
+    3.  **Xử lý ở Backend:** Khi người dùng nhấn nút "Generate Report", ứng dụng Flask sẽ:
+        * Nhận và xác thực tệp đã tải lên.
+        * Sử dụng thư viện `python-docx` hoặc `odfpy` để đọc và trích xuất toàn bộ nội dung văn bản từ tệp.
+        * Gọi service `report_generator`, nơi nội dung văn bản này được kết hợp với một "prompt" (câu lệnh chỉ dẫn) được thiết kế đặc biệt cho AI.
+        * Gửi yêu cầu hoàn chỉnh đến API của Google Gemini. Prompt này hướng dẫn AI biến nội dung văn bản thô thành ba khối mã nguồn riêng biệt: **HTML** cho cấu trúc, **CSS** cho giao diện, và **JavaScript**.
+    4.  **Tạo mã nguồn:**
+        * **HTML:** Tạo cấu trúc nội dung cho trang báo cáo.
+        * **CSS:** Tạo các quy tắc định dạng để trang báo cáo có giao diện đẹp mắt.
+        * **JavaScript:** Tạo mã nguồn để gọi các hàm vẽ biểu đồ đã được code sẵn trong tệp `chart.js`. AI sẽ xác định loại biểu đồ phù hợp (ví dụ: line chart, bar chart, doughnut chart) và chuẩn bị dữ liệu cần thiết để truyền vào các hàm đó, giúp trực quan hóa thông tin một cách sinh động ngay trong báo cáo.
+    5.  **Lưu trữ và Hiển thị:**
+        * Sau khi nhận được phản hồi từ Gemini, ứng dụng sẽ lưu ba khối mã nguồn (HTML, CSS, JS) vào một bản ghi mới trong cơ sở dữ liệu.
+        * Người dùng sẽ được tự động chuyển hướng về trang chủ, nơi báo cáo họ vừa tạo sẽ được hiển thị ngay lập tức.
+-----
 
-Luồng này được thiết kế cho nhà phát triển để cập nhật nội dung phân tích chính trên trang dashboard.
+## 🗄️ Lưu Trữ Báo Cáo Trong Cơ Sở Dữ Liệu
 
-  * **Cách hoạt động:**
-    1.  Nhà phát triển đặt một tệp `.docx` chứa nội dung phân tích vào thư mục `create_report`.
-    2.  Chạy kịch bản `python create_report/create_report.py`.
-    3.  Kịch bản đọc nội dung từ `.docx`, kết hợp với prompt từ `create_report/promt_create_report.md`, và gửi yêu cầu đến Gemini.
-    4.  Prompt này yêu cầu AI tạo ra **ba tệp riêng biệt**: `report.html`, `report.css`, và `report.js`. Các tệp này được lưu vào thư mục `app/static/`.
-    5.  Trang `index.html` sẽ tự động tải nội dung từ `report.html` và áp dụng CSS, JS tương ứng để hiển thị báo cáo.
+Để đảm bảo tính bền vững và khả năng truy xuất, mỗi báo cáo được tạo ra đều được lưu vào cơ sở dữ liệu (PostgreSQL trên Vercel hoặc SQLite khi chạy local) thông qua mô hình `Report` của SQLAlchemy.
 
-### 2\. Phương pháp Độc lập (Cho người dùng cuối)
+  * **Cấu trúc bảng `Report`:** Bảng này được thiết kế để lưu trữ riêng biệt từng thành phần của trang báo cáo:
+      * `id` (Integer, Primary Key): Mã định danh duy nhất cho mỗi báo cáo.
+      * `created_at` (DateTime): Dấu thời gian ghi lại thời điểm báo cáo được tạo.
+      * `html_content` (Text): Lưu trữ toàn bộ mã **HTML** của báo cáo.
+      * `css_content` (Text): Lưu trữ toàn bộ mã **CSS** để định dạng cho báo cáo đó.
+      * `js_content` (Text): Lưu trữ mã **JavaScript** để thêm các hiệu ứng hoặc tương tác.
 
-Luồng này cung cấp một công cụ linh hoạt cho bất kỳ ai muốn nhanh chóng tạo một báo cáo web từ tài liệu của riêng họ.
+Khi một trang cần hiển thị một báo cáo (ví dụ: trang chủ hiển thị báo cáo mới nhất), ứng dụng sẽ truy vấn bản ghi tương ứng từ cơ sở dữ liệu và chèn các nội dung `html_content`, `css_content`, và `js_content` vào template một cách linh động.
 
-  * **Cách hoạt động:**
-    1.  Người dùng truy cập trang `/upload`.
-    2.  Họ nhập **Gemini API Key** và tải lên một tệp `.docx`.
-    3.  Ứng dụng Flask nhận yêu cầu, đọc nội dung và gọi service `report_generator` để xử lý.
-    4.  Service này sử dụng một prompt khác, yêu cầu AI tạo ra **một tệp HTML duy nhất**, trong đó mã CSS và JavaScript được nhúng trực tiếp.
-    5.  Kết quả là một trang `generated_report.html` hoàn chỉnh, độc lập được hiển thị ngay lập tức cho người dùng.
+-----
 
 ## 🛠️ Công Nghệ Sử Dụng
 
-  * **Backend:**
-      * **Ngôn ngữ:** Python 3
-      * **Framework:** Flask
-      * **WSGI Server:** Gunicorn
-      * **Thư viện:** Requests, python-dotenv, Flask-Caching
-  * **AI & Tự động hóa:**
-      * Google Gemini API (`google-generativeai`)
-      * `python-docx` để đọc file Word.
-  * **Frontend:**
-      * HTML5, CSS3, Vanilla JavaScript
-      * **Framework CSS:** Tailwind CSS
-      * **Trực quan hóa:** Chart.js, D3.js, và các hàm vẽ SVG tùy chỉnh.
-  * **APIs Dữ Liệu:**
-      * CoinGecko
-      * Alternative.me
-      * TAAPI.IO
+  * **Backend:** Python 3, Flask, SQLAlchemy
+  * **Cơ sở dữ liệu:** PostgreSQL (Production), SQLite (Development)
+  * **Caching:** Redis (Production), SimpleCache (Development)
+  * **AI:** Google Gemini API (`google-generativeai`)
+  * **Xử lý tài liệu:** `python-docx`, `odfpy`
+  * **Frontend:** HTML5, CSS3, JavaScript (ES6+), Tailwind CSS
   * **Deployment:** Vercel
+
+-----
 
 ## 🚀 Cài Đặt Và Chạy Cục Bộ
 
 1.  **Clone kho mã nguồn:**
-
     ```bash
     git clone https://github.com/thichuong/crypto-dashboard-app.git
     cd crypto-dashboard-app
     ```
-
 2.  **Tạo và kích hoạt môi trường ảo:**
-
     ```bash
     # Windows
-    python -m venv venv
-    venv\Scripts\activate
-
+    python -m venv venv && venv\Scripts\activate
     # macOS/Linux
-    python -m venv venv
-    source venv/bin/activate
+    python -m venv venv && source venv/bin/activate
     ```
-
-3.  **Cài đặt các thư viện cần thiết:**
-
+3.  **Cài đặt các thư viện:**
     ```bash
     pip install -r requirements.txt
     ```
-
 4.  **Thiết lập biến môi trường:**
-
-      * Tạo một tệp `.env` ở thư mục gốc của dự án.
-      * Sao chép nội dung từ file `env` và điền các giá trị cần thiết, đặc biệt là `GEMINI_API_KEY`.
-
-5.  **Chạy ứng dụng:**
-
+      * Tạo một tệp `.env` ở thư mục gốc, sao chép nội dung từ `.env_example` và điền các giá trị API key cần thiết.
+5.  **Build tệp JavaScript cho biểu đồ:**
+      * Kịch bản này sẽ nối các module JavaScript trong `app/static/js/chart_modules/` thành một tệp `chart.js` duy nhất để ứng dụng sử dụng.
+    <!-- end list -->
+    ```bash
+    python build.py
+    ```
+6.  **Chạy ứng dụng:**
     ```bash
     flask run
-    # Hoặc chạy bằng file run.py để có cấu hình chi tiết hơn
-    python run.py
     ```
+    Ứng dụng sẽ có tại `http://127.0.0.1:5000` (hoặc cổng do Flask chỉ định).
 
-    Ứng dụng sẽ có tại `http://127.0.0.1:8080`.
+-----
 
-## 📁 Cấu Trúc Dự Án
+## 🧪 Kiểm Thử Biểu Đồ với `chart_tester.html`
 
-```
-/
-|-- app/
-|   |-- __init__.py             # Khởi tạo Flask, chứa route cho trang upload và dashboard
-|   |-- blueprints/
-|   |   `-- crypto.py           # Các route cho API dữ liệu crypto (global, btc, fng, rsi)
-|   |-- services/
-|   |   |-- api_client.py       # Hàm GET request chung
-|   |   |-- coingecko.py        # Logic gọi API CoinGecko
-|   |   |-- alternative_me.py   # Logic gọi API Alternative.me (F&G)
-|   |   |-- taapi.py            # Logic gọi API TAAPI.IO (RSI)
-|   |   `-- report_generator.py # Service xử lý tạo báo cáo độc lập (Phương pháp 2)
-|   |-- static/                 # Chứa CSS, JS, và các tệp báo cáo từ Phương pháp 1
-|   |-- templates/
-|   |   |-- index.html          # Trang dashboard chính
-|   |   |-- upload.html         # Giao diện tải lên cho Phương pháp 2
-|   |   `-- generated_report.html # Template để hiển thị kết quả từ Phương pháp 2
-|   `-- utils/
-|       `-- cache.py            # Khởi tạo Flask-Caching
-|-- create_report/
-|   |-- create_report.py        # Kịch bản để chạy Phương pháp 1
-|   |-- promt_create_report.md  # Prompt cho Phương pháp 1 (tạo 3 tệp)
-|   `-- (ví dụ) report.docx
-|-- .gitignore
-|-- requirements.txt            # Các thư viện Python cần thiết
-|-- run.py                      # Điểm khởi chạy ứng dụng (entrypoint)
-`-- vercel.json                 # Cấu hình cho deployment Vercel
-```
+Trong thư mục gốc của dự án có tệp **`chart_tester.html`**. Đây là một công cụ phát triển hữu ích.
+
+  * **Mục đích:** Tệp này cho phép bạn xem và kiểm thử các biểu đồ SVG một cách độc lập mà **không cần phải chạy toàn bộ ứng dụng Flask**.
+  * **Cách sử dụng:**
+    1.  Chạy `python build.py` để đảm bảo tệp `app/static/js/chart.js` được cập nhật mới nhất.
+    2.  Mở trực tiếp tệp `chart_tester.html` bằng trình duyệt (ví dụ: nhấp đúp vào tệp).
+    3.  Trang này sẽ tải `chart.js` và hiển thị tất cả các biểu đồ có sẵn, giúp bạn dễ dàng gỡ lỗi (debug) và tinh chỉnh giao diện hoặc hành vi của chúng một cách nhanh chóng.
