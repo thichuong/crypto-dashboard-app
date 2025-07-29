@@ -1,19 +1,158 @@
-/* static/css/gauge-chart.css */
+/**
+ * =============================================================================
+ * GAUGE CHART STYLES (MODIFIED WITH HOVER EFFECTS)
+ * =============================================================================
+ * This file contains all the styles for the interactive gauge chart.
+ * It relies on variables defined in 'colors.css' for theming.
+ */
 
-/* Hiệu ứng xoay mượt mà cho kim */
-.gauge-needle {
-    transition: transform 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+.gauge-container {
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-/* Thêm transition cho các text element */
-.gauge-value-text,
+
+.gauge-svg {
+    width: 100%;
+    height: auto;
+    overflow: visible; /* Allows elements like the needle to not be clipped */
+}
+
+
+/* --- SVG Paths --- */
+
+
+/* The main background track of the gauge */
+.gauge-track {
+    fill: none;
+    stroke: var(--bg-primary); /* Use background color for the track */
+    stroke-width: 22;
+    stroke-linecap: round;
+}
+
+
+/* Base style for the colored segments */
+.gauge-segment {
+    fill: none;
+    stroke-width: 22;
+    transition: stroke-width 0.3s ease, stroke 0.3s ease; /* Smooth transition for hover effect */
+}
+
+
+.gauge-segment:hover {
+    stroke-width: 26; /* Slightly larger on hover */
+    cursor: pointer; /* Indicate interactivity */
+}
+
+
+/* Example of how to define darker color variables (in colors.css):
+:root {
+    --fng-extreme-fear-color: #ff6347;
+    --fng-extreme-fear-color-darker: #cc503a;
+    --fng-fear-color: #ff8c00;
+    --fng-fear-color-darker: #cc7000;
+    --fng-neutral-color: #20b2aa;
+    --fng-neutral-color-darker: #198f84;
+    --fng-greed-color: #32cd32;
+    --fng-greed-color-darker: #26a126;
+    --fng-extreme-greed-color: #00ff00;
+    --fng-extreme-greed-color-darker: #00cc00;
+}
+*/
+
+
+/* Apply darker stroke on hover */
+/*
+.gauge-segment:hover {
+    stroke-width: 26;
+    stroke: var(--fng-extreme-fear-color-darker); 
+}
+.gauge-segment:nth-child(2):hover {
+    stroke: var(--fng-fear-color-darker);
+}
+.gauge-segment:nth-child(3):hover {
+    stroke: var(--fng-neutral-color-darker);
+}
+.gauge-segment:nth-child(4):hover {
+    stroke: var(--fng-greed-color-darker);
+}
+.gauge-segment:nth-child(5):hover {
+    stroke: var(--fng-extreme-greed-color-darker);
+}
+*/
+
+
+/* --- Needle Elements --- */
+
+
+.gauge-needle-group {
+    /* Smooth transition for the rotation */
+    transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+
+.gauge-needle-pointer {
+    fill: var(--text-primary); /* Color of the needle's pointer */
+}
+
+
+.gauge-needle-pivot {
+    fill: var(--text-primary); /* Color of the central pivot point */
+}
+
+
+
+
+/* --- Text Elements --- */
+
+
+.gauge-text {
+    text-anchor: middle; /* Center the text horizontally */
+    font-family: sans-serif;
+}
+
+
+.gauge-value-text {
+    fill: var(--text-primary);
+    font-size: 32px;
+    font-weight: 800;
+}
+
+
 .gauge-label-text {
-    transition: transform 0.25s ease-in-out, fill 0.25s ease-in-out;
-    transform-origin: center;
+    font-size: 16px;
+    font-weight: 600;
+    /* The fill color is set dynamically via JavaScript */
 }
 
-/* Nhấn mạnh giá trị ở trung tâm khi di chuột */
-.gauge-interactive:hover .gauge-value-text {
-    transform: scale(1.08);
-    fill: var(--accent-color);
+/* --- Text Elements --- */
+
+.gauge-text {
+    text-anchor: middle;
+    transition: transform 0.3s ease, fill 0.3s ease;
+    transform-origin: center; /* ADD THIS LINE */
+}
+
+.gauge-value-text {
+    fill: var(--text-primary);
+    font-size: 32px;
+    font-weight: 800;
+}
+
+.gauge-label-text {
+    font-size: 16px;
+    font-weight: 600;
+    /* The fill color is set dynamically via JavaScript */
+}
+
+/* --- ADD THIS NEW RULE FOR THE HOVER EFFECT --- */
+.gauge-value-text:hover,
+.gauge-label-text:hover {
+    fill: var(--text-accent); /* Changes color to the theme's accent color */
+    transform: scale(1.1);   /* Scales the text up by 10% */
+    cursor: pointer;         /* Changes the cursor to a pointer */
 }

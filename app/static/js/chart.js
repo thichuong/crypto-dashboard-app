@@ -10,7 +10,11 @@
 /**
  * Chuyển đổi tọa độ cực sang Descartes.
  * Dùng cho việc tính toán vị trí trên một đường tròn hoặc cung tròn.
- * @returns {{x: number, y: number}}
+ * @param {number} centerX - Tọa độ X của tâm.
+ * @param {number} centerY - Tọa độ Y của tâm.
+ * @param {number} radius - Bán kính.
+ * @param {number} angleInDegrees - Góc (tính bằng độ).
+ * @returns {{x: number, y: number}} Tọa độ Descartes.
  */
 function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
     const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
@@ -21,14 +25,28 @@ function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
 }
 
 /**
- * Tạo chuỗi path data 'd' cho một cung tròn đơn giản (dùng cho Gauge).
- * @returns {string}
+ * Tạo chuỗi path data 'd' cho một cung tròn SVG.
+ * Hàm này đã được tối ưu để dễ đọc và sử dụng đúng cờ SVG.
+ * @param {number} x - Tọa độ X của tâm.
+ * @param {number} y - Tọa độ Y của tâm.
+ * @param {number} radius - Bán kính của cung tròn.
+ * @param {number} startAngle - Góc bắt đầu (độ).
+ * @param {number} endAngle - Góc kết thúc (độ).
+ * @returns {string} Chuỗi data cho thuộc tính 'd' của thẻ <path>.
  */
 function describeArc(x, y, radius, startAngle, endAngle) {
-    const start = polarToCartesian(x, y, radius, endAngle);
-    const end = polarToCartesian(x, y, radius, startAngle);
+    const startPoint = polarToCartesian(x, y, radius, startAngle);
+    const endPoint = polarToCartesian(x, y, radius, endAngle);
+
     const largeArcFlag = endAngle - startAngle <= 180 ? '0' : '1';
-    return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`;
+    const sweepFlag = '1'; // Vẽ cung theo chiều dương (cùng chiều kim đồng hồ)
+
+    const d = [
+        'M', startPoint.x, startPoint.y,
+        'A', radius, radius, 0, largeArcFlag, sweepFlag, endPoint.x, endPoint.y
+    ].join(' ');
+
+    return d;
 }
 
 /**
@@ -54,68 +72,134 @@ function describeDoughnutArc(x, y, outerRadius, innerRadius, startAngle, endAngl
     return d;
 }
 
-// static/chart_modules/gauge.js
-
 /**
- * TẠO BIỂU ĐỒ ĐỒNG HỒ (GAUGE)
- * Phụ thuộc: utils.js (polarToCartesian, describeArc)
+ * =============================================================================
+ * TẠO BIỂU ĐỒ ĐỒNG HỒ (GAUGE) ĐƯỢC CẢI TIẾN
+ * =============================================================================
+ * Phụ thuộc vào các hàm trong 'utils.js'.
+ * Kiểu dáng được điều khiển bởi 'gauge-chart.css'.
+ *
  * @param {HTMLElement} container - Element DOM để chứa biểu đồ.
- * @param {number} value - Giá trị hiện tại.
- * @param {object} config - Cấu hình chi tiết cho biểu đồ.
+ * @param {number} value - Giá trị hiện tại để hiển thị trên biểu đồ.
+ * @param {object} config - Đối tượng cấu hình cho biểu đồ.
+ * @param {number} [config.min=0] - Giá trị tối thiểu của gauge.
+ * @param {number} [config.max=100] - Giá trị tối đa của gauge.
+ * @param {Array<object>} [config.segments=[]] - Mảng các đoạn màu.
  */
 function createGauge(container, value, config) {
-    if (!container) return;
+    // --- 1. KIỂM TRA ĐẦU VÀO ---
+    if (!container) {
+        console.error("Lỗi: Container element không được cung cấp cho createGauge.");
+        return;
+    }
 
-    // --- CẤU HÌNH GAUGE ---
-    const { min = 0, max = 100, segments } = config;
+    // --- 2. CẤU HÌNH & HẰNG SỐ ---
+    const cfg = {
+        min: 0,
+        max: 100,
+        segments: [],
+        ...config,
+    };
     const GAUGE_START_ANGLE = -120;
     const GAUGE_END_ANGLE = 120;
     const ANGLE_SPAN = GAUGE_END_ANGLE - GAUGE_START_ANGLE;
+    const SVG_NS = "http://www.w3.org/2000/svg"; // Namespace cho SVG
 
-    // --- TÍNH TOÁN ---
-    const clampedValue = Math.max(min, Math.min(max, value));
-    const percentage = (clampedValue - min) / (max - min);
+    // --- 3. TÍNH TOÁN LOGIC ---
+    const clampedValue = Math.max(cfg.min, Math.min(cfg.max, value));
+    const percentage = (clampedValue - cfg.min) / (cfg.max - cfg.min);
     const valueAngle = GAUGE_START_ANGLE + (percentage * ANGLE_SPAN);
 
-    const currentSegment = segments.find(s => clampedValue <= s.limit) || segments[segments.length - 1];
+    const currentSegment = cfg.segments.find(s => clampedValue <= s.limit) ||
+                           cfg.segments[cfg.segments.length - 1] ||
+                           { color: '#ccc', label: '' };
     const valueColor = currentSegment.color;
     const classification = currentSegment.label || '';
 
-    // --- VẼ CÁC ĐOẠN MÀU ---
-    let segmentPaths = '';
-    let lastPercentage = 0;
+    // --- 4. TẠO CÁC THÀNH PHẦN SVG ---
 
-    segments.forEach(segment => {
-        const segmentEndPercentage = (segment.limit - min) / (max - min);
-        const start = GAUGE_START_ANGLE + (lastPercentage * ANGLE_SPAN);
-        const end = GAUGE_START_ANGLE + (segmentEndPercentage * ANGLE_SPAN);
+    // Hàm trợ giúp để tạo phần tử SVG và đặt thuộc tính
+    function createSvgElement(tag, attributes) {
+        const element = document.createElementNS(SVG_NS, tag);
+        for (const key in attributes) {
+            element.setAttribute(key, attributes[key]);
+        }
+        return element;
+    }
 
-        segmentPaths += `<path d="${describeArc(100, 100, 85, start, end)}"
-                             fill="none" stroke="${segment.color}" stroke-width="22" />`;
-        lastPercentage = segmentEndPercentage;
+    // Xóa nội dung cũ và thêm class vào container
+    container.innerHTML = '';
+    container.classList.add('gauge-container');
+
+    // Tạo SVG element chính
+    const svg = createSvgElement('svg', {
+        viewBox: "0 0 200 165",
+        class: 'gauge-svg'
     });
 
-    const svg = `
-        <svg viewBox="0 0 200 165" style="width: 100%; height: auto; overflow: visible;" class="gauge-interactive">
-            <path d="${describeArc(100, 100, 85, GAUGE_START_ANGLE, GAUGE_END_ANGLE)}"
-                  fill="none" stroke="var(--bg-primary)" stroke-width="22" stroke-linecap="round"/>
-            <g>${segmentPaths}</g>
-            <g transform="rotate(${valueAngle} 100 100)" class="gauge-needle">
-                <path d="M 100 20 L 97 100 L 103 100 Z" fill="var(--text-primary)"/>
-                <circle cx="100" cy="100" r="6" fill="var(--text-primary)"/>
-            </g>
-            <text x="100" y="105" text-anchor="middle" font-size="32px" font-weight="800"
-                  fill="var(--text-primary)" class="gauge-value-text">
-                ${value.toFixed(1)}
-            </text>
-            <text x="100" y="130" text-anchor="middle" font-size="16px" font-weight="600"
-                  fill="${valueColor}" class="gauge-label-text">
-                ${classification}
-            </text>
-        </svg>
-    `;
-    container.innerHTML = svg;
-    container.classList.add('gauge-container');
+    // a. Tạo đường track nền
+    const trackPath = createSvgElement('path', {
+        d: describeArc(100, 100, 85, GAUGE_START_ANGLE, GAUGE_END_ANGLE),
+        class: 'gauge-track'
+    });
+    svg.appendChild(trackPath);
+
+    // b. Tạo các đoạn màu
+    const segmentsGroup = createSvgElement('g', { class: 'gauge-segments-group' });
+    let lastPercentage = 0;
+    cfg.segments.forEach(segment => {
+        const segmentEndPercentage = (segment.limit - cfg.min) / (cfg.max - cfg.min);
+        const start = GAUGE_START_ANGLE + (lastPercentage * ANGLE_SPAN);
+        const end = GAUGE_START_ANGLE + (Math.min(segmentEndPercentage, 1) * ANGLE_SPAN);
+        
+        const segmentPath = createSvgElement('path', {
+            d: describeArc(100, 100, 85, start, end),
+            stroke: segment.color, // Color được đặt trực tiếp vì nó là dữ liệu động
+            class: 'gauge-segment'
+        });
+        segmentsGroup.appendChild(segmentPath);
+        lastPercentage = segmentEndPercentage;
+    });
+    svg.appendChild(segmentsGroup);
+
+    // c. Tạo kim chỉ
+    const needleGroup = createSvgElement('g', {
+        class: 'gauge-needle-group',
+        transform: `rotate(${valueAngle} 100 100)`
+    });
+    const needlePointer = createSvgElement('path', {
+        d: 'M 100 20 L 97 100 L 103 100 Z',
+        class: 'gauge-needle-pointer'
+    });
+    const needlePivot = createSvgElement('circle', {
+        cx: 100,
+        cy: 100,
+        r: 6,
+        class: 'gauge-needle-pivot'
+    });
+    needleGroup.append(needlePointer, needlePivot);
+    svg.appendChild(needleGroup);
+
+    // d. Tạo các nhãn văn bản
+    const valueText = createSvgElement('text', {
+        x: 100,
+        y: 105,
+        class: 'gauge-text gauge-value-text'
+    });
+    valueText.textContent = value.toFixed(1);
+
+    const labelText = createSvgElement('text', {
+        x: 100,
+        y: 130,
+        fill: valueColor, // Color được đặt trực tiếp vì nó là dữ liệu động
+        class: 'gauge-text gauge-label-text'
+    });
+    labelText.textContent = classification;
+
+    svg.append(valueText, labelText);
+
+    // --- 5. RENDER BIỂU ĐỒ ---
+    container.appendChild(svg);
 }
 
 // static/chart_modules/bar.js

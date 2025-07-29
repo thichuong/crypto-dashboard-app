@@ -10,7 +10,11 @@
 /**
  * Chuyển đổi tọa độ cực sang Descartes.
  * Dùng cho việc tính toán vị trí trên một đường tròn hoặc cung tròn.
- * @returns {{x: number, y: number}}
+ * @param {number} centerX - Tọa độ X của tâm.
+ * @param {number} centerY - Tọa độ Y của tâm.
+ * @param {number} radius - Bán kính.
+ * @param {number} angleInDegrees - Góc (tính bằng độ).
+ * @returns {{x: number, y: number}} Tọa độ Descartes.
  */
 function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
     const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
@@ -21,14 +25,28 @@ function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
 }
 
 /**
- * Tạo chuỗi path data 'd' cho một cung tròn đơn giản (dùng cho Gauge).
- * @returns {string}
+ * Tạo chuỗi path data 'd' cho một cung tròn SVG.
+ * Hàm này đã được tối ưu để dễ đọc và sử dụng đúng cờ SVG.
+ * @param {number} x - Tọa độ X của tâm.
+ * @param {number} y - Tọa độ Y của tâm.
+ * @param {number} radius - Bán kính của cung tròn.
+ * @param {number} startAngle - Góc bắt đầu (độ).
+ * @param {number} endAngle - Góc kết thúc (độ).
+ * @returns {string} Chuỗi data cho thuộc tính 'd' của thẻ <path>.
  */
 function describeArc(x, y, radius, startAngle, endAngle) {
-    const start = polarToCartesian(x, y, radius, endAngle);
-    const end = polarToCartesian(x, y, radius, startAngle);
+    const startPoint = polarToCartesian(x, y, radius, startAngle);
+    const endPoint = polarToCartesian(x, y, radius, endAngle);
+
     const largeArcFlag = endAngle - startAngle <= 180 ? '0' : '1';
-    return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`;
+    const sweepFlag = '1'; // Vẽ cung theo chiều dương (cùng chiều kim đồng hồ)
+
+    const d = [
+        'M', startPoint.x, startPoint.y,
+        'A', radius, radius, 0, largeArcFlag, sweepFlag, endPoint.x, endPoint.y
+    ].join(' ');
+
+    return d;
 }
 
 /**
