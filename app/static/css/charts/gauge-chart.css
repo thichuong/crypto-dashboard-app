@@ -1,0 +1,19 @@
+/* static/css/gauge-chart.css */
+
+/* Hiệu ứng xoay mượt mà cho kim */
+.gauge-needle {
+    transition: transform 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Thêm transition cho các text element */
+.gauge-value-text,
+.gauge-label-text {
+    transition: transform 0.25s ease-in-out, fill 0.25s ease-in-out;
+    transform-origin: center;
+}
+
+/* Nhấn mạnh giá trị ở trung tâm khi di chuột */
+.gauge-interactive:hover .gauge-value-text {
+    transform: scale(1.08);
+    fill: var(--accent-color);
+}

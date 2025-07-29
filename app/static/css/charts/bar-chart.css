@@ -1,0 +1,66 @@
+/* static/css/bar-chart.css */
+
+/* --- HIỆU ỨNG VẼ BAN ĐẦU --- */
+
+.bar-rect {
+    transform: scaleY(0);
+    transform-origin: bottom;
+    animation: grow-bar 0.7s forwards cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes grow-bar { to { transform: scaleY(1); } }
+
+
+/* --- HIỆU ỨNG TƯƠNG TÁC KHI DI CHUỘT --- */
+
+.bar-rect {
+    transition: all 0.25s ease-in-out;
+}
+
+/* Làm sáng và nhấc nhẹ cột lên khi di chuột vào */
+.bar-group:hover .bar-rect {
+    filter: brightness(1.2);
+    transform: translateY(-3px);
+}
+
+/* --- BỐ CỤC (LAYOUT) --- */
+
+.bar-chart-layout {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    width: 100%;
+}
+
+.bar-chart-svg-wrapper {
+    flex-grow: 1;
+    min-width: 0; /* Ngăn SVG co lại không đúng cách */
+}
+
+.bar-chart-legend {
+    flex-shrink: 0;
+    margin: 0 !important;
+    align-self: center;
+    /* Kế thừa các kiểu từ .doughnut-legend cho nhất quán */
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+/* --- RESPONSIVE --- */
+
+@media (max-width: 640px) {
+    .bar-chart-layout {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+
+    .bar-chart-legend {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5rem 1rem;
+        margin-top: 0.75rem !important;
+        align-self: initial; /* Reset align-self */
+    }
+}

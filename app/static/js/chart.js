@@ -1,20 +1,15 @@
-// static/chart.js
+// static/chart_modules/utils.js
 
 /**
  * -----------------------------------------------------------------------------
- * THƯ VIỆN VẼ BIỂU ĐỒ SVG NÂNG CAO
+ * TIỆN ÍCH CHUNG CHO BIỂU ĐỒ
  * -----------------------------------------------------------------------------
- * Phiên bản cải tiến với hiệu ứng (animation), thiết kế đẹp hơn và
- * tính toán chính xác hơn cho các biểu đồ.
- *
- * - Sử dụng các biến CSS (--text-primary, --accent-color, v.v.) để tự động
- * thích ứng với Light/Dark mode.
- * - Thêm hiệu ứng chuyển động khi vẽ và hiệu ứng tương tác khi di chuột.
- * - Cải thiện thẩm mỹ và độ rõ ràng của các biểu đồ.
+ * Chứa các hàm tính toán dùng chung cho việc vẽ các biểu đồ SVG.
  */
 
 /**
- * Hàm trợ giúp: Chuyển đổi tọa độ cực sang Descartes cho cung tròn.
+ * Chuyển đổi tọa độ cực sang Descartes.
+ * Dùng cho việc tính toán vị trí trên một đường tròn hoặc cung tròn.
  * @returns {{x: number, y: number}}
  */
 function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
@@ -26,7 +21,7 @@ function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
 }
 
 /**
- * Hàm trợ giúp: Tạo chuỗi "d" cho thuộc tính path của SVG để vẽ cung tròn.
+ * Tạo chuỗi path data 'd' cho một cung tròn đơn giản (dùng cho Gauge).
  * @returns {string}
  */
 function describeArc(x, y, radius, startAngle, endAngle) {
@@ -37,8 +32,33 @@ function describeArc(x, y, radius, startAngle, endAngle) {
 }
 
 /**
- * [CẢI TIẾN] TẠO BIỂU ĐỒ ĐỒNG HỒ (GAUGE)
- * Thiết kế mới tinh tế hơn, kim chỉ mượt mà và có hiệu ứng.
+ * Tạo chuỗi path data 'd' cho một cung của biểu đồ Doughnut.
+ * @returns {string}
+ */
+function describeDoughnutArc(x, y, outerRadius, innerRadius, startAngle, endAngle) {
+    const startOuter = polarToCartesian(x, y, outerRadius, endAngle);
+    const endOuter = polarToCartesian(x, y, outerRadius, startAngle);
+    const startInner = polarToCartesian(x, y, innerRadius, endAngle);
+    const endInner = polarToCartesian(x, y, innerRadius, startAngle);
+
+    const largeArcFlag = endAngle - startAngle <= 180 ? '0' : '1';
+
+    const d = [
+        'M', startOuter.x, startOuter.y,
+        'A', outerRadius, outerRadius, 0, largeArcFlag, 0, endOuter.x, endOuter.y,
+        'L', endInner.x, endInner.y,
+        'A', innerRadius, innerRadius, 0, largeArcFlag, 1, startInner.x, startInner.y,
+        'Z'
+    ].join(' ');
+
+    return d;
+}
+
+// static/chart_modules/gauge.js
+
+/**
+ * TẠO BIỂU ĐỒ ĐỒNG HỒ (GAUGE)
+ * Phụ thuộc: utils.js (polarToCartesian, describeArc)
  * @param {HTMLElement} container - Element DOM để chứa biểu đồ.
  * @param {number} value - Giá trị hiện tại.
  * @param {object} config - Cấu hình chi tiết cho biểu đồ.
@@ -79,14 +99,11 @@ function createGauge(container, value, config) {
         <svg viewBox="0 0 200 165" style="width: 100%; height: auto; overflow: visible;" class="gauge-interactive">
             <path d="${describeArc(100, 100, 85, GAUGE_START_ANGLE, GAUGE_END_ANGLE)}"
                   fill="none" stroke="var(--bg-primary)" stroke-width="22" stroke-linecap="round"/>
-
             <g>${segmentPaths}</g>
-
             <g transform="rotate(${valueAngle} 100 100)" class="gauge-needle">
                 <path d="M 100 20 L 97 100 L 103 100 Z" fill="var(--text-primary)"/>
                 <circle cx="100" cy="100" r="6" fill="var(--text-primary)"/>
             </g>
-
             <text x="100" y="105" text-anchor="middle" font-size="32px" font-weight="800"
                   fill="var(--text-primary)" class="gauge-value-text">
                 ${value.toFixed(1)}
@@ -98,15 +115,13 @@ function createGauge(container, value, config) {
         </svg>
     `;
     container.innerHTML = svg;
-    // Gán một class riêng để CSS có thể nhắm mục tiêu chính xác
     container.classList.add('gauge-container');
 }
 
+// static/chart_modules/bar.js
 
 /**
- * [CẢI TIẾN & NÂNG CẤP] TẠO BIỂU ĐỒ CỘT (BAR CHART) HỖ TRỢ GIÁ TRỊ ÂM
- * Cho phép vẽ biểu đồ với các giá trị âm. Cột âm sẽ được dựng theo hướng ngược lại với cột dương.
- * Thêm hiệu ứng, nhãn giá trị cho các cột và tương tác khi di chuột.
+ * TẠO BIỂU ĐỒ CỘT (BAR CHART) HỖ TRỢ GIÁ TRỊ ÂM
  * @param {HTMLElement} container - Element DOM.
  * @param {Array<object>} data - Dữ liệu, vd: [{value: 10, label: 'A', color: 'red'}].
  * @param {object} [options] - Các tùy chọn, vd: { valuePrefix: '$', valueSuffix: 'M', yAxisLabel: 'Triệu USD' }.
@@ -115,26 +130,20 @@ function createBarChart(container, data, options = {}) {
     if (!container || !data || data.length === 0) return;
 
     const { valuePrefix = '', valueSuffix = '', yAxisLabel = '' } = options;
-
     const width = 300, height = 180, pTop = 25, pBottom = 20;
     const pLeft = yAxisLabel ? 45 : 20;
     const pRight = 20;
 
-    // --- [THAY ĐỔI] TÍNH TOÁN DẢI GIÁ TRỊ ĐỂ HỖ TRỢ SỐ ÂM ---
     const allValues = data.map(d => d.value);
-    const minValue = Math.min(0, ...allValues); // Luôn bao gồm 0
-    const maxValue = Math.max(0, ...allValues); // Luôn bao gồm 0
+    const minValue = Math.min(0, ...allValues);
+    const maxValue = Math.max(0, ...allValues);
     const totalRange = maxValue - minValue;
-    
-    // Nếu không có sự thay đổi (tất cả giá trị là 0), không cần vẽ
+
     if (totalRange === 0) return;
 
     const chartAreaHeight = height - pTop - pBottom;
     const chartWidth = width - pLeft - pRight;
-
-    // --- [THAY ĐỔI] TÍNH TOÁN VỊ TRÍ TRỤC ZERO ---
     const zeroY = pTop + (maxValue / totalRange) * chartAreaHeight;
-
     const barWidth = chartWidth / data.length * 0.65;
     const gap = chartWidth / data.length * 0.35;
     const scale = chartAreaHeight / totalRange;
@@ -156,16 +165,14 @@ function createBarChart(container, data, options = {}) {
     data.forEach((d, i) => {
         const barHeight = Math.abs(d.value) * scale;
         const x = pLeft + i * (barWidth + gap) + gap / 2;
-        
-        // --- [THAY ĐỔI] XÁC ĐỊNH VỊ TRÍ Y VÀ NHÃN DỰA TRÊN GIÁ TRỊ ÂM/DƯƠNG ---
-        let y, labelY, labelAnchor;
+        let y, labelY;
 
         if (d.value >= 0) {
             y = zeroY - barHeight;
-            labelY = -8; // Phía trên cột
+            labelY = -8;
         } else {
             y = zeroY;
-            labelY = barHeight + 15; // Phía dưới cột
+            labelY = barHeight + 15;
         }
 
         bars += `
@@ -203,9 +210,10 @@ function createBarChart(container, data, options = {}) {
     container.classList.add('bar-chart-container');
 }
 
+// static/chart_modules/line.js
+
 /**
- * [CẢI TIẾN] TẠO BIỂU ĐỒ ĐƯỜNG (LINE CHART)
- * Phiên bản mới này sẽ hiển thị giá trị tại mỗi điểm dữ liệu và có hiệu ứng hover.
+ * TẠO BIỂU ĐỒ ĐƯỜNG (LINE CHART)
  * @param {HTMLElement} container - Element DOM.
  * @param {Array<number>} data - Mảng dữ liệu.
  * @param {object} options - Các tùy chọn bổ sung.
@@ -235,12 +243,9 @@ function createLineChart(container, data, options = {}) {
                     <stop offset="100%" stop-color="${color}" stop-opacity="0" />
                 </linearGradient>
             </defs>
-
             <polygon fill="url(#areaGradient-${container.id})" points="${areaPoints}" class="line-area" />
-
             <polyline fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round"
                       stroke-linejoin="round" points="${points}" class="line-path" />
-
             ${data.map((d, i) => `
                 <g class="line-point-group">
                     <circle cx="${toX(i)}" cy="${toY(d)}" r="9" fill="transparent" />
@@ -256,76 +261,19 @@ function createLineChart(container, data, options = {}) {
         </svg>
     `;
     container.innerHTML = svg;
-    // Gán một class riêng để CSS có thể nhắm mục tiêu chính xác
     container.classList.add('line-chart-container');
 }
 
+// static/chart_modules/doughnut.js
 
 /**
- * [ĐÃ SỬA & CẢI TIẾN] TẠO BIỂU ĐỒ TRÒN (DOUGHNUT CHART)
- * Hiển thị tiêu đề ở giữa, chú giải động và hiệu ứng hover tương tác hai chiều.
- * @param {HTMLElement} container - Element DOM để chứa biểu đồ.
- * @param {Array<object>} data - Dữ liệu  `value`, `label`, and `color`.
- * @param {string} [title=''] - Tiêu đề hiển thị ở giữa.
- */
-/**
- * [REWRITTEN] TẠO BIỂU ĐỒ TRÒN (DOUGHNUT CHART)
- * Tạo biểu đồ tròn với tiêu đề ở giữa, chú giải động và hiệu ứng tương tác hai chiều khi di chuột.
- *
- * @param {HTMLElement} container - The DOM element to render the chart into.
- * @param {Array<object>} data - The dataset. Example: [{ value: 30, label: 'A', color: '#FF6384' }]
- * @param {string} [title=''] - The title to display in the center of the chart.
- */
-/**
- * HÀM TRỢ GIÚP
- * Chuyển đổi tọa độ cực sang Descartes.
- */
-function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
-    const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
-    return {
-        x: centerX + radius * Math.cos(angleInRadians),
-        y: centerY + radius * Math.sin(angleInRadians),
-    };
-}
-
-/**
- * HÀM TRỢ GIÚP [MỚI]
- * Tạo chuỗi path data 'd' cho một cung tròn của biểu đồ Doughnut.
- * @returns {string} - Chuỗi 'd' để dùng trong thuộc tính path của SVG.
- */
-function describeDoughnutArc(x, y, outerRadius, innerRadius, startAngle, endAngle) {
-    const startOuter = polarToCartesian(x, y, outerRadius, endAngle);
-    const endOuter = polarToCartesian(x, y, outerRadius, startAngle);
-    const startInner = polarToCartesian(x, y, innerRadius, endAngle);
-    const endInner = polarToCartesian(x, y, innerRadius, startAngle);
-
-    const largeArcFlag = endAngle - startAngle <= 180 ? '0' : '1';
-
-    // Path: Di chuyển đến điểm bắt đầu bên ngoài -> Vẽ cung bên ngoài ->
-    // Đi thẳng vào cung bên trong -> Vẽ cung bên trong ngược lại -> Đóng path.
-    const d = [
-        'M', startOuter.x, startOuter.y,
-        'A', outerRadius, outerRadius, 0, largeArcFlag, 0, endOuter.x, endOuter.y,
-        'L', endInner.x, endInner.y,
-        'A', innerRadius, innerRadius, 0, largeArcFlag, 1, startInner.x, startInner.y,
-        'Z'
-    ].join(' ');
-
-    return d;
-}
-
-
-/**
- * [VIẾT LẠI] TẠO BIỂU ĐỒ TRÒN (DOUGHNUT CHART)
- * Phiên bản cải tiến sử dụng <path> để vẽ các cung tròn, giúp mã nguồn rõ ràng hơn.
- * Giữ nguyên hiệu ứng tương tác hai chiều và chú giải động.
- *
+ * TẠO BIỂU ĐỒ TRÒN (DOUGHNUT CHART)
+ * Phụ thuộc: utils.js (describeDoughnutArc)
  * @param {HTMLElement} container - Element DOM để chứa biểu đồ.
  * @param {Array<object>} data - Dữ liệu. Vd: [{ value: 30, label: 'A', color: '#FF6384' }]
  * @param {string} [title=''] - Tiêu đề hiển thị ở giữa biểu đồ.
  */
 function createDoughnutChart(container, data, title = '') {
-    // --- 1. KIỂM TRA ĐẦU VÀO ---
     if (!container || !data || data.length === 0) {
         if (container) container.innerHTML = 'Không có dữ liệu để hiển thị.';
         return;
@@ -337,33 +285,27 @@ function createDoughnutChart(container, data, title = '') {
         return;
     }
 
-    // --- 2. CẤU HÌNH BIỂU ĐỒ ---
     const width = 180, height = 180;
     const cx = width / 2;
     const cy = height / 2;
     const outerRadius = 80;
     const innerRadius = 50;
-    // ID duy nhất cho biểu đồ để tránh xung đột khi có nhiều biểu đồ trên trang
     const chartId = `doughnut-${Math.random().toString(36).substring(2, 9)}`;
 
-    // --- 3. TẠO CÁC SEGMENT SVG VÀ CHÚ GIẢI HTML ---
     let startAngle = 0;
     let segmentsHTML = '';
     let legendHTML = '';
 
     data.forEach((d, i) => {
-        if (d.value <= 0) return; // Bỏ qua các segment có giá trị bằng 0 hoặc âm
+        if (d.value <= 0) return;
 
         const percentage = d.value / total;
         const angleSpan = percentage * 360;
         const endAngle = startAngle + angleSpan;
-        
-        // ID để liên kết segment và chú giải
         const segmentId = `${chartId}-segment-${i}`;
         const legendId = `${chartId}-legend-${i}`;
-
-        // Tạo path cho segment
         const pathData = describeDoughnutArc(cx, cy, outerRadius, innerRadius, startAngle, endAngle);
+        
         segmentsHTML += `
             <path
                 id="${segmentId}"
@@ -374,7 +316,6 @@ function createDoughnutChart(container, data, title = '') {
                 style="--animation-delay: ${i * 100}ms;"
             />`;
 
-        // Tạo chú giải tương ứng
         const percentageDisplay = (percentage * 100).toFixed(1);
         legendHTML += `
             <div id="${legendId}" class="legend-item" data-segment-id="${segmentId}">
@@ -385,7 +326,6 @@ function createDoughnutChart(container, data, title = '') {
         startAngle = endAngle;
     });
 
-    // --- 4. GHÉP VÀ HIỂN THỊ HTML ---
     container.innerHTML = `
         <div class="doughnut-chart-container">
             <div class="doughnut-svg-wrapper">
@@ -403,27 +343,21 @@ function createDoughnutChart(container, data, title = '') {
             </div>
         </div>`;
     
-    // --- 5. THIẾT LẬP SỰ KIỆN TƯƠNG TÁC (HOVER) ---
     const chartContainer = container.querySelector('.doughnut-chart-container');
     const interactiveElements = container.querySelectorAll('.doughnut-segment, .legend-item');
 
     const handleMouseEnter = (event) => {
-        // Thêm class để kích hoạt trạng thái "đang tương tác"
         if (chartContainer) chartContainer.classList.add('is-highlighted');
-
         const target = event.currentTarget;
         const segmentId = target.dataset.segmentId || target.id;
         const legendId = target.dataset.legendId || target.id;
-
         const segment = container.querySelector('#' + segmentId);
         const legend = container.querySelector('#' + legendId);
-
         if (segment) segment.classList.add('highlight');
         if (legend) legend.classList.add('highlight');
     };
 
     const handleMouseLeave = () => {
-        // Xóa tất cả các class highlight và trạng thái "đang tương tác"
         if (chartContainer) chartContainer.classList.remove('is-highlighted');
         container.querySelectorAll('.highlight').forEach(el => el.classList.remove('highlight'));
     };
@@ -433,3 +367,4 @@ function createDoughnutChart(container, data, title = '') {
         el.addEventListener('mouseleave', handleMouseLeave);
     });
 }
+

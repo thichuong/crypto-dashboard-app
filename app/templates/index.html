@@ -7,16 +7,16 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='colors.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='chart.css') }}"> 
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/colors.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chart.css') }}">
     
     {% if report and report.css_content %}
         <style>
             {{ report.css_content | safe }}
         </style>
     {% else %}
-        <link rel="stylesheet" href="{{ url_for('static', filename='report.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/report.css') }}">
     {% endif %}
 </head>
 <body class="antialiased">
@@ -120,15 +120,15 @@
         </div>
     </div>
     
-    <script src="{{ url_for('static', filename='chart.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/chart.js') }}" defer></script>
     {% if report and report.js_content %}
         <script>
             {{ report.js_content | safe }}
         </script>
     {% else %}
-        <script src="{{ url_for('static', filename='report.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/report.js') }}"></script>
     {% endif %}
     
-    <script src="{{ url_for('static', filename='main.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
 </body>
 </html>
