@@ -244,6 +244,7 @@ function setupThemeSwitcher() {
             localStorage.setItem('theme', 'dark');
         }
     });
+    
 }
 
 document.addEventListener('DOMContentLoaded', () => {

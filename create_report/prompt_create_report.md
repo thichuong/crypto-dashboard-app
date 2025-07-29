@@ -86,60 +86,7 @@ Bạn PHẢI trả về 3 khối mã riêng biệt và đầy đủ, được ba
 *   Dùng màu với các icon Crypto đúng với màu mẫu.
 ```css
 /* --- Bảng màu cho Light Mode (Mặc định) --- */
-:root {
-    --bg-primary: #f3f4f6;
-    --bg-secondary: #ffffff;
-    --bg-gradient-start: #f3f4f6;
-    --bg-gradient-end: #eef2ff;
-    --text-primary: #1f2937;
-    --text-secondary: #4b5563;
-    --text-accent: #4338ca;
-    --border-color: #e5e7eb;
-    --card-bg: rgba(255, 255, 255, 0.7);
-    --card-border: rgba(229, 231, 235, 0.8);
-    --card-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.07);
-    --nav-link-bg-active: #eef2ff;
-    --accent-color: #6366f1;
-    --positive-color: #16a34a;
-    --negative-color: #dc2626;
-    --neutral-color: #f59e0b;
-    --bull-card-bg: #f0fdf4;
-    --bear-card-bg: #fef2f2;
-    --table-row-hover-bg: #f0f9ff;
-    /* Màu cho thước đo RSI */
-    --rsi-track-color: #e5e7eb;
-    --rsi-overbought-color: #ef4444;
-    --rsi-oversold-color: #22c55e;
-    --rsi-neutral-color: #f59e0b;
-    /* Màu cho thước đo Fear & Greed */
-    --fng-track-color: #e5e7eb;
-    --fng-extreme-fear-color: #dc2626;
-    --fng-fear-color: #f97316;
-    --fng-neutral-color: #6b7280;
-    --fng-greed-color: #84cc16;
-    --fng-extreme-greed-color: #22c55e;
-    /* THÊM MỚI: Màu cho các Icon H2 */
-    --icon-color-summary: #3b82f6;      /* Blue */
-    --icon-color-macro-legal: #f59e0b;   /* Amber */
-    --icon-color-on-chain-sentiment: #14b8a6; /* Teal */
-    --icon-color-btc-analysis: #f97316;  /* Orange */
-    --icon-color-eth-analysis: #6366f1;  /* Indigo */
-    --icon-color-market-activity: #22c55e; /* Green */
-    --icon-color-expert-outlook: #8b5cf6;/* Violet */
-    --icon-color-outlook: #d946ef;      /* Fuchsia */
-    
-    /* --- CẬP NHẬT: Màu cho các Icon Crypto Hàng đầu --- */
-    --icon-color-btc: #F7931A;
-    --icon-color-eth: #627EEA;
-    --icon-color-usdt: #26A17B;
-    --icon-color-bnb: #F3BA2F;
-    --icon-color-sol: #9945FF;
-    --icon-color-xrp: #00A3FF;
-    --icon-color-usdc: #2775CA;
-    --icon-color-doge: #C3A634;
-    --icon-color-ada: #0033AD;
-    --icon-color-trx: #EF0027;
-}
+{{ @css_root }}
 ```
 *   **Phạm vi (Scope):** Tất cả các selector trong report.css phải được giới hạn trong #report-container (ví dụ: #report-container h2).
 

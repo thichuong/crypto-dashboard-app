@@ -1,106 +1,6 @@
 /* static/style.css */
 
-/* --- Bảng màu cho Light Mode (Mặc định) --- */
-:root {
-    --bg-primary: #f3f4f6;
-    --bg-secondary: #ffffff;
-    --bg-gradient-start: #f3f4f6;
-    --bg-gradient-end: #eef2ff;
-    --text-primary: #1f2937;
-    --text-secondary: #4b5563;
-    --text-accent: #4338ca;
-    --border-color: #e5e7eb;
-    --card-bg: rgba(255, 255, 255, 0.7);
-    --card-border: rgba(229, 231, 235, 0.8);
-    --card-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.07);
-    --nav-link-bg-active: #eef2ff;
-    --accent-color: #6366f1;
-    --positive-color: #16a34a;
-    --negative-color: #dc2626;
-    --neutral-color: #f59e0b;
-    --bull-card-bg: #f0fdf4;
-    --bear-card-bg: #fef2f2;
-    --table-row-hover-bg: #f0f9ff;
-    /* Màu cho thước đo RSI */
-    --rsi-track-color: #e5e7eb;
-    --rsi-overbought-color: #ef4444;
-    --rsi-oversold-color: #22c55e;
-    --rsi-neutral-color: #f59e0b;
-    /* Màu cho thước đo Fear & Greed */
-    --fng-track-color: #e5e7eb;
-    --fng-extreme-fear-color: #dc2626;
-    --fng-fear-color: #f97316;
-    --fng-neutral-color: #6b7280;
-    --fng-greed-color: #84cc16;
-    --fng-extreme-greed-color: #22c55e;
-    /* THÊM MỚI: Màu cho các Icon H2 */
-    --icon-color-summary: #3b82f6;      /* Blue */
-    --icon-color-macro-legal: #f59e0b;   /* Amber */
-    --icon-color-on-chain-sentiment: #14b8a6; /* Teal */
-    --icon-color-btc-analysis: #f97316;  /* Orange */
-    --icon-color-eth-analysis: #6366f1;  /* Indigo */
-    --icon-color-market-activity: #22c55e; /* Green */
-    --icon-color-expert-outlook: #8b5cf6;/* Violet */
-    --icon-color-outlook: #d946ef;      /* Fuchsia */
-    
-    /* --- CẬP NHẬT: Màu cho các Icon Crypto Hàng đầu --- */
-    --icon-color-btc: #F7931A;
-    --icon-color-eth: #627EEA;
-    --icon-color-usdt: #26A17B;
-    --icon-color-bnb: #F3BA2F;
-    --icon-color-sol: #a968fa;
-    --icon-color-xrp: #00A3FF;
-    --icon-color-usdc: #2775CA;
-    --icon-color-doge: #C3A634;
-    --icon-color-ada: #0033AD;
-    --icon-color-trx: #EF0027;
-}
-
-/* --- Bảng màu cho Dark Mode --- */
-[data-theme="dark"] {
-    --bg-primary: #0d1117;
-    --bg-secondary: #161b22;
-    --bg-gradient-start: #0d1117;
-    --bg-gradient-end: #1f2937;
-    --text-primary: #e5e7eb;
-    --text-secondary: #9ca3af;
-    --text-accent: #818cf8;
-    --border-color: #30363d;
-    --card-bg: rgba(22, 27, 34, 0.7);
-    --card-border: rgba(48, 54, 61, 0.8);
-    --card-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.2);
-    --nav-link-bg-active: #312e81;
-    --accent-color: #818cf8;
-    --positive-color: #22c55e;
-    --negative-color: #ef4444;
-    --neutral-color: #f59e0b;
-    --bull-card-bg: #052e16;
-    --bear-card-bg: #450a0a;
-    --table-row-hover-bg: #1e293b;
-    /* Màu cho thước đo RSI (Dark Mode) */
-    --rsi-track-color: #374151;
-    --rsi-overbought-color: #f87171;
-    --rsi-oversold-color: #4ade80;
-    --rsi-neutral-color: #fb923c;
-    /* Màu cho thước đo Fear & Greed (Dark Mode) */
-    --fng-track-color: #374151;
-    --fng-extreme-fear-color: #f87171;
-    --fng-fear-color: #fb923c;
-    --fng-neutral-color: #9ca3af;
-    --fng-greed-color: #a3e635;
-    --fng-extreme-greed-color: #4ade80;
-    /* THÊM MỚI: Màu cho các Icon H2 (Giữ nguyên ở Dark Mode) */
-    --icon-color-summary: #3b82f6;
-    --icon-color-macro-legal: #f59e0b;
-    --icon-color-on-chain-sentiment: #14b8a6;
-    --icon-color-btc-analysis: #f97316;
-    --icon-color-eth-analysis: #6366f1;
-    --icon-color-market-activity: #22c55e;
-    --icon-color-expert-outlook: #8b5cf6;
-    --icon-color-outlook: #d946ef;
-}
-
-
+@import url('colors.css');
 
 body {
     font-family: 'Inter', sans-serif;
@@ -268,3 +168,4 @@ header p {
     box-shadow: var(--card-shadow);
     transform: scale(1.05); /* Làm cho mục active nổi bật hơn */
 }
+
