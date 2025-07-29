@@ -56,7 +56,8 @@ def create_app():
     @app.route('/')
     def index():
         latest_report = Report.query.order_by(Report.created_at.desc()).first()
-        if latest_report:
+
+        if latest_report and app.config['CACHE_TYPE'] == 'SimpleCache':
             try:
                 archive_dir = os.path.join(app.instance_path, 'archive')
                 os.makedirs(archive_dir, exist_ok=True)

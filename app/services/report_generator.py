@@ -33,7 +33,7 @@ def _read_prompt_file(file_path):
             template = f.read()
             # Đọc toàn bộ nội dung file app/static/colors.css
             current_dir = os.path.dirname(__file__)
-            colors = os.path.abspath(os.path.join(current_dir, '..','static', 'colors.css'))
+            colors = os.path.abspath(os.path.join(current_dir, '..','static', 'css/colors.css'))
             with open(colors, 'r', encoding='utf-8') as f:
                 colors_content = f.read()
                 # Lấy nội dung :root trong file colors.css
