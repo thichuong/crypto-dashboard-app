@@ -3,17 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phân Tích Thị Trường Crypto</title>
+    <title>Dashboard Báo Cáo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='chart.css') }}"> 
-    <link rel="stylesheet" href="{{ url_for('static', filename='report.css') }}">
+    {% if report and report.css_content %}
+        <style>
+            {{ report.css_content | safe }}
+        </style>
+    {% else %}
+        <link rel="stylesheet" href="{{ url_for('static', filename='report.css') }}">
+    {% endif %}
 
-    <script src="{{ url_for('static', filename='chart.js') }}" defer></script>
-    <script src="{{ url_for('static', filename='report.js') }}" defer></script>
-    <script src="{{ url_for('static', filename='main.js') }}" defer></script>
+    
 </head>
 <body class="antialiased">
 
@@ -94,10 +98,28 @@
             </aside>
 
             <main id="report-container" class="lg:col-span-3">
-                 </main>
+                    {% if report and report.html_content %}
+                        {{ report.html_content | safe }}
+                    {% else %}
+                        <div class="placeholder">
+                            <h2>Chưa có báo cáo nào được tạo.</h2>
+                            <p>Vui lòng sử dụng trang <a href="{{ url_for('upload_page') }}">tải lên</a> để tạo báo cáo đầu tiên của bạn.</p>
+                        </div>
+                    {% endif %}
+            </div>
         </div>
     </div>
     
+    <script src="{{ url_for('static', filename='chart.js') }}" defer></script>
+    {% if report and report.js_content %}
+        <script>
+            {{ report.js_content | safe }}
+        </script>
+    {% else %}
+        <script src="{{ url_for('static', filename='report.js') }}"></script>
+    {% endif %}
+    
+    <script src="{{ url_for('static', filename='main.js') }}" defer></script>
 
 </body>
 </html>

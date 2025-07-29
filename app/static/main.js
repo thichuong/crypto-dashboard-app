@@ -144,14 +144,8 @@ async function fetchBtcRsi_index() {
 /**
  * Tải nội dung báo cáo từ file tĩnh và tạo mục lục điều hướng.
  */
-async function loadReportAndCreateNav() {
+async function CreateNav() {
     try {
-        const response = await fetch("/static/report.html");
-        if (!response.ok) throw new Error('Không thể tải tệp báo cáo.');
-        const reportHtml = await response.text();
-
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = reportHtml;
 
         const reportContainer = document.getElementById('report-container');
         const navLinksContainer = document.getElementById('report-nav-links');
@@ -164,16 +158,6 @@ async function loadReportAndCreateNav() {
         
         // Xóa nội dung cũ của mục lục trước khi tạo mới để tránh trùng lặp
         navLinksContainer.innerHTML = '';
-
-        // để giữ nguyên cấu trúc và các lớp CSS của nó.
-        const articleElement = tempDiv.querySelector('article');
-        if (articleElement) {
-            reportContainer.innerHTML = '';
-            reportContainer.appendChild(articleElement);
-        } else {
-            // Fallback nếu không có <article>, dùng toàn bộ nội dung.
-            reportContainer.innerHTML = reportHtml;
-        }
 
         const reportSections = reportContainer.querySelectorAll('section');
 
@@ -230,7 +214,7 @@ async function loadReportAndCreateNav() {
  * Hàm khởi tạo chính
  */
 function init() {
-    loadReportAndCreateNav();
+    CreateNav();
     
     fetchCryptoData();
     fetchBtcAndFearGreed();
