@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test New Doughnut Chart</title>
+    <link rel="stylesheet" href="../app/static/css/charts/charts-common.css">
+    <link rel="stylesheet" href="../app/static/css/charts/doughnut-chart.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+
+        .test-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e9ecef;
+        }
+
+        .test-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #495057;
+            text-align: center;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+        }
+
+        :root {
+            --text-primary: #333;
+            --text-secondary: #666;
+            --text-tertiary: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🍩 Test New Doughnut Chart Implementation</h1>
+        
+        <div class="test-grid">
+            <!-- Test 1: Basic doughnut với config object -->
+            <div class="test-card">
+                <div class="test-title">Test 1: Basic Config Object</div>
+                <div id="test1" class="chart-container"></div>
+            </div>
+
+            <!-- Test 2: Backward compatibility với title string -->
+            <div class="test-card">
+                <div class="test-title">Test 2: Backward Compatibility (Title String)</div>
+                <div id="test2" class="chart-container"></div>
+            </div>
+
+            <!-- Test 3: Không có legend -->
+            <div class="test-card">
+                <div class="test-title">Test 3: No Legend</div>
+                <div id="test3" class="chart-container"></div>
+            </div>
+
+            <!-- Test 4: Custom radii -->
+            <div class="test-card">
+                <div class="test-title">Test 4: Custom Radii</div>
+                <div id="test4" class="chart-container"></div>
+            </div>
+
+            <!-- Test 5: Many segments -->
+            <div class="test-card">
+                <div class="test-title">Test 5: Many Segments</div>
+                <div id="test5" class="chart-container"></div>
+            </div>
+
+            <!-- Test 6: Small segments -->
+            <div class="test-card">
+                <div class="test-title">Test 6: Small Values</div>
+                <div id="test6" class="chart-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../app/static/js/chart_modules/utils.js"></script>
+    <script src="../app/static/js/chart_modules/doughnut.js"></script>
+
+    <script>
+        console.log('🚀 Starting Doughnut Chart Tests');
+
+        // Test 1: Basic config object
+        const testData1 = [
+            { value: 35, label: 'Bitcoin', color: '#F7931A' },
+            { value: 25, label: 'Ethereum', color: '#627EEA' },
+            { value: 20, label: 'BNB', color: '#F3BA2F' },
+            { value: 20, label: 'Others', color: '#8E8E93' }
+        ];
+        createDoughnutChart(document.getElementById('test1'), testData1, {
+            title: 'Crypto Portfolio',
+            showLegend: true
+        });
+
+        // Test 2: Backward compatibility - string title
+        createDoughnutChart(document.getElementById('test2'), testData1, 'Portfolio Classic');
+
+        // Test 3: No legend
+        createDoughnutChart(document.getElementById('test3'), testData1, {
+            title: 'No Legend',
+            showLegend: false
+        });
+
+        // Test 4: Custom radii
+        createDoughnutChart(document.getElementById('test4'), testData1, {
+            title: 'Thick Ring',
+            outerRadius: 85,
+            innerRadius: 35,
+            showLegend: true
+        });
+
+        // Test 5: Many segments
+        const testData5 = [
+            { value: 30, label: 'BTC', color: '#F7931A' },
+            { value: 20, label: 'ETH', color: '#627EEA' },
+            { value: 15, label: 'BNB', color: '#F3BA2F' },
+            { value: 10, label: 'ADA', color: '#0033AD' },
+            { value: 8, label: 'SOL', color: '#9945FF' },
+            { value: 7, label: 'XRP', color: '#23292F' },
+            { value: 5, label: 'DOT', color: '#E6007A' },
+            { value: 3, label: 'LINK', color: '#2A5ADA' },
+            { value: 2, label: 'Others', color: '#8E8E93' }
+        ];
+        createDoughnutChart(document.getElementById('test5'), testData5, {
+            title: 'Diverse',
+            showLegend: true
+        });
+
+        // Test 6: Small values
+        const testData6 = [
+            { value: 1.5, label: 'A', color: '#FF6384' },
+            { value: 2.3, label: 'B', color: '#36A2EB' },
+            { value: 0.8, label: 'C', color: '#FFCE56' },
+            { value: 1.2, label: 'D', color: '#4BC0C0' }
+        ];
+        createDoughnutChart(document.getElementById('test6'), testData6, {
+            title: 'Small Values',
+            showLegend: true
+        });
+
+        console.log('✅ All tests created successfully');
+
+        // Debug hover events
+        setTimeout(() => {
+            console.log('🔍 Testing hover events...');
+            document.querySelectorAll('.doughnut-segment').forEach((segment, i) => {
+                console.log(`Segment ${i}:`, segment.dataset);
+            });
+        }, 1000);
+    </script>
+</body>
+</html>

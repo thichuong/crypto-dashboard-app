@@ -160,8 +160,23 @@ Tất cả các hàm vẽ biểu đồ đều nằm trong `chart.js`. Khi gọi 
  * - `{number}` value: Giá trị của phần đó, dùng để tính tỷ lệ.
  * - `{string}` color: Màu của phần đó.
  * - `{string}` label: Nhãn văn bản cho phần đó, sẽ được hiển thị trong chú giải.
- * @param `{string}` [title=''] - **Đầu vào:** (Tùy chọn) Tiêu đề để hiển thị ở giữa biểu đồ. Ví dụ: BTC.D
+ * @param `{object|string}` config - **Đầu vào:** Đối tượng cấu hình cho biểu đồ hoặc title string (backward compatibility).
+ * @param `{string}` [config.title=''] - (Tùy chọn) Tiêu đề để hiển thị ở giữa biểu đồ. Ví dụ: BTC.D
+ * @param `{number}` [config.outerRadius=80] - (Tùy chọn) Bán kính ngoài của biểu đồ.
+ * @param `{number}` [config.innerRadius=50] - (Tùy chọn) Bán kính trong của biểu đồ.
+ * @param `{boolean}` [config.showLegend=true] - (Tùy chọn) Có hiển thị chú thích hay không.
  * @returns `{void}` **Đầu ra:** Hàm này không trả về giá trị.
  * Nó sẽ vẽ một biểu đồ doughnut SVG với tiêu đề ở giữa và một phần chú giải chi tiết vào trong `container`.
- * Chú ý: chọn màu tương phản nhau co các đối tượng khác nhau
-`function createDoughnutChart(container, data, title = '') { /* ... */ }`
+ * Chú ý: chọn màu tương phản nhau cho các đối tượng khác nhau
+ * 
+ * **Ví dụ sử dụng:**
+ * ```javascript
+ * createDoughnutChart(container, data, {
+ *     title: 'BTC.D',
+ *     showLegend: true,
+ *     outerRadius: 80,
+ *     innerRadius: 50
+ * });
+ * 
+ * ```
+`function createDoughnutChart(container, data, config = {}) { /* ... */ }`

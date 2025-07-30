@@ -9,7 +9,7 @@ _min_request_interval = 60  # Minimum 60 seconds between requests
 
 def get_btc_rsi():
     """Lấy chỉ số RSI của Bitcoin từ TAAPI.IO với rate limiting và backup cache."""
-    global _last_request_time
+    global _last_request_time, _min_request_interval
     
     api_url = os.getenv('TAAPI_RSI_API_URL')
 
@@ -35,7 +35,6 @@ def get_btc_rsi():
     if error:
         # Nếu gặp rate limit, tăng thời gian chờ và thử backup cache
         if status_code == 429:
-            global _min_request_interval
             _min_request_interval = min(_min_request_interval * 2, 300)  # Tối đa 5 phút
             
             backup_data = get_backup_cache("taapi_rsi")

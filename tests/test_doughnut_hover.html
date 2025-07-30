@@ -68,7 +68,7 @@
             { value: 20, label: 'Others', color: '#8E8E93' }
         ];
         console.log('📊 Creating Test Case 1');
-        createDoughnutChart(document.getElementById('test1'), testData1, 'Portfolio');
+        createDoughnutChart(document.getElementById('test1'), testData1, { title: 'Portfolio', showLegend: true });
 
         // Test Case 2: Many segments
         const testData2 = [
@@ -83,7 +83,7 @@
             { value: 2, label: 'Others', color: '#8E8E93' }
         ];
         console.log('📊 Creating Test Case 2');
-        createDoughnutChart(document.getElementById('test2'), testData2, 'Diverse Portfolio');
+        createDoughnutChart(document.getElementById('test2'), testData2, { title: 'Diverse Portfolio', showLegend: true });
 
         // Test Case 3: Small values
         const testData3 = [
@@ -93,7 +93,7 @@
             { value: 1.2, label: 'D', color: '#4BC0C0' }
         ];
         console.log('📊 Creating Test Case 3');
-        createDoughnutChart(document.getElementById('test3'), testData3, 'Small Values');
+        createDoughnutChart(document.getElementById('test3'), testData3, { title: 'Small Values', showLegend: true });
 
         // Debug event listeners after charts are created
         setTimeout(() => {

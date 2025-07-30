@@ -56,9 +56,9 @@ function setupBtcDominanceChart_report() {
         { value: btcDominance, color: 'var(--icon-color-btc)', label: 'Bitcoin' },
         { value: 100 - btcDominance, color: 'var(--text-secondary)', label: 'Altcoins' }
     ];
-    const title = 'BTC.D';
+    const config = { title: 'BTC.D', showLegend: true };
 
-    createDoughnutChart(container, data, title);
+    createDoughnutChart(container, data, config);
 }
 
 /**

@@ -1,118 +1,227 @@
-// static/chart_modules/doughnut.js
-
 /**
- * TẠO BIỂU ĐỒ TRÒN (DOUGHNUT CHART)
- * Phụ thuộc: utils.js (describeDoughnutArc)
+ * =============================================================================
+ * TẠO BIỂU ĐỒ TRÒN (DOUGHNUT CHART) ĐƯỢC CẢI TIẾN
+ * =============================================================================
+ * Phụ thuộc vào các hàm trong 'utils.js'.
+ * Kiểu dáng được điều khiển bởi 'doughnut-chart.css'.
+ *
  * @param {HTMLElement} container - Element DOM để chứa biểu đồ.
  * @param {Array<object>} data - Dữ liệu. Vd: [{ value: 30, label: 'A', color: '#FF6384' }]
- * @param {string} [title=''] - Tiêu đề hiển thị ở giữa biểu đồ.
+ * @param {object|string} config - Đối tượng cấu hình cho biểu đồ hoặc title string (backward compatibility).
+ * @param {string} [config.title=''] - Tiêu đề hiển thị ở giữa biểu đồ.
+ * @param {number} [config.outerRadius=80] - Bán kính ngoài của biểu đồ.
+ * @param {number} [config.innerRadius=50] - Bán kính trong của biểu đồ.
+ * @param {boolean} [config.showLegend=true] - Có hiển thị chú thích hay không.
  */
-function createDoughnutChart(container, data, title = '') {
-    if (!container || !data || data.length === 0) {
-        if (container) container.innerHTML = 'Không có dữ liệu để hiển thị.';
+function createDoughnutChart(container, data, config = {}) {
+    // --- BACKWARD COMPATIBILITY ---
+    // Nếu tham số thứ 3 là string, tạo config object với title
+    if (typeof config === 'string') {
+        config = { title: config, showLegend: true };
+    }
+
+    // --- 1. KIỂM TRA ĐẦU VÀO ---
+    if (!container) {
+        console.error("Lỗi: Container element không được cung cấp cho createDoughnutChart.");
+        return;
+    }
+
+    if (!data || data.length === 0) {
+        container.innerHTML = '<div class="doughnut-error">Không có dữ liệu để hiển thị.</div>';
         return;
     }
 
     const total = data.reduce((sum, d) => sum + d.value, 0);
     if (total === 0) {
-        if (container) container.innerHTML = 'Tổng giá trị bằng 0, không thể vẽ biểu đồ.';
+        container.innerHTML = '<div class="doughnut-error">Tổng giá trị bằng 0, không thể vẽ biểu đồ.</div>';
         return;
     }
 
-    const width = 180, height = 180;
-    const cx = width / 2;
-    const cy = height / 2;
-    const outerRadius = 80;
-    const innerRadius = 50;
-    const chartId = `doughnut-${Math.random().toString(36).substring(2, 9)}`;
+    // --- 2. CẤU HÌNH & HẰNG SỐ ---
+    const cfg = {
+        title: '',
+        outerRadius: 80,
+        innerRadius: 50,
+        showLegend: true,
+        ...config,
+    };
 
-    let startAngle = 0;
-    let segmentsHTML = '';
-    let legendHTML = '';
+    const SVG_SIZE = 180;
+    const CENTER_X = SVG_SIZE / 2;
+    const CENTER_Y = SVG_SIZE / 2;
+    const SVG_NS = "http://www.w3.org/2000/svg";
 
-    data.forEach((d, i) => {
-        if (d.value <= 0) return;
+    // --- 3. TÍNH TOÁN LOGIC ---
+    const validData = data.filter(d => d.value > 0);
+    
+    // --- 4. TẠO CÁC THÀNH PHẦN SVG ---
 
+    // Hàm trợ giúp để tạo phần tử SVG và đặt thuộc tính
+    function createSvgElement(tag, attributes) {
+        const element = document.createElementNS(SVG_NS, tag);
+        for (const key in attributes) {
+            element.setAttribute(key, attributes[key]);
+        }
+        return element;
+    }
+
+    // Xóa nội dung cũ và thêm class vào container
+    container.innerHTML = '';
+    container.classList.add('doughnut-container');
+
+    // Tạo wrapper chính
+    const wrapper = document.createElement('div');
+    wrapper.className = 'doughnut-chart-wrapper';
+
+    // Tạo phần biểu đồ
+    const chartSection = document.createElement('div');
+    chartSection.className = 'doughnut-chart-section';
+
+    // Tạo SVG element chính
+    const svg = createSvgElement('svg', {
+        viewBox: `0 0 ${SVG_SIZE} ${SVG_SIZE}`,
+        class: 'doughnut-svg'
+    });
+
+    // Tạo group cho các segments
+    const segmentsGroup = createSvgElement('g', { class: 'doughnut-segments-group' });
+
+    // a. Tạo các segments
+    let currentAngle = 0;
+    const segments = [];
+
+    validData.forEach((d, i) => {
         const percentage = d.value / total;
         const angleSpan = percentage * 360;
-        const endAngle = startAngle + angleSpan;
-        const segmentId = `${chartId}-segment-${i}`;
-        const legendId = `${chartId}-legend-${i}`;
-        const pathData = describeDoughnutArc(cx, cy, outerRadius, innerRadius, startAngle, endAngle);
+        const endAngle = currentAngle + angleSpan;
         
-        segmentsHTML += `
-            <path
-                id="${segmentId}"
-                class="doughnut-segment"
-                d="${pathData}"
-                fill="${d.color}"
-                data-legend-id="${legendId}"
-                style="--animation-delay: ${i * 100}ms;"
-            />`;
+        const pathData = describeDoughnutArc(CENTER_X, CENTER_Y, cfg.outerRadius, cfg.innerRadius, currentAngle, endAngle);
+        
+        const segmentPath = createSvgElement('path', {
+            d: pathData,
+            fill: d.color,
+            class: 'doughnut-segment',
+            'data-index': i,
+            'data-value': d.value,
+            'data-percentage': (percentage * 100).toFixed(1),
+            'data-label': d.label
+        });
 
-        const percentageDisplay = (percentage * 100).toFixed(1);
-        legendHTML += `
-            <div id="${legendId}" class="legend-item" data-segment-id="${segmentId}">
-                <span class="legend-color-box" style="background-color: ${d.color};"></span>
-                <span>${d.label}: <strong>${percentageDisplay}%</strong></span>
-            </div>`;
-        
-        startAngle = endAngle;
+        segments.push({
+            element: segmentPath,
+            data: d,
+            percentage: percentage * 100,
+            index: i
+        });
+
+        segmentsGroup.appendChild(segmentPath);
+        currentAngle = endAngle;
     });
 
-    container.innerHTML = `
-        <div class="doughnut-chart-container">
-            <div class="doughnut-svg-wrapper">
-                <svg viewBox="0 0 ${width} ${height}" class="doughnut-svg">
-                    <g class="doughnut-segments-group">
-                        ${segmentsHTML}
-                    </g>
-                </svg>
-                <div class="doughnut-title">
-                    ${title}
-                </div>
-            </div>
-            <div class="doughnut-legend">
-                ${legendHTML}
-            </div>
-        </div>`;
-    
-    const chartContainer = container.querySelector('.doughnut-chart-container');
-    const interactiveElements = container.querySelectorAll('.doughnut-segment, .legend-item');
+    svg.appendChild(segmentsGroup);
 
-    const handleMouseEnter = (event) => {
-        event.stopPropagation();
-        if (chartContainer) chartContainer.classList.add('is-highlighted');
-        
+    // b. Tạo title ở giữa (nếu có)
+    if (cfg.title) {
+        const titleText = createSvgElement('text', {
+            x: CENTER_X,
+            y: CENTER_Y,
+            class: 'doughnut-title-text'
+        });
+        titleText.textContent = cfg.title;
+        svg.appendChild(titleText);
+    }
+
+    chartSection.appendChild(svg);
+    wrapper.appendChild(chartSection);
+
+    // c. Tạo legend (nếu được yêu cầu)
+    let legendItems = [];
+    if (cfg.showLegend) {
+        const legendSection = document.createElement('div');
+        legendSection.className = 'doughnut-legend-section';
+
+        validData.forEach((d, i) => {
+            const percentage = (d.value / total * 100).toFixed(1);
+            
+            const legendItem = document.createElement('div');
+            legendItem.className = 'doughnut-legend-item';
+            legendItem.dataset.index = i;
+
+            const colorBox = document.createElement('span');
+            colorBox.className = 'doughnut-legend-color';
+            colorBox.style.backgroundColor = d.color;
+
+            const labelSpan = document.createElement('span');
+            labelSpan.className = 'doughnut-legend-label';
+            labelSpan.textContent = `${d.label}: ${percentage}%`;
+
+            legendItem.appendChild(colorBox);
+            legendItem.appendChild(labelSpan);
+            legendSection.appendChild(legendItem);
+
+            legendItems.push(legendItem);
+        });
+
+        wrapper.appendChild(legendSection);
+    }
+
+    // --- 5. THIẾT LẬP HIỆU ỨNG HOVER ---
+    function handleMouseEnter(event) {
         const target = event.currentTarget;
-        const segmentId = target.dataset.segmentId || target.id;
-        const legendId = target.dataset.legendId || target.id;
+        const index = parseInt(target.dataset.index);
         
-        // Tìm và highlight cả segment và legend tương ứng
-        if (segmentId) {
-            const segment = container.querySelector(`[id="${segmentId}"]`);
-            if (segment) segment.classList.add('highlight');
-        }
+        // Thêm class highlight cho container
+        wrapper.classList.add('is-highlighted');
         
-        if (legendId) {
-            const legend = container.querySelector(`[id="${legendId}"]`);
-            if (legend) legend.classList.add('highlight');
-        }
-    };
+        // Highlight segment tương ứng
+        segments.forEach((seg, i) => {
+            if (i === index) {
+                seg.element.classList.add('highlight');
+            } else {
+                seg.element.classList.add('dimmed');
+            }
+        });
 
-    const handleMouseLeave = (event) => {
-        event.stopPropagation();
-        if (chartContainer) chartContainer.classList.remove('is-highlighted');
-        container.querySelectorAll('.highlight').forEach(el => el.classList.remove('highlight'));
-    };
-
-    // Thêm event listeners với error handling
-    interactiveElements.forEach((el, index) => {
-        try {
-            el.addEventListener('mouseenter', handleMouseEnter);
-            el.addEventListener('mouseleave', handleMouseLeave);
-        } catch (error) {
-            console.warn(`Failed to add event listener to element ${index}:`, error);
+        // Highlight legend item tương ứng
+        if (cfg.showLegend) {
+            legendItems.forEach((item, i) => {
+                if (i === index) {
+                    item.classList.add('highlight');
+                } else {
+                    item.classList.add('dimmed');
+                }
+            });
         }
+    }
+
+    function handleMouseLeave(event) {
+        // Xóa tất cả highlight và dimmed classes
+        wrapper.classList.remove('is-highlighted');
+        segments.forEach(seg => {
+            seg.element.classList.remove('highlight', 'dimmed');
+        });
+        
+        if (cfg.showLegend) {
+            legendItems.forEach(item => {
+                item.classList.remove('highlight', 'dimmed');
+            });
+        }
+    }
+
+    // Thêm event listeners cho segments
+    segments.forEach(seg => {
+        seg.element.addEventListener('mouseenter', handleMouseEnter);
+        seg.element.addEventListener('mouseleave', handleMouseLeave);
     });
+
+    // Thêm event listeners cho legend items
+    if (cfg.showLegend) {
+        legendItems.forEach(item => {
+            item.addEventListener('mouseenter', handleMouseEnter);
+            item.addEventListener('mouseleave', handleMouseLeave);
+        });
+    }
+
+    // --- 6. RENDER BIỂU ĐỒ ---
+    container.appendChild(wrapper);
 }
