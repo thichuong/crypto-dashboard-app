@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rate Limit Handling Example</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .warning { background: #fff3cd; border: 1px solid #ffc107; color: #856404; padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .error { background: #f8d7da; border: 1px solid #dc3545; color: #721c24; padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .success { background: #d4edda; border: 1px solid #28a745; color: #155724; padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .data-item { margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        button { padding: 10px 20px; margin: 10px 5px; cursor: pointer; }
+        #status { margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <h1>Crypto Dashboard - Rate Limit Handling Demo</h1>
+    
+    <div>
+        <button onclick="fetchDashboardData()">Fetch Dashboard Data</button>
+        <button onclick="checkApiStatus()">Check API Status</button>
+    </div>
+    
+    <div id="status"></div>
+    <div id="warnings"></div>
+    <div id="data"></div>
+    
+    <script>
+        async function fetchDashboardData() {
+            const statusDiv = document.getElementById('status');
+            const warningsDiv = document.getElementById('warnings');
+            const dataDiv = document.getElementById('data');
+            
+            statusDiv.innerHTML = '<div>Loading dashboard data...</div>';
+            
+            try {
+                const response = await fetch('/dashboard-summary');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    statusDiv.innerHTML = '<div class="success">Dashboard data loaded successfully!</div>';
+                    
+                    // Show warnings if any
+                    if (data.warnings) {
+                        let warningHtml = '<h3>Warnings:</h3>';
+                        Object.entries(data.warnings).forEach(([service, message]) => {
+                            warningHtml += `<div class="warning"><strong>${service}:</strong> ${message}</div>`;
+                        });
+                        warningsDiv.innerHTML = warningHtml;
+                    } else {
+                        warningsDiv.innerHTML = '';
+                    }
+                    
+                    // Show data
+                    let dataHtml = '<h3>Data:</h3>';
+                    Object.entries(data).forEach(([key, value]) => {
+                        if (key !== 'warnings') {
+                            dataHtml += `<div class="data-item"><strong>${key}:</strong> ${JSON.stringify(value)}</div>`;
+                        }
+                    });
+                    dataDiv.innerHTML = dataHtml;
+                    
+                } else {
+                    statusDiv.innerHTML = '<div class="error">Error loading dashboard data</div>';
+                    
+                    if (data.errors) {
+                        let errorHtml = '<h3>Errors:</h3>';
+                        Object.entries(data.errors).forEach(([service, message]) => {
+                            errorHtml += `<div class="error"><strong>${service}:</strong> ${message}</div>`;
+                        });
+                        statusDiv.innerHTML += errorHtml;
+                    }
+                    
+                    if (data.warnings) {
+                        let warningHtml = '<h3>Warnings:</h3>';
+                        Object.entries(data.warnings).forEach(([service, message]) => {
+                            warningHtml += `<div class="warning"><strong>${service}:</strong> ${message}</div>`;
+                        });
+                        warningsDiv.innerHTML = warningHtml;
+                    }
+                }
+                
+            } catch (error) {
+                statusDiv.innerHTML = `<div class="error">Network error: ${error.message}</div>`;
+            }
+        }
+        
+        async function checkApiStatus() {
+            const statusDiv = document.getElementById('status');
+            
+            try {
+                const response = await fetch('/api-status');
+                const status = await response.json();
+                
+                let statusHtml = '<h3>API Status:</h3>';
+                statusHtml += `<div class="data-item">
+                    <strong>TAAPI:</strong><br>
+                    - Last request: ${status.taapi.last_request_ago} seconds ago<br>
+                    - Min interval: ${status.taapi.min_interval} seconds<br>
+                    - Can request now: ${status.taapi.can_request_now ? 'Yes' : 'No'}<br>
+                    - Wait time: ${status.taapi.wait_time} seconds
+                </div>`;
+                
+                statusDiv.innerHTML = statusHtml;
+                
+            } catch (error) {
+                statusDiv.innerHTML = `<div class="error">Error checking API status: ${error.message}</div>`;
+            }
+        }
+        
+        // Auto-refresh status every 30 seconds
+        setInterval(checkApiStatus, 30000);
+        
+        // Load initial data
+        fetchDashboardData();
+    </script>
+</body>
+</html>
