@@ -14,15 +14,11 @@
             max-width: 600px;
             margin: 4rem auto;
             padding: 2.5rem;
-            background-color: var(--background-color-light);
+            background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            box-shadow: var(--card-shadow);
             transition: background-color 0.3s, border-color 0.3s;
-        }
-
-        body.dark .upload-container {
-            background-color: var(--background-color-dark);
         }
 
         .file-input-wrapper {
@@ -30,26 +26,22 @@
             overflow: hidden;
             display: inline-block;
             cursor: pointer;
-            border: 2px dashed #cbd5e1;
+            border: 2px dashed var(--border-color);
             border-radius: 8px;
             padding: 2.5rem;
             width: 100%;
             text-align: center;
-            color: #4a5568;
-            transition: border-color 0.3s, background-color 0.3s;
-        }
-
-        body.dark .file-input-wrapper {
-            border-color: #4a5568;
-            color: #a0aec0;
+            color: var(--text-secondary);
+            background-color: var(--bg-secondary);
+            transition: all 0.3s ease;
         }
 
         .file-input-wrapper:hover {
-            border-color: #4f46e5;
-            background-color: rgba(79, 70, 229, 0.05);
+            border-color: var(--accent-color);
+            background-color: rgba(99, 102, 241, 0.05);
         }
 
-        body.dark .file-input-wrapper:hover {
+        [data-theme="dark"] .file-input-wrapper:hover {
             background-color: rgba(99, 102, 241, 0.1);
         }
 
@@ -66,13 +58,53 @@
         .file-name {
             margin-top: 1rem;
             font-style: italic;
-            color: #64748b;
+            color: var(--text-secondary);
         }
-        body.dark .file-name {
-            color: #94a3b8;
+
+        .file-selected {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1.5rem;
+            background-color: var(--bg-secondary);
+            border: 2px solid var(--accent-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+        }
+
+        .file-icon {
+            font-size: 2rem;
+            color: var(--accent-color);
+        }
+
+        .file-details {
+            text-align: left;
+        }
+
+        .file-details .file-name-text {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .file-details .file-type-text {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        .gemini-input {
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            border-color: var(--border-color);
+        }
+
+        .gemini-input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
         }
         
-        /* --- HIỆU ỨNG CHỜ MỚI --- */
         #loading-overlay {
             position: fixed;
             top: 0;
@@ -89,13 +121,21 @@
             gap: 1rem;
         }
 
+        [data-theme="dark"] #loading-overlay {
+            background-color: rgba(13, 17, 23, 0.8);
+        }
+
         .spinner {
-            border: 6px solid #f3f3f3; /* Light grey */
-            border-top: 6px solid #4f46e5; /* Indigo */
+            border: 6px solid var(--border-color);
+            border-top: 6px solid var(--accent-color);
             border-radius: 50%;
             width: 50px;
             height: 50px;
             animation: spin 1s linear infinite;
+        }
+
+        #loading-overlay p {
+            color: var(--text-primary);
         }
 
         @keyframes spin {
@@ -108,14 +148,20 @@
 
     <div id="loading-overlay">
         <div class="spinner"></div>
-        <p class="text-lg font-semibold text-gray-700">Đang xử lý, vui lòng chờ...</p>
+        <p class="text-lg font-semibold">Đang xử lý, vui lòng chờ...</p>
     </div>
+
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" onclick="toggleTheme()" title="Chuyển đổi chế độ sáng/tối">
+        <i class="fas fa-sun"></i>
+        <i class="fas fa-moon"></i>
+    </button>
 
     <div class="container mx-auto p-4 md:p-8">
         <div class="upload-container">
             <div class="text-center mb-8">
-                <h1 class="text-3xl font-bold text-gray-800">Tạo Báo Cáo Phân Tích</h1>
-                <p class="text-gray-500 mt-2">Tải lên tệp báo cáo của bạn (định dạng .docx) để bắt đầu.</p>
+                <h1 class="text-3xl font-bold" style="color: var(--text-primary);">Tạo Báo Cáo Phân Tích</h1>
+                <p style="color: var(--text-secondary);" class="mt-2">Tải lên tệp báo cáo của bạn (định dạng .docx) để bắt đầu.</p>
             </div>
 
             {% with messages = get_flashed_messages() %}
@@ -133,34 +179,50 @@
 
             <form id="upload-form" action="{{ url_for('generate_report_from_upload') }}" method="post" enctype="multipart/form-data">
                 <div class="mb-6">
-                    <label for="gemini-key" class="block text-sm font-medium text-gray-700 mb-2">
-                        <i class="fas fa-key mr-2 text-indigo-500"></i>Gemini API Key
+                    <label for="gemini-key" class="block text-sm font-medium mb-2" style="color: var(--text-primary);">
+                        <i class="fas fa-key mr-2" style="color: var(--accent-color);"></i>Gemini API Key
                     </label>
-                    <input type="password" id="gemini-key" name="gemini_key" class="block w-full px-4 py-2 text-gray-800 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Nhập API Key của bạn tại đây..." required>
-                    <p class="text-xs text-gray-500 mt-2">API key của bạn sẽ không được lưu trữ. Bạn có thể lấy key tại <a href="https://makersuite.google.com/app/apikey" target="_blank" class="text-indigo-600 hover:underline">Google AI Studio</a>.</p>
+                    <input type="password" id="gemini-key" name="gemini_key" class="gemini-input block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2" 
+                           placeholder="Nhập API Key của bạn tại đây..." required>
+                    <p class="text-xs mt-2" style="color: var(--text-secondary);">API key của bạn sẽ không được lưu trữ. Bạn có thể lấy key tại <a href="https://makersuite.google.com/app/apikey" target="_blank" style="color: var(--text-accent);" class="hover:underline">Google AI Studio</a>.</p>
                 </div>
 
                 <div class="mb-6">
-                    <label for="file-upload" class="block text-sm font-medium text-gray-700 mb-2">
-                         <i class="fas fa-file-alt mr-2 text-indigo-500"></i>Tệp Báo Cáo
+                    <label for="file-upload" class="block text-sm font-medium mb-2" style="color: var(--text-primary);">
+                         <i class="fas fa-file-alt mr-2" style="color: var(--accent-color);"></i>Tệp Báo Cáo
                     </label>
-                    <div class="file-input-wrapper">
+                    <div id="file-input-container" class="file-input-wrapper">
                         <input type="file" id="file-upload" name="file" accept=".docx,.odt" required>
-                        <i class="fas fa-cloud-upload-alt text-4xl text-gray-400"></i>
-                        <p class="mt-2">Kéo & thả hoặc nhấp để chọn tệp</p>
+                        <i class="fas fa-cloud-upload-alt text-4xl" style="color: var(--text-secondary);"></i>
+                        <p class="mt-2" style="color: var(--text-secondary);">Kéo & thả hoặc nhấp để chọn tệp</p>
                     </div>
-                    <p id="file-name" class="file-name text-center"></p>
+                    <div id="file-display" class="file-selected" style="display: none;">
+                        <i id="file-icon" class="file-icon"></i>
+                        <div class="file-details">
+                            <p id="file-name-text" class="file-name-text"></p>
+                            <p id="file-type-text" class="file-type-text"></p>
+                        </div>
+                        <button type="button" onclick="removeFile()" class="ml-auto px-3 py-1 text-sm rounded" 
+                                style="background-color: var(--negative-color); color: white;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="mt-8">
-                    <button type="submit" class="w-full inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 shadow-lg">
+                    <button type="submit" class="w-full inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white shadow-lg" 
+                            style="background-color: var(--accent-color);" 
+                            onmouseover="this.style.backgroundColor='var(--text-accent)'" 
+                            onmouseout="this.style.backgroundColor='var(--accent-color)'">
                         <i class="fas fa-cogs mr-3"></i>
                         Xử lý và Tạo Báo cáo
                     </button>
                 </div>
             </form>
              <div class="mt-6 text-center">
-                <a href="{{ url_for('index') }}" class="text-sm text-indigo-600 hover:text-indigo-800 transition-colors">
+                <a href="{{ url_for('index') }}" class="text-sm transition-colors" style="color: var(--text-accent);" 
+                   onmouseover="this.style.color='var(--accent-color)'" 
+                   onmouseout="this.style.color='var(--text-accent)'">
                     <i class="fas fa-arrow-left mr-1"></i> Quay lại trang chủ
                 </a>
             </div>
@@ -168,18 +230,76 @@
     </div>
 
     <script>
-        // Hiển thị tên tệp đã chọn
+        // Theme Toggle functionality
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // Load saved theme on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        });
+
+        // File selection handling
         const fileInput = document.getElementById('file-upload');
-        const fileNameDisplay = document.getElementById('file-name');
+        const fileInputContainer = document.getElementById('file-input-container');
+        const fileDisplay = document.getElementById('file-display');
+        const fileNameText = document.getElementById('file-name-text');
+        const fileTypeText = document.getElementById('file-type-text');
+        const fileIcon = document.getElementById('file-icon');
+
+        function getFileIcon(fileName) {
+            const extension = fileName.split('.').pop().toLowerCase();
+            switch(extension) {
+                case 'docx':
+                    return 'fas fa-file-word';
+                case 'odt':
+                    return 'fas fa-file-alt';
+                default:
+                    return 'fas fa-file';
+            }
+        }
+
+        function getFileType(fileName) {
+            const extension = fileName.split('.').pop().toLowerCase();
+            switch(extension) {
+                case 'docx':
+                    return 'Microsoft Word Document';
+                case 'odt':
+                    return 'OpenDocument Text';
+                default:
+                    return 'Document';
+            }
+        }
+
+        function removeFile() {
+            fileInput.value = '';
+            fileInputContainer.style.display = 'block';
+            fileDisplay.style.display = 'none';
+        }
+
         fileInput.addEventListener('change', () => {
             if (fileInput.files.length > 0) {
-                fileNameDisplay.textContent = `Tệp đã chọn: ${fileInput.files[0].name}`;
-            } else {
-                fileNameDisplay.textContent = '';
+                const file = fileInput.files[0];
+                const fileName = file.name;
+                
+                // Update file display
+                fileNameText.textContent = fileName;
+                fileTypeText.textContent = getFileType(fileName);
+                fileIcon.className = `file-icon ${getFileIcon(fileName)}`;
+                
+                // Show selected file display and hide input
+                fileInputContainer.style.display = 'none';
+                fileDisplay.style.display = 'flex';
             }
         });
 
-        // HIỆN HIỆU ỨNG CHỜ KHI SUBMIT FORM
+        // Form submission handling
         const uploadForm = document.getElementById('upload-form');
         const loadingOverlay = document.getElementById('loading-overlay');
         uploadForm.addEventListener('submit', () => {

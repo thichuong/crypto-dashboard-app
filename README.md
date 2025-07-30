@@ -1,118 +1,311 @@
-# 📊 Bảng Điều Khiển Crypto & Trình Tạo Báo Cáo AI
+# 📊 Crypto Dashboard & AI Report Generator
 
-Một ứng dụng web Flask toàn diện, cung cấp bảng điều khiển dữ liệu thị trường tiền mã hóa theo thời gian thực và một công cụ cho phép người dùng tự tạo báo cáo phân tích bằng AI từ tài liệu của riêng họ.
+Một ứng dụng web Flask toàn diện được thiết kế để cung cấp hai tính năng chính:
+1. **Dashboard thị trường tiền mã hóa** theo thời gian thực với các chỉ số quan trọng
+2. **Trình tạo báo cáo AI** - công cụ cho phép chuyển đổi tài liệu văn bản thành báo cáo web tương tác một cách tự động
 
-**Xem trực tiếp tại:** [https://crypto-dashboard-app-thichuong.vercel.app/](https://crypto-dashboard-app-thichuong.vercel.app/)
+**🔗 Xem trực tiếp tại:** [https://crypto-dashboard-app-thichuong.vercel.app/](https://crypto-dashboard-app-thichuong.vercel.app/)
 
-## ✨ Các Tính Năng Chính
+## ✨ Tính Năng Nổi Bật
 
-  * **Dashboard Dữ Liệu Sống:** Theo dõi các chỉ số quan trọng được cập nhật tự động, với cơ chế caching để tối ưu hiệu suất:
-      * Giá **Bitcoin (BTC)** và biến động trong 24 giờ.
-      * Tổng vốn hóa thị trường và khối lượng giao dịch toàn cầu.
-      * Chỉ số **Sợ hãi & Tham lam (Fear & Greed Index)** từ nhiều nguồn.
-      * Chỉ số **Sức mạnh Tương đối (RSI)** của BTC.
-  * **Tạo Báo Cáo Tự Động Bằng AI:**
-      * Một công cụ mạnh mẽ cho phép bất kỳ ai cũng có thể biến một tài liệu văn bản (`.docx` hoặc `.odt`) thành một trang web báo cáo hoàn chỉnh chỉ trong vài cú nhấp chuột.
-  * **Lưu Trữ và Xem Lại Lịch Sử:**
-      * Mỗi báo cáo được tạo ra sẽ được lưu trữ an toàn trong cơ sở dữ liệu.
-      * Trang `/reports` cho phép xem lại toàn bộ lịch sử các báo cáo đã được tạo.
-  * **Giao Diện Người Dùng Hiện Đại:**
-      * Thiết kế responsive, sử dụng Tailwind CSS.
-      * Hỗ trợ **chế độ Sáng/Tối (Light/Dark mode)**.
-      * Sử dụng các biểu đồ SVG động, có hiệu ứng tương tác được viết bằng JavaScript thuần túy để trực quan hóa dữ liệu.
+### 📈 Dashboard Thị Trường Crypto
+* **Dữ liệu thời gian thực** với hệ thống caching thông minh (10 phút):
+  * Giá **Bitcoin (BTC)** với biến động 24h và biểu đồ line chart
+  * Tổng vốn hóa thị trường & khối lượng giao dịch toàn cầu
+  * **Fear & Greed Index** (Chỉ số Sợ hãi & Tham lam) với gauge chart
+  * **RSI indicator** (Relative Strength Index) cho BTC
+* **Rate limiting thông minh** để tối ưu API calls và tránh vượt quota
+* **API status monitoring** với endpoint `/api-status`
+
+### 🤖 AI Report Generator
+* **Chuyển đổi tài liệu thành web report** hoàn toàn tự động:
+  * Hỗ trợ định dạng: `.docx` (Microsoft Word) và `.odt` (OpenDocument)
+  * Tích hợp **Google Gemini AI** để phân tích và tạo nội dung
+  * Sinh tự động HTML, CSS, và JavaScript với biểu đồ tương tác
+* **Smart chart generation**: AI tự động chọn loại biểu đồ phù hợp (line, bar, doughnut, gauge)
+* **Persistent storage**: Lưu trữ báo cáo vào database để xem lại sau này
+
+### 🎨 Giao Diện & UX
+* **Modern responsive design** với Tailwind CSS
+* **Dark/Light theme** với smooth transitions
+* **Interactive SVG charts** được tối ưu performance:
+  * Hover effects mượt mà với scale và brightness animations
+  * Touch-friendly cho mobile devices
+  * Accessibility support (ARIA labels, keyboard navigation)
+* **Progressive loading** với skeleton screens
 
 ---
 
-## 🤖 Luồng Hoạt Động Của Trình Tạo Báo Cáo AI
+## 🔄 Workflow: AI Report Generation
 
-Tính năng cốt lõi của dự án là cho phép người dùng cuối tự tạo ra các báo cáo phân tích dưới dạng trang web một cách nhanh chóng.
+Tính năng cốt lõi cho phép người dùng tạo báo cáo web tương tác từ tài liệu văn bản trong vài phút.
 
-* **Cách hoạt động:**
-    1.  **Truy cập:** Người dùng truy cập vào trang `/upload` trên ứng dụng.
-    2.  **Cung cấp thông tin:** Trên trang này, người dùng cần điền hai thông tin:
-        * **Gemini API Key:** Khóa API cá nhân của họ từ Google AI Studio để có quyền sử dụng mô hình Gemini.
-        * **Tải tệp lên:** Người dùng chọn và tải lên một tệp tài liệu từ máy tính. Hệ thống hỗ trợ hai định dạng phổ biến: **`.docx`** (Microsoft Word) và **`.odt`** (OpenDocument Text).
-    3.  **Xử lý ở Backend:** Khi người dùng nhấn nút "Generate Report", ứng dụng Flask sẽ:
-        * Nhận và xác thực tệp đã tải lên.
-        * Sử dụng thư viện `python-docx` hoặc `odfpy` để đọc và trích xuất toàn bộ nội dung văn bản từ tệp.
-        * Gọi service `report_generator`, nơi nội dung văn bản này được kết hợp với một "prompt" (câu lệnh chỉ dẫn) được thiết kế đặc biệt cho AI.
-        * Gửi yêu cầu hoàn chỉnh đến API của Google Gemini. Prompt này hướng dẫn AI biến nội dung văn bản thô thành ba khối mã nguồn riêng biệt: **HTML** cho cấu trúc, **CSS** cho giao diện, và **JavaScript**.
-    4.  **Tạo mã nguồn:**
-        * **HTML:** Tạo cấu trúc nội dung cho trang báo cáo.
-        * **CSS:** Tạo các quy tắc định dạng để trang báo cáo có giao diện đẹp mắt.
-        * **JavaScript:** Tạo mã nguồn để gọi các hàm vẽ biểu đồ đã được code sẵn trong tệp `chart.js`. AI sẽ xác định loại biểu đồ phù hợp (ví dụ: line chart, bar chart, doughnut chart) và chuẩn bị dữ liệu cần thiết để truyền vào các hàm đó, giúp trực quan hóa thông tin một cách sinh động ngay trong báo cáo.
-    5.  **Lưu trữ và Hiển thị:**
-        * Sau khi nhận được phản hồi từ Gemini, ứng dụng sẽ lưu ba khối mã nguồn (HTML, CSS, JS) vào một bản ghi mới trong cơ sở dữ liệu.
-        * Người dùng sẽ được tự động chuyển hướng về trang chủ, nơi báo cáo họ vừa tạo sẽ được hiển thị ngay lập tức.
------
+### 📋 Quy Trình Chi Tiết
 
-## 🗄️ Lưu Trữ Báo Cáo Trong Cơ Sở Dữ Liệu
+1. **📤 Upload & Input**
+   * Truy cập trang `/upload`
+   * Cung cấp **Gemini API Key** (từ Google AI Studio)
+   * Upload tài liệu: `.docx` hoặc `.odt`
 
-Để đảm bảo tính bền vững và khả năng truy xuất, mỗi báo cáo được tạo ra đều được lưu vào cơ sở dữ liệu (PostgreSQL trên Vercel hoặc SQLite khi chạy local) thông qua mô hình `Report` của SQLAlchemy.
+2. **⚙️ AI Processing Pipeline**
+   ```
+   Document → Text Extraction → AI Analysis → Code Generation
+   ```
+   * **Document parsing**: `python-docx`/`odfpy` trích xuất nội dung
+   * **Content analysis**: Gemini AI phân tích cấu trúc và dữ liệu
+   * **Smart prompt engineering**: Sử dụng prompt template được tối ưu
 
-  * **Cấu trúc bảng `Report`:** Bảng này được thiết kế để lưu trữ riêng biệt từng thành phần của trang báo cáo:
-      * `id` (Integer, Primary Key): Mã định danh duy nhất cho mỗi báo cáo.
-      * `created_at` (DateTime): Dấu thời gian ghi lại thời điểm báo cáo được tạo.
-      * `html_content` (Text): Lưu trữ toàn bộ mã **HTML** của báo cáo.
-      * `css_content` (Text): Lưu trữ toàn bộ mã **CSS** để định dạng cho báo cáo đó.
-      * `js_content` (Text): Lưu trữ mã **JavaScript** để thêm các hiệu ứng hoặc tương tác.
+3. **🎨 Code Generation**
+   * **HTML**: Semantic structure với accessibility support
+   * **CSS**: Responsive design + dark/light theme variables
+   * **JavaScript**: Interactive charts với optimized rendering
+   * **Chart selection**: AI tự chọn chart type phù hợp:
+     * `LineChart` cho dữ liệu time-series
+     * `BarChart` cho so sánh categorical
+     * `DoughnutChart` cho phần trăm/tỷ lệ
+     * `GaugeChart` cho KPI/metrics
 
-Khi một trang cần hiển thị một báo cáo (ví dụ: trang chủ hiển thị báo cáo mới nhất), ứng dụng sẽ truy vấn bản ghi tương ứng từ cơ sở dữ liệu và chèn các nội dung `html_content`, `css_content`, và `js_content` vào template một cách linh động.
+4. **💾 Storage & Delivery**
+   * Lưu vào database (PostgreSQL/SQLite)
+   * Auto-redirect về homepage
+   * Real-time display với lazy loading
 
------
+### 🔧 Technical Features
+* **Error handling**: Graceful fallbacks cho API failures
+* **Security**: Input validation + file type verification
+* **Performance**: Async processing + progress indicators
+* **Scalability**: Modular architecture cho easy extensions
+---
 
-## 🛠️ Công Nghệ Sử Dụng
+## 🗄️ Database Architecture
 
-  * **Backend:** Python 3, Flask, SQLAlchemy
-  * **Cơ sở dữ liệu:** PostgreSQL (Production), SQLite (Development)
-  * **Caching:** Redis (Production), SimpleCache (Development)
-  * **AI:** Google Gemini API (`google-generativeai`)
-  * **Xử lý tài liệu:** `python-docx`, `odfpy`
-  * **Frontend:** HTML5, CSS3, JavaScript (ES6+), Tailwind CSS
-  * **Deployment:** Vercel
+Hệ thống lưu trữ được thiết kế tối ưu cho performance và scalability.
 
------
+### 📊 Report Model Schema
+```python
+class Report(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    html_content = db.Column(db.Text, nullable=False)
+    css_content = db.Column(db.Text, nullable=True) 
+    js_content = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+```
 
-## 🚀 Cài Đặt Và Chạy Cục Bộ
+### 🔄 Data Flow & Caching Strategy
+* **Production**: PostgreSQL + Redis caching
+* **Development**: SQLite + SimpleCache
+* **Cache TTL**: 10 minutes cho market data
+* **Dynamic rendering**: Template injection cho real-time display
+* **Archive system**: Historical reports trong `/instance/archive/`
 
-1.  **Clone kho mã nguồn:**
-    ```bash
-    git clone https://github.com/thichuong/crypto-dashboard-app.git
-    cd crypto-dashboard-app
-    ```
-2.  **Tạo và kích hoạt môi trường ảo:**
-    ```bash
-    # Windows
-    python -m venv venv && venv\Scripts\activate
-    # macOS/Linux
-    python -m venv venv && source venv/bin/activate
-    ```
-3.  **Cài đặt các thư viện:**
-    ```bash
-    pip install -r requirements.txt
-    ```
-4.  **Thiết lập biến môi trường:**
-      * Tạo một tệp `.env` ở thư mục gốc, sao chép nội dung từ `.env_example` và điền các giá trị API key cần thiết.
-5.  **Build tệp JavaScript cho biểu đồ:**
-      * Kịch bản này sẽ nối các module JavaScript trong `app/static/js/chart_modules/` thành một tệp `chart.js` duy nhất để ứng dụng sử dụng.
-    <!-- end list -->
-    ```bash
-    python build.py
-    ```
-6.  **Chạy ứng dụng:**
-    ```bash
-    flask run
-    ```
-    Ứng dụng sẽ có tại `http://127.0.0.1:5000` (hoặc cổng do Flask chỉ định).
+### 🔍 Query Optimization
+* Indexed queries cho faster retrieval
+* Pagination support cho large datasets
+* Lazy loading cho improved UX
 
------
+---
 
-## 🧪 Kiểm Thử Biểu Đồ với `chart_tester.html`
+## 🛠️ Tech Stack & Architecture
 
-Trong thư mục gốc của dự án có tệp **`chart_tester.html`**. Đây là một công cụ phát triển hữu ích.
+### Backend Stack
+* **Framework**: Flask (Python 3.8+)
+* **ORM**: SQLAlchemy với migration support
+* **Database**: 
+  * Production: PostgreSQL (Vercel)
+  * Development: SQLite
+* **Caching**: Redis (Production) / SimpleCache (Dev)
+* **AI Integration**: Google Gemini API (`google-generativeai`)
+* **Document Processing**: `python-docx`, `odfpy`
 
-  * **Mục đích:** Tệp này cho phép bạn xem và kiểm thử các biểu đồ SVG một cách độc lập mà **không cần phải chạy toàn bộ ứng dụng Flask**.
-  * **Cách sử dụng:**
-    1.  Chạy `python build.py` để đảm bảo tệp `app/static/js/chart.js` được cập nhật mới nhất.
-    2.  Mở trực tiếp tệp `chart_tester.html` bằng trình duyệt (ví dụ: nhấp đúp vào tệp).
-    3.  Trang này sẽ tải `chart.js` và hiển thị tất cả các biểu đồ có sẵn, giúp bạn dễ dàng gỡ lỗi (debug) và tinh chỉnh giao diện hoặc hành vi của chúng một cách nhanh chóng.
+### Frontend Stack  
+* **Core**: HTML5, CSS3, JavaScript ES6+
+* **Framework**: Tailwind CSS untuk utility-first styling
+* **Charts**: Custom SVG-based chart library
+* **Features**: 
+  * Progressive enhancement
+  * Dark/Light theme với CSS custom properties
+  * Mobile-first responsive design
+  * Accessibility (WCAG 2.1 AA)
+
+### API Integration
+* **CoinGecko API**: Market data & Bitcoin prices
+* **Alternative.me API**: Fear & Greed Index
+* **TAAPI API**: Technical indicators (RSI)
+* **Rate limiting**: Smart queuing để avoid API limits
+
+### Deployment & DevOps
+* **Platform**: Vercel (Serverless)
+* **CI/CD**: Automatic deployment từ GitHub
+* **Environment**: Separate configs cho dev/prod
+* **Monitoring**: Built-in API status endpoints
+
+---
+
+## 🚀 Setup & Development
+
+### Quick Start
+```bash
+# Clone repository
+git clone https://github.com/thichuong/crypto-dashboard-app.git
+cd crypto-dashboard-app
+
+# Setup virtual environment
+python -m venv venv
+source venv/bin/activate  # Linux/macOS
+# venv\Scripts\activate    # Windows
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Build chart modules
+python build.py
+
+# Run development server
+flask run
+```
+
+### Environment Configuration
+1. **Tạo file `.env`** từ template:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **Cấu hình API keys** trong `.env`:
+   ```env
+   # API Keys (optional cho development)
+   COINGECKO_API_KEY=your_coingecko_key
+   TAAPI_SECRET=your_taapi_secret
+   
+   # Database (auto-configured)
+   DATABASE_URL=sqlite:///instance/local_dev.db
+   ```
+
+### Development Workflow
+* **Hot reload**: Flask development server tự động restart
+* **Database**: SQLite file tại `instance/local_dev.db`
+* **Static assets**: Auto-compilation với `build.py`
+* **Testing**: Sử dụng files trong `/tests/` directory
+
+### Production Deployment (Vercel)
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Deploy
+vercel --prod
+```
+
+**Environment Variables cần thiết trên Vercel:**
+- `DATABASE_URL`: PostgreSQL connection string
+- `REDIS_URL`: Redis instance URL  
+- API keys (optional, có fallback graceful)
+
+---
+
+## 🧪 Testing & Development Tools
+
+### Chart Testing Suite (`/tests/`)
+Bộ công cụ testing toàn diện cho chart components:
+
+#### 🎯 **chart_tester.html** - Universal Chart Tester
+* **Full test suite** cho tất cả chart types
+* **Features**:
+  * Test 4 loại: Gauge, Doughnut, Line, Bar charts
+  * Manual data input hoặc random generation
+  * Dark/Light theme switcher
+  * Responsive testing tools
+  * Interactive hover debugging
+  * Performance monitoring
+
+#### 🍩 **test_doughnut_hover.html** - Specialized Hover Testing
+* **Focus**: Doughnut chart hover interactions
+* **Test scenarios**:
+  * Basic segments (3-5 items)
+  * Many segments (10+ items) 
+  * Small values & edge cases
+* **Debug features**:
+  * Console logging cho hover events
+  * Visual feedback indicators
+  * Performance profiling
+
+#### 📊 **Other Test Files**
+* `test_new_doughnut.html` - Latest doughnut implementations
+* `example_rate_limit_handling.html` - API rate limiting demos
+* `RATE_LIMIT_HANDLING.md` - Documentation cho API optimization
+
+### Development Workflow
+```bash
+# 1. Build chart modules
+python build.py
+
+# 2. Open test files trong browser
+open tests/chart_tester.html
+
+# 3. Test với real server
+flask run &
+open http://localhost:5000
+```
+
+### Chart Architecture
+* **Modular design**: Separate files trong `chart_modules/`
+* **Unified API**: Consistent function signatures
+* **Performance optimized**: 
+  * Efficient SVG rendering
+  * Smooth animations với CSS transforms
+  * Memory leak prevention
+  * Touch/mouse event optimization
+
+### Debugging Tips
+* **Console debugging**: Sử dụng browser DevTools
+* **Performance**: Monitor với Performance tab
+* **Mobile testing**: Chrome DevTools device simulation
+* **Accessibility**: axe-core hoặc WAVE tools
+
+---
+
+## 📁 Project Structure
+
+```
+crypto-dashboard-app/
+├── 📄 README.md
+├── 📄 requirements.txt
+├── 📄 build.py                 # Chart modules builder
+├── 📄 run.py                   # Production WSGI entry
+├── 📄 vercel.json             # Vercel deployment config
+├── 🗂️ app/
+│   ├── 📄 __init__.py         # Flask app factory
+│   ├── 📄 extensions.py       # Flask extensions setup
+│   ├── 📄 models.py          # Database models
+│   ├── 🗂️ blueprints/
+│   │   └── 📄 crypto.py       # API endpoints & dashboard
+│   ├── 🗂️ services/
+│   │   ├── 📄 api_client.py   # HTTP client base class
+│   │   ├── 📄 coingecko.py    # CoinGecko API integration
+│   │   ├── 📄 alternative_me.py # Fear & Greed Index
+│   │   ├── 📄 taapi.py        # Technical Analysis API
+│   │   └── 📄 report_generator.py # AI report creation
+│   ├── 🗂️ static/
+│   │   ├── 🗂️ css/           # Stylesheets
+│   │   └── 🗂️ js/
+│   │       ├── 📄 chart.js    # Built from chart_modules/
+│   │       └── 🗂️ chart_modules/ # Individual chart components
+│   ├── 🗂️ templates/         # Jinja2 templates
+│   └── 🗂️ utils/
+│       └── 📄 cache.py        # Caching utilities
+├── 🗂️ tests/                 # Testing & development tools
+├── 🗂️ create_report/         # AI prompt templates
+└── 🗂️ instance/              # Runtime data & database
+    ├── 📄 local_dev.db       # SQLite database
+    └── 🗂️ archive/           # Historical reports
+```
+
+
+## 🙏 Acknowledgments
+
+* **APIs**: CoinGecko, Alternative.me, TAAPI.io cho market data
+* **AI**: Google Gemini API cho intelligent report generation  
+* **Frontend**: Tailwind CSS, modern web standards
+* **Deployment**: Vercel cho serverless hosting
+* **Community**: Open source contributors và feedback
+
+**⭐ Nếu project này hữu ích, hãy cho một star trên GitHub!**
