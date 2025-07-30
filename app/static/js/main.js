@@ -26,65 +26,42 @@ function displayError(containerId, message = 'Không thể tải dữ liệu.') 
 }
 
 /**
- * Fetch dữ liệu tổng quan thị trường (vốn hóa, khối lượng).
+ * Fetch toàn bộ dữ liệu cho dashboard từ endpoint tổng hợp.
  */
-async function fetchCryptoData() {
+async function fetchDashboardSummary() {
     try {
-        const response = await fetch('/api/crypto/global');
+        const response = await fetch('/api/crypto/dashboard-summary');
         if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.error || `Lỗi server ${response.status}`);
+            const errorMessage = errorData.errors ? JSON.stringify(errorData.errors) : `Lỗi server ${response.status}`;
+            throw new Error(errorMessage);
         }
         const data = await response.json();
-        
-        const marketCapContainer = document.getElementById('market-cap-container');
-        marketCapContainer.innerHTML = `
+
+        // Cập nhật Vốn hóa thị trường
+        document.getElementById('market-cap-container').innerHTML = `
             <p class="text-3xl font-bold text-gray-900">${'$' + formatNumber(data.market_cap)}</p>
-            <p class="text-sm text-gray-500">Toàn thị trường</p>
-        `;
+            <p class="text-sm text-gray-500">Toàn thị trường</p>`;
 
-        const volumeContainer = document.getElementById('volume-24h-container');
-        volumeContainer.innerHTML = `
+        // Cập nhật Khối lượng giao dịch
+        document.getElementById('volume-24h-container').innerHTML = `
             <p class="text-3xl font-bold text-gray-900">${'$' + formatNumber(data.volume_24h)}</p>
-            <p class="text-sm text-gray-500">Toàn thị trường</p>
-        `;
-
-    } catch (error) {
-        console.error('Lỗi fetchCryptoData:', error);
-        displayError('market-cap-container', error.message);
-        displayError('volume-24h-container', error.message);
-    }
-}
-
-/**
- * Fetch giá Bitcoin và chỉ số Sợ hãi & Tham lam.
- */
-async function fetchBtcAndFearGreed() {
-    const btcContainer = document.getElementById('btc-price-container');
-    const fngContainer = document.getElementById('fear-greed-container');
-
-    try {
-        const response = await fetch('/api/crypto/btc-and-fng');
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || `Lỗi server ${response.status}`);
-        }
-        const data = await response.json();
+            <p class="text-sm text-gray-500">Toàn thị trường</p>`;
 
         // Cập nhật giá BTC
+        const btcContainer = document.getElementById('btc-price-container');
         const change = data.btc_change_24h;
         const changeClass = change >= 0 ? 'text-green-600' : 'text-red-600';
         btcContainer.innerHTML = `
             <p class="text-3xl font-bold text-gray-900">${'$' + (data.btc_price_usd ? data.btc_price_usd.toLocaleString('en-US') : 'N/A')}</p>
-            <p class="text-sm font-semibold ${changeClass}">${change !== null ? change.toFixed(2) : 'N/A'}% (24h)</p>
-        `;
+            <p class="text-sm font-semibold ${changeClass}">${change !== null ? change.toFixed(2) : 'N/A'}% (24h)</p>`;
 
-        // Cập nhật chỉ số Sợ hãi & Tham lam bằng hàm createGauge
+        // Cập nhật chỉ số Sợ hãi & Tham lam
+        const fngContainer = document.getElementById('fear-greed-container');
         const fngValue = parseInt(data.fng_value, 10);
         if (!isNaN(fngValue)) {
             const fngConfig = {
-                min: 0,
-                max: 100,
+                min: 0, max: 100,
                 segments: [
                     { limit: 24, color: 'var(--fng-extreme-fear-color)', label: 'Sợ hãi Cực độ' },
                     { limit: 49, color: 'var(--fng-fear-color)', label: 'Sợ hãi' },
@@ -95,48 +72,33 @@ async function fetchBtcAndFearGreed() {
             };
             createGauge(fngContainer, fngValue, fngConfig);
         } else {
-            throw new Error('Giá trị F&G không hợp lệ.');
+            displayError('fear-greed-container', 'Giá trị F&G không hợp lệ.');
         }
 
-    } catch (error) {
-        console.error('Lỗi fetchBtcAndFearGreed:', error);
-        displayError('btc-price-container', error.message);
-        displayError('fear-greed-container', error.message);
-    }
-}
-
-/**
- * Fetch và hiển thị chỉ số RSI
- */
-async function fetchBtcRsi_index() {
-    const container = document.getElementById('rsi-container');
-    try {
-        const response = await fetch('/api/crypto/btc-rsi');
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || `Lỗi server ${response.status}`);
-        }
-        const data = await response.json();
+        // Cập nhật chỉ số RSI
+        const rsiContainer = document.getElementById('rsi-container');
         const rsiValue = data.rsi_14;
-
-        if (rsiValue === null || rsiValue === undefined) {
-            throw new Error('Không nhận được giá trị RSI.');
+        if (rsiValue !== null && rsiValue !== undefined) {
+            const rsiConfig = {
+                min: 0, max: 100,
+                segments: [
+                    { limit: 30, color: 'var(--rsi-oversold-color)', label: 'Quá bán' },
+                    { limit: 70, color: 'var(--rsi-neutral-color)', label: 'Trung tính' },
+                    { limit: 100, color: 'var(--rsi-overbought-color)', label: 'Quá mua' }
+                ]
+            };
+            createGauge(rsiContainer, rsiValue, rsiConfig);
+        } else {
+             displayError('rsi-container', 'Không nhận được giá trị RSI.');
         }
-        
-        const rsiConfig = {
-            min: 0,
-            max: 100,
-            segments: [
-                { limit: 30, color: 'var(--rsi-oversold-color)', label: 'Quá bán' },
-                { limit: 70, color: 'var(--rsi-neutral-color)', label: 'Trung tính' },
-                { limit: 100, color: 'var(--rsi-overbought-color)', label: 'Quá mua' }
-            ]
-        };
-        createGauge(container, rsiValue, rsiConfig);
 
     } catch (error) {
-        console.error('Lỗi fetchBtcRsi_index:', error);
-        displayError('rsi-container', error.message);
+        console.error('Lỗi fetchDashboardSummary:', error);
+        displayError('market-cap-container', error.message);
+        displayError('volume-24h-container', '');
+        displayError('btc-price-container', '');
+        displayError('fear-greed-container', '');
+        displayError('rsi-container', '');
     }
 }
 
@@ -216,13 +178,11 @@ async function CreateNav() {
 function init() {
     CreateNav();
     
-    fetchCryptoData();
-    fetchBtcAndFearGreed();
-    fetchBtcRsi_index(); 
+// Gọi hàm tổng hợp một lần khi tải trang
+    fetchDashboardSummary();
     
-    setInterval(fetchCryptoData, 300000); 
-    setInterval(fetchBtcAndFearGreed, 300000); 
-    setInterval(fetchBtcRsi_index, 900000); 
+    // Đặt lịch gọi lại hàm tổng hợp sau mỗi 10 phút
+    setInterval(fetchDashboardSummary, 600000); 
 }
 
 

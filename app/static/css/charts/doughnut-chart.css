@@ -55,7 +55,7 @@
     display: flex;
     align-items: center;
     gap: 0.6rem;
-    cursor: default;
+    cursor: pointer;
 }
 
 .doughnut-chart-container .legend-color-box {
@@ -85,9 +85,19 @@
 }
 
 /* --- 3. INTERACTIVITY (HOVER EFFECTS) --- */
-.doughnut-segment,
+.doughnut-segment {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                opacity 0.25s ease-out,
+                filter 0.25s ease-out;
+    cursor: pointer;
+    transform-origin: center center;
+    will-change: transform, opacity, filter;
+}
+
 .doughnut-chart-container .legend-item {
-    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    cursor: pointer;
+    will-change: transform, color, opacity;
 }
 
 /* Làm mờ các thành phần không được highlight */
@@ -98,8 +108,10 @@
 
 /* Hiệu ứng cho segment khi được highlight */
 .doughnut-segment.highlight {
-    transform: scale(1.05);
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.25));
+    transform: scale(1.12) !important;
+    opacity: 1 !important;
+    transform-origin: center center;
+    filter: brightness(1.05);
 }
 
 /* Hiệu ứng cho chú giải khi được highlight */

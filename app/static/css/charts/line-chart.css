@@ -1,20 +1,37 @@
 /* static/css/line-chart.css */
 
+/* --- CONTAINER CHUNG --- */
+.line-chart-container {
+    transition: background-color 0.3s ease;
+}
+
 /* --- HIỆU ỨNG VẼ BAN ĐẦU --- */
 
+/* Hiệu ứng vẽ đường line từ trái sang phải */
 .line-path {
     stroke-dasharray: 1000;
     stroke-dashoffset: 1000;
     animation: draw-path 1.2s 0.2s forwards cubic-bezier(0.45, 0.05, 0.55, 0.95);
 }
-@keyframes draw-path { to { stroke-dashoffset: 0; } }
 
+@keyframes draw-path {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+/* Hiệu ứng xuất hiện cho các điểm và nhãn giá trị */
 .line-dot, .value-label {
     opacity: 0;
     transform: translateY(10px);
     animation: fade-in-up 0.5s forwards cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-.value-label { animation-delay: 0.8s; }
+
+/* Thêm độ trễ cho nhãn để xuất hiện sau các điểm */
+.value-label {
+    animation-delay: 0.8s;
+}
+
 @keyframes fade-in-up {
     to {
         opacity: 1;
@@ -24,20 +41,29 @@
 
 /* --- HIỆU ỨNG TƯƠNG TÁC KHI DI CHUỘT --- */
 
-.line-dot {
+/* Thiết lập transition mượt mà cho các thành phần */
+.line-dot, .value-label, .line-point-group {
     transition: all 0.25s ease-in-out;
 }
 
-.value-label {
-    transition: transform 0.25s ease-in-out, fill 0.25s ease-in-out;
-    transform-origin: center;
+/* Khi di chuột vào toàn bộ biểu đồ, làm mờ tất cả các điểm */
+.line-chart-interactive:hover .line-point-group {
+    opacity: 0.4;
 }
 
-/* Phóng to điểm và nhãn giá trị */
+/* Chỉ làm nổi bật (không mờ) điểm đang được di chuột vào */
+.line-chart-interactive:hover .line-point-group:hover {
+    opacity: 1;
+}
+
+/* Phóng to điểm đang được hover */
 .line-point-group:hover .line-dot {
     transform: scale(1.6);
 }
+
+/* Di chuyển nhãn giá trị lên trên, phóng to và đổi màu để nhấn mạnh */
 .line-point-group:hover .value-label {
     transform: translateY(-5px) scale(1.1);
-    fill: var(--accent-color);
+    fill: var(--text-accent); /* Sử dụng màu nhấn từ bảng màu */
+    font-weight: 700;
 }

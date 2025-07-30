@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Doughnut Chart Hover</title>
+    <link rel="stylesheet" href="../app/static/css/colors.css">
+    <link rel="stylesheet" href="../app/static/css/charts/charts-common.css">
+    <link rel="stylesheet" href="../app/static/css/charts/doughnut-chart.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            padding: 2rem;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .test-case {
+            margin-bottom: 3rem;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+        .test-case h2 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Test Doughnut Chart Hover Effects</h1>
+        
+        <div class="test-case">
+            <h2>Test Case 1: Basic Hover</h2>
+            <div id="test1"></div>
+        </div>
+        
+        <div class="test-case">
+            <h2>Test Case 2: Many Segments</h2>
+            <div id="test2"></div>
+        </div>
+        
+        <div class="test-case">
+            <h2>Test Case 3: Small Values</h2>
+            <div id="test3"></div>
+        </div>
+    </div>
+
+    <script src="../app/static/js/chart_modules/utils.js"></script>
+    <script src="../app/static/js/chart_modules/doughnut.js"></script>
+    <script>
+        console.log('🚀 Starting Doughnut Chart Hover Tests');
+        
+        // Test Case 1: Basic hover
+        const testData1 = [
+            { value: 35, label: 'Bitcoin', color: '#F7931A' },
+            { value: 25, label: 'Ethereum', color: '#627EEA' },
+            { value: 20, label: 'BNB', color: '#F3BA2F' },
+            { value: 20, label: 'Others', color: '#8E8E93' }
+        ];
+        console.log('📊 Creating Test Case 1');
+        createDoughnutChart(document.getElementById('test1'), testData1, 'Portfolio');
+
+        // Test Case 2: Many segments
+        const testData2 = [
+            { value: 30, label: 'BTC', color: '#F7931A' },
+            { value: 20, label: 'ETH', color: '#627EEA' },
+            { value: 15, label: 'BNB', color: '#F3BA2F' },
+            { value: 10, label: 'ADA', color: '#0033AD' },
+            { value: 8, label: 'SOL', color: '#9945FF' },
+            { value: 7, label: 'XRP', color: '#23292F' },
+            { value: 5, label: 'DOT', color: '#E6007A' },
+            { value: 3, label: 'LINK', color: '#2A5ADA' },
+            { value: 2, label: 'Others', color: '#8E8E93' }
+        ];
+        console.log('📊 Creating Test Case 2');
+        createDoughnutChart(document.getElementById('test2'), testData2, 'Diverse Portfolio');
+
+        // Test Case 3: Small values
+        const testData3 = [
+            { value: 1.5, label: 'A', color: '#FF6384' },
+            { value: 2.3, label: 'B', color: '#36A2EB' },
+            { value: 0.8, label: 'C', color: '#FFCE56' },
+            { value: 1.2, label: 'D', color: '#4BC0C0' }
+        ];
+        console.log('📊 Creating Test Case 3');
+        createDoughnutChart(document.getElementById('test3'), testData3, 'Small Values');
+
+        // Debug event listeners after charts are created
+        setTimeout(() => {
+            console.log('🔍 Debugging Event Listeners:');
+            document.querySelectorAll('.doughnut-segment').forEach((el, index) => {
+                console.log(`Segment ${index}:`, {
+                    id: el.id,
+                    legendId: el.dataset.legendId,
+                    hasMouseEnter: !!el.onmouseenter || el.listeners?.mouseenter
+                });
+            });
+            
+            document.querySelectorAll('.legend-item').forEach((el, index) => {
+                console.log(`Legend ${index}:`, {
+                    id: el.id,
+                    segmentId: el.dataset.segmentId,
+                    hasMouseEnter: !!el.onmouseenter || el.listeners?.mouseenter
+                });
+            });
+            
+            console.log('✅ Hover test ready! Try hovering over segments and legend items.');
+        }, 500);
+    </script>
+</body>
+</html>

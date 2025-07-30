@@ -81,23 +81,38 @@ function createDoughnutChart(container, data, title = '') {
     const interactiveElements = container.querySelectorAll('.doughnut-segment, .legend-item');
 
     const handleMouseEnter = (event) => {
-        if (chartContainer) chartContainer.classList.add('is-highlighted'); // Kích hoạt trạng thái highlight
+        event.stopPropagation();
+        if (chartContainer) chartContainer.classList.add('is-highlighted');
+        
         const target = event.currentTarget;
         const segmentId = target.dataset.segmentId || target.id;
         const legendId = target.dataset.legendId || target.id;
-        const segment = container.querySelector('#' + segmentId);
-        const legend = container.querySelector('#' + legendId);
-        if (segment) segment.classList.add('highlight'); // Highlight segment tương ứng
-        if (legend) legend.classList.add('highlight'); // Highlight chú giải tương ứng
+        
+        // Tìm và highlight cả segment và legend tương ứng
+        if (segmentId) {
+            const segment = container.querySelector(`[id="${segmentId}"]`);
+            if (segment) segment.classList.add('highlight');
+        }
+        
+        if (legendId) {
+            const legend = container.querySelector(`[id="${legendId}"]`);
+            if (legend) legend.classList.add('highlight');
+        }
     };
 
-    const handleMouseLeave = () => {
-        if (chartContainer) chartContainer.classList.remove('is-highlighted'); // Tắt trạng thái highlight
-        container.querySelectorAll('.highlight').forEach(el => el.classList.remove('highlight')); // Xóa tất cả các highlight
+    const handleMouseLeave = (event) => {
+        event.stopPropagation();
+        if (chartContainer) chartContainer.classList.remove('is-highlighted');
+        container.querySelectorAll('.highlight').forEach(el => el.classList.remove('highlight'));
     };
 
-    interactiveElements.forEach(el => {
-        el.addEventListener('mouseenter', handleMouseEnter);
-        el.addEventListener('mouseleave', handleMouseLeave);
+    // Thêm event listeners với error handling
+    interactiveElements.forEach((el, index) => {
+        try {
+            el.addEventListener('mouseenter', handleMouseEnter);
+            el.addEventListener('mouseleave', handleMouseLeave);
+        } catch (error) {
+            console.warn(`Failed to add event listener to element ${index}:`, error);
+        }
     });
 }

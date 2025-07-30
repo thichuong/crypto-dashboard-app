@@ -4,39 +4,38 @@ from ..services import coingecko, alternative_me, taapi
 
 crypto_bp = Blueprint('crypto', __name__)
 
-@crypto_bp.route('/global')
-@cache.cached(timeout=300)
-def get_global_data():
-    """Lấy dữ liệu tổng quan thị trường."""
-    data, error, status_code = coingecko.get_global_market_data()
-    if error:
-        return jsonify({"error": error}), status_code
-    return jsonify(data)
 
-@crypto_bp.route('/btc-and-fng')
-@cache.cached(timeout=300)
-def get_btc_and_fng_data():
-    """Lấy giá BTC và chỉ số Fear & Greed."""
-    # Lấy giá BTC
-    btc_data, btc_error, btc_status = coingecko.get_btc_price()
-    if btc_error:
-        return jsonify({"error": btc_error}), btc_status
 
-    # Lấy chỉ số F&G
-    fng_data, fng_error, fng_status = alternative_me.get_fng_index()
-    if fng_error:
-        return jsonify({"error": fng_error}), fng_status
+@crypto_bp.route('/dashboard-summary')
+@cache.cached(timeout=600) # Cache trong 10 phút
+def dashboard_summary():
+    """
+    Endpoint tổng hợp, trả về tất cả dữ liệu cần thiết cho dashboard chính
+    chỉ trong một lần gọi API để tối ưu tốc độ tải trang.
+    """
+    # Lấy dữ liệu từ các service
+    global_data, global_error, _ = coingecko.get_global_market_data()
+    btc_data, btc_error, _ = coingecko.get_btc_price()
+    fng_data, fng_error, _ = alternative_me.get_fng_index()
+    rsi_data, rsi_error, _ = taapi.get_btc_rsi()
 
-    # Kết hợp dữ liệu
-    combined_data = {**btc_data, **fng_data}
+    # Kiểm tra và gom lỗi nếu có
+    errors = {
+        "global_data": global_error,
+        "btc_data": btc_error,
+        "fng_data": fng_error,
+        "rsi_data": rsi_error
+    }
+    actual_errors = {k: v for k, v in errors.items() if v}
+    if actual_errors:
+        return jsonify({"errors": actual_errors}), 500
+
+    # Kết hợp tất cả dữ liệu thành một object duy nhất
+    combined_data = {
+        **(global_data or {}),
+        **(btc_data or {}),
+        **(fng_data or {}),
+        **(rsi_data or {}),
+    }
+
     return jsonify(combined_data)
-
-
-@crypto_bp.route('/btc-rsi')
-@cache.cached(timeout=3600)
-def get_btc_rsi():
-    """Lấy chỉ số RSI(14) của Bitcoin."""
-    data, error, status_code = taapi.get_btc_rsi()
-    if error:
-        return jsonify({"error": error}), status_code
-    return jsonify(data)
