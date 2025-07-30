@@ -69,7 +69,8 @@ Bạn PHẢI trả về 3 khối mã riêng biệt và đầy đủ, được ba
     -   Đối với các chỉ số quan trọng (như RSI, Fear & Greed), hãy tạo các placeholder `<div>` với `id` rõ ràng để JavaScript có thể vẽ biểu đồ vào đó. Ví dụ: `<div id="rsi-gauge-container"></div>`.
     -   Đối với các bảng dữ liệu, hãy biến chúng thành các bảng HTML (`<table>`) gọn gàng và đặt chúng trong một container cho phép cuộn ngang nếu cần (`<div class="table-container">`).
     -   Đối với các chỉ số như Tỷ lệ Thống trị của Bitcoin, hãy tạo các placeholder `<div>` với `id` rõ ràng để JavaScript có thể vẽ biểu đồ vào đó. Ví dụ: `<div id="btc-dominance-doughnut-container"></div>`.
-
+-   **Tối ưu hóa cho Thiết bị Di động:** 
+    -   Tạo phiên bản hiển thị dạng "card" cho mỗi hàng của bảng trên di động thay vì cuộn ngang, giúp thông tin dễ đọc hơn.
 
 
 ### 5.2. `report.css`
@@ -78,6 +79,7 @@ Bạn PHẢI trả về 3 khối mã riêng biệt và đầy đủ, được ba
     * **TUYỆT ĐỐI KHÔNG SỬ DỤNG `position: absolute` hoặc `position: fixed`** cho mục đích layout chính của các card. Chỉ sử dụng chúng cho các chi tiết nhỏ bên trong một card nếu thực sự cần thiết (ví dụ: tooltip), và phải đảm bảo phần tử cha có `position: relative`.
     * **KHÔNG GÂY CHỒNG CHÉO:** Đảm bảo 100% rằng các phần tử (đặc biệt là văn bản và biểu đồ) không bị chồng lên nhau. Các phần tử phải có khoảng cách hợp lý.
     * **CHIỀU CAO LINH HOẠT:** **KHÔNG** đặt chiều cao cố định (`height`) cho các container chứa biểu đồ (`.gauge-container`, `.doughnut-container`, etc.). Hãy để chiều cao của chúng tự động điều chỉnh theo nội dung bên trong để tránh tình trạng biểu đồ hoặc chú giải bị cắt xén hoặc chồng lên các phần tử khác.
+    
 * **Styling:**
     * Tạo kiểu cho class `.report-card` với các thuộc tính như `background-color: #ffffff;`, `border-radius`, `box-shadow`, và `padding` để tạo giao diện sạch sẽ, hiện đại.
     * Sử dụng các biến CSS (CSS Variables) cho màu sắc chính nếu có thể để dễ bảo trì.
@@ -97,6 +99,9 @@ Bạn PHẢI trả về 3 khối mã riêng biệt và đầy đủ, được ba
 -   **Hàm khởi tạo:** Cung cấp một hàm chính gọi là `initializeAllVisuals_report()`, để gọi và vẽ tất cả các biểu đồ cần thiết cho báo cáo.
 -   **Hàm trong `report.js` thêm hậu tố:** Các hàm trong `report.js` nên có hậu tố `_report` để tránh trùng tên với các hàm trong `main.js` (ví dụ: `initializeAllVisuals_report`).
 -   ** Mã nguồn phải sạch sẽ, không có lỗi console.**
+-   **Tối ưu hóa cho Thiết bị Di động:** 
+    -   Phóng to và thu nhỏ chart tùy theo màn hình di động và máy tính.
+    
 ### 5.4. Quy ước về Hàm vẽ Biểu đồ (chart.js)
 
 Tất cả các hàm vẽ biểu đồ đều nằm trong `chart.js`. Khi gọi các hàm này, hãy tuân thủ đúng cấu trúc tham số đầu vào.

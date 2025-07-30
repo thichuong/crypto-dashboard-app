@@ -214,7 +214,13 @@ function createBarChart(container, data, options = {}) {
     if (!container || !data || data.length === 0) return;
 
     const { valuePrefix = '', valueSuffix = '', yAxisLabel = '' } = options;
-    const width = 300, height = 180, pTop = 25, pBottom = 20;
+
+    // Lấy kích thước động từ container để biểu đồ co giãn theo card
+    const availableWidth = container.clientWidth || 450; // Lấy chiều rộng thực tế, có fallback
+    const width = availableWidth;
+    const height = availableWidth * 0.5; // Giữ tỷ lệ khung hình ~2:1, có thể điều chỉnh
+
+    const pTop = 25, pBottom = 20;
     const pLeft = yAxisLabel ? 45 : 20;
     const pRight = 20;
 
@@ -260,7 +266,7 @@ function createBarChart(container, data, options = {}) {
         }
 
         bars += `
-            <g transform="translate(${x}, ${y})" class="bar-group">
+            <g transform="translate(${x}, ${y})" class="bar-group" data-index="${i}">
                 <rect width="${barWidth}" height="${barHeight}"
                       fill="${d.color || 'var(--accent-color)'}" rx="3" class="bar-rect"
                       style="animation-delay: ${i * 100}ms;" />
@@ -284,6 +290,11 @@ function createBarChart(container, data, options = {}) {
                     ${yAxisUnit}
                     <line x1="${pLeft}" y1="${zeroY}" x2="${width - pRight}" y2="${zeroY}" stroke="var(--border-color)" />
                     ${bars}
+                    <!-- Custom Tooltip -->
+                    <g class="bar-chart-tooltip" style="visibility: hidden;">
+                        <rect class="tooltip-bg" rx="4" ry="4" height="28" />
+                        <text class="tooltip-text" x="10" y="18"></text>
+                    </g>
                 </svg>
             </div>
             <div class="bar-chart-legend doughnut-legend">
@@ -292,6 +303,45 @@ function createBarChart(container, data, options = {}) {
         </div>
     `;
     container.classList.add('bar-chart-container');
+
+    // --- THÊM TƯƠNG TÁC CHO TOOLTIP ---
+    const svg = container.querySelector('svg');
+    const tooltip = svg.querySelector('.bar-chart-tooltip');
+    const tooltipBg = tooltip.querySelector('.tooltip-bg');
+    const tooltipText = tooltip.querySelector('.tooltip-text');
+    const barGroups = svg.querySelectorAll('.bar-group');
+    const svgPoint = svg.createSVGPoint();
+
+    function getMousePosition(event) {
+        svgPoint.x = event.clientX;
+        svgPoint.y = event.clientY;
+        // Chuyển đổi tọa độ chuột sang hệ tọa độ của SVG
+        return svgPoint.matrixTransform(svg.getScreenCTM().inverse());
+    }
+
+    barGroups.forEach(bar => {
+        bar.addEventListener('mouseover', (e) => {
+            const index = parseInt(bar.dataset.index);
+            const d = data[index];
+            const content = `${d.label}: ${valuePrefix}${d.value}${valueSuffix}`;
+            
+            tooltipText.textContent = content;
+            tooltip.style.visibility = 'visible';
+
+            // Tự động điều chỉnh chiều rộng tooltip
+            const textBBox = tooltipText.getBBox();
+            tooltipBg.setAttribute('width', textBBox.width + 20); // 10px padding mỗi bên
+        });
+
+        bar.addEventListener('mousemove', (e) => {
+            const pos = getMousePosition(e);
+            tooltip.setAttribute('transform', `translate(${pos.x + 12}, ${pos.y - 30})`);
+        });
+
+        bar.addEventListener('mouseout', () => {
+            tooltip.style.visibility = 'hidden';
+        });
+    });
 }
 
 // static/chart_modules/line.js
@@ -431,19 +481,19 @@ function createDoughnutChart(container, data, title = '') {
     const interactiveElements = container.querySelectorAll('.doughnut-segment, .legend-item');
 
     const handleMouseEnter = (event) => {
-        if (chartContainer) chartContainer.classList.add('is-highlighted');
+        if (chartContainer) chartContainer.classList.add('is-highlighted'); // Kích hoạt trạng thái highlight
         const target = event.currentTarget;
         const segmentId = target.dataset.segmentId || target.id;
         const legendId = target.dataset.legendId || target.id;
         const segment = container.querySelector('#' + segmentId);
         const legend = container.querySelector('#' + legendId);
-        if (segment) segment.classList.add('highlight');
-        if (legend) legend.classList.add('highlight');
+        if (segment) segment.classList.add('highlight'); // Highlight segment tương ứng
+        if (legend) legend.classList.add('highlight'); // Highlight chú giải tương ứng
     };
 
     const handleMouseLeave = () => {
-        if (chartContainer) chartContainer.classList.remove('is-highlighted');
-        container.querySelectorAll('.highlight').forEach(el => el.classList.remove('highlight'));
+        if (chartContainer) chartContainer.classList.remove('is-highlighted'); // Tắt trạng thái highlight
+        container.querySelectorAll('.highlight').forEach(el => el.classList.remove('highlight')); // Xóa tất cả các highlight
     };
 
     interactiveElements.forEach(el => {

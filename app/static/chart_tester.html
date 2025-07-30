@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kiểm tra Thư viện Biểu đồ (chart.js)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="css/colors.css">
     <link rel="stylesheet" href="css/chart.css">
     <style>
@@ -16,6 +19,35 @@
             flex-direction: column;
             align-items: center;
         }
+        /* --- Theme Toggle Button --- */
+        .theme-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            z-index: 1000;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+        }
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+        .theme-toggle .fa-sun { display: none; }
+        .theme-toggle .fa-moon { display: block; }
+
+        [data-theme="dark"] .theme-toggle .fa-sun { display: block; }
+        [data-theme="dark"] .theme-toggle .fa-moon { display: none; }
+        
         .header {
             text-align: center;
             margin-bottom: 2rem;
@@ -42,7 +74,7 @@
             flex-direction: column;
             align-items: center;
         }
-        h2 {
+        #chart-grid-container h2 {
             font-size: 1.5rem;
             font-weight: 600;
             margin-bottom: 1.5rem;
@@ -128,13 +160,16 @@
     </style>
 </head>
 <body>
-
+    <button id="theme-toggle" class="theme-toggle" title="Toggle light/dark mode">
+        <i class="fas fa-moon"></i>
+        <i class="fas fa-sun"></i>
+    </button>
     <div class="header">
-        <h1>Trình Kiểm tra Biểu đồ</h1>
+        <h1 class="text-4xl md:text-5xl font-extrabold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-green-500">Trình Kiểm tra Biểu đồ</h1>
         <p>Tạo dữ liệu ngẫu nhiên hoặc nhập thủ công để kiểm tra các thành phần biểu đồ từ <code>chart.js</code>.</p>
     </div>
 
-    <div class="chart-grid">
+    <div id = "chart-grid-container" class="chart-grid">
         <div class="chart-card">
             <h2>Biểu đồ Đồng hồ (Gauge)</h2>
             <div id="gauge-test-container" class="chart-placeholder"></div>
@@ -356,7 +391,26 @@ Quý 4,40</textarea>
         }
         createBarChart(container, data, barOptions);
     }
+    function setupThemeSwitcher() {
+        const themeToggleButton = document.getElementById('theme-toggle');
+        const htmlElement = document.documentElement;
 
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme) {
+            htmlElement.setAttribute('data-theme', currentTheme);
+        }
+
+        themeToggleButton.addEventListener('click', () => {
+            if (htmlElement.getAttribute('data-theme') === 'dark') {
+                htmlElement.removeAttribute('data-theme');
+                localStorage.removeItem('theme');
+            } else {
+                htmlElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+        
+    }
     // --- GÁN SỰ KIỆN VÀ CHẠY LẦN ĐẦU ---
     document.addEventListener('DOMContentLoaded', () => {
         // Nút vẽ từ dữ liệu nhập
@@ -376,6 +430,8 @@ Quý 4,40</textarea>
         handleDoughnutChart(true);
         handleLineChart(true);
         handleBarChart(true);
+
+        setupThemeSwitcher()
     });
     </script>
 </body>

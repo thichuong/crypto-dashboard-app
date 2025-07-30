@@ -81,19 +81,19 @@ function createDoughnutChart(container, data, title = '') {
     const interactiveElements = container.querySelectorAll('.doughnut-segment, .legend-item');
 
     const handleMouseEnter = (event) => {
-        if (chartContainer) chartContainer.classList.add('is-highlighted');
+        if (chartContainer) chartContainer.classList.add('is-highlighted'); // Kích hoạt trạng thái highlight
         const target = event.currentTarget;
         const segmentId = target.dataset.segmentId || target.id;
         const legendId = target.dataset.legendId || target.id;
         const segment = container.querySelector('#' + segmentId);
         const legend = container.querySelector('#' + legendId);
-        if (segment) segment.classList.add('highlight');
-        if (legend) legend.classList.add('highlight');
+        if (segment) segment.classList.add('highlight'); // Highlight segment tương ứng
+        if (legend) legend.classList.add('highlight'); // Highlight chú giải tương ứng
     };
 
     const handleMouseLeave = () => {
-        if (chartContainer) chartContainer.classList.remove('is-highlighted');
-        container.querySelectorAll('.highlight').forEach(el => el.classList.remove('highlight'));
+        if (chartContainer) chartContainer.classList.remove('is-highlighted'); // Tắt trạng thái highlight
+        container.querySelectorAll('.highlight').forEach(el => el.classList.remove('highlight')); // Xóa tất cả các highlight
     };
 
     interactiveElements.forEach(el => {
