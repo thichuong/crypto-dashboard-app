@@ -195,14 +195,35 @@ function setupThemeSwitcher() {
         htmlElement.setAttribute('data-theme', currentTheme);
     }
 
+    // Function to notify all iframes about theme change
+    function notifyIframesThemeChange(theme) {
+        const iframes = document.querySelectorAll('iframe');
+        iframes.forEach(iframe => {
+            try {
+                iframe.contentWindow.postMessage({
+                    type: 'themeChange',
+                    theme: theme
+                }, '*');
+            } catch (e) {
+                console.log('Could not send theme message to iframe:', e);
+            }
+        });
+    }
+
     themeToggleButton.addEventListener('click', () => {
+        let newTheme;
         if (htmlElement.getAttribute('data-theme') === 'dark') {
             htmlElement.removeAttribute('data-theme');
             localStorage.removeItem('theme');
+            newTheme = null; // light theme
         } else {
             htmlElement.setAttribute('data-theme', 'dark');
             localStorage.setItem('theme', 'dark');
+            newTheme = 'dark';
         }
+        
+        // Notify all iframes about the theme change
+        notifyIframesThemeChange(newTheme);
     });
     
 }
