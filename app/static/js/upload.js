@@ -115,10 +115,6 @@ uploadForm.addEventListener('submit', function(event) {
     setTimeout(() => {
         const gameIframe = document.getElementById('main-game-iframe');
         if (gameIframe) {
-            gameIframe.scrollIntoView({ 
-                behavior: 'smooth',
-                block: 'center'
-            });
             
             // Send message to iframe to scroll to game-header
             setTimeout(() => {
