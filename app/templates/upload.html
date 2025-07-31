@@ -105,13 +105,13 @@
             box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
         }
         
-        #loading-overlay {
+        #loading-overlay, #success-overlay, #error-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(255, 255, 255, 0.7);
+            background-color: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(4px);
             display: none; /* Ẩn mặc định */
             justify-content: center;
@@ -121,8 +121,114 @@
             gap: 1rem;
         }
 
-        [data-theme="dark"] #loading-overlay {
-            background-color: rgba(13, 17, 23, 0.8);
+        [data-theme="dark"] #loading-overlay,
+        [data-theme="dark"] #success-overlay,
+        [data-theme="dark"] #error-overlay {
+            background-color: rgba(13, 17, 23, 0.95);
+        }
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background-color: transparent;
+            padding: 0;
+            border: none;
+            box-shadow: none;
+            max-width: 90vw;
+            width: 100%;
+            max-width: 380px;
+            margin: 0 auto;
+        }
+
+        .game-iframe {
+            width: 100%;
+            max-width: 380px;
+            height: 500px;
+            border: none;
+            border-radius: 16px;
+            background-color: var(--card-bg);
+            box-shadow: var(--card-shadow);
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid var(--border-color);
+            background-color: var(--card-bg);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 10000;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .success-content, .error-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-color);
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .upload-container {
+                margin: 2rem auto;
+                padding: 1.5rem;
+            }
+            
+            .game-container {
+                max-width: 95vw;
+                margin: 0 auto;
+            }
+            
+            .game-iframe {
+                max-width: 350px;
+                height: 480px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .upload-container {
+                margin: 1rem auto;
+                padding: 1rem;
+            }
+            
+            .game-container {
+                margin: 0 auto;
+            }
+            
+            .game-iframe {
+                max-width: 320px;
+                height: 460px;
+            }
+        }
+
+        .success-content, .error-content {
+            text-align: center;
+            background-color: var(--card-bg);
+            padding: 3rem;
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-color);
+            max-width: 400px;
         }
 
         .spinner {
@@ -134,7 +240,7 @@
             animation: spin 1s linear infinite;
         }
 
-        #loading-overlay p {
+        #loading-overlay p, #success-overlay p, #error-overlay p {
             color: var(--text-primary);
         }
 
@@ -147,8 +253,36 @@
 <body class="antialiased">
 
     <div id="loading-overlay">
-        <div class="spinner"></div>
-        <p class="text-lg font-semibold">Đang xử lý, vui lòng chờ...</p>
+        <div class="game-container">
+            <iframe src="{{ url_for('static', filename='game.html') }}" 
+                    class="game-iframe" 
+                    id="game-iframe"
+                    frameborder="0" 
+                    allowtransparency="true">
+            </iframe>
+        </div>
+    </div>
+
+    <!-- Success Overlay -->
+    <div id="success-overlay" class="loading-overlay" style="display: none;">
+        <div class="success-content">
+            <i class="fas fa-check-circle text-6xl text-green-500 mb-4"></i>
+            <p id="success-message" class="text-lg font-semibold mb-4">Báo cáo đã được tạo thành công!</p>
+            <button onclick="goToHome()" class="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                <i class="fas fa-home mr-2"></i>Quay lại trang chủ
+            </button>
+        </div>
+    </div>
+
+    <!-- Error Overlay -->
+    <div id="error-overlay" class="loading-overlay" style="display: none;">
+        <div class="error-content">
+            <i class="fas fa-exclamation-triangle text-6xl text-red-500 mb-4"></i>
+            <p id="error-message" class="text-lg font-semibold mb-4">Đã xảy ra lỗi!</p>
+            <button onclick="closeErrorOverlay()" class="px-6 py-3 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors">
+                <i class="fas fa-times mr-2"></i>Đóng
+            </button>
+        </div>
     </div>
 
     <!-- Theme Toggle Button -->
@@ -237,6 +371,15 @@
             
             document.documentElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
+            
+            // Notify game iframe about theme change
+            const gameIframe = document.getElementById('game-iframe');
+            if (gameIframe && gameIframe.contentWindow) {
+                gameIframe.contentWindow.postMessage({
+                    type: 'themeChange',
+                    theme: newTheme
+                }, '*');
+            }
         }
 
         // Load saved theme on page load
@@ -302,12 +445,110 @@
         // Form submission handling
         const uploadForm = document.getElementById('upload-form');
         const loadingOverlay = document.getElementById('loading-overlay');
-        uploadForm.addEventListener('submit', () => {
+        const successOverlay = document.getElementById('success-overlay');
+        const errorOverlay = document.getElementById('error-overlay');
+        const successMessage = document.getElementById('success-message');
+        const errorMessage = document.getElementById('error-message');
+
+        // Game iframe reference
+        let gameIframe = null;
+
+        uploadForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Ngăn form submit bình thường
+            
             // Kiểm tra xem các trường bắt buộc đã được điền chưa
             const apiKey = document.getElementById('gemini-key').value;
             const file = document.getElementById('file-upload').files.length;
-            if (apiKey && file > 0) {
-                 loadingOverlay.style.display = 'flex';
+            
+            if (!apiKey || file === 0) {
+                showError('Vui lòng cung cấp đủ tệp và API Key.');
+                return;
+            }
+
+            // Hiển thị loading overlay và bắt đầu game
+            loadingOverlay.style.display = 'flex';
+            startGame();
+
+            // Tạo FormData để gửi file và dữ liệu
+            const formData = new FormData(uploadForm);
+
+            // Gửi AJAX request
+            fetch(uploadForm.action, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Dừng game và ẩn loading overlay
+                stopGame();
+                loadingOverlay.style.display = 'none';
+                
+                if (data.success) {
+                    showSuccess(data.message);
+                } else {
+                    showError(data.message);
+                }
+            })
+            .catch(error => {
+                // Dừng game và ẩn loading overlay
+                stopGame();
+                loadingOverlay.style.display = 'none';
+                showError('Đã xảy ra lỗi kết nối. Vui lòng thử lại.');
+                console.error('Error:', error);
+            });
+        });
+
+        function showSuccess(message) {
+            successMessage.textContent = message + ' Click nút bên dưới để xem báo cáo mới.';
+            successOverlay.style.display = 'flex';
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorOverlay.style.display = 'flex';
+        }
+
+        function goToHome() {
+            // Điều hướng về trang chủ để xem báo cáo mới
+            window.location.href = "{{ url_for('index') }}";
+        }
+
+        function closeErrorOverlay() {
+            errorOverlay.style.display = 'none';
+        }
+
+        // Game iframe control functions
+        function startGame() {
+            gameIframe = document.getElementById('game-iframe');
+            if (gameIframe && gameIframe.contentWindow) {
+                gameIframe.contentWindow.postMessage({ type: 'startGame' }, '*');
+            }
+        }
+        
+        function stopGame() {
+            if (gameIframe && gameIframe.contentWindow) {
+                gameIframe.contentWindow.postMessage({ type: 'stopGame' }, '*');
+            }
+        }
+
+        function pauseGame() {
+            if (gameIframe && gameIframe.contentWindow) {
+                gameIframe.contentWindow.postMessage({ type: 'pauseGame' }, '*');
+            }
+        }
+
+        function resumeGame() {
+            if (gameIframe && gameIframe.contentWindow) {
+                gameIframe.contentWindow.postMessage({ type: 'resumeGame' }, '*');
+            }
+        }
+
+        // Listen for messages from game iframe
+        window.addEventListener('message', function(event) {
+            if (event.data.type === 'gameStarted') {
+                console.log('Game started in iframe');
+            } else if (event.data.type === 'gameStopped') {
+                console.log('Game stopped in iframe');
             }
         });
     </script>

@@ -428,8 +428,6 @@ function createLineChart(container, data, options = {}) {
     container.classList.add('line-chart-container');
 }
 
-// static/chart_modules/doughnut.js
-
 /**
  * =============================================================================
  * TẠO BIỂU ĐỒ TRÒN (DOUGHNUT CHART) ĐƯỢC CẢI TIẾN
@@ -451,6 +449,7 @@ function createDoughnutChart(container, data, config = {}) {
     if (typeof config === 'string') {
         config = { title: config, showLegend: true };
     }
+
     // --- 1. KIỂM TRA ĐẦU VÀO ---
     if (!container) {
         console.error("Lỗi: Container element không được cung cấp cho createDoughnutChart.");

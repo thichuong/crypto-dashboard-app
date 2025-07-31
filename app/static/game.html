@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dodge Game</title>
+    <style>
+        :root {
+            /* Light theme */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-accent: #3b82f6;
+            --accent-color: #6366f1;
+            --border-color: #e2e8f0;
+            --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --negative-color: #ef4444;
+        }
+
+        [data-theme="dark"] {
+            /* Dark theme */
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --card-bg: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-accent: #60a5fa;
+            --accent-color: #6366f1;
+            --border-color: #334155;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+            --negative-color: #f87171;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s, color 0.3s;
+            overflow: hidden;
+        }
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-color);
+            max-width: 90vw;
+            width: 100%;
+            max-width: 380px;
+            margin: 0 auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .game-header {
+            margin-bottom: 1rem;
+        }
+
+        .game-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .game-subtitle {
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .score-display {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        #gameCanvas {
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background-color: var(--bg-primary);
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            aspect-ratio: 3/4;
+        }
+
+        [data-theme="dark"] #gameCanvas {
+            background-color: var(--bg-primary);
+            box-shadow: 0 2px 8px rgba(255,255,255,0.1);
+        }
+
+        .game-instructions {
+            margin-top: 0.5rem;
+        }
+
+        .instructions-text {
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .game-container {
+                padding: 1rem;
+                max-width: 95vw;
+            }
+            
+            #gameCanvas {
+                max-width: 280px;
+            }
+            
+            .game-title {
+                font-size: 1.125rem;
+            }
+            
+            .score-display {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .game-container {
+                padding: 0.75rem;
+            }
+            
+            #gameCanvas {
+                max-width: 260px;
+            }
+        }
+
+        /* Loading animation */
+        .loading-text {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <h3 class="game-title loading-text">Đang xử lý báo cáo...</h3>
+            <p class="game-subtitle">Chơi game để giải trí trong lúc chờ!</p>
+            <div class="score-display">
+                <span>Điểm: <span id="score">0</span></span>
+            </div>
+        </div>
+        <canvas id="gameCanvas" width="300" height="400"></canvas>
+        <div class="game-instructions">
+            <p class="instructions-text">Click để đổi hướng • Tránh kim cương • Chạm biên -20 điểm</p>
+        </div>
+    </div>
+
+    <script src="js/dodge-game.js"></script>
+    <script>
+        // Auto-detect theme from parent window
+        function detectTheme() {
+            try {
+                if (window.parent && window.parent.document) {
+                    const parentTheme = window.parent.document.documentElement.getAttribute('data-theme');
+                    if (parentTheme) {
+                        document.documentElement.setAttribute('data-theme', parentTheme);
+                    }
+                }
+            } catch (e) {
+                // Fallback to light theme if parent access is denied
+                console.log('Cannot access parent theme, using light theme');
+            }
+        }
+
+        // Listen for theme changes from parent
+        function listenForThemeChanges() {
+            try {
+                if (window.parent && window.parent.document) {
+                    const observer = new MutationObserver((mutations) => {
+                        mutations.forEach((mutation) => {
+                            if (mutation.type === 'attributes' && mutation.attributeName === 'data-theme') {
+                                const newTheme = window.parent.document.documentElement.getAttribute('data-theme');
+                                document.documentElement.setAttribute('data-theme', newTheme);
+                            }
+                        });
+                    });
+                    
+                    observer.observe(window.parent.document.documentElement, {
+                        attributes: true,
+                        attributeFilter: ['data-theme']
+                    });
+                }
+            } catch (e) {
+                console.log('Cannot observe parent theme changes');
+            }
+        }
+
+        // Game management
+        let dodgeGame = null;
+
+        function startGame() {
+            if (typeof DodgeGame !== 'undefined') {
+                dodgeGame = new DodgeGame('gameCanvas', 'score');
+                dodgeGame.start();
+                
+                // Notify parent that game started
+                try {
+                    if (window.parent) {
+                        window.parent.postMessage({ type: 'gameStarted' }, '*');
+                    }
+                } catch (e) {
+                    console.log('Cannot notify parent of game start');
+                }
+            } else {
+                console.error('DodgeGame class not found');
+            }
+        }
+
+        function stopGame() {
+            if (dodgeGame) {
+                dodgeGame.stop();
+                dodgeGame = null;
+                
+                // Notify parent that game stopped
+                try {
+                    if (window.parent) {
+                        window.parent.postMessage({ type: 'gameStopped' }, '*');
+                    }
+                } catch (e) {
+                    console.log('Cannot notify parent of game stop');
+                }
+            }
+        }
+
+        function pauseGame() {
+            if (dodgeGame) {
+                dodgeGame.stop();
+            }
+        }
+
+        function resumeGame() {
+            if (dodgeGame) {
+                dodgeGame.start();
+            }
+        }
+
+        // Listen for messages from parent window
+        window.addEventListener('message', function(event) {
+            switch(event.data.type) {
+                case 'startGame':
+                    startGame();
+                    break;
+                case 'stopGame':
+                    stopGame();
+                    break;
+                case 'pauseGame':
+                    pauseGame();
+                    break;
+                case 'resumeGame':
+                    resumeGame();
+                    break;
+                case 'themeChange':
+                    document.documentElement.setAttribute('data-theme', event.data.theme);
+                    break;
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            detectTheme();
+            listenForThemeChanges();
+            
+            // Auto-start game after a short delay
+            setTimeout(() => {
+                startGame();
+            }, 500);
+        });
+
+        // Expose functions globally for parent access
+        window.gameControl = {
+            start: startGame,
+            stop: stopGame,
+            pause: pauseGame,
+            resume: resumeGame
+        };
+
+        console.log('🎮 Dodge Game iframe loaded and ready!');
+    </script>
+</body>
+</html>

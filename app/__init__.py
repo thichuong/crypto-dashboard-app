@@ -1,7 +1,7 @@
 # app/__init__.py
 
 import os
-from flask import Flask, render_template, request, flash, redirect, url_for
+from flask import Flask, render_template, request, flash, redirect, url_for, jsonify
 from dotenv import load_dotenv
 
 # Import các phần mở rộng và model
@@ -95,15 +95,13 @@ def create_app():
     @app.route('/upload-report', methods=['POST'])
     def generate_report_from_upload():
         if 'file' not in request.files or not request.form.get('gemini_key'):
-            flash('Vui lòng cung cấp đủ tệp và API Key.')
-            return redirect(url_for('upload_page'))
+            return jsonify({'success': False, 'message': 'Vui lòng cung cấp đủ tệp và API Key.'})
 
         file = request.files['file']
         api_key = request.form.get('gemini_key')
         
         if file.filename == '':
-            flash('Không có tệp nào được chọn.')
-            return redirect(url_for('upload_page'))
+            return jsonify({'success': False, 'message': 'Không có tệp nào được chọn.'})
 
         if file and (file.filename.endswith('.docx') or file.filename.endswith('.odt')):
             try:
@@ -112,8 +110,7 @@ def create_app():
                 code_blocks = create_report_from_content(file.stream, file.filename, api_key, prompt_path)
 
                 if not code_blocks or not code_blocks.get("html"):
-                    flash('Lỗi: Không thể tạo nội dung báo cáo từ AI.')
-                    return redirect(url_for('upload_page'))
+                    return jsonify({'success': False, 'message': 'Lỗi: Không thể tạo nội dung báo cáo từ AI.'})
 
                 new_report = Report(
                     html_content=code_blocks.get("html", ""),
@@ -123,16 +120,13 @@ def create_app():
                 db.session.add(new_report)
                 db.session.commit()
 
-                flash('Báo cáo đã được tạo và cập nhật thành công!')
-                return redirect(url_for('index'))
+                return jsonify({'success': True, 'message': 'Báo cáo đã được tạo và cập nhật thành công!'})
 
             except Exception as e:
                 db.session.rollback()
-                flash(f"Đã xảy ra lỗi không mong muốn: {e}")
-                return redirect(url_for('upload_page'))
+                return jsonify({'success': False, 'message': f'Đã xảy ra lỗi không mong muốn: {e}'})
         else:
-            flash('Định dạng tệp không hợp lệ. Vui lòng tải lên tệp .docx hoặc .odt.')
-            return redirect(url_for('upload_page'))
+            return jsonify({'success': False, 'message': 'Định dạng tệp không hợp lệ. Vui lòng tải lên tệp .docx hoặc .odt.'})
 
     app.register_blueprint(crypto_bp, url_prefix='/api/crypto')
 
