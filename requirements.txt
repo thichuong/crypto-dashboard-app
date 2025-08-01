@@ -8,3 +8,4 @@ google-generativeai
 python-docx
 odfpy
 psycopg2-binary
+PyPDF2

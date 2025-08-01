@@ -5,6 +5,7 @@ from docx import Document
 from odf import text, teletype
 from odf.opendocument import load
 import google.generativeai as genai
+import PyPDF2
 
 def _read_text_from_docx_stream(stream):
     """Đọc văn bản từ một stream .docx (trong bộ nhớ)."""
@@ -23,6 +24,18 @@ def _read_text_from_odt_stream(stream):
         return "\n".join([teletype.extractText(p) for p in all_paras])
     except Exception as e:
         print(f"Lỗi khi đọc file odt: {e}")
+        return None
+
+def _read_text_from_pdf_stream(stream):
+    """Đọc văn bản từ một stream .pdf (trong bộ nhớ)."""
+    try:
+        pdf_reader = PyPDF2.PdfReader(BytesIO(stream.read()))
+        text_content = ""
+        for page in pdf_reader.pages:
+            text_content += page.extract_text() + "\n"
+        return text_content.strip()
+    except Exception as e:
+        print(f"Lỗi khi đọc file pdf: {e}")
         return None
 
 def _read_prompt_file(file_path):
@@ -77,6 +90,8 @@ def create_report_from_content(file_stream, filename, api_key, prompt_path):
             report_content = _read_text_from_docx_stream(file_stream)
         elif filename.endswith('.odt'):
             report_content = _read_text_from_odt_stream(file_stream)
+        elif filename.endswith('.pdf'):
+            report_content = _read_text_from_pdf_stream(file_stream)
         else:
             # Bạn có thể thêm xử lý cho các định dạng khác ở đây
             print(f"Lỗi: Định dạng tệp không được hỗ trợ: {filename}")

@@ -119,7 +119,7 @@ def create_app():
         if file.filename == '':
             return jsonify({'success': False, 'message': 'Không có tệp nào được chọn.'})
 
-        if file and (file.filename.endswith('.docx') or file.filename.endswith('.odt')):
+        if file and (file.filename.endswith('.docx') or file.filename.endswith('.odt') or file.filename.endswith('.pdf')):
             try:
                 prompt_path = os.path.join(app.root_path, '..', 'create_report', 'prompt_create_report.md')
                 # Truyền cả file stream và filename
@@ -142,7 +142,7 @@ def create_app():
                 db.session.rollback()
                 return jsonify({'success': False, 'message': f'Đã xảy ra lỗi không mong muốn: {e}'})
         else:
-            return jsonify({'success': False, 'message': 'Định dạng tệp không hợp lệ. Vui lòng tải lên tệp .docx hoặc .odt.'})
+            return jsonify({'success': False, 'message': 'Định dạng tệp không hợp lệ. Vui lòng tải lên tệp .docx, .odt hoặc .pdf.'})
 
     app.register_blueprint(crypto_bp, url_prefix='/api/crypto')
 
