@@ -3,24 +3,10 @@
   "builds": [
     {
       "src": "run.py",
-      "use": "@vercel/python",
-      "config": { 
-        "maxLambdaSize": "45mb"
-      }
+      "use": "@vercel/python"
     }
   ],
   "routes": [
-    {
-      "src": "/api/crypto/dashboard-summary",
-      "dest": "run.py",
-      "methods": ["GET"],
-      "headers": {
-        "Cache-Control": "s-maxage=300, stale-while-revalidate"
-      },
-      "config": {
-        "maxDuration": 25
-      }
-    },
     {
       "src": "/(.*)",
       "dest": "run.py"
