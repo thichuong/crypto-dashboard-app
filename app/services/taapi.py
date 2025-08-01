@@ -13,8 +13,6 @@ def get_btc_rsi():
     
     api_url = os.getenv('TAAPI_RSI_API_URL')
 
-    if not api_url or 'YOUR_TAAPI_KEY' in api_url:
-        return None, "API key cho TAAPI.IO chưa được cấu hình", 500
 
     # Kiểm tra rate limiting
     current_time = time.time()
@@ -22,24 +20,30 @@ def get_btc_rsi():
     
     if time_since_last_request < _min_request_interval:
         # Thử lấy từ backup cache khi bị rate limit
-        backup_data = get_backup_cache("taapi_rsi")
-        if backup_data:
-            return backup_data, None, 200
+        try:
+            backup_data = get_backup_cache("taapi_rsi")
+            if backup_data:
+                return backup_data, None, 200
+        except Exception as cache_error:
+            print(f"Warning: Could not read from backup cache: {cache_error}")
         
         time_to_wait = _min_request_interval - time_since_last_request
         return None, f"Rate limit: phải chờ {int(time_to_wait)} giây nữa", 429
 
     _last_request_time = current_time
-    json_data, error, status_code = fetch_json(api_url, timeout=15)
+    json_data, error, status_code = fetch_json(api_url, timeout=50)
 
     if error:
         # Nếu gặp rate limit, tăng thời gian chờ và thử backup cache
         if status_code == 429:
             _min_request_interval = min(_min_request_interval * 2, 300)  # Tối đa 5 phút
             
-            backup_data = get_backup_cache("taapi_rsi")
-            if backup_data:
-                return backup_data, None, 200
+            try:
+                backup_data = get_backup_cache("taapi_rsi")
+                if backup_data:
+                    return backup_data, None, 200
+            except Exception as cache_error:
+                print(f"Warning: Could not read from backup cache: {cache_error}")
                 
         return None, f"Lỗi khi gọi TAAPI: {error}", status_code
 
@@ -49,8 +53,11 @@ def get_btc_rsi():
             raise KeyError("Không tìm thấy 'value' trong phản hồi của TAAPI.")
         data = {'rsi_14': rsi_value}
         
-        # Lưu vào backup cache khi thành công
-        set_backup_cache("taapi_rsi", data, max_age_hours=6)
+        # Lưu vào backup cache khi thành công (ignore errors)
+        try:
+            set_backup_cache("taapi_rsi", data, max_age_hours=6)
+        except Exception as cache_error:
+            print(f"Warning: Could not save to backup cache: {cache_error}")
         
         # Reset interval sau khi request thành công
         _min_request_interval = 60

@@ -20,6 +20,17 @@ def create_app():
     load_dotenv()
     app = Flask(__name__)
     app.secret_key = os.getenv('SECRET_KEY', 'a_very_secret_key')
+    
+    # --- DETECT ENVIRONMENT ---
+    is_vercel = bool(os.getenv('VERCEL'))
+    is_production = is_vercel or os.getenv('FLASK_ENV') == 'production'
+    
+    if is_vercel:
+        print("INFO: Running on Vercel serverless environment")
+    elif is_production:
+        print("INFO: Running in production mode")
+    else:
+        print("INFO: Running in development mode")
 
     # --- CẤU HÌNH DATABASE ĐỘNG ---
     if postgres_url := os.getenv('POSTGRES_URL'):
@@ -27,10 +38,15 @@ def create_app():
         app.config['SQLALCHEMY_DATABASE_URI'] = db_url
         print("INFO: Connecting to Vercel Postgres")
     else:
-        db_path = os.path.join(app.instance_path, 'local_dev.db')
-        os.makedirs(app.instance_path, exist_ok=True)
-        app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
-        print("INFO: Connecting to local SQLite database")
+        if is_vercel:
+            # On Vercel without Postgres, use SQLite in /tmp (writable)
+            app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/vercel_app.db'
+            print("INFO: Using temporary SQLite on Vercel")
+        else:
+            db_path = os.path.join(app.instance_path, 'local_dev.db')
+            os.makedirs(app.instance_path, exist_ok=True)
+            app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
+            print("INFO: Connecting to local SQLite database")
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
