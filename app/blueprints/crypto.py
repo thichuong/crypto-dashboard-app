@@ -5,6 +5,13 @@ import time
 
 crypto_bp = Blueprint('crypto', __name__)
 
+@crypto_bp.after_request
+def after_request(response):
+    """Đảm bảo tất cả response từ crypto blueprint có Content-Type là JSON"""
+    if not response.content_type:
+        response.content_type = 'application/json'
+    return response
+
 
 @crypto_bp.route('/api-status')
 def api_status():
@@ -38,62 +45,76 @@ def dashboard_summary():
     Endpoint tổng hợp, trả về tất cả dữ liệu cần thiết cho dashboard chính
     chỉ trong một lần gọi API để tối ưu tốc độ tải trang.
     """
-    # Lấy dữ liệu từ các service
-    global_data, global_error, global_status = coingecko.get_global_market_data()
-    btc_data, btc_error, btc_status = coingecko.get_btc_price()
-    fng_data, fng_error, fng_status = alternative_me.get_fng_index()
-    rsi_data, rsi_error, rsi_status = taapi.get_btc_rsi()
+    try:
+        # Lấy dữ liệu từ các service
+        global_data, global_error, global_status = coingecko.get_global_market_data()
+        btc_data, btc_error, btc_status = coingecko.get_btc_price()
+        fng_data, fng_error, fng_status = alternative_me.get_fng_index()
+        rsi_data, rsi_error, rsi_status = taapi.get_btc_rsi()
 
-    # Phân loại lỗi: critical vs non-critical
-    critical_errors = {}
-    warnings = {}
+        # Phân loại lỗi: critical vs non-critical
+        critical_errors = {}
+        warnings = {}
+        
+        # Kiểm tra từng service
+        if global_error:
+            if global_status == 429:
+                warnings["global_data"] = "Rate limit reached - using cached data"
+            else:
+                critical_errors["global_data"] = global_error
+                
+        if btc_error:
+            if btc_status == 429:
+                warnings["btc_data"] = "Rate limit reached - using cached data"
+            else:
+                critical_errors["btc_data"] = btc_error
+                
+        if fng_error:
+            if fng_status == 429:
+                warnings["fng_data"] = "Rate limit reached - using default value"
+                fng_data = {"fng_value": 50, "fng_value_classification": "Neutral"}
+            else:
+                warnings["fng_data"] = fng_error
+                fng_data = {"fng_value": 50, "fng_value_classification": "Neutral"}
+                
+        if rsi_error:
+            if rsi_status == 429:
+                warnings["rsi_data"] = "Rate limit reached - using default value"
+                rsi_data = {"rsi_14": 50}
+            else:
+                warnings["rsi_data"] = rsi_error
+                rsi_data = {"rsi_14": 50}
+
+        # Chỉ fail request nếu có critical error (không phải rate limit)
+        if critical_errors:
+            return jsonify({
+                "errors": critical_errors,
+                "warnings": warnings
+            }), 500
+
+        # Kết hợp tất cả dữ liệu thành một object duy nhất
+        combined_data = {
+            **(global_data or {}),
+            **(btc_data or {}),
+            **(fng_data or {}),
+            **(rsi_data or {}),
+        }
+        
+        # Thêm thông tin warnings nếu có
+        if warnings:
+            combined_data["warnings"] = warnings
+
+        return jsonify(combined_data)
     
-    # Kiểm tra từng service
-    if global_error:
-        if global_status == 429:
-            warnings["global_data"] = "Rate limit reached - using cached data"
-        else:
-            critical_errors["global_data"] = global_error
-            
-    if btc_error:
-        if btc_status == 429:
-            warnings["btc_data"] = "Rate limit reached - using cached data"
-        else:
-            critical_errors["btc_data"] = btc_error
-            
-    if fng_error:
-        if fng_status == 429:
-            warnings["fng_data"] = "Rate limit reached - using default value"
-            fng_data = {"fng_value": 50, "fng_value_classification": "Neutral"}
-        else:
-            warnings["fng_data"] = fng_error
-            fng_data = {"fng_value": 50, "fng_value_classification": "Neutral"}
-            
-    if rsi_error:
-        if rsi_status == 429:
-            warnings["rsi_data"] = "Rate limit reached - using default value"
-            rsi_data = {"rsi_14": 50}
-        else:
-            warnings["rsi_data"] = rsi_error
-            rsi_data = {"rsi_14": 50}
-
-    # Chỉ fail request nếu có critical error (không phải rate limit)
-    if critical_errors:
+    except Exception as e:
+        # Log lỗi để debug
+        import traceback
+        print(f"Error in dashboard_summary: {e}")
+        print(traceback.format_exc())
+        
+        # Trả về JSON error response
         return jsonify({
-            "errors": critical_errors,
-            "warnings": warnings
+            "error": "Internal server error", 
+            "message": str(e),
+            "status": 500
         }), 500
-
-    # Kết hợp tất cả dữ liệu thành một object duy nhất
-    combined_data = {
-        **(global_data or {}),
-        **(btc_data or {}),
-        **(fng_data or {}),
-        **(rsi_data or {}),
-    }
-    
-    # Thêm thông tin warnings nếu có
-    if warnings:
-        combined_data["warnings"] = warnings
-
-    return jsonify(combined_data)

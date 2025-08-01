@@ -30,31 +30,80 @@ function displayError(containerId, message = 'Không thể tải dữ liệu.') 
  */
 async function fetchDashboardSummary() {
     try {
-        const response = await fetch('/api/crypto/dashboard-summary');
+        const response = await fetch('/api/crypto/dashboard-summary', {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        // Kiểm tra nếu response trống
+        if (!response.body) {
+            throw new Error('Server trả về response trống');
+        }
+        
+        // Kiểm tra content-type để đảm bảo response là JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            console.error('Response không phải JSON:', contentType);
+            const responseText = await response.text();
+            console.error('Response text:', responseText);
+            throw new Error(`Server trả về định dạng không hợp lệ: ${contentType || 'unknown'}`);
+        }
+        
+        // Đọc response text trước để kiểm tra
+        const responseText = await response.text();
+        if (!responseText || responseText.trim().length === 0) {
+            throw new Error('Server trả về nội dung trống');
+        }
+        
         if (!response.ok) {
-            const errorData = await response.json();
+            let errorData;
+            try {
+                errorData = JSON.parse(responseText);
+            } catch (jsonError) {
+                console.error('Lỗi parse JSON từ error response:', jsonError);
+                console.error('Error response text:', responseText);
+                throw new Error(`Lỗi server ${response.status}: Không thể đọc response`);
+            }
             const errorMessage = errorData.errors ? JSON.stringify(errorData.errors) : `Lỗi server ${response.status}`;
             throw new Error(errorMessage);
         }
-        const data = await response.json();
+        
+        let data;
+        try {
+            data = JSON.parse(responseText);
+        } catch (jsonError) {
+            console.error('Lỗi parse JSON từ success response:', jsonError);
+            console.error('Success response text:', responseText);
+            throw new Error('Server trả về dữ liệu không hợp lệ');
+        }
 
         // Cập nhật Vốn hóa thị trường
-        document.getElementById('market-cap-container').innerHTML = `
-            <p class="text-3xl font-bold text-gray-900">${'$' + formatNumber(data.market_cap)}</p>
-            <p class="text-sm text-gray-500">Toàn thị trường</p>`;
+        const marketCapContainer = document.getElementById('market-cap-container');
+        if (marketCapContainer) {
+            marketCapContainer.innerHTML = `
+                <p class="text-3xl font-bold text-gray-900">${'$' + formatNumber(data.market_cap)}</p>
+                <p class="text-sm text-gray-500">Toàn thị trường</p>`;
+        }
 
         // Cập nhật Khối lượng giao dịch
-        document.getElementById('volume-24h-container').innerHTML = `
-            <p class="text-3xl font-bold text-gray-900">${'$' + formatNumber(data.volume_24h)}</p>
-            <p class="text-sm text-gray-500">Toàn thị trường</p>`;
+        const volumeContainer = document.getElementById('volume-24h-container');
+        if (volumeContainer) {
+            volumeContainer.innerHTML = `
+                <p class="text-3xl font-bold text-gray-900">${'$' + formatNumber(data.volume_24h)}</p>
+                <p class="text-sm text-gray-500">Toàn thị trường</p>`;
+        }
 
         // Cập nhật giá BTC
         const btcContainer = document.getElementById('btc-price-container');
-        const change = data.btc_change_24h;
-        const changeClass = change >= 0 ? 'text-green-600' : 'text-red-600';
-        btcContainer.innerHTML = `
-            <p class="text-3xl font-bold text-gray-900">${'$' + (data.btc_price_usd ? data.btc_price_usd.toLocaleString('en-US') : 'N/A')}</p>
-            <p class="text-sm font-semibold ${changeClass}">${change !== null ? change.toFixed(2) : 'N/A'}% (24h)</p>`;
+        if (btcContainer) {
+            const change = data.btc_change_24h;
+            const changeClass = change >= 0 ? 'text-green-600' : 'text-red-600';
+            btcContainer.innerHTML = `
+                <p class="text-3xl font-bold text-gray-900">${'$' + (data.btc_price_usd ? data.btc_price_usd.toLocaleString('en-US') : 'N/A')}</p>
+                <p class="text-sm font-semibold ${changeClass}">${change !== null ? change.toFixed(2) : 'N/A'}% (24h)</p>`;
+        }
 
         // Cập nhật chỉ số Sợ hãi & Tham lam
         const fngContainer = document.getElementById('fear-greed-container');
@@ -94,12 +143,103 @@ async function fetchDashboardSummary() {
 
     } catch (error) {
         console.error('Lỗi fetchDashboardSummary:', error);
-        displayError('market-cap-container', error.message);
-        displayError('volume-24h-container', '');
-        displayError('btc-price-container', '');
-        displayError('fear-greed-container', '');
-        displayError('rsi-container', '');
+        console.error('Error stack:', error.stack);
+        
+        // Hiển thị fallback data thay vì chỉ hiển thị lỗi
+        displayFallbackData();
+        
+        // Hiển thị thông báo lỗi nhẹ nhàng
+        showErrorNotification('Đang gặp sự cố kết nối. Hiển thị dữ liệu mặc định.');
     }
+}
+
+/**
+ * Hiển thị dữ liệu mặc định khi API không khả dụng
+ */
+function displayFallbackData() {
+    // Hiển thị market cap fallback
+    const marketCapContainer = document.getElementById('market-cap-container');
+    if (marketCapContainer) {
+        marketCapContainer.innerHTML = `
+            <p class="text-3xl font-bold text-gray-400">Đang tải...</p>
+            <p class="text-sm text-gray-500">Toàn thị trường</p>`;
+    }
+
+    // Hiển thị volume fallback
+    const volumeContainer = document.getElementById('volume-24h-container');
+    if (volumeContainer) {
+        volumeContainer.innerHTML = `
+            <p class="text-3xl font-bold text-gray-400">Đang tải...</p>
+            <p class="text-sm text-gray-500">Toàn thị trường</p>`;
+    }
+
+    // Hiển thị BTC price fallback
+    const btcContainer = document.getElementById('btc-price-container');
+    if (btcContainer) {
+        btcContainer.innerHTML = `
+            <p class="text-3xl font-bold text-gray-400">Đang tải...</p>
+            <p class="text-sm text-gray-500">Bitcoin USD</p>`;
+    }
+
+    // Hiển thị F&G fallback
+    const fngContainer = document.getElementById('fear-greed-container');
+    if (fngContainer) {
+        const fngConfig = {
+            min: 0, max: 100,
+            segments: [
+                { limit: 24, color: 'var(--fng-extreme-fear-color)', label: 'Sợ hãi Cực độ' },
+                { limit: 49, color: 'var(--fng-fear-color)', label: 'Sợ hãi' },
+                { limit: 54, color: 'var(--fng-neutral-color)', label: 'Trung tính' },
+                { limit: 74, color: 'var(--fng-greed-color)', label: 'Tham lam' },
+                { limit: 100, color: 'var(--fng-extreme-greed-color)', label: 'Tham lam Cực độ' }
+            ]
+        };
+        createGauge(fngContainer, 50, fngConfig); // Default neutral value
+    }
+
+    // Hiển thị RSI fallback
+    const rsiContainer = document.getElementById('rsi-container');
+    if (rsiContainer) {
+        const rsiConfig = {
+            min: 0, max: 100,
+            segments: [
+                { limit: 30, color: 'var(--rsi-oversold-color)', label: 'Quá bán' },
+                { limit: 70, color: 'var(--rsi-neutral-color)', label: 'Trung tính' },
+                { limit: 100, color: 'var(--rsi-overbought-color)', label: 'Quá mua' }
+            ]
+        };
+        createGauge(rsiContainer, 50, rsiConfig); // Default neutral value
+    }
+}
+
+/**
+ * Hiển thị thông báo lỗi dạng toast
+ */
+function showErrorNotification(message) {
+    // Tạo toast notification nếu chưa có
+    let notification = document.getElementById('error-notification');
+    if (!notification) {
+        notification = document.createElement('div');
+        notification.id = 'error-notification';
+        notification.className = 'fixed top-4 right-4 bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded shadow-lg z-50 max-w-sm';
+        document.body.appendChild(notification);
+    }
+    
+    notification.innerHTML = `
+        <div class="flex items-center">
+            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+            </svg>
+            <span class="text-sm">${message}</span>
+        </div>
+    `;
+    
+    // Tự động ẩn sau 5 giây
+    setTimeout(() => {
+        if (notification && notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+        }
+    }, 5000);
 }
 
 
