@@ -1,15 +1,9 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "run.py",
-      "use": "@vercel/python"
+  "functions": {
+    "run.py": {
+      "runtime": "@vercel/python",
+      "maxDuration": 30
     }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "run.py"
-    }
-  ]
+  }
 }
