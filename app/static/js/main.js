@@ -149,7 +149,7 @@ async function fetchDashboardSummary() {
         displayFallbackData();
         
         // Hiển thị thông báo lỗi nhẹ nhàng
-        showErrorNotification('Đang gặp sự cố kết nối. Hiển thị dữ liệu mặc định.');
+        showErrorNotification('Đang gặp sự cố kết nối. Hiển thị dữ liệu mặc định.', error);
     }
 }
 
