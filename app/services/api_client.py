@@ -1,7 +1,7 @@
 import requests
 from requests.exceptions import RequestException, HTTPError, ConnectionError, Timeout
 
-def fetch_json(url, timeout=10):
+def fetch_json(url, timeout=5):
     """
     Hàm chung để gửi yêu cầu GET và trả về dữ liệu JSON.
     Bao gồm xử lý lỗi chi tiết.

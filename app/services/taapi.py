@@ -31,7 +31,7 @@ def get_btc_rsi():
         return None, f"Rate limit: phải chờ {int(time_to_wait)} giây nữa", 429
 
     _last_request_time = current_time
-    json_data, error, status_code = fetch_json(api_url, timeout=50)
+    json_data, error, status_code = fetch_json(api_url, timeout=3)
 
     if error:
         # Nếu gặp rate limit, tăng thời gian chờ và thử backup cache
