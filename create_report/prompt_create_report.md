@@ -71,6 +71,7 @@ Bạn PHẢI trả về 3 khối mã riêng biệt và đầy đủ, được ba
     -   Đối với các chỉ số như Tỷ lệ Thống trị của Bitcoin, hãy tạo các placeholder `<div>` với `id` rõ ràng để JavaScript có thể vẽ biểu đồ vào đó. Ví dụ: `<div id="btc-dominance-doughnut-container"></div>`.
 -   **Tối ưu hóa cho Thiết bị Di động:** 
     -   Tạo phiên bản hiển thị dạng "card" cho mỗi hàng của bảng trên di động thay vì cuộn ngang, giúp thông tin dễ đọc hơn.
+    -   **Căn giữa hoàn hảo:** Tất cả các `.report-card` phải được căn giữa một cách hoàn hảo trên thiết bị di động, sử dụng Flexbox với `align-items: center` và `justify-content: center`.
 
 
 ### 5.2. `report.css`
@@ -81,9 +82,10 @@ Bạn PHẢI trả về 3 khối mã riêng biệt và đầy đủ, được ba
     * **CHIỀU CAO LINH HOẠT:** **KHÔNG** đặt chiều cao cố định (`height`) cho các container chứa biểu đồ (`.gauge-container`, `.doughnut-container`, etc.). Hãy để chiều cao của chúng tự động điều chỉnh theo nội dung bên trong để tránh tình trạng biểu đồ hoặc chú giải bị cắt xén hoặc chồng lên các phần tử khác.
     
 * **Styling:**
-    * Tạo kiểu cho class `.report-card` với các thuộc tính như `background-color: #ffffff;`, `border-radius`, `box-shadow`, và `padding` để tạo giao diện sạch sẽ, hiện đại.
+    * Tạo kiểu cho class `.report-card` với các thuộc tính như `background-color: #ffffff;`, `border-radius`, `box-shadow`, và `padding = 1rem` để tạo giao diện sạch sẽ, hiện đại.
     * Sử dụng các biến CSS (CSS Variables) cho màu sắc chính nếu có thể để dễ bảo trì.
     * Đảm bảo văn bản dễ đọc, font chữ và kích thước phù hợp.
+    * **Căn giữa trên di động:** Đảm bảo tất cả các `.report-card` được căn giữa hoàn hảo trên thiết bị di động bằng cách sử dụng `display: flex`, `align-items: center`, `justify-content: center` cho các container và `margin: 0 auto` cho các card.
 *   **Bảng màu chung (Theme Light/Dark):** Sử dụng các biến CSS dưới đây làm nền tảng cho việc thiết kế. Các biến này phải được đặt trong selector `:root` của tệp CSS chính (`style.css`), và `report.css` sẽ kế thừa chúng.
 *   Dùng màu với các icon Crypto đúng với màu mẫu.
 ```css
