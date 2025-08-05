@@ -12,25 +12,55 @@ from ..models import Report
 def _read_prompt_file(file_path):
     """Đọc nội dung từ tệp prompt."""
     try:
+        # Kiểm tra file tồn tại
+        if not os.path.exists(file_path):
+            print(f"Lỗi: File không tồn tại tại '{file_path}'")
+            return None
+            
         with open(file_path, 'r', encoding='utf-8') as f:
             template = f.read()
+            
+            # Kiểm tra nội dung template
+            if not template or not isinstance(template, str):
+                print(f"Lỗi: Nội dung file trống hoặc không hợp lệ tại '{file_path}'")
+                return None
+            
             # Đọc toàn bộ nội dung file app/static/colors.css
             current_dir = os.path.dirname(__file__)
             colors = os.path.abspath(os.path.join(current_dir, '..','static', 'css/colors.css'))
-            with open(colors, 'r', encoding='utf-8') as f:
-                colors_content = f.read()
-                # Lấy nội dung :root trong file colors.css
-                colors_content = re.search(r':root\s*{([^}]+)}', colors_content, re.DOTALL)
-                if colors_content:
-                    colors_content = colors_content.group(1).strip()
-                else:
-                    print("Lỗi: Không tìm thấy nội dung :root trong file colors.css")
+            
+            # Kiểm tra file colors.css tồn tại
+            if not os.path.exists(colors):
+                print(f"Cảnh báo: File colors.css không tồn tại tại '{colors}' - sử dụng giá trị mặc định")
+                colors_content = ""
+            else:
+                try:
+                    with open(colors, 'r', encoding='utf-8') as f:
+                        colors_content = f.read()
+                        
+                        if colors_content:
+                            # Lấy nội dung :root trong file colors.css
+                            colors_match = re.search(r':root\s*{([^}]+)}', colors_content, re.DOTALL)
+                            if colors_match:
+                                colors_content = colors_match.group(1).strip()
+                            else:
+                                print("Cảnh báo: Không tìm thấy nội dung :root trong file colors.css")
+                                colors_content = ""
+                        else:
+                            colors_content = ""
+                except Exception as e:
+                    print(f"Lỗi khi đọc file colors.css: {e}")
                     colors_content = ""
-                # Thay thế biến trong template
-                prompt = template.replace("{{ @css_root }}", colors_content)
-                return prompt
+                
+            # Thay thế biến trong template
+            prompt = template.replace("{{ @css_root }}", colors_content)
+            return prompt
+            
     except FileNotFoundError:
         print(f"Lỗi: Không tìm thấy tệp prompt tại '{file_path}'")
+        return None
+    except Exception as e:
+        print(f"Lỗi khi đọc file '{file_path}': {e}")
         return None
 
 
@@ -47,6 +77,15 @@ def _replace_date_placeholders(prompt_text):
 
 def _extract_code_blocks(response_text):
     """Trích xuất các khối mã nguồn (html, css, js) từ phản hồi của Gemini."""
+    # Kiểm tra input
+    if not response_text or not isinstance(response_text, str):
+        print("Cảnh báo: response_text là None hoặc không phải string")
+        return {
+            "html": "",
+            "css": "/* Lỗi: Không có nội dung phản hồi */",
+            "js": "// Lỗi: Không có nội dung phản hồi"
+        }
+    
     html_match = re.search(r"```html(.*?)```", response_text, re.DOTALL)
     css_match = re.search(r"```css(.*?)```", response_text, re.DOTALL)
     js_match = re.search(r"```javascript(.*?)```", response_text, re.DOTALL)
@@ -63,6 +102,11 @@ def _extract_code_blocks(response_text):
 
 def _extract_part_a_content(full_report):
     """Trích xuất nội dung PHẦN A: NỘI DUNG BÁO CÁO từ báo cáo đầy đủ."""
+    # Kiểm tra input
+    if not full_report or not isinstance(full_report, str):
+        print("Cảnh báo: full_report là None hoặc không phải string")
+        return ""
+    
     # Tìm phần bắt đầu của PHẦN A
     part_a_start = re.search(r"##\s*📑\s*PHẦN A.*?NỘI DUNG BÁO CÁO", full_report, re.IGNORECASE | re.DOTALL)
     if not part_a_start:
@@ -103,6 +147,11 @@ def _check_report_validation(report_text):
     Returns:
         str: 'PASS', 'FAIL', hoặc 'UNKNOWN'
     """
+    # Kiểm tra input
+    if not report_text or not isinstance(report_text, str):
+        print("Cảnh báo: report_text là None hoặc không phải string")
+        return 'UNKNOWN'
+    
     # Tìm kết quả kiểm tra cuối cùng
     pass_pattern = re.search(r"KẾT QUẢ KIỂM TRA:\s*PASS", report_text, re.IGNORECASE)
     fail_pattern = re.search(r"KẾT QUẢ KIỂM TRA:\s*FAIL", report_text, re.IGNORECASE)
@@ -129,6 +178,11 @@ def generate_auto_research_report(api_key, max_attempts=3):
     try:
         print(f"[{datetime.now()}] Bắt đầu tạo báo cáo tự động...")
         
+        # Kiểm tra API key
+        if not api_key or not isinstance(api_key, str):
+            print("Lỗi: API key không hợp lệ")
+            return False
+        
         # Đường dẫn tới các prompt files
         current_dir = os.path.dirname(__file__)
         deep_research_prompt_path = os.path.abspath(
@@ -137,6 +191,9 @@ def generate_auto_research_report(api_key, max_attempts=3):
         create_report_prompt_path = os.path.abspath(
             os.path.join(current_dir, '..', '..', 'create_report', 'prompt_create_report.md')
         )
+        
+        print(f"Deep research prompt path: {deep_research_prompt_path}")
+        print(f"Create report prompt path: {create_report_prompt_path}")
         
         # Bước 1: Đọc prompt deep research và thay thế ngày tháng
         deep_research_prompt = _read_prompt_file(deep_research_prompt_path)
@@ -147,8 +204,13 @@ def generate_auto_research_report(api_key, max_attempts=3):
         deep_research_prompt = _replace_date_placeholders(deep_research_prompt)
         
         # Cấu hình Gemini
-        client = genai.Client(api_key=api_key)
-        model = "gemini-2.5-pro"
+        try:
+            client = genai.Client(api_key=api_key)
+            model = "gemini-2.5-pro"
+            print("Đã khởi tạo Gemini client thành công")
+        except Exception as e:
+            print(f"Lỗi khi khởi tạo Gemini client: {e}")
+            return False
         
         # Cấu hình tools và thinking mode
         tools = [
@@ -184,10 +246,17 @@ def generate_auto_research_report(api_key, max_attempts=3):
                     contents=contents,
                     config=generate_content_config
                 )
+                
+                # Kiểm tra response
+                if not response or not hasattr(response, 'text'):
+                    print(f"Lần thử {attempt}: Response không hợp lệ từ AI")
+                    continue
+                    
                 full_report_text = response.text
                 
-                if not full_report_text:
-                    print(f"Lần thử {attempt}: Không nhận được nội dung báo cáo từ AI")
+                # Kiểm tra nội dung response
+                if not full_report_text or not isinstance(full_report_text, str):
+                    print(f"Lần thử {attempt}: Không nhận được nội dung báo cáo từ AI hoặc không phải string")
                     continue
                 
                 # Kiểm tra validation
@@ -244,6 +313,15 @@ def generate_auto_research_report(api_key, max_attempts=3):
             contents=interface_contents
         )
         
+        # Kiểm tra interface response
+        if not interface_response or not hasattr(interface_response, 'text'):
+            print("Lỗi: Interface response không hợp lệ từ AI")
+            return False
+            
+        if not interface_response.text or not isinstance(interface_response.text, str):
+            print("Lỗi: Không nhận được nội dung interface từ AI hoặc không phải string")
+            return False
+        
         # Bước 5: Trích xuất các khối mã
         code_blocks = _extract_code_blocks(interface_response.text)
         
@@ -273,7 +351,7 @@ def generate_auto_research_report(api_key, max_attempts=3):
         return False
 
 
-def schedule_auto_report(app, api_key, interval_hours=3):
+def schedule_auto_report(app, api_key, interval_hours=6):
     """
     Lên lịch tự động tạo báo cáo mỗi interval_hours giờ.
     
