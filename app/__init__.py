@@ -12,6 +12,7 @@ from .models import Report
 from .utils.cache import cache
 from .blueprints.crypto import crypto_bp
 from .services.report_generator import create_report_from_content
+from .services.auto_report_scheduler import start_auto_report_scheduler, generate_auto_research_report
 
 def create_app():
     """
@@ -68,6 +69,9 @@ def create_app():
         db.create_all()
         print("INFO: Database tables initialized.")
 
+    # Khởi động auto report scheduler
+    start_auto_report_scheduler(app)
+
     # --- Routes ---
     @app.route('/')
     def index():
@@ -108,6 +112,31 @@ def create_app():
     def upload_page():
         return render_template('upload.html')
 
+    @app.route('/auto-update-system-<secret_key>')
+    def auto_update_page(secret_key):
+        """Trang auto update - chỉ có thể truy cập bằng URL với secret key đúng"""
+        required_secret = os.getenv('AUTO_UPDATE_SECRET_KEY')
+        
+        # Kiểm tra nếu secret key chưa được cấu hình
+        if not required_secret:
+            return jsonify({
+                'error': 'Auto update system chưa được cấu hình', 
+                'message': 'Vui lòng thiết lập AUTO_UPDATE_SECRET_KEY trong file .env'
+            }), 503
+        
+        # Kiểm tra secret key có khớp không
+        if secret_key != required_secret:
+            # Log attempt để security monitoring
+            app.logger.warning(f'Unauthorized access attempt to auto-update-system with key: {secret_key}')
+            return jsonify({
+                'error': 'Access denied', 
+                'message': 'Invalid secret key'
+            }), 403
+        
+        # Log successful access
+        app.logger.info('Authorized access to auto-update-system')
+        return render_template('auto_update.html')
+
     @app.route('/upload-report', methods=['POST'])
     def generate_report_from_upload():
         if 'file' not in request.files or not request.form.get('gemini_key'):
@@ -143,6 +172,46 @@ def create_app():
                 return jsonify({'success': False, 'message': f'Đã xảy ra lỗi không mong muốn: {e}'})
         else:
             return jsonify({'success': False, 'message': 'Định dạng tệp không hợp lệ. Vui lòng tải lên tệp .docx, .odt hoặc .pdf.'})
+
+    @app.route('/generate-auto-report', methods=['POST'])
+    def manual_generate_auto_report():
+        """Route để tạo báo cáo tự động thủ công"""
+        try:
+            api_key = os.getenv('GEMINI_API_KEY')
+            
+            if not api_key:
+                return jsonify({'success': False, 'message': 'Vui lòng cung cấp API Key hoặc thiết lập GEMINI_API_KEY.'})
+            
+            success = generate_auto_research_report(api_key)
+            
+            if success:
+                return jsonify({'success': True, 'message': 'Báo cáo tự động đã được tạo thành công!'})
+            else:
+                return jsonify({'success': False, 'message': 'Có lỗi xảy ra khi tạo báo cáo tự động.'})
+                
+        except Exception as e:
+            return jsonify({'success': False, 'message': f'Đã xảy ra lỗi không mong muốn: {e}'})
+
+    @app.route('/scheduler-status')
+    def scheduler_status():
+        """API endpoint để kiểm tra trạng thái scheduler"""
+        is_enabled = os.getenv('ENABLE_AUTO_REPORT_SCHEDULER', 'false').lower() == 'true'
+        has_api_key = bool(os.getenv('GEMINI_API_KEY'))
+        interval_hours = int(os.getenv('AUTO_REPORT_INTERVAL_HOURS', '3'))
+        
+        # Get latest report info
+        latest_report = Report.query.order_by(Report.created_at.desc()).first()
+        latest_report_time = latest_report.created_at.isoformat() if latest_report else None
+        total_reports = Report.query.count()
+        
+        return jsonify({
+            'scheduler_enabled': is_enabled,
+            'has_api_key': has_api_key,
+            'interval_hours': interval_hours,
+            'status': 'active' if (is_enabled and has_api_key) else 'inactive',
+            'latest_report_time': latest_report_time,
+            'total_reports': total_reports
+        })
 
     app.register_blueprint(crypto_bp, url_prefix='/api/crypto')
 

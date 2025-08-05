@@ -4,6 +4,7 @@ Flask-SQLAlchemy
 Flask-Caching
 redis
 requests
+google-genai
 google-generativeai
 python-docx
 odfpy

@@ -19,11 +19,16 @@ Một ứng dụng web Flask toàn diện được thiết kế để cung cấp
 
 ### 🤖 AI Report Generator
 * **Chuyển đổi tài liệu thành web report** hoàn toàn tự động:
-  * Hỗ trợ định dạng: `.docx` (Microsoft Word) và `.odt` (OpenDocument)
-  * Tích hợp **Google Gemini AI** để phân tích và tạo nội dung
+  * Hỗ trợ định dạng: `.docx` (Microsoft Word), `.odt` (OpenDocument), và `.pdf`
+  * Tích hợp **Google Gemini 2.5 Pro** để phân tích và tạo nội dung
   * Sinh tự động HTML, CSS, và JavaScript với biểu đồ tương tác
 * **Smart chart generation**: AI tự động chọn loại biểu đồ phù hợp (line, bar, doughnut, gauge)
 * **Persistent storage**: Lưu trữ báo cáo vào database để xem lại sau này
+* **🆕 Auto Report Generator**: Tạo báo cáo nghiên cứu thị trường crypto tự động
+  * Scheduler tự động chạy mỗi 3 giờ (có thể tùy chỉnh)
+  * Báo cáo nghiên cứu sâu về thị trường tiền điện tử
+  * Phân tích tâm lý thị trường, kỹ thuật, và các yếu tố vĩ mô
+  * Tạo giao diện web tương tác tự động từ dữ liệu mới nhất
 
 ### 🎨 Giao Diện & UX
 * **Modern responsive design** với Tailwind CSS
@@ -170,15 +175,26 @@ flask run
    cp .env.example .env
    ```
 
-2. **Cấu hình API keys** trong `.env`:
+2. **Cấu hình API keys và Auto Report Scheduler** trong `.env`:
    ```env
-   # API Keys (optional cho development)
+   # API Keys (optional for dashboard, required for AI report generator)
    COINGECKO_API_KEY=your_coingecko_key
    TAAPI_SECRET=your_taapi_secret
+   GEMINI_API_KEY=your_gemini_api_key  # Required for AI reports
+   
+   # Auto Report Scheduler Settings
+   ENABLE_AUTO_REPORT_SCHEDULER=true   # Set to true to enable auto reports
+   AUTO_REPORT_INTERVAL_HOURS=3        # Generate report every 3 hours
    
    # Database (auto-configured)
    DATABASE_URL=sqlite:///instance/local_dev.db
    ```
+
+3. **Bật tính năng Auto Report Scheduler**:
+   * Thiết lập `GEMINI_API_KEY` với API key từ [Google AI Studio](https://makersuite.google.com/app/apikey)
+   * Đặt `ENABLE_AUTO_REPORT_SCHEDULER=true` để bật scheduler
+   * Tùy chỉnh `AUTO_REPORT_INTERVAL_HOURS` cho khoảng thời gian mong muốn
+   * Khởi động lại ứng dụng để áp dụng thay đổi
 
 ### Development Workflow
 * **Hot reload**: Flask development server tự động restart
@@ -198,7 +214,58 @@ vercel --prod
 **Environment Variables cần thiết trên Vercel:**
 - `DATABASE_URL`: PostgreSQL connection string
 - `REDIS_URL`: Redis instance URL  
+- `GEMINI_API_KEY`: Google Gemini API key (for AI reports)
+- `ENABLE_AUTO_REPORT_SCHEDULER`: Set to "true" for auto reports
+- `AUTO_REPORT_INTERVAL_HOURS`: Interval in hours (default: 3)
 - API keys (optional, có fallback graceful)
+
+---
+
+## 📖 Cách Sử Dụng
+
+### 📈 Dashboard Crypto
+1. Truy cập trang chủ để xem dashboard thời gian thực
+2. Xem các chỉ số quan trọng: BTC price, market cap, Fear & Greed Index, RSI
+3. Dashboard tự động cập nhật mỗi 10 phút
+
+### 🤖 AI Report Generator
+
+#### Tạo báo cáo từ file:
+1. Truy cập `/upload` 
+2. Chọn tab "Tải lên tệp"
+3. Nhập Gemini API Key
+4. Tải lên file (.docx, .odt, .pdf)
+5. Nhấn "Xử lý và Tạo Báo cáo"
+
+#### Tạo báo cáo tự động:
+1. Truy cập `/upload`
+2. Chọn tab "Tạo tự động" 
+3. Nhập Gemini API Key (hoặc để trống nếu đã cấu hình)
+4. Nhấn "Tạo Báo cáo Tự động"
+5. Hệ thống sẽ tự động tạo báo cáo nghiên cứu thị trường crypto
+
+#### Scheduler tự động:
+1. Cấu hình `GEMINI_API_KEY` và `ENABLE_AUTO_REPORT_SCHEDULER=true` trong `.env`
+2. Khởi động lại ứng dụng
+3. Hệ thống sẽ tự động tạo báo cáo mỗi 3 giờ (hoặc theo cấu hình)
+4. Kiểm tra trạng thái scheduler tại `/scheduler-status`
+
+#### 🔧 Trang Auto Update System:
+- **URL**: `/auto-update-system-<secret_key>` (yêu cầu secret key để truy cập)
+- **Bảo mật**: 
+  - Cấu hình `AUTO_UPDATE_SECRET_KEY` trong `.env`
+  - Chỉ những người có secret key mới truy cập được
+  - Log tất cả các attempt truy cập
+- **Tính năng**:
+  - Theo dõi trạng thái scheduler thời gian thực
+  - Tạo báo cáo thủ công bằng một click
+  - Xem nhật ký hoạt động chi tiết
+  - Kiểm tra cấu hình hệ thống
+
+### 📊 Xem Báo Cáo
+- Trang chủ hiển thị báo cáo mới nhất
+- Truy cập `/reports` để xem tất cả báo cáo
+- Mỗi báo cáo có URL riêng: `/report/<id>`
 
 ---
 
