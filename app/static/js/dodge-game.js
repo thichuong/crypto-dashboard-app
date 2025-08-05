@@ -257,8 +257,8 @@ class DodgeGame {
         
         this.gameTime += 16; // ~60fps
         
-        // Tăng tốc theo thời gian
-        this.speed = 2 + (this.gameTime / 10000);
+        // Tăng tốc theo điểm số (mỗi 100 điểm tăng 0.5 tốc độ)
+        this.speed = 2 + (this.score / 200);
         
         this.updatePlayer();
         this.updateObstacles();

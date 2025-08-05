@@ -1,24 +1,41 @@
-// main.js - DEPRECATED FILE
-// 
-// This file is deprecated and should not be used in new code.
-// Functionality has been moved to:
-// - dashboard.js for dashboard-specific logic  
-// - theme-manager.js for theme switching
-// - upload.js for upload page functionality
-//
-// This file is kept only for backward compatibility and will be removed in future versions.
+// dashboard.js - Logic riêng cho trang dashboard chính
 
-console.warn('⚠️  main.js is deprecated. Please use dashboard.js and theme-manager.js instead.');
+/**
+ * Định dạng số lớn thành dạng ngắn gọn (nghìn tỷ, tỷ, triệu).
+ * @param {number} num - Số cần định dạng.
+ * @returns {string} - Chuỗi đã được định dạng.
+ */
+function formatNumber(num) {
+    if (num === null || num === undefined) return 'N/A';
+    if (num >= 1e12) return (num / 1e12).toFixed(2) + ' nghìn tỷ';
+    if (num >= 1e9) return (num / 1e9).toFixed(2) + ' tỷ';
+    if (num >= 1e6) return (num / 1e6).toFixed(2) + ' triệu';
+    return num.toLocaleString('en-US');
+}
 
-// If you see this warning, update your HTML templates to use the new JS files:
-// - Replace main.js with dashboard.js for index.html
-// - Add theme-manager.js for all pages that need theme switching
-// - Use only upload.js for upload.html (no main.js needed)
+/**
+ * Hiển thị thông báo lỗi thân thiện trên một card cụ thể.
+ * @param {string} containerId - ID của container cần hiển thị lỗi.
+ * @param {string} message - Thông báo lỗi.
+ */
+function displayError(containerId, message = 'Không thể tải dữ liệu.') {
+    const container = document.getElementById(containerId);
+    if (container) {
+        container.innerHTML = `<p class="text-sm text-red-600">${message}</p>`;
+    }
+}
 
 /**
  * Fetch toàn bộ dữ liệu cho dashboard từ endpoint tổng hợp.
  */
 async function fetchDashboardSummary() {
+    // Chỉ chạy nếu có các element dashboard
+    if (!document.getElementById('market-cap-container') && 
+        !document.getElementById('volume-24h-container') && 
+        !document.getElementById('btc-price-container')) {
+        return; // Không phải trang dashboard, bỏ qua
+    }
+
     try {
         const response = await fetch('/api/crypto/dashboard-summary', {
             headers: {
@@ -168,7 +185,7 @@ function displayFallbackData() {
     if (btcContainer) {
         btcContainer.innerHTML = `
             <p class="text-3xl font-bold text-gray-400">Đang tải...</p>
-            <p class="text-sm text-gray-500">Bitcoin USD</p>`;
+            <p class="text-sm text-gray-500">Bitcoin</p>`;
     }
 
     // Hiển thị F&G fallback
@@ -231,7 +248,6 @@ function showErrorNotification(message) {
         }
     }, 5000);
 }
-
 
 /**
  * Tải nội dung báo cáo từ file tĩnh và tạo mục lục điều hướng.
@@ -302,21 +318,36 @@ async function CreateNav() {
     }
 }
 
+
 /**
- * Hàm khởi tạo chính
+ * Hàm khởi tạo dashboard
  */
-function init() {
+function initDashboard() {
+    // Chỉ chạy nếu đang ở trang dashboard (có các element dashboard)
+    if (document.getElementById('market-cap-container') || 
+        document.getElementById('volume-24h-container') || 
+        document.getElementById('btc-price-container')) {
+        
+        // Gọi hàm tổng hợp một lần khi tải trang
+        fetchDashboardSummary();
+        
+        // Đặt lịch gọi lại hàm tổng hợp sau mỗi 10 phút
+        setInterval(fetchDashboardSummary, 600000);
+    }
+    
     CreateNav();
+
     
-// Gọi hàm tổng hợp một lần khi tải trang
-    fetchDashboardSummary();
-    
-    // Đặt lịch gọi lại hàm tổng hợp sau mỗi 10 phút
-    setInterval(fetchDashboardSummary, 600000); 
+    // Khởi tạo các visual nếu có
+    if (typeof initializeAllVisuals === 'function') {
+        initializeAllVisuals();
+    }
+    else if (typeof initializeAllVisuals_report === 'function') {
+        initializeAllVisuals_report();
+    }
 }
 
-
-
+// Khởi tạo dashboard khi DOM ready
 document.addEventListener('DOMContentLoaded', () => {
-    init();
+    initDashboard();
 });

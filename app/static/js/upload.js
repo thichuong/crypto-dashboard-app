@@ -15,17 +15,10 @@ function notifyIframesThemeChange(theme) {
     });
 }
 
-// Load saved theme on page load
+// Initialize upload page functionality
 document.addEventListener('DOMContentLoaded', function() {
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    
-    // Wait a bit for iframes to load, then send initial theme
-    setTimeout(() => {
-        notifyIframesThemeChange(savedTheme === 'light' ? null : savedTheme);
-    }, 1000);
-    
-    // Watch for theme changes on the document
+    // Theme handling is now managed by theme-manager.js
+    // Just need to notify iframes when theme changes
     const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
             if (mutation.type === 'attributes' && mutation.attributeName === 'data-theme') {
@@ -39,6 +32,12 @@ document.addEventListener('DOMContentLoaded', function() {
         attributes: true,
         attributeFilter: ['data-theme']
     });
+    
+    // Initialize iframe theme after a delay
+    setTimeout(() => {
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+        notifyIframesThemeChange(currentTheme === 'light' ? null : currentTheme);
+    }, 1000);
 });
 
 // File selection handling
