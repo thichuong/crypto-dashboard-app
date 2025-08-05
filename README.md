@@ -237,13 +237,6 @@ vercel --prod
 4. Tải lên file (.docx, .odt, .pdf)
 5. Nhấn "Xử lý và Tạo Báo cáo"
 
-#### Tạo báo cáo tự động:
-1. Truy cập `/upload`
-2. Chọn tab "Tạo tự động" 
-3. Nhập Gemini API Key (hoặc để trống nếu đã cấu hình)
-4. Nhấn "Tạo Báo cáo Tự động"
-5. Hệ thống sẽ tự động tạo báo cáo nghiên cứu thị trường crypto
-
 #### Scheduler tự động:
 1. Cấu hình `GEMINI_API_KEY` và `ENABLE_AUTO_REPORT_SCHEDULER=true` trong `.env`
 2. Khởi động lại ứng dụng
