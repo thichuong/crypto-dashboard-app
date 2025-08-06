@@ -4,7 +4,11 @@ Một ứng dụng web Flask toàn diện được thiết kế để cung cấp
 1. **Dashboard thị trường tiền mã hóa** theo thời gian thực với các chỉ số quan trọng
 2. **Trình tạo báo cáo AI** - công cụ cho phép chuyển đổi tài liệu văn bản thành báo cáo web tương tác một cách tự động
 
-**🔗 Xem trực tiếp tại:** [https://crypto-dashboard-app-thichuong.vercel.app/](https://crypto-dashboard-app-thichuong.vercel.app/)
+**🔗 Xem trực tiếp tại:** [https://crypto-dashboard-app-thichuong.vercel.app/](h   │   ├── 📄 alternative_me.py # Fear & Greed Index
+   │   ├── 📄 taapi.py        # Technical Analysis API
+   │   ├── 📄 report_generator.py # AI report creation (legacy)
+   │   ├── 📄 report_workflow.py # LangGraph workflow implementation
+   │   └── 📄 auto_report_scheduler.py # Scheduler với LangGraph integration://crypto-dashboard-app-thichuong.vercel.app/)
 
 ## ✨ Tính Năng Nổi Bật
 
@@ -24,7 +28,11 @@ Một ứng dụng web Flask toàn diện được thiết kế để cung cấp
   * Sinh tự động HTML, CSS, và JavaScript với biểu đồ tương tác
 * **Smart chart generation**: AI tự động chọn loại biểu đồ phù hợp (line, bar, doughnut, gauge)
 * **Persistent storage**: Lưu trữ báo cáo vào database để xem lại sau này
-* **🆕 Auto Report Generator**: Tạo báo cáo nghiên cứu thị trường crypto tự động
+* **🆕 Auto Report Generator với LangGraph**: Tạo báo cáo nghiên cứu thị trường crypto tự động
+  * **🌐 LangGraph Workflow**: Workflow engine hiện đại cho complex AI pipelines
+  * **📊 Modular Architecture**: Các nodes độc lập dễ test và maintain
+  * **🔄 Smart Routing**: Conditional flows với retry và fallback logic
+  * **📈 State Management**: Tracking toàn bộ quá trình từ input đến output
   * Scheduler tự động chạy mỗi 3 giờ (có thể tùy chỉnh)
   * Báo cáo nghiên cứu sâu về thị trường tiền điện tử với Google Search integration
   * Phân tích tâm lý thị trường, kỹ thuật, và các yếu tố vĩ mô
@@ -32,6 +40,7 @@ Một ứng dụng web Flask toàn diện được thiết kế để cung cấp
   * **🛡️ Advanced Error Handling**: Retry logic với exponential backoff
   * **🔄 Fallback Mode**: Tự động chuyển sang chế độ offline khi gặp lỗi API
   * **✅ Validation System**: Kiểm tra chất lượng báo cáo tự động
+  * **🔍 Observability**: Detailed logging và monitoring cho từng step
 
 ### 🎨 Giao Diện & UX
 * **Modern responsive design** với Tailwind CSS
@@ -55,13 +64,20 @@ Tính năng cốt lõi cho phép người dùng tạo báo cáo web tương tác
    * Cung cấp **Gemini API Key** (từ Google AI Studio)
    * Upload tài liệu: `.docx` hoặc `.odt`
 
-2. **⚙️ AI Processing Pipeline**
+2. **⚙️ AI Processing Pipeline với LangGraph**
    ```
-   Document → Text Extraction → AI Analysis → Code Generation
+   Document → LangGraph Workflow → Interactive Report
    ```
-   * **Document parsing**: `python-docx`/`odfpy` trích xuất nội dung
-   * **Content analysis**: Gemini AI phân tích cấu trúc và dữ liệu
-   * **Smart prompt engineering**: Sử dụng prompt template được tối ưu
+   * **State-driven processing**: Mỗi step được quản lý bởi LangGraph StateGraph
+   * **Workflow nodes**:
+     - `prepare_data_node`: Document parsing và setup
+     - `research_deep_node`: AI analysis với Google Search
+     - `validate_report_node`: Quality assurance checking
+     - `create_interface_node`: HTML/CSS/JS generation
+     - `extract_code_node`: Code parsing và optimization
+     - `save_database_node`: Persistent storage
+   * **Error handling**: Automatic retry với conditional routing
+   * **Fallback strategy**: Graceful degradation khi API fails
 
 3. **🎨 Code Generation**
    * **HTML**: Semantic structure với accessibility support
@@ -123,6 +139,7 @@ class Report(db.Model):
   * Development: SQLite
 * **Caching**: Redis (Production) / SimpleCache (Dev)
 * **AI Integration**: Google Gemini API (`google-generativeai`)
+* **Workflow Engine**: LangGraph cho complex AI pipelines
 * **Document Processing**: `python-docx`, `odfpy`
 
 ### Frontend Stack  
@@ -258,10 +275,12 @@ vercel --prod
   - Log tất cả các attempt truy cập
 - **Tính năng**:
   - Theo dõi trạng thái scheduler thời gian thực
+  - **🌐 LangGraph Workflow Monitoring**: Visual tracking workflow execution
+  - **📊 Node-level Analytics**: Performance metrics cho từng workflow step
   - Tạo báo cáo thủ công bằng một click
   - Xem nhật ký hoạt động chi tiết
   - Kiểm tra cấu hình hệ thống
-  - **🛡️ Error Recovery**: Tự động retry với exponential backoff
+  - **🛡️ Error Recovery**: Workflow state inspection và manual retry
   - **🔄 Fallback Monitoring**: Theo dõi chế độ fallback và API health
 
 ### 📊 Xem Báo Cáo
@@ -271,26 +290,123 @@ vercel --prod
 
 ---
 
+## 🌐 LangGraph Workflow Architecture
+
+### 🔄 Auto Report Generation Pipeline
+
+Hệ thống sử dụng LangGraph để quản lý complex AI workflow với state management và error handling tiên tiến.
+
+#### 📋 **Workflow Nodes**
+
+```python
+# Workflow Structure
+StateGraph(ReportState)
+├── prepare_data_node       # Document parsing & client setup
+├── research_deep_node      # AI research với Google Search
+├── fallback_research_node  # Offline mode khi API fails
+├── validate_report_node    # Quality assurance checking
+├── create_interface_node   # HTML/CSS/JS generation  
+├── extract_code_node       # Code parsing & optimization
+└── save_database_node      # Persistent storage
+```
+
+#### 🗃️ **State Schema**
+```python
+class ReportState(TypedDict):
+    # Input parameters
+    api_key: str
+    max_attempts: int
+    use_fallback_on_500: bool
+    
+    # Processing state
+    research_content: Optional[str]
+    validation_result: Optional[str]
+    interface_content: Optional[str]
+    
+    # Output
+    html_content: Optional[str]
+    css_content: Optional[str] 
+    js_content: Optional[str]
+    report_id: Optional[int]
+    
+    # Control flow
+    current_attempt: int
+    error_messages: List[str]
+    fallback_used: bool
+    success: bool
+```
+
+#### 🛤️ **Conditional Routing Logic**
+
+```python
+def should_retry_or_continue(state):
+    if validation_result == "PASS":
+        return "continue"
+    elif current_attempt >= max_attempts:
+        if should_fallback:
+            return "fallback"
+        return "end"
+    else:
+        return "retry"
+```
+
+### 🏗️ **Benefits của LangGraph Implementation**
+
+#### ✅ **Improved Maintainability**
+* **Modular design**: Mỗi node là function độc lập
+* **Clear separation**: Logic rõ ràng giữa các processing steps  
+* **Easy testing**: Unit test từng node riêng lẻ
+* **Scalable**: Dễ thêm nodes mới hoặc modify existing logic
+
+#### 🔍 **Enhanced Observability**
+* **State tracking**: Monitor state changes qua workflow
+* **Node-level logging**: Chi tiết execution của từng step
+* **Error context**: Complete error tracing với workflow path
+* **Performance metrics**: Timing và resource usage per node
+
+#### 🛡️ **Robust Error Handling**
+* **Graceful degradation**: Automatic fallback khi gặp errors
+* **State preservation**: Không mất state khi retry
+* **Conditional flows**: Smart routing dựa trên results
+* **Recovery mechanisms**: Resume từ checkpoint khi possible
+
+#### 🔄 **Flexible Control Flow**
+* **Dynamic routing**: Conditional edges based on state
+* **Parallel execution**: Potential cho async processing
+* **Retry strategies**: Per-node retry với custom logic
+* **Circuit breakers**: Prevent cascade failures
+
+---
+
 ## 🛡️ Error Handling & Reliability
 
-### Auto Report Scheduler Resilience
+### Auto Report Scheduler Resilience với LangGraph
 Hệ thống được thiết kế để hoạt động ổn định ngay cả khi gặp sự cố API:
 
-#### 🔄 **Retry Logic với Exponential Backoff**
-* **3 lần retry** cho mỗi API call
-* **Thời gian chờ tăng dần**: 30s → 60s → 90s
-* **Áp dụng cho**: Deep research generation và interface creation
+#### 🌐 **LangGraph Workflow Architecture**
+* **State Management**: Persistent state tracking qua tất cả workflow steps
+* **Modular Nodes**: Mỗi processing step là một node độc lập
+* **Conditional Routing**: Smart decision making dựa trên results và errors
+* **Observability**: Built-in logging và monitoring cho từng node
 
-#### 🆘 **Fallback Mode**
-* **Kích hoạt tự động** khi gặp lỗi 500 INTERNAL từ Google Gemini
+#### 🔄 **Retry Logic với Exponential Backoff**
+* **Node-level retry**: Mỗi node có thể retry riêng lẻ
+* **Thời gian chờ tăng dần**: 30s → 60s → 90s
+* **State preservation**: Giữ nguyên state khi retry
+* **Áp dụng cho**: Research, interface generation, và database operations
+
+#### 🆘 **Fallback Mode với Smart Routing**
+* **Automatic detection**: LangGraph tự động detect lỗi 500 INTERNAL
+* **Conditional routing**: Smart navigation đến fallback node
 * **Chế độ offline**: Tạo báo cáo dựa trên kiến thức có sẵn của AI
-* **Không cần Google Search**: Giảm tải và tránh API limits
+* **State continuity**: Workflow tiếp tục mượt mà sau fallback
 * **Quality assurance**: Vẫn áp dụng validation system
 
-#### ✅ **Validation System**
-* **Automatic quality check**: Kiểm tra kết quả `PASS/FAIL/UNKNOWN`
-* **Content verification**: Đảm bảo báo cáo có đủ nội dung cần thiết
-* **Retry on failure**: Tự động thử lại nếu validation không đạt
+#### ✅ **Enhanced Validation System**
+* **Dedicated validation node**: Specialized step cho quality checking
+* **Multi-criteria validation**: PASS/FAIL/UNKNOWN với context awareness
+* **Conditional flow**: Automatic routing based on validation results
+* **Fallback acceptance**: Smart handling cho UNKNOWN results trong fallback mode
 
 #### ⚙️ **Configuration Options**
 ```env
@@ -300,11 +416,12 @@ USE_FALLBACK_ON_500=true       # Bật fallback mode
 THINKING_BUDGET=32768          # AI thinking budget (128-32768)
 ```
 
-#### 📊 **Monitoring & Logging**
-* **Detailed error logs**: Ghi nhận chi tiết mỗi lỗi và retry attempt
-* **Performance tracking**: Theo dõi thời gian xử lý và success rate
-* **API health monitoring**: Kiểm tra trạng thái các external APIs
-* **Dashboard integration**: Hiển thị status trên auto-update system
+#### 📊 **Monitoring & Debugging**
+* **Node-level logging**: Chi tiết execution cho từng workflow step
+* **State inspection**: Real-time monitoring state changes
+* **Performance tracking**: Timing và resource usage per node
+* **Error tracing**: Complete error context với workflow path
+* **Dashboard integration**: Visual workflow status trên auto-update system
 
 ---
 
@@ -416,3 +533,11 @@ crypto-dashboard-app/
 * **Community**: Open source contributors và feedback
 
 **⭐ Nếu project này hữu ích, hãy cho một star trên GitHub!**
+
+### 🔧 **LangGraph Dependencies**
+Nếu gặp lỗi khi install LangGraph, chạy lệnh sau:
+```bash
+pip install langgraph langchain-core
+```
+
+**Note**: LangGraph yêu cầu Python 3.8+ và các dependencies tương thích với LangChain ecosystem.

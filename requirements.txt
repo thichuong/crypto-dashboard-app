@@ -10,3 +10,5 @@ python-docx
 odfpy
 psycopg2-binary
 PyPDF2
+langgraph
+langchain-core
