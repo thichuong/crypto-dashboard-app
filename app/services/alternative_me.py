@@ -5,8 +5,7 @@ BASE_FNG_URL = "https://api.alternative.me/fng/?limit=1"
 
 def get_fng_index():
     """Lấy chỉ số Fear & Greed từ Alternative.me."""
-    api_url = os.getenv('ALTERNATIVE_ME_FNG_API_URL', BASE_FNG_URL)
-    json_data, error, status_code = fetch_json(api_url)
+    json_data, error, status_code = fetch_json(BASE_FNG_URL)
 
     if error:
         return None, error, status_code

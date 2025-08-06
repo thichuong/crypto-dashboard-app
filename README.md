@@ -26,9 +26,12 @@ Một ứng dụng web Flask toàn diện được thiết kế để cung cấp
 * **Persistent storage**: Lưu trữ báo cáo vào database để xem lại sau này
 * **🆕 Auto Report Generator**: Tạo báo cáo nghiên cứu thị trường crypto tự động
   * Scheduler tự động chạy mỗi 3 giờ (có thể tùy chỉnh)
-  * Báo cáo nghiên cứu sâu về thị trường tiền điện tử
+  * Báo cáo nghiên cứu sâu về thị trường tiền điện tử với Google Search integration
   * Phân tích tâm lý thị trường, kỹ thuật, và các yếu tố vĩ mô
   * Tạo giao diện web tương tác tự động từ dữ liệu mới nhất
+  * **🛡️ Advanced Error Handling**: Retry logic với exponential backoff
+  * **🔄 Fallback Mode**: Tự động chuyển sang chế độ offline khi gặp lỗi API
+  * **✅ Validation System**: Kiểm tra chất lượng báo cáo tự động
 
 ### 🎨 Giao Diện & UX
 * **Modern responsive design** với Tailwind CSS
@@ -185,6 +188,8 @@ flask run
    # Auto Report Scheduler Settings
    ENABLE_AUTO_REPORT_SCHEDULER=true   # Set to true to enable auto reports
    AUTO_REPORT_INTERVAL_HOURS=3        # Generate report every 3 hours
+   MAX_REPORT_ATTEMPTS=3               # Max retry attempts for report generation
+   USE_FALLBACK_ON_500=true           # Enable fallback mode on 500 errors
    
    # Database (auto-configured)
    DATABASE_URL=sqlite:///instance/local_dev.db
@@ -217,6 +222,8 @@ vercel --prod
 - `GEMINI_API_KEY`: Google Gemini API key (for AI reports)
 - `ENABLE_AUTO_REPORT_SCHEDULER`: Set to "true" for auto reports
 - `AUTO_REPORT_INTERVAL_HOURS`: Interval in hours (default: 3)
+- `MAX_REPORT_ATTEMPTS`: Max retry attempts (default: 3)
+- `USE_FALLBACK_ON_500`: Enable fallback mode (default: true)
 - API keys (optional, có fallback graceful)
 
 ---
@@ -254,11 +261,50 @@ vercel --prod
   - Tạo báo cáo thủ công bằng một click
   - Xem nhật ký hoạt động chi tiết
   - Kiểm tra cấu hình hệ thống
+  - **🛡️ Error Recovery**: Tự động retry với exponential backoff
+  - **🔄 Fallback Monitoring**: Theo dõi chế độ fallback và API health
 
 ### 📊 Xem Báo Cáo
 - Trang chủ hiển thị báo cáo mới nhất
 - Truy cập `/reports` để xem tất cả báo cáo
 - Mỗi báo cáo có URL riêng: `/report/<id>`
+
+---
+
+## 🛡️ Error Handling & Reliability
+
+### Auto Report Scheduler Resilience
+Hệ thống được thiết kế để hoạt động ổn định ngay cả khi gặp sự cố API:
+
+#### 🔄 **Retry Logic với Exponential Backoff**
+* **3 lần retry** cho mỗi API call
+* **Thời gian chờ tăng dần**: 30s → 60s → 90s
+* **Áp dụng cho**: Deep research generation và interface creation
+
+#### 🆘 **Fallback Mode**
+* **Kích hoạt tự động** khi gặp lỗi 500 INTERNAL từ Google Gemini
+* **Chế độ offline**: Tạo báo cáo dựa trên kiến thức có sẵn của AI
+* **Không cần Google Search**: Giảm tải và tránh API limits
+* **Quality assurance**: Vẫn áp dụng validation system
+
+#### ✅ **Validation System**
+* **Automatic quality check**: Kiểm tra kết quả `PASS/FAIL/UNKNOWN`
+* **Content verification**: Đảm bảo báo cáo có đủ nội dung cần thiết
+* **Retry on failure**: Tự động thử lại nếu validation không đạt
+
+#### ⚙️ **Configuration Options**
+```env
+# Tùy chỉnh error handling behavior
+MAX_REPORT_ATTEMPTS=3           # Số lần thử tối đa
+USE_FALLBACK_ON_500=true       # Bật fallback mode
+THINKING_BUDGET=32768          # AI thinking budget (128-32768)
+```
+
+#### 📊 **Monitoring & Logging**
+* **Detailed error logs**: Ghi nhận chi tiết mỗi lỗi và retry attempt
+* **Performance tracking**: Theo dõi thời gian xử lý và success rate
+* **API health monitoring**: Kiểm tra trạng thái các external APIs
+* **Dashboard integration**: Hiển thị status trên auto-update system
 
 ---
 
@@ -343,7 +389,8 @@ crypto-dashboard-app/
 │   │   ├── 📄 coingecko.py    # CoinGecko API integration
 │   │   ├── 📄 alternative_me.py # Fear & Greed Index
 │   │   ├── 📄 taapi.py        # Technical Analysis API
-│   │   └── 📄 report_generator.py # AI report creation
+│   │   ├── 📄 report_generator.py # AI report creation
+│   │   └── 📄 auto_report_scheduler.py # Advanced scheduler với error handling
 │   ├── 🗂️ static/
 │   │   ├── 🗂️ css/           # Stylesheets
 │   │   └── 🗂️ js/

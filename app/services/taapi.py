@@ -7,12 +7,18 @@ from ..utils.cache import get_backup_cache, set_backup_cache
 _last_request_time = 0
 _min_request_interval = 60  # Minimum 60 seconds between requests
 
+# Base URL template for TAAPI RSI endpoint
+BASE_RSI_URL_TEMPLATE = "https://api.taapi.io/rsi?secret={secret}&exchange=binance&symbol=BTC/USDT&interval=1d"
+
 def get_btc_rsi():
     """Lấy chỉ số RSI của Bitcoin từ TAAPI.IO với rate limiting và backup cache."""
     global _last_request_time, _min_request_interval
     
-    api_url = os.getenv('TAAPI_RSI_API_URL')
-
+    api_key = os.getenv('TAAPI_SECRET')
+    if not api_key:
+        return None, "TAAPI_SECRET không được cấu hình", 500
+        
+    api_url = BASE_RSI_URL_TEMPLATE.format(secret=api_key)
 
     # Kiểm tra rate limiting
     current_time = time.time()

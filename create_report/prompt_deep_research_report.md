@@ -9,7 +9,7 @@
 
 ## 📑 PHẦN A: NỘI DUNG BÁO CÁO
 
-### 1. 📈 Tóm tắt cho Lãnh đạo (Executive Summary)
+### 1. 📈 Tóm tắt báo cáo (Executive Summary)
 
 - Cung cấp một cái nhìn **tổng quan ngắn gọn** về những diễn biến quan trọng nhất của thị trường trong **24 giờ qua**
 - Nêu bật **kết luận chính** và **triển vọng ngắn hạn**

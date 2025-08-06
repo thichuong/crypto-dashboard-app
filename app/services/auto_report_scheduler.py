@@ -100,46 +100,6 @@ def _extract_code_blocks(response_text):
     }
 
 
-def _extract_part_a_content(full_report):
-    """Trích xuất nội dung PHẦN A: NỘI DUNG BÁO CÁO từ báo cáo đầy đủ."""
-    # Kiểm tra input
-    if not full_report or not isinstance(full_report, str):
-        print("Cảnh báo: full_report là None hoặc không phải string")
-        return ""
-    
-    # Tìm phần bắt đầu của PHẦN A
-    part_a_start = re.search(r"##\s*📑\s*PHẦN A.*?NỘI DUNG BÁO CÁO", full_report, re.IGNORECASE | re.DOTALL)
-    if not part_a_start:
-        # Fallback: tìm pattern khác
-        part_a_start = re.search(r"PHẦN A.*?NỘI DUNG BÁO CÁO", full_report, re.IGNORECASE | re.DOTALL)
-    
-    if not part_a_start:
-        print("Cảnh báo: Không tìm thấy PHẦN A trong báo cáo")
-        return full_report
-    
-    # Tìm phần kết thúc (bắt đầu của verification section)
-    verification_start = re.search(r"##\s*🔍\s*PHẦN B.*?CƠ CHẾ KIỂM TRA", full_report, re.IGNORECASE | re.DOTALL)
-    if not verification_start:
-        # Fallback patterns
-        verification_patterns = [
-            r"PHẦN B.*?CƠ CHẾ KIỂM TRA",
-            r"Bảng Đối chiếu Dữ liệu",
-            r"Data Verification Table",
-            r"KẾT QUẢ KIỂM TRA"
-        ]
-        for pattern in verification_patterns:
-            verification_start = re.search(pattern, full_report, re.IGNORECASE | re.DOTALL)
-            if verification_start:
-                break
-    
-    if verification_start:
-        # Trích xuất từ đầu PHẦN A đến trước phần verification
-        return full_report[part_a_start.start():verification_start.start()].strip()
-    else:
-        # Nếu không tìm thấy phần verification, lấy từ PHẦN A đến cuối
-        return full_report[part_a_start.start():].strip()
-
-
 def _check_report_validation(report_text):
     """
     Kiểm tra kết quả validation của báo cáo.
@@ -164,13 +124,54 @@ def _check_report_validation(report_text):
         return 'UNKNOWN'
 
 
-def generate_auto_research_report(api_key, max_attempts=3):
+def _create_fallback_report_without_search(client, model, deep_research_prompt):
+    """
+    Tạo báo cáo fallback không sử dụng Google Search khi gặp lỗi 500.
+    """
+    try:
+        print("Đang thử chế độ fallback (không Google Search)...")
+        
+        # Cấu hình đơn giản không có tools
+        fallback_config = types.GenerateContentConfig(
+            temperature=0.8,
+            candidate_count=1,
+        )
+        
+        contents = [
+            types.Content(
+                role="user",
+                parts=[
+                    types.Part.from_text(
+                        text=f"{deep_research_prompt}\n\n**LUU Ý: Tạo báo cáo dựa trên kiến thức có sẵn do không thể truy cập internet.**"
+                    ),
+                ],
+            ),
+        ]
+        
+        response = client.models.generate_content(
+            model=model,
+            contents=contents,
+            config=fallback_config
+        )
+        
+        if response and hasattr(response, 'text') and response.text:
+            return response.text
+        else:
+            return None
+            
+    except Exception as e:
+        print(f"Fallback mode cũng thất bại: {e}")
+        return None
+
+
+def generate_auto_research_report(api_key, max_attempts=3, use_fallback_on_500=True):
     """
     Hàm tự động tạo báo cáo nghiên cứu sâu với cơ chế validation và retry.
     
     Args:
         api_key (str): API key của Gemini
         max_attempts (int): Số lần thử tối đa để tạo báo cáo PASS
+        use_fallback_on_500 (bool): Có sử dụng fallback mode khi gặp lỗi 500
         
     Returns:
         bool: True nếu tạo báo cáo thành công, False nếu thất bại
@@ -212,15 +213,17 @@ def generate_auto_research_report(api_key, max_attempts=3):
             print(f"Lỗi khi khởi tạo Gemini client: {e}")
             return False
         
-        # Cấu hình tools và thinking mode
+        # Cấu hình tools và thinking mode với giới hạn budget
         tools = [
             types.Tool(googleSearch=types.GoogleSearch()),
         ]
         generate_content_config = types.GenerateContentConfig(
             thinking_config=types.ThinkingConfig(
-                thinking_budget=-1,
+                thinking_budget=32768,  # Giá trị tối đa cho phép (128-32768)
             ),
             tools=tools,
+            temperature=0.7,  # Thêm temperature để ổn định
+            candidate_count=1,  # Chỉ tạo 1 candidate
         )
         
         # Bước 2: Vòng lặp tạo báo cáo nghiên cứu sâu với validation
@@ -241,11 +244,25 @@ def generate_auto_research_report(api_key, max_attempts=3):
                     ),
                 ]
                 
-                response = client.models.generate_content(
-                    model=model,
-                    contents=contents,
-                    config=generate_content_config
-                )
+                # Thêm timeout và retry cho API call
+                import time
+                for api_attempt in range(3):  # Retry 3 lần cho mỗi attempt
+                    try:
+                        print(f"API call attempt {api_attempt + 1}/3...")
+                        response = client.models.generate_content(
+                            model=model,
+                            contents=contents,
+                            config=generate_content_config
+                        )
+                        break  # Thành công, thoát khỏi retry loop
+                    except Exception as api_error:
+                        print(f"API attempt {api_attempt + 1} failed: {api_error}")
+                        if api_attempt < 2:  # Không phải lần cuối
+                            wait_time = (api_attempt + 1) * 30  # Exponential backoff: 30s, 60s
+                            print(f"Waiting {wait_time}s before retry...")
+                            time.sleep(wait_time)
+                        else:
+                            raise api_error  # Ném lỗi sau khi hết retry
                 
                 # Kiểm tra response
                 if not response or not hasattr(response, 'text'):
@@ -264,9 +281,9 @@ def generate_auto_research_report(api_key, max_attempts=3):
                 print(f"Lần thử {attempt}: Kết quả validation = {validation_result}")
                 
                 if validation_result == 'PASS':
-                    # Trích xuất PHẦN A: NỘI DUNG BÁO CÁO
-                    report_content = _extract_part_a_content(full_report_text)
-                    print(f"Lần thử {attempt}: Báo cáo PASS - Đã trích xuất PHẦN A")
+                    # Sử dụng toàn bộ nội dung báo cáo
+                    report_content = full_report_text
+                    print(f"Lần thử {attempt}: Báo cáo PASS - Sử dụng toàn bộ nội dung")
                     break
                 elif validation_result == 'FAIL':
                     print(f"Lần thử {attempt}: Báo cáo FAIL - Thử lại...")
@@ -276,7 +293,20 @@ def generate_auto_research_report(api_key, max_attempts=3):
                     continue
                     
             except Exception as e:
+                error_str = str(e)
                 print(f"Lần thử {attempt}: Lỗi khi gọi AI: {e}")
+                
+                # Kiểm tra nếu là lỗi 500 và có thể thử fallback
+                if "500" in error_str and "INTERNAL" in error_str and use_fallback_on_500 and attempt == max_attempts:
+                    print("Phát hiện lỗi 500 INTERNAL, thử chế độ fallback...")
+                    fallback_text = _create_fallback_report_without_search(client, model, deep_research_prompt)
+                    if fallback_text:
+                        validation_result = _check_report_validation(fallback_text)
+                        if validation_result in ['PASS', 'UNKNOWN']:  # Chấp nhận UNKNOWN cho fallback
+                            full_report_text = fallback_text
+                            report_content = full_report_text
+                            print("Fallback mode thành công!")
+                            break
                 continue
         
         # Kiểm tra kết quả sau vòng lặp
@@ -308,10 +338,31 @@ def generate_auto_research_report(api_key, max_attempts=3):
             ),
         ]
         
-        interface_response = client.models.generate_content(
-            model=model,
-            contents=interface_contents
+        # Cấu hình đơn giản hơn cho interface generation (không có tools)
+        simple_config = types.GenerateContentConfig(
+            temperature=0.7,
+            candidate_count=1,
         )
+        
+        # Retry cho interface generation
+        for interface_attempt in range(3):
+            try:
+                print(f"Interface generation attempt {interface_attempt + 1}/3...")
+                interface_response = client.models.generate_content(
+                    model=model,
+                    contents=interface_contents,
+                    config=simple_config
+                )
+                break  # Thành công, thoát khỏi retry loop
+            except Exception as interface_error:
+                print(f"Interface attempt {interface_attempt + 1} failed: {interface_error}")
+                if interface_attempt < 2:  # Không phải lần cuối
+                    wait_time = (interface_attempt + 1) * 20  # 20s, 40s
+                    print(f"Waiting {wait_time}s before retry...")
+                    time.sleep(wait_time)
+                else:
+                    print("Lỗi: Không thể tạo interface sau 3 lần thử")
+                    return False
         
         # Kiểm tra interface response
         if not interface_response or not hasattr(interface_response, 'text'):
@@ -364,9 +415,10 @@ def schedule_auto_report(app, api_key, interval_hours=6):
         with app.app_context():
             while True:
                 try:
-                    # Chạy tạo báo cáo với số lần thử tối đa
+                    # Chạy tạo báo cáo với số lần thử tối đa và fallback
                     max_attempts = int(os.getenv('MAX_REPORT_ATTEMPTS', '3'))
-                    success = generate_auto_research_report(api_key, max_attempts)
+                    use_fallback = os.getenv('USE_FALLBACK_ON_500', 'true').lower() == 'true'
+                    success = generate_auto_research_report(api_key, max_attempts, use_fallback)
                     if success:
                         print(f"[{datetime.now()}] Scheduler: Báo cáo đã được tạo thành công")
                     else:

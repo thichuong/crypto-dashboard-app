@@ -6,8 +6,7 @@ BASE_BTC_PRICE_URL = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&
 
 def get_global_market_data():
     """Lấy tổng vốn hóa và khối lượng giao dịch từ CoinGecko."""
-    api_url = os.getenv('COINGECKO_GLOBAL_API_URL', BASE_GLOBAL_URL)
-    json_data, error, status_code = fetch_json(api_url)
+    json_data, error, status_code = fetch_json(BASE_GLOBAL_URL)
 
     if error:
         return None, error, status_code
@@ -25,8 +24,7 @@ def get_global_market_data():
 
 def get_btc_price():
     """Lấy giá và thay đổi 24h của BTC từ CoinGecko."""
-    api_url = os.getenv('COINGECKO_BTC_PRICE_API_URL', BASE_BTC_PRICE_URL)
-    json_data, error, status_code = fetch_json(api_url)
+    json_data, error, status_code = fetch_json(BASE_BTC_PRICE_URL)
 
     if error:
         return None, error, status_code
