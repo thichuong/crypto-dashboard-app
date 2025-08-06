@@ -4,7 +4,7 @@ import os
 from build import build_js
 
 # Gọi hàm create_app để tạo một instance của ứng dụng Flask
-app = create_app()
+app, socketio = create_app()
 
 # Vercel configuration for maxDuration
 config = {"maxDuration": 30}
@@ -25,5 +25,5 @@ if __name__ == '__main__':
     # Chỉ enable debug mode khi không phải trên Vercel
     debug_mode = not os.getenv('VERCEL', False)
     
-    # Chạy ứng dụng
-    app.run(host=host, port=port, debug=debug_mode)
+    # Chạy ứng dụng với SocketIO
+    socketio.run(app, host=host, port=port, debug=debug_mode)

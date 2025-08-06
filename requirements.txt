@@ -1,4 +1,5 @@
 Flask
+Flask-SocketIO
 python-dotenv
 Flask-SQLAlchemy
 Flask-Caching

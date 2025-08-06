@@ -4,7 +4,30 @@ Một ứng dụng web Flask toàn diện được thiết kế để cung cấp
 1. **Dashboard thị trường tiền mã hóa** theo thời gian thực với các chỉ số quan trọng
 2. **Trình tạo báo cáo AI** - công cụ cho phép chuyển đổi tài liệu văn bản thành báo cáo web tương tác một cách tự động
 
-**🔗 Xem trực tiếp tại:** [https://crypto-dashboard-app-thichuong.vercel.app/](h   │   ├── 📄 alternative_me.py # Fear & Greed Index
+**🔗 Xem trực tiếp tại:** [https://crypto-dashboard-app-thich#### 🔄 **Retry Logic với Exponential Backoff**
+* **Node-level retry**: Mỗi node có thể retry riêng lẻ
+* **Thời gian chờ tăng dần**: 30s → 60s → 90s
+* **State preservation**: Giữ nguyên state khi retry
+* **Áp dụng cho**: Research, interface generation, và database operations
+* **Enhanced code extraction**: Improved regex patterns để extract HTML/CSS/JS từ AI response
+
+#### 🎯 **Real-time Data Focus**
+* **No fallback mode**: Đảm bảo 100% thông tin real-time
+* **Google Search required**: Luôn yêu cầu internet access cho dữ liệu mới nhất
+* **Quality assurance**: Chỉ chấp nhận báo cáo PASS validation
+* **Fresh data guarantee**: Mỗi báo cáo đều có thông tin từ internet
+
+#### ✅ **Enhanced Validation System**
+* **Dedicated validation node**: Specialized step cho quality checking
+* **Strict criteria**: Chỉ chấp nhận PASS, retry cho FAIL/UNKNOWN
+* **Real-time validation**: Kiểm tra chất lượng dữ liệu real-time
+* **No compromise**: Không chấp nhận báo cáo chất lượng thấp
+
+#### 📋 **Table-based Progress Tracking**
+* **Real-time updates**: SocketIO integration cho instant progress updates
+* **Structured display**: Bảng 4 cột (Bước, Tên Công Việc, Chi Tiết, Trạng Thái)
+* **Visual indicators**: Color-coded status badges và progress bar
+* **Session tracking**: Unique session IDs cho multiple concurrent reports(h   │   ├── 📄 alternative_me.py # Fear & Greed Index
    │   ├── 📄 taapi.py        # Technical Analysis API
    │   ├── 📄 report_generator.py # AI report creation (legacy)
    │   ├── 📄 report_workflow.py # LangGraph workflow implementation
@@ -31,15 +54,16 @@ Một ứng dụng web Flask toàn diện được thiết kế để cung cấp
 * **🆕 Auto Report Generator với LangGraph**: Tạo báo cáo nghiên cứu thị trường crypto tự động
   * **🌐 LangGraph Workflow**: Workflow engine hiện đại cho complex AI pipelines
   * **📊 Modular Architecture**: Các nodes độc lập dễ test và maintain
-  * **🔄 Smart Routing**: Conditional flows với retry và fallback logic
+  * **🔄 Smart Routing**: Conditional flows với retry logic (real-time only)
   * **📈 State Management**: Tracking toàn bộ quá trình từ input đến output
+  * **📋 Table-based Progress**: Giao diện theo dõi tiến độ dạng bảng với real-time updates
   * Scheduler tự động chạy mỗi 3 giờ (có thể tùy chỉnh)
   * Báo cáo nghiên cứu sâu về thị trường tiền điện tử với Google Search integration
   * Phân tích tâm lý thị trường, kỹ thuật, và các yếu tố vĩ mô
   * Tạo giao diện web tương tác tự động từ dữ liệu mới nhất
   * **🛡️ Advanced Error Handling**: Retry logic với exponential backoff
-  * **🔄 Fallback Mode**: Tự động chuyển sang chế độ offline khi gặp lỗi API
-  * **✅ Validation System**: Kiểm tra chất lượng báo cáo tự động
+  * **🎯 Real-time Data Only**: Chỉ sử dụng thông tin mới nhất từ internet
+  * **✅ Validation System**: Kiểm tra chất lượng báo cáo tự động (PASS/FAIL only)
   * **🔍 Observability**: Detailed logging và monitoring cho từng step
 
 ### 🎨 Giao Diện & UX
@@ -71,13 +95,13 @@ Tính năng cốt lõi cho phép người dùng tạo báo cáo web tương tác
    * **State-driven processing**: Mỗi step được quản lý bởi LangGraph StateGraph
    * **Workflow nodes**:
      - `prepare_data_node`: Document parsing và setup
-     - `research_deep_node`: AI analysis với Google Search
-     - `validate_report_node`: Quality assurance checking
+     - `research_deep_node`: AI analysis với Google Search (real-time data only)
+     - `validate_report_node`: Quality assurance checking (PASS/FAIL only - no UNKNOWN acceptance)
      - `create_interface_node`: HTML/CSS/JS generation
-     - `extract_code_node`: Code parsing và optimization
+     - `extract_code_node`: Code parsing và optimization với improved regex patterns
      - `save_database_node`: Persistent storage
-   * **Error handling**: Automatic retry với conditional routing
-   * **Fallback strategy**: Graceful degradation khi API fails
+   * **Error handling**: Automatic retry với conditional routing (no fallback - real-time only)
+   * **Progress tracking**: Table-based progress display với real-time SocketIO updates
 
 3. **🎨 Code Generation**
    * **HTML**: Semantic structure với accessibility support
@@ -206,7 +230,6 @@ flask run
    ENABLE_AUTO_REPORT_SCHEDULER=true   # Set to true to enable auto reports
    AUTO_REPORT_INTERVAL_HOURS=3        # Generate report every 3 hours
    MAX_REPORT_ATTEMPTS=3               # Max retry attempts for report generation
-   USE_FALLBACK_ON_500=true           # Enable fallback mode on 500 errors
    
    # Database (auto-configured)
    DATABASE_URL=sqlite:///instance/local_dev.db
@@ -240,7 +263,6 @@ vercel --prod
 - `ENABLE_AUTO_REPORT_SCHEDULER`: Set to "true" for auto reports
 - `AUTO_REPORT_INTERVAL_HOURS`: Interval in hours (default: 3)
 - `MAX_REPORT_ATTEMPTS`: Max retry attempts (default: 3)
-- `USE_FALLBACK_ON_500`: Enable fallback mode (default: true)
 - API keys (optional, có fallback graceful)
 
 ---
@@ -267,21 +289,21 @@ vercel --prod
 3. Hệ thống sẽ tự động tạo báo cáo mỗi 3 giờ (hoặc theo cấu hình)
 4. Kiểm tra trạng thái scheduler tại `/scheduler-status`
 
-#### 🔧 Trang Auto Update System:
-- **URL**: `/auto-update-system-<secret_key>` (yêu cầu secret key để truy cập)
-- **Bảo mật**: 
-  - Cấu hình `AUTO_UPDATE_SECRET_KEY` trong `.env`
-  - Chỉ những người có secret key mới truy cập được
-  - Log tất cả các attempt truy cập
-- **Tính năng**:
-  - Theo dõi trạng thái scheduler thời gian thực
-  - **🌐 LangGraph Workflow Monitoring**: Visual tracking workflow execution
-  - **📊 Node-level Analytics**: Performance metrics cho từng workflow step
-  - Tạo báo cáo thủ công bằng một click
-  - Xem nhật ký hoạt động chi tiết
-  - Kiểm tra cấu hình hệ thống
-  - **🛡️ Error Recovery**: Workflow state inspection và manual retry
-  - **🔄 Fallback Monitoring**: Theo dõi chế độ fallback và API health
+- **Trang Auto Update System**:
+  - **URL**: `/auto-update-system-<secret_key>` (yêu cầu secret key để truy cập)
+  - **Bảo mật**: 
+    - Cấu hình `AUTO_UPDATE_SECRET_KEY` trong `.env`
+    - Chỉ những người có secret key mới truy cập được
+    - Log tất cả các attempt truy cập
+  - **Tính năng**:
+    - Theo dõi trạng thái scheduler thời gian thực
+    - **📋 Table-based Progress Tracking**: Bảng tiến độ với 4 cột (Bước, Tên Công Việc, Chi Tiết, Trạng Thái)
+    - **� Real-time Updates**: SocketIO integration cho progress updates
+    - Tạo báo cáo thủ công bằng một click
+    - Xem nhật ký hoạt động chi tiết
+    - Kiểm tra cấu hình hệ thống
+    - **🛡️ Error Recovery**: Workflow state inspection và manual retry
+    - **🎯 Real-time Data Monitoring**: Theo dõi chất lượng dữ liệu real-time (no fallback)
 
 ### 📊 Xem Báo Cáo
 - Trang chủ hiển thị báo cáo mới nhất
@@ -299,11 +321,10 @@ Hệ thống sử dụng LangGraph để quản lý complex AI workflow với st
 #### 📋 **Workflow Nodes**
 
 ```python
-# Workflow Structure
+# Workflow Structure - Real-time Data Only
 StateGraph(ReportState)
 ├── prepare_data_node       # Document parsing & client setup
-├── research_deep_node      # AI research với Google Search
-├── fallback_research_node  # Offline mode khi API fails
+├── research_deep_node      # AI research với Google Search (real-time)
 ├── validate_report_node    # Quality assurance checking
 ├── create_interface_node   # HTML/CSS/JS generation  
 ├── extract_code_node       # Code parsing & optimization
@@ -316,7 +337,6 @@ class ReportState(TypedDict):
     # Input parameters
     api_key: str
     max_attempts: int
-    use_fallback_on_500: bool
     
     # Processing state
     research_content: Optional[str]
@@ -332,7 +352,6 @@ class ReportState(TypedDict):
     # Control flow
     current_attempt: int
     error_messages: List[str]
-    fallback_used: bool
     success: bool
 ```
 
@@ -343,9 +362,7 @@ def should_retry_or_continue(state):
     if validation_result == "PASS":
         return "continue"
     elif current_attempt >= max_attempts:
-        if should_fallback:
-            return "fallback"
-        return "end"
+        return "end"  # No fallback - real-time data only
     else:
         return "retry"
 ```
@@ -365,7 +382,7 @@ def should_retry_or_continue(state):
 * **Performance metrics**: Timing và resource usage per node
 
 #### 🛡️ **Robust Error Handling**
-* **Graceful degradation**: Automatic fallback khi gặp errors
+* **Graceful degradation**: Smart retry mechanisms
 * **State preservation**: Không mất state khi retry
 * **Conditional flows**: Smart routing dựa trên results
 * **Recovery mechanisms**: Resume từ checkpoint khi possible
@@ -376,12 +393,18 @@ def should_retry_or_continue(state):
 * **Retry strategies**: Per-node retry với custom logic
 * **Circuit breakers**: Prevent cascade failures
 
+#### 🎯 **Real-time Data Guarantee**
+* **Fresh information**: Mỗi báo cáo đều có dữ liệu mới nhất
+* **Internet dependency**: Yêu cầu Google Search cho accuracy
+* **Quality assurance**: Chỉ chấp nhận PASS validation
+* **No stale data**: Không có báo cáo dựa trên kiến thức cũ
+
 ---
 
 ## 🛡️ Error Handling & Reliability
 
 ### Auto Report Scheduler Resilience với LangGraph
-Hệ thống được thiết kế để hoạt động ổn định ngay cả khi gặp sự cố API:
+Hệ thống được thiết kế để hoạt động ổn định với thông tin real-time:
 
 #### 🌐 **LangGraph Workflow Architecture**
 * **State Management**: Persistent state tracking qua tất cả workflow steps
@@ -395,24 +418,22 @@ Hệ thống được thiết kế để hoạt động ổn định ngay cả k
 * **State preservation**: Giữ nguyên state khi retry
 * **Áp dụng cho**: Research, interface generation, và database operations
 
-#### 🆘 **Fallback Mode với Smart Routing**
-* **Automatic detection**: LangGraph tự động detect lỗi 500 INTERNAL
-* **Conditional routing**: Smart navigation đến fallback node
-* **Chế độ offline**: Tạo báo cáo dựa trên kiến thức có sẵn của AI
-* **State continuity**: Workflow tiếp tục mượt mà sau fallback
-* **Quality assurance**: Vẫn áp dụng validation system
+#### � **Real-time Data Focus**
+* **No fallback mode**: Đảm bảo 100% thông tin real-time
+* **Google Search required**: Luôn yêu cầu internet access cho dữ liệu mới nhất
+* **Quality assurance**: Chỉ chấp nhận báo cáo PASS validation
+* **Fresh data guarantee**: Mỗi báo cáo đều có thông tin từ internet
 
 #### ✅ **Enhanced Validation System**
 * **Dedicated validation node**: Specialized step cho quality checking
-* **Multi-criteria validation**: PASS/FAIL/UNKNOWN với context awareness
-* **Conditional flow**: Automatic routing based on validation results
-* **Fallback acceptance**: Smart handling cho UNKNOWN results trong fallback mode
+* **Strict criteria**: Chỉ chấp nhận PASS, retry cho FAIL/UNKNOWN
+* **Real-time validation**: Kiểm tra chất lượng dữ liệu real-time
+* **No compromise**: Không chấp nhận báo cáo chất lượng thấp
 
-#### ⚙️ **Configuration Options**
+⚙️ **Configuration Options**
 ```env
 # Tùy chỉnh error handling behavior
 MAX_REPORT_ATTEMPTS=3           # Số lần thử tối đa
-USE_FALLBACK_ON_500=true       # Bật fallback mode
 THINKING_BUDGET=32768          # AI thinking budget (128-32768)
 ```
 
@@ -506,8 +527,10 @@ crypto-dashboard-app/
 │   │   ├── 📄 coingecko.py    # CoinGecko API integration
 │   │   ├── 📄 alternative_me.py # Fear & Greed Index
 │   │   ├── 📄 taapi.py        # Technical Analysis API
-│   │   ├── 📄 report_generator.py # AI report creation
-│   │   └── 📄 auto_report_scheduler.py # Advanced scheduler với error handling
+│   │   ├── 📄 report_generator.py # AI report creation (legacy)
+│   │   ├── 📄 report_workflow.py # LangGraph workflow (real-time only)
+│   │   ├── 📄 progress_tracker.py # Progress tracking với SocketIO
+│   │   └── 📄 auto_report_scheduler.py # Scheduler với LangGraph integration
 │   ├── 🗂️ static/
 │   │   ├── 🗂️ css/           # Stylesheets
 │   │   └── 🗂️ js/

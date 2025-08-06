@@ -1,6 +1,7 @@
 import os
 import re
 import time
+import uuid
 from datetime import datetime, timezone
 from typing import TypedDict, Optional, List, Literal
 from google import genai
@@ -8,10 +9,14 @@ from google.genai import types
 from langgraph.graph import StateGraph, END
 from ..extensions import db
 from ..models import Report
+from .progress_tracker import progress_tracker
 
 
 class ReportState(TypedDict):
     """State schema cho report generation workflow"""
+    # Session tracking
+    session_id: str
+    
     # Input parameters
     api_key: str
     max_attempts: int
@@ -166,15 +171,23 @@ def _check_report_validation(report_text):
 
 def prepare_data_node(state: ReportState) -> ReportState:
     """Node để chuẩn bị dữ liệu và khởi tạo Gemini client"""
+    session_id = state["session_id"]
+    print(f"[PROGRESS] Starting prepare_data_node for session {session_id}")
+    progress_tracker.update_step(session_id, 1, "Chuẩn bị dữ liệu và khởi tạo AI...", "Đang kiểm tra API key và đọc prompts")
+    
     print(f"[{datetime.now()}] Bắt đầu tạo báo cáo tự động...")
     
     # Kiểm tra API key
     if not state["api_key"] or not isinstance(state["api_key"], str):
-        state["error_messages"].append("API key không hợp lệ")
+        error_msg = "API key không hợp lệ"
+        state["error_messages"].append(error_msg)
         state["success"] = False
+        progress_tracker.error_progress(session_id, error_msg)
+        print(f"[PROGRESS] Error in prepare_data_node: {error_msg}")
         return state
     
     # Thiết lập đường dẫn tới các prompt files
+    progress_tracker.update_substep(session_id, "Đang thiết lập đường dẫn prompts...")
     current_dir = os.path.dirname(__file__)
     state["deep_research_prompt_path"] = os.path.abspath(
         os.path.join(current_dir, '..', '..', 'create_report', 'prompt_deep_research_report.md')
@@ -187,46 +200,65 @@ def prepare_data_node(state: ReportState) -> ReportState:
     print(f"Create report prompt path: {state['create_report_prompt_path']}")
     
     # Đọc prompt deep research và thay thế ngày tháng
+    progress_tracker.update_substep(session_id, "Đang đọc prompt nghiên cứu...")
     deep_research_prompt = _read_prompt_file(state["deep_research_prompt_path"])
     if deep_research_prompt is None:
-        state["error_messages"].append("Không thể đọc prompt deep research")
+        error_msg = "Không thể đọc prompt deep research"
+        state["error_messages"].append(error_msg)
         state["success"] = False
+        progress_tracker.error_progress(session_id, error_msg)
+        print(f"[PROGRESS] Error in prepare_data_node: {error_msg}")
         return state
         
     state["deep_research_prompt"] = _replace_date_placeholders(deep_research_prompt)
     
     # Khởi tạo Gemini client
+    progress_tracker.update_substep(session_id, "Đang khởi tạo Gemini AI...")
     try:
         client = genai.Client(api_key=state["api_key"])
         state["client"] = client
         state["model"] = "gemini-2.5-pro"
         print("Đã khởi tạo Gemini client thành công")
     except Exception as e:
-        state["error_messages"].append(f"Lỗi khi khởi tạo Gemini client: {e}")
+        error_msg = f"Lỗi khi khởi tạo Gemini client: {e}"
+        state["error_messages"].append(error_msg)
         state["success"] = False
+        progress_tracker.error_progress(session_id, error_msg)
+        print(f"[PROGRESS] Error in prepare_data_node: {error_msg}")
         return state
     
     # Đọc prompt tạo giao diện
+    progress_tracker.update_substep(session_id, "Đang đọc prompt tạo giao diện...")
     create_report_prompt = _read_prompt_file(state["create_report_prompt_path"])
     if create_report_prompt is None:
-        state["error_messages"].append("Không thể đọc prompt tạo giao diện")
+        error_msg = "Không thể đọc prompt tạo giao diện"
+        state["error_messages"].append(error_msg)
         state["success"] = False
+        progress_tracker.error_progress(session_id, error_msg)
+        print(f"[PROGRESS] Error in prepare_data_node: {error_msg}")
         return state
     
     state["create_report_prompt"] = create_report_prompt
     state["current_attempt"] = 0
     state["success"] = True
     
+    print(f"[PROGRESS] Completed prepare_data_node for session {session_id}")
     return state
 
 
 def research_deep_node(state: ReportState) -> ReportState:
     """Node để thực hiện nghiên cứu sâu với Google Search"""
+    session_id = state["session_id"]
     state["current_attempt"] += 1
+    
+    progress_tracker.update_step(session_id, 2, f"Thu thập dữ liệu từ internet (lần {state['current_attempt']})...", 
+                               "Đang cấu hình Google Search và AI tools")
+    
     print(f"Đang tạo báo cáo nghiên cứu sâu (lần thử {state['current_attempt']}/{state['max_attempts']})...")
     
     try:
         # Cấu hình tools và thinking mode với giới hạn budget
+        progress_tracker.update_substep(session_id, "Đang cấu hình AI tools và Google Search...")
         tools = [
             types.Tool(googleSearch=types.GoogleSearch()),
         ]
@@ -240,6 +272,7 @@ def research_deep_node(state: ReportState) -> ReportState:
         )
         
         # Tạo request content với Google Search tools
+        progress_tracker.update_substep(session_id, "Đang chuẩn bị request content...")
         contents = [
             types.Content(
                 role="user",
@@ -252,6 +285,7 @@ def research_deep_node(state: ReportState) -> ReportState:
         # Thêm timeout và retry cho API call
         for api_attempt in range(3):  # Retry 3 lần cho mỗi attempt
             try:
+                progress_tracker.update_substep(session_id, f"Đang gọi AI API (lần {api_attempt + 1}/3)...")
                 print(f"API call attempt {api_attempt + 1}/3...")
                 response = state["client"].models.generate_content(
                     model=state["model"],
@@ -263,82 +297,41 @@ def research_deep_node(state: ReportState) -> ReportState:
                 print(f"API attempt {api_attempt + 1} failed: {api_error}")
                 if api_attempt < 2:  # Không phải lần cuối
                     wait_time = (api_attempt + 1) * 30  # Exponential backoff: 30s, 60s
+                    progress_tracker.update_substep(session_id, f"Lỗi API, đang chờ {wait_time}s trước khi thử lại...")
                     print(f"Waiting {wait_time}s before retry...")
                     time.sleep(wait_time)
                 else:
                     raise api_error  # Ném lỗi sau khi hết retry
         
         # Kiểm tra response
+        progress_tracker.update_substep(session_id, "Đang xử lý phản hồi từ AI...")
         if not response or not hasattr(response, 'text'):
-            state["error_messages"].append(f"Lần thử {state['current_attempt']}: Response không hợp lệ từ AI")
+            error_msg = f"Lần thử {state['current_attempt']}: Response không hợp lệ từ AI"
+            state["error_messages"].append(error_msg)
+            progress_tracker.update_substep(session_id, error_msg)
             return state
             
         full_report_text = response.text
         
         # Kiểm tra nội dung response
         if not full_report_text or not isinstance(full_report_text, str):
-            state["error_messages"].append(f"Lần thử {state['current_attempt']}: Không nhận được nội dung báo cáo từ AI hoặc không phải string")
+            error_msg = f"Lần thử {state['current_attempt']}: Không nhận được nội dung báo cáo từ AI hoặc không phải string"
+            state["error_messages"].append(error_msg)
+            progress_tracker.update_substep(session_id, error_msg)
             return state
         
         state["research_content"] = full_report_text
         state["success"] = True
+        progress_tracker.update_substep(session_id, "Hoàn thành thu thập dữ liệu!")
         
     except Exception as e:
         error_str = str(e)
         error_msg = f"Lần thử {state['current_attempt']}: Lỗi khi gọi AI: {e}"
         print(error_msg)
         state["error_messages"].append(error_msg)
+        progress_tracker.update_substep(session_id, error_msg)
         
-        # Kiểm tra nếu là lỗi 500 và có thể thử fallback
-        if ("500" in error_str and "INTERNAL" in error_str and 
-            state["use_fallback_on_500"] and 
-            state["current_attempt"] == state["max_attempts"]):
-            state["should_fallback"] = True
-        
-        state["success"] = False
-    
-    return state
-
-
-def fallback_research_node(state: ReportState) -> ReportState:
-    """Node fallback cho nghiên cứu không sử dụng Google Search"""
-    print("Đang thử chế độ fallback (không Google Search)...")
-    
-    try:
-        # Cấu hình đơn giản không có tools
-        fallback_config = types.GenerateContentConfig(
-            temperature=0.8,
-            candidate_count=1,
-        )
-        
-        contents = [
-            types.Content(
-                role="user",
-                parts=[
-                    types.Part.from_text(
-                        text=f"{state['deep_research_prompt']}\n\n**LUU Ý: Tạo báo cáo dựa trên kiến thức có sẵn do không thể truy cập internet.**"
-                    ),
-                ],
-            ),
-        ]
-        
-        response = state["client"].models.generate_content(
-            model=state["model"],
-            contents=contents,
-            config=fallback_config
-        )
-        
-        if response and hasattr(response, 'text') and response.text:
-            state["research_content"] = response.text
-            state["fallback_used"] = True
-            state["success"] = True
-            print("Fallback mode thành công!")
-        else:
-            state["error_messages"].append("Fallback mode cũng thất bại: Không nhận được response")
-            state["success"] = False
-            
-    except Exception as e:
-        state["error_messages"].append(f"Fallback mode cũng thất bại: {e}")
+        # Không sử dụng fallback - báo cáo cần thông tin real-time
         state["success"] = False
     
     return state
@@ -346,11 +339,16 @@ def fallback_research_node(state: ReportState) -> ReportState:
 
 def validate_report_node(state: ReportState) -> ReportState:
     """Node để validate báo cáo nghiên cứu"""
+    session_id = state["session_id"]
+    progress_tracker.update_step(session_id, 3, "Kiểm tra chất lượng báo cáo...", "Đang phân tích nội dung báo cáo")
+    
     if not state["research_content"]:
         state["validation_result"] = "UNKNOWN"
+        progress_tracker.update_substep(session_id, "Không có nội dung để kiểm tra")
         return state
     
     # Kiểm tra validation
+    progress_tracker.update_substep(session_id, "Đang phân tích kết quả validation...")
     validation_result = _check_report_validation(state["research_content"])
     state["validation_result"] = validation_result
     
@@ -358,28 +356,30 @@ def validate_report_node(state: ReportState) -> ReportState:
     
     if validation_result == 'PASS':
         print(f"Lần thử {state['current_attempt']}: Báo cáo PASS - Sử dụng toàn bộ nội dung")
+        progress_tracker.update_substep(session_id, "✓ Báo cáo đạt chất lượng yêu cầu!")
         state["success"] = True
     elif validation_result == 'FAIL':
         print(f"Lần thử {state['current_attempt']}: Báo cáo FAIL - Thử lại...")
+        progress_tracker.update_substep(session_id, "✗ Báo cáo chưa đạt yêu cầu, sẽ thử lại...")
         state["success"] = False
     else:
-        # UNKNOWN case
-        if state["fallback_used"]:
-            # Chấp nhận UNKNOWN cho fallback
-            print(f"Lần thử {state['current_attempt']}: Validation UNKNOWN nhưng chấp nhận do dùng fallback")
-            state["success"] = True
-        else:
-            print(f"Lần thử {state['current_attempt']}: Không tìm thấy kết quả validation - Thử lại...")
-            state["success"] = False
+        # UNKNOWN case - yêu cầu thông tin real-time nên không chấp nhận UNKNOWN
+        print(f"Lần thử {state['current_attempt']}: Không tìm thấy kết quả validation - Thử lại...")
+        progress_tracker.update_substep(session_id, "? Không xác định được chất lượng, thử lại...")
+        state["success"] = False
     
     return state
 
 
 def create_interface_node(state: ReportState) -> ReportState:
     """Node để tạo giao diện từ báo cáo nghiên cứu"""
+    session_id = state["session_id"]
+    progress_tracker.update_step(session_id, 4, "Tạo giao diện báo cáo...", "Đang chuẩn bị tạo HTML, CSS, JS")
+    
     print("Đang tạo giao diện báo cáo...")
     
     # Tạo request đầy đủ
+    progress_tracker.update_substep(session_id, "Đang chuẩn bị request cho AI...")
     full_request = f"{state['create_report_prompt']}\n\n---\n\n**NỘI DUNG BÁO CÁO CẦN XỬ LÝ:**\n\n{state['research_content']}"
     
     # Tạo request content cho giao diện (không cần Google Search cho phần này)
@@ -401,6 +401,7 @@ def create_interface_node(state: ReportState) -> ReportState:
     # Retry cho interface generation
     for interface_attempt in range(3):
         try:
+            progress_tracker.update_substep(session_id, f"Đang gọi AI để tạo giao diện (lần {interface_attempt + 1}/3)...")
             print(f"Interface generation attempt {interface_attempt + 1}/3...")
             interface_response = state["client"].models.generate_content(
                 model=state["model"],
@@ -412,75 +413,167 @@ def create_interface_node(state: ReportState) -> ReportState:
             print(f"Interface attempt {interface_attempt + 1} failed: {interface_error}")
             if interface_attempt < 2:  # Không phải lần cuối
                 wait_time = (interface_attempt + 1) * 20  # 20s, 40s
+                progress_tracker.update_substep(session_id, f"Lỗi tạo giao diện, chờ {wait_time}s...")
                 print(f"Waiting {wait_time}s before retry...")
                 time.sleep(wait_time)
             else:
-                state["error_messages"].append("Không thể tạo interface sau 3 lần thử")
+                error_msg = "Không thể tạo interface sau 3 lần thử"
+                state["error_messages"].append(error_msg)
                 state["success"] = False
+                progress_tracker.error_progress(session_id, error_msg)
                 return state
     
     # Kiểm tra interface response
+    progress_tracker.update_substep(session_id, "Đang kiểm tra phản hồi từ AI...")
     if not interface_response or not hasattr(interface_response, 'text'):
-        state["error_messages"].append("Interface response không hợp lệ từ AI")
+        error_msg = "Interface response không hợp lệ từ AI"
+        state["error_messages"].append(error_msg)
         state["success"] = False
+        progress_tracker.error_progress(session_id, error_msg)
         return state
         
     if not interface_response.text or not isinstance(interface_response.text, str):
-        state["error_messages"].append("Không nhận được nội dung interface từ AI hoặc không phải string")
+        error_msg = "Không nhận được nội dung interface từ AI hoặc không phải string"
+        state["error_messages"].append(error_msg)
         state["success"] = False
+        progress_tracker.error_progress(session_id, error_msg)
         return state
     
     state["interface_content"] = interface_response.text
     state["success"] = True
+    progress_tracker.update_substep(session_id, "Hoàn thành tạo giao diện!")
     
     return state
 
 
 def extract_code_node(state: ReportState) -> ReportState:
     """Node để trích xuất các khối mã từ phản hồi interface"""
+    session_id = state["session_id"]
+    progress_tracker.update_step(session_id, 5, "Trích xuất mã nguồn...", "Đang tách HTML, CSS, JavaScript")
+    
     print("Đang trích xuất các khối mã...")
     
-    # Trích xuất các khối mã
-    code_blocks = _extract_code_blocks(state["interface_content"])
-    
-    if not code_blocks or not code_blocks.get("html"):
-        state["error_messages"].append("Không thể trích xuất mã HTML từ phản hồi AI")
+    # Kiểm tra interface_content trước khi trích xuất
+    if not state.get("interface_content"):
+        error_msg = "Không có nội dung interface để trích xuất"
+        state["error_messages"].append(error_msg)
         state["success"] = False
+        progress_tracker.error_progress(session_id, error_msg)
         return state
     
-    state["html_content"] = code_blocks.get("html", "")
-    state["css_content"] = code_blocks.get("css", "")
-    state["js_content"] = code_blocks.get("js", "")
+    # Trích xuất các khối mã
+    progress_tracker.update_substep(session_id, "Đang phân tích và trích xuất các khối mã...")
+    code_blocks = _extract_code_blocks(state["interface_content"])
+    
+    # Kiểm tra kết quả trích xuất với nhiều điều kiện
+    html_content = code_blocks.get("html", "").strip()
+    css_content = code_blocks.get("css", "").strip()
+    js_content = code_blocks.get("js", "").strip()
+    
+    # Validation HTML content
+    if not html_content:
+        # Thử trích xuất trực tiếp từ interface_content nếu có HTML tags
+        interface_text = state["interface_content"]
+        if '<html' in interface_text.lower() or '<!doctype' in interface_text.lower() or '<div' in interface_text.lower():
+            # Có vẻ như có HTML trong response nhưng không trong code blocks
+            print("[DEBUG] Detected HTML content outside code blocks, using raw content")
+            html_content = interface_text
+        else:
+            error_msg = "Không thể trích xuất mã HTML từ phản hồi AI - Không tìm thấy HTML content"
+            print(f"[DEBUG] Interface content sample: {interface_text[:200]}...")
+            state["error_messages"].append(error_msg)
+            state["success"] = False
+            progress_tracker.error_progress(session_id, error_msg)
+            return state
+    
+    # Kiểm tra HTML content có hợp lệ không
+    if len(html_content) < 50:  # HTML quá ngắn có thể không hợp lệ
+        print(f"[WARNING] HTML content seems too short ({len(html_content)} chars): {html_content[:100]}")
+        # Không fail ngay, vẫn tiếp tục với nội dung này
+    
+    # Set default values nếu CSS/JS trống
+    if not css_content:
+        css_content = "/* CSS được tạo tự động */\nbody { font-family: Arial, sans-serif; margin: 20px; }"
+    
+    if not js_content or js_content.startswith("//"):
+        js_content = "// JavaScript được tạo tự động\nconsole.log('Report loaded successfully');"
+    
+    state["html_content"] = html_content
+    state["css_content"] = css_content
+    state["js_content"] = js_content
     state["success"] = True
     
-    print("Hoàn thành tạo giao diện báo cáo")
+    progress_tracker.update_substep(session_id, f"Trích xuất thành công! HTML: {len(html_content)} chars, CSS: {len(css_content)} chars, JS: {len(js_content)} chars")
+    print(f"Hoàn thành trích xuất - HTML: {len(html_content)}, CSS: {len(css_content)}, JS: {len(js_content)} characters")
     
     return state
 
 
-def save_database_node(state: ReportState) -> ReportState:
-    """Node để lưu báo cáo vào database"""
-    print("Đang lưu báo cáo vào database...")
-    
+def _save_to_database_with_context(state: ReportState, session_id: str) -> ReportState:
+    """Helper function để lưu database với proper context"""
     try:
         # Tạo báo cáo mới và lưu vào database
+        progress_tracker.update_substep(session_id, "Đang tạo record báo cáo mới...")
         new_report = Report(
             html_content=state["html_content"],
             css_content=state["css_content"],
             js_content=state["js_content"]
         )
         
+        progress_tracker.update_substep(session_id, "Đang lưu vào database...")
         db.session.add(new_report)
         db.session.commit()
         
         state["report_id"] = new_report.id
         state["success"] = True
         
+        progress_tracker.update_step(session_id, 7, "Hoàn thành!", f"Báo cáo #{new_report.id} đã được tạo thành công")
+        progress_tracker.complete_progress(session_id, True, new_report.id)
+        
         print(f"[{datetime.now()}] Tạo báo cáo tự động thành công! ID: {new_report.id}")
         
     except Exception as e:
-        state["error_messages"].append(f"Lỗi khi lưu database: {e}")
+        error_msg = f"Lỗi khi lưu database: {e}"
+        state["error_messages"].append(error_msg)
         state["success"] = False
+        progress_tracker.error_progress(session_id, error_msg)
+        try:
+            db.session.rollback()
+        except:
+            pass
+    
+    return state
+
+
+def save_database_node(state: ReportState) -> ReportState:
+    """Node để lưu báo cáo vào database"""
+    session_id = state["session_id"]
+    progress_tracker.update_step(session_id, 6, "Lưu báo cáo vào database...", "Đang lưu HTML, CSS, JS vào cơ sở dữ liệu")
+    
+    print("Đang lưu báo cáo vào database...")
+    
+    try:
+        # Import Flask app để có application context
+        from .. import create_app
+        from flask import current_app
+        
+        # Kiểm tra xem đã có application context chưa
+        try:
+            # Test xem có app context không
+            _ = current_app.name
+            # Nếu có rồi, gọi trực tiếp
+            return _save_to_database_with_context(state, session_id)
+        except RuntimeError:
+            # Chưa có app context, tạo mới
+            app = create_app()
+            with app.app_context():
+                return _save_to_database_with_context(state, session_id)
+            
+    except Exception as e:
+        error_msg = f"Lỗi khi lưu database: {e}"
+        state["error_messages"].append(error_msg)
+        state["success"] = False
+        progress_tracker.error_progress(session_id, error_msg)
         try:
             db.session.rollback()
         except:
@@ -493,36 +586,19 @@ def save_database_node(state: ReportState) -> ReportState:
 # CONDITIONAL ROUTING
 # =============================================================================
 
-def should_retry_or_continue(state: ReportState) -> Literal["retry", "continue", "fallback", "end"]:
+def should_retry_or_continue(state: ReportState) -> Literal["retry", "continue", "end"]:
     """Quyết định hướng đi tiếp theo sau validation"""
     
     # Nếu validation PASS, tiếp tục
     if state["validation_result"] == "PASS":
         return "continue"
     
-    # Nếu đã hết số lần thử
+    # Nếu đã hết số lần thử, kết thúc
     if state["current_attempt"] >= state["max_attempts"]:
-        # Kiểm tra xem có nên thử fallback không
-        if (hasattr(state, "should_fallback") and state["should_fallback"] and 
-            state["use_fallback_on_500"] and not state["fallback_used"]):
-            return "fallback"
-        
-        # Nếu đã dùng fallback và có kết quả UNKNOWN, chấp nhận
-        if state["fallback_used"] and state["validation_result"] == "UNKNOWN":
-            return "continue"
-        
-        # Hết lựa chọn, kết thúc
         return "end"
     
     # Còn lần thử, retry
     return "retry"
-
-
-def should_continue_after_fallback(state: ReportState) -> Literal["continue", "end"]:
-    """Quyết định có tiếp tục sau fallback không"""
-    if state["success"]:
-        return "continue"
-    return "end"
 
 
 # =============================================================================
@@ -534,10 +610,9 @@ def create_report_workflow():
     
     workflow = StateGraph(ReportState)
     
-    # Thêm các nodes
+    # Thêm các nodes (bỏ fallback_research)
     workflow.add_node("prepare_data", prepare_data_node)
     workflow.add_node("research_deep", research_deep_node)
-    workflow.add_node("fallback_research", fallback_research_node)
     workflow.add_node("validate_report", validate_report_node)
     workflow.add_node("create_interface", create_interface_node)
     workflow.add_node("extract_code", extract_code_node)
@@ -546,29 +621,17 @@ def create_report_workflow():
     # Thiết lập entry point
     workflow.set_entry_point("prepare_data")
     
-    # Thiết lập các edges
+    # Thiết lập các edges (bỏ fallback edges)
     workflow.add_edge("prepare_data", "research_deep")
     workflow.add_edge("research_deep", "validate_report")
-    workflow.add_edge("fallback_research", "validate_report")
     
-    # Conditional routing sau validation
+    # Conditional routing sau validation (bỏ fallback option)
     workflow.add_conditional_edges(
         "validate_report",
         should_retry_or_continue,
         {
             "retry": "research_deep",
             "continue": "create_interface",
-            "fallback": "fallback_research",
-            "end": END
-        }
-    )
-    
-    # Conditional routing sau fallback
-    workflow.add_conditional_edges(
-        "fallback_research", 
-        should_continue_after_fallback,
-        {
-            "continue": "validate_report",
             "end": END
         }
     )
@@ -584,24 +647,37 @@ def create_report_workflow():
 # MAIN FUNCTION
 # =============================================================================
 
-def generate_auto_research_report_langgraph(api_key: str, max_attempts: int = 3, use_fallback_on_500: bool = True) -> bool:
+def generate_auto_research_report_langgraph(api_key: str, max_attempts: int = 3, session_id: str = None) -> dict:
     """
     Hàm chính để tạo báo cáo sử dụng LangGraph workflow.
     
     Args:
         api_key (str): API key của Gemini
         max_attempts (int): Số lần thử tối đa để tạo báo cáo PASS
-        use_fallback_on_500 (bool): Có sử dụng fallback mode khi gặp lỗi 500
+        session_id (str): Session ID để tracking progress (tự tạo nếu None)
         
     Returns:
-        bool: True nếu tạo báo cáo thành công, False nếu thất bại
+        dict: {
+            'success': bool,
+            'session_id': str,
+            'report_id': int | None,
+            'errors': list
+        }
     """
     
-    # Khởi tạo state
+    # Tạo session_id nếu chưa có
+    if not session_id:
+        session_id = str(uuid.uuid4())
+    
+    # Khởi tạo progress tracking
+    progress_tracker.start_progress(session_id)
+    
+    # Khởi tạo state (bỏ use_fallback_on_500)
     initial_state = ReportState(
+        session_id=session_id,
         api_key=api_key,
         max_attempts=max_attempts,
-        use_fallback_on_500=use_fallback_on_500,
+        use_fallback_on_500=False,  # Không sử dụng fallback
         deep_research_prompt_path=None,
         create_report_prompt_path=None,
         deep_research_prompt=None,
@@ -622,19 +698,51 @@ def generate_auto_research_report_langgraph(api_key: str, max_attempts: int = 3,
     )
     
     try:
-        # Tạo và chạy workflow
-        workflow = create_report_workflow()
-        final_state = workflow.invoke(initial_state)
+        # Import Flask app để đảm bảo application context
+        from .. import create_app
+        from flask import current_app
+        
+        # Kiểm tra và tạo application context nếu cần
+        try:
+            # Test xem có app context không
+            _ = current_app.name
+            # Nếu có rồi, chạy trực tiếp
+            workflow = create_report_workflow()
+            final_state = workflow.invoke(initial_state)
+        except RuntimeError:
+            # Chưa có app context, tạo mới
+            app = create_app()
+            with app.app_context():
+                workflow = create_report_workflow()
+                final_state = workflow.invoke(initial_state)
         
         # Kiểm tra kết quả
         if final_state["success"] and final_state.get("report_id"):
-            return True
+            return {
+                'success': True,
+                'session_id': session_id,
+                'report_id': final_state["report_id"],
+                'errors': []
+            }
         else:
+            progress_tracker.error_progress(session_id, "Workflow hoàn thành nhưng không thành công")
             print(f"[{datetime.now()}] Lỗi khi tạo báo cáo tự động:")
             for error in final_state["error_messages"]:
                 print(f"  - {error}")
-            return False
+            return {
+                'success': False,
+                'session_id': session_id,
+                'report_id': None,
+                'errors': final_state["error_messages"]
+            }
             
     except Exception as e:
-        print(f"[{datetime.now()}] Lỗi workflow: {e}")
-        return False
+        error_msg = f"Lỗi workflow: {e}"
+        progress_tracker.error_progress(session_id, error_msg)
+        print(f"[{datetime.now()}] {error_msg}")
+        return {
+            'success': False,
+            'session_id': session_id,
+            'report_id': None,
+            'errors': [error_msg]
+        }

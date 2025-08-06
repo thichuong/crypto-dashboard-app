@@ -1,7 +1,10 @@
 # app/__init__.py
 
 import os
+from datetime import timedelta
+import uuid
 from flask import Flask, render_template, request, flash, redirect, url_for, jsonify
+from flask_socketio import SocketIO, emit, join_room, leave_room
 from dotenv import load_dotenv
 
 # Import các phần mở rộng và model
@@ -13,6 +16,7 @@ from .utils.cache import cache
 from .blueprints.crypto import crypto_bp
 from .services.report_generator import create_report_from_content
 from .services.auto_report_scheduler import start_auto_report_scheduler, generate_auto_research_report
+from .services.progress_tracker import init_progress_tracker, progress_tracker
 
 def create_app():
     """
@@ -21,6 +25,12 @@ def create_app():
     load_dotenv()
     app = Flask(__name__)
     app.secret_key = os.getenv('SECRET_KEY', 'a_very_secret_key')
+    
+    # Khởi tạo SocketIO
+    socketio = SocketIO(app, cors_allowed_origins="*")
+    
+    # Khởi tạo progress tracker với socketio
+    init_progress_tracker(socketio)
     
     # --- DETECT ENVIRONMENT ---
     is_vercel = bool(os.getenv('VERCEL'))
@@ -105,8 +115,12 @@ def create_app():
 
     @app.route('/reports')
     def report_list():
-        all_reports = Report.query.order_by(Report.created_at.desc()).all()
-        return render_template('report_list.html', reports=all_reports)
+        page = request.args.get('page', 1, type=int)
+        per_page = 10  # Number of reports per page
+        reports = Report.query.order_by(Report.created_at.desc()).paginate(
+            page=page, per_page=per_page, error_out=False
+        )
+        return render_template('report_list.html', reports=reports)
     
     @app.route('/upload')
     def upload_page():
@@ -175,19 +189,41 @@ def create_app():
 
     @app.route('/generate-auto-report', methods=['POST'])
     def manual_generate_auto_report():
-        """Route để tạo báo cáo tự động thủ công"""
+        """Route để tạo báo cáo tự động thủ công với progress tracking"""
         try:
             api_key = os.getenv('GEMINI_API_KEY')
             
             if not api_key:
                 return jsonify({'success': False, 'message': 'Vui lòng cung cấp API Key hoặc thiết lập GEMINI_API_KEY.'})
             
-            success = generate_auto_research_report(api_key)
+            # Tạo session_id mới cho tracking
+            session_id = str(uuid.uuid4())
             
-            if success:
-                return jsonify({'success': True, 'message': 'Báo cáo tự động đã được tạo thành công!'})
-            else:
-                return jsonify({'success': False, 'message': 'Có lỗi xảy ra khi tạo báo cáo tự động.'})
+            # Import và chạy workflow trong background
+            from .services.report_workflow import generate_auto_research_report_langgraph
+            
+            def run_workflow_background():
+                """Chạy workflow trong background thread với application context"""
+                # Đảm bảo có application context
+                with app.app_context():
+                    try:
+                        result = generate_auto_research_report_langgraph(api_key, session_id=session_id)
+                        print(f"Workflow completed: {result}")
+                    except Exception as e:
+                        print(f"Workflow error: {e}")
+                        progress_tracker.error_progress(session_id, f"Lỗi workflow: {e}")
+            
+            # Khởi tạo progress tracking
+            progress_tracker.start_progress(session_id)
+            
+            # Chạy workflow trong background
+            socketio.start_background_task(run_workflow_background)
+            
+            return jsonify({
+                'success': True, 
+                'message': 'Đã bắt đầu tạo báo cáo, theo dõi tiến độ real-time',
+                'session_id': session_id
+            })
                 
         except Exception as e:
             return jsonify({'success': False, 'message': f'Đã xảy ra lỗi không mong muốn: {e}'})
@@ -213,7 +249,65 @@ def create_app():
             'total_reports': total_reports
         })
 
+    @app.route('/test-progress/<session_id>')
+    def test_progress(session_id):
+        """Test endpoint để kiểm tra progress tracking"""
+        def test_workflow():
+            # Đảm bảo có application context
+            with app.app_context():
+                import time
+                progress_tracker.start_progress(session_id)
+                time.sleep(2)
+                
+                for i in range(1, 8):
+                    progress_tracker.update_step(session_id, i, f"Test step {i}", f"Testing step {i} details")
+                    time.sleep(2)
+                
+                progress_tracker.complete_progress(session_id, True, 999)
+        
+        socketio.start_background_task(test_workflow)
+        return jsonify({'success': True, 'session_id': session_id, 'message': 'Test progress started'})
+
     app.register_blueprint(crypto_bp, url_prefix='/api/crypto')
+
+    # --- SOCKETIO EVENT HANDLERS ---
+    @socketio.on('connect')
+    def handle_connect():
+        print(f"[SOCKETIO] Client connected: {request.sid}")
+
+    @socketio.on('disconnect')
+    def handle_disconnect():
+        print(f"[SOCKETIO] Client disconnected: {request.sid}")
+
+    @socketio.on('join_progress')
+    def handle_join_progress(data):
+        """Client tham gia room để nhận progress updates"""
+        session_id = data.get('session_id')
+        if session_id:
+            join_room(session_id)
+            print(f"[SOCKETIO] Client {request.sid} joined progress room {session_id}")
+            
+            # Gửi progress hiện tại nếu có
+            current_progress = progress_tracker.get_progress(session_id)
+            if current_progress:
+                print(f"[SOCKETIO] Sending current progress to {request.sid}: {current_progress}")
+                emit('progress_update', {
+                    'session_id': session_id,
+                    'progress': current_progress
+                })
+            else:
+                print(f"[SOCKETIO] No current progress found for session {session_id}")
+
+    @socketio.on('leave_progress')
+    def handle_leave_progress(data):
+        """Client rời khỏi room progress"""
+        session_id = data.get('session_id')
+        if session_id:
+            leave_room(session_id)
+            print(f"[SOCKETIO] Client {request.sid} left progress room {session_id}")
+
+    # --- TEMPLATE GLOBALS ---
+    app.jinja_env.globals.update(timedelta=timedelta)
 
     # --- ERROR HANDLERS ---
     @app.errorhandler(404)
@@ -236,4 +330,4 @@ def create_app():
             return jsonify({'error': 'An unexpected error occurred', 'status': 500}), 500
         return render_template('index.html'), 500
 
-    return app
+    return app, socketio

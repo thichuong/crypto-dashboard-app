@@ -28,7 +28,7 @@
             <h1 class="text-4xl md:text-5xl font-extrabold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-green-500">Toàn Cảnh Thị Trường Tiền Mã Hóa</h1>
             {% if report %}
                 <p class="text-lg text-gray-600 max-w-3xl mx-auto">
-                    Hiển thị báo cáo  (tạo lúc {{ report.created_at.strftime('%d-%m-%Y %H:%M') }} UTC)
+                    Hiển thị báo cáo  (tạo lúc {{ (report.created_at + timedelta(hours=7)).strftime('%d-%m-%Y %H:%M') }})
                 </p>
             {% else %}
                 <p class="text-lg text-gray-600 max-w-3xl mx-auto">Bài phân tích và tổng hợp</p>
