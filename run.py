@@ -4,7 +4,7 @@ import os
 from build import build_js
 
 # Gọi hàm create_app để tạo một instance của ứng dụng Flask
-app, socketio = create_app()
+app = create_app()
 
 # Vercel configuration for maxDuration
 config = {"maxDuration": 30}
@@ -12,7 +12,7 @@ config = {"maxDuration": 30}
 # Đoạn mã này đảm bảo việc build chỉ xảy ra một lần khi bạn
 # khởi động ứng dụng ở chế độ debug (ví dụ: flask run --debug)
 # và sẽ không chạy trên môi trường production.
-if app.debug and not os.getenv('VERCEL'):
+if app.debug:
     build_js()
 
 # Vercel expects an app variable to be exported
@@ -23,8 +23,8 @@ if __name__ == '__main__':
     host = os.environ.get('FLASK_RUN_HOST', '127.0.0.1')
     port = int(os.environ.get('FLASK_RUN_PORT', 8080))
     
-    # Chỉ enable debug mode khi không phải trên Vercel
-    debug_mode = not os.getenv('VERCEL', False)
+    # Enable debug mode for local development
+    debug_mode = True
     
-    # Chạy ứng dụng với SocketIO (thống nhất cho cả local và production)
-    socketio.run(app, host=host, port=port, debug=debug_mode)
+    # Chạy ứng dụng Flask thông thường
+    app.run(host=host, port=port, debug=debug_mode)

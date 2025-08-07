@@ -4,7 +4,6 @@ import os
 from datetime import timedelta
 import uuid
 from flask import Flask, render_template, request, flash, redirect, url_for, jsonify
-from flask_socketio import SocketIO, emit, join_room, leave_room
 from dotenv import load_dotenv
 
 # Import các phần mở rộng và model
@@ -16,7 +15,7 @@ from .utils.cache import cache
 from .blueprints.crypto import crypto_bp
 from .services.report_generator import create_report_from_content
 from .services.auto_report_scheduler import start_auto_report_scheduler, generate_auto_research_report
-from .services.progress_tracker import init_progress_tracker, progress_tracker
+from .services.progress_tracker import progress_tracker
 
 def create_app():
     """
@@ -26,49 +25,24 @@ def create_app():
     app = Flask(__name__)
     app.secret_key = os.getenv('SECRET_KEY', 'a_very_secret_key')
     
-    # Khởi tạo SocketIO với cấu hình thống nhất cho cả Vercel và local
-    # Sử dụng polling làm transport chính để tương thích với serverless
-    socketio = SocketIO(
-        app, 
-        cors_allowed_origins="*",
-        transports=['polling'],  # Chỉ sử dụng polling cho tính nhất quán
-        ping_timeout=60,         # Timeout dài hơn cho stability
-        ping_interval=25,        # Interval phù hợp
-        logger=False,            # Tắt logger để giảm overhead
-        engineio_logger=False    # Tắt engine logger
-    )
-    
-    # Khởi tạo progress tracker với socketio
-    init_progress_tracker(socketio)
-    
     # --- DETECT ENVIRONMENT ---
-    is_vercel = bool(os.getenv('VERCEL'))
-    is_production = is_vercel or os.getenv('FLASK_ENV') == 'production'
+    is_production = os.getenv('FLASK_ENV') == 'production'
     
-    if is_vercel:
-        print("INFO: Running on Vercel serverless environment")
-    elif is_production:
+    if is_production:
         print("INFO: Running in production mode")
     else:
         print("INFO: Running in development mode")
-    
-    print("INFO: SocketIO configured with polling transport for universal compatibility")
 
     # --- CẤU HÌNH DATABASE ĐỘNG ---
     if postgres_url := os.getenv('POSTGRES_URL'):
         db_url = postgres_url.replace("postgres://", "postgresql://", 1)
         app.config['SQLALCHEMY_DATABASE_URI'] = db_url
-        print("INFO: Connecting to Vercel Postgres")
+        print("INFO: Connecting to Postgres database")
     else:
-        if is_vercel:
-            # On Vercel without Postgres, use SQLite in /tmp (writable)
-            app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/vercel_app.db'
-            print("INFO: Using temporary SQLite on Vercel")
-        else:
-            db_path = os.path.join(app.instance_path, 'local_dev.db')
-            os.makedirs(app.instance_path, exist_ok=True)
-            app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
-            print("INFO: Connecting to local SQLite database")
+        db_path = os.path.join(app.instance_path, 'local_dev.db')
+        os.makedirs(app.instance_path, exist_ok=True)
+        app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
+        print("INFO: Connecting to local SQLite database")
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -210,8 +184,9 @@ def create_app():
             # Tạo session_id mới cho tracking
             session_id = str(uuid.uuid4())
             
-            # Import và chạy workflow trong background
+            # Import và chạy workflow trong background thread
             from .services.report_workflow import generate_auto_research_report_langgraph
+            import threading
             
             def run_workflow_background():
                 """Chạy workflow trong background thread với application context"""
@@ -227,12 +202,14 @@ def create_app():
             # Khởi tạo progress tracking
             progress_tracker.start_progress(session_id)
             
-            # Chạy workflow trong background
-            socketio.start_background_task(run_workflow_background)
+            # Chạy workflow trong background thread
+            thread = threading.Thread(target=run_workflow_background)
+            thread.daemon = True
+            thread.start()
             
             return jsonify({
                 'success': True, 
-                'message': 'Đã bắt đầu tạo báo cáo, theo dõi tiến độ real-time',
+                'message': 'Đã bắt đầu tạo báo cáo, theo dõi tiến độ qua API',
                 'session_id': session_id
             })
                 
@@ -279,10 +256,12 @@ def create_app():
     @app.route('/test-progress/<session_id>')
     def test_progress(session_id):
         """Test endpoint để kiểm tra progress tracking"""
+        import threading
+        import time
+        
         def test_workflow():
             # Đảm bảo có application context
             with app.app_context():
-                import time
                 progress_tracker.start_progress(session_id)
                 time.sleep(2)
                 
@@ -292,46 +271,13 @@ def create_app():
                 
                 progress_tracker.complete_progress(session_id, True, 999)
         
-        socketio.start_background_task(test_workflow)
+        thread = threading.Thread(target=test_workflow)
+        thread.daemon = True
+        thread.start()
+        
         return jsonify({'success': True, 'session_id': session_id, 'message': 'Test progress started'})
 
     app.register_blueprint(crypto_bp, url_prefix='/api/crypto')
-
-    # --- SOCKETIO EVENT HANDLERS ---
-    @socketio.on('connect')
-    def handle_connect():
-        print(f"[SOCKETIO] Client connected: {request.sid}")
-
-    @socketio.on('disconnect')
-    def handle_disconnect():
-        print(f"[SOCKETIO] Client disconnected: {request.sid}")
-
-    @socketio.on('join_progress')
-    def handle_join_progress(data):
-        """Client tham gia room để nhận progress updates"""
-        session_id = data.get('session_id')
-        if session_id:
-            join_room(session_id)
-            print(f"[SOCKETIO] Client {request.sid} joined progress room {session_id}")
-            
-            # Gửi progress hiện tại nếu có
-            current_progress = progress_tracker.get_progress(session_id)
-            if current_progress:
-                print(f"[SOCKETIO] Sending current progress to {request.sid}: {current_progress}")
-                emit('progress_update', {
-                    'session_id': session_id,
-                    'progress': current_progress
-                })
-            else:
-                print(f"[SOCKETIO] No current progress found for session {session_id}")
-
-    @socketio.on('leave_progress')
-    def handle_leave_progress(data):
-        """Client rời khỏi room progress"""
-        session_id = data.get('session_id')
-        if session_id:
-            leave_room(session_id)
-            print(f"[SOCKETIO] Client {request.sid} left progress room {session_id}")
 
     # --- TEMPLATE GLOBALS ---
     app.jinja_env.globals.update(timedelta=timedelta)
@@ -357,4 +303,4 @@ def create_app():
             return jsonify({'error': 'An unexpected error occurred', 'status': 500}), 500
         return render_template('index.html'), 500
 
-    return app, socketio
+    return app
