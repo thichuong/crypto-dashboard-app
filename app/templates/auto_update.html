@@ -29,52 +29,6 @@
 </head>
 <body class="antialiased min-h-screen" style="background: linear-gradient(180deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);">
 
-    <!-- Process Notification Overlay -->
-    <div id="process-overlay" class="loading-overlay" style="display: none;">
-        <div class="success-content" style="max-width: 700px;">
-            <div class="text-center mb-6">
-                <i class="fas fa-chart-line text-6xl text-blue-500 mb-4"></i>
-                <h3 class="text-xl font-bold mb-2" style="color: var(--text-primary);">Đang Tạo Báo Cáo Crypto</h3>
-                <p class="text-sm" style="color: var(--text-secondary);">Hệ thống đang thu thập và phân tích dữ liệu thị trường</p>
-            </div>
-            
-            <!-- Progress Table -->
-            <div class="bg-white rounded-lg border shadow-sm">
-                <div class="px-4 py-3 border-b bg-gray-50 rounded-t-lg">
-                    <h4 class="text-sm font-semibold text-gray-800">
-                        <i class="fas fa-tasks mr-2"></i>Tiến Độ Thực Hiện
-                    </h4>
-                </div>
-                <div class="max-h-80 overflow-y-auto">
-                    <table class="w-full text-sm">
-                        <thead class="bg-gray-100">
-                            <tr>
-                                <th class="px-4 py-2 text-left text-gray-700 font-medium w-12">Bước</th>
-                                <th class="px-4 py-2 text-left text-gray-700 font-medium">Tên Công Việc</th>
-                                <th class="px-4 py-2 text-left text-gray-700 font-medium">Chi Tiết</th>
-                                <th class="px-4 py-2 text-left text-gray-700 font-medium w-20">Trạng Thái</th>
-                            </tr>
-                        </thead>
-                        <tbody id="progress-table-body" class="divide-y divide-gray-200">
-                            <!-- Rows will be populated by JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            
-            <!-- Progress Bar -->
-            <div class="mt-6">
-                <div class="w-full bg-gray-200 rounded-full h-3">
-                    <div id="progress-bar" class="bg-blue-500 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
-                </div>
-                <div class="flex justify-between text-sm mt-2" style="color: var(--text-secondary);">
-                    <span>Tiến độ tổng thể</span>
-                    <span id="progress-text">0%</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Success Overlay -->
     <div id="success-overlay" class="loading-overlay" style="display: none;">
         <div class="success-content">
@@ -256,12 +210,6 @@
             const progress = data.progress;
             console.log('[PROGRESS] Processing progress update:', progress);
             
-            // Update progress bar
-            updateProgressBar(progress.percentage);
-            
-            // Update current step
-            updateStepProgress(progress.step, progress.current_step_name, progress.details);
-            
             // Update log if details available
             if (progress.details) {
                 addLogEntry(progress.details, 'info');
@@ -270,137 +218,36 @@
             // Handle completion
             if (progress.status === 'completed') {
                 console.log('[PROGRESS] Workflow completed!');
-                setTimeout(() => {
-                    hideProcessNotification();
-                    document.getElementById('success-message').textContent = 
-                        `Báo cáo #${progress.report_id} đã được tạo thành công!`;
-                    document.getElementById('success-overlay').style.display = 'flex';
-                    
-                    // Restore button
-                    const btn = document.getElementById('trigger-report-btn');
-                    btn.innerHTML = '<i class="fas fa-play mr-2"></i>Tạo Báo Cáo Ngay';
-                    btn.disabled = false;
-                    
-                    addLogEntry('🎉 Hoàn thành tạo báo cáo!', 'success');
-                }, 1000);
+                document.getElementById('success-message').textContent = 
+                    `Báo cáo #${progress.report_id} đã được tạo thành công!`;
+                document.getElementById('success-overlay').style.display = 'flex';
+                
+                // Restore button
+                const btn = document.getElementById('trigger-report-btn');
+                btn.innerHTML = '<i class="fas fa-play mr-2"></i>Tạo Báo Cáo Ngay';
+                btn.disabled = false;
+                
+                addLogEntry('🎉 Hoàn thành tạo báo cáo!', 'success');
             } else if (progress.status === 'error') {
                 console.log('[PROGRESS] Workflow error:', progress.details);
-                setTimeout(() => {
-                    hideProcessNotification();
-                    document.getElementById('error-message').textContent = 
-                        progress.details || 'Có lỗi xảy ra trong quá trình tạo báo cáo';
-                    document.getElementById('error-overlay').style.display = 'flex';
-                    
-                    // Restore button
-                    const btn = document.getElementById('trigger-report-btn');
-                    btn.innerHTML = '<i class="fas fa-play mr-2"></i>Tạo Báo Cáo Ngay';
-                    btn.disabled = false;
-                    
-                    addLogEntry('💥 Có lỗi xảy ra!', 'error');
-                }, 1000);
+                document.getElementById('error-message').textContent = 
+                    progress.details || 'Có lỗi xảy ra trong quá trình tạo báo cáo';
+                document.getElementById('error-overlay').style.display = 'flex';
+                
+                // Restore button
+                const btn = document.getElementById('trigger-report-btn');
+                btn.innerHTML = '<i class="fas fa-play mr-2"></i>Tạo Báo Cáo Ngay';
+                btn.disabled = false;
+                
+                addLogEntry('💥 Có lỗi xảy ra!', 'error');
             }
         }
         
-        // Show process notification
-        function showProcessNotification() {
-            document.getElementById('process-overlay').style.display = 'flex';
-            resetProcessSteps();
-        }
-        
-        // Hide process notification
-        function hideProcessNotification() {
-            document.getElementById('process-overlay').style.display = 'none';
+        // Leave progress room when done
+        function leaveProgressRoom() {
             if (currentSessionId && socket) {
                 socket.emit('leave_progress', { session_id: currentSessionId });
                 currentSessionId = null;
-            }
-        }
-        
-        // Reset process steps
-        function resetProcessSteps() {
-            const tableBody = document.getElementById('progress-table-body');
-            tableBody.innerHTML = '';
-            
-            // Initialize table with all steps
-            const steps = [
-                'Chuẩn bị dữ liệu và khởi tạo AI',
-                'Thu thập dữ liệu từ internet',
-                'Kiểm tra chất lượng báo cáo',
-                'Tạo giao diện báo cáo', 
-                'Trích xuất mã nguồn',
-                'Lưu báo cáo vào database',
-                'Hoàn thành'
-            ];
-            
-            steps.forEach((stepName, index) => {
-                const row = document.createElement('tr');
-                row.id = `progress-row-${index + 1}`;
-                row.className = 'bg-white hover:bg-gray-50';
-                row.innerHTML = `
-                    <td class="px-4 py-2 text-gray-700 font-mono">${index + 1}</td>
-                    <td class="px-4 py-2 text-gray-800">${stepName}</td>
-                    <td class="px-4 py-2 text-gray-600 text-sm">Đang chờ...</td>
-                    <td class="px-4 py-2">
-                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
-                            <i class="fas fa-clock mr-1"></i>Chờ
-                        </span>
-                    </td>
-                `;
-                tableBody.appendChild(row);
-            });
-            
-            updateProgressBar(0);
-        }
-        
-        // Update step progress
-        function updateStepProgress(stepNumber, stepName, details) {
-            // Complete previous steps
-            for (let i = 1; i < stepNumber; i++) {
-                const row = document.getElementById(`progress-row-${i}`);
-                if (row) {
-                    const statusCell = row.cells[3];
-                    statusCell.innerHTML = `
-                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            <i class="fas fa-check mr-1"></i>Hoàn thành
-                        </span>
-                    `;
-                    row.className = 'bg-green-50 hover:bg-green-100';
-                }
-            }
-            
-            // Update current step
-            const currentRow = document.getElementById(`progress-row-${stepNumber}`);
-            if (currentRow) {
-                currentRow.className = 'bg-blue-50 hover:bg-blue-100';
-                
-                // Update step name if provided
-                if (stepName) {
-                    currentRow.cells[1].textContent = stepName;
-                }
-                
-                // Update details if provided
-                if (details) {
-                    currentRow.cells[2].textContent = details;
-                }
-                
-                // Update status
-                const statusCell = currentRow.cells[3];
-                statusCell.innerHTML = `
-                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                        <i class="fas fa-spinner fa-spin mr-1"></i>Đang thực hiện
-                    </span>
-                `;
-            }
-        }
-        
-        // Update progress bar
-        function updateProgressBar(percentage) {
-            const progressBar = document.getElementById('progress-bar');
-            const progressText = document.getElementById('progress-text');
-            
-            if (progressBar && progressText) {
-                progressBar.style.width = percentage + '%';
-                progressText.textContent = Math.round(percentage) + '%';
             }
         }
         
@@ -504,7 +351,7 @@
             }
         }
         
-        // Trigger manual report with SocketIO progress tracking
+        // Trigger manual report with simplified UI feedback
         async function triggerManualReport() {
             // Confirmation dialog
             if (!confirm('Bạn có chắc chắn muốn tạo báo cáo mới? Quá trình này có thể mất vài phút.')) {
@@ -515,12 +362,10 @@
             const originalContent = btn.innerHTML;
             
             // Show loading state
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Đang khởi tạo...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Đang tạo báo cáo...';
             btn.disabled = true;
             
-            // Show process notification
-            showProcessNotification();
-            addLogEntry('🚀 Bắt đầu tạo báo cáo tự động với real-time tracking', 'info');
+            addLogEntry('🚀 Bắt đầu tạo báo cáo tự động', 'info');
             
             try {
                 const response = await fetch('/generate-auto-report', {
@@ -545,11 +390,8 @@
                         addLogEntry('⚠️ Cảnh báo: Socket không khả dụng', 'error');
                     }
                     
-                    // Update button to show it's running
-                    btn.innerHTML = '<i class="fas fa-cog fa-spin mr-2"></i>Đang chạy...';
                     addLogEntry('✅ Workflow đã được khởi chạy thành công', 'success');
                 } else {
-                    hideProcessNotification();
                     document.getElementById('error-message').textContent = data.message;
                     document.getElementById('error-overlay').style.display = 'flex';
                     addLogEntry(`❌ Lỗi tạo báo cáo: ${data.message}`, 'error');
@@ -560,7 +402,6 @@
                 }
                 
             } catch (error) {
-                hideProcessNotification();
                 document.getElementById('error-message').textContent = `Lỗi kết nối: ${error.message}`;
                 document.getElementById('error-overlay').style.display = 'flex';
                 addLogEntry(`🔌 Lỗi kết nối: ${error.message}`, 'error');
@@ -580,11 +421,13 @@
         // Close overlays
         function closeSuccessOverlay() {
             document.getElementById('success-overlay').style.display = 'none';
+            leaveProgressRoom(); // Clean up session
             refreshStatus(); // Refresh to show new report count
         }
         
         function closeErrorOverlay() {
             document.getElementById('error-overlay').style.display = 'none';
+            leaveProgressRoom(); // Clean up session
         }
     </script>
 </body>

@@ -4,38 +4,16 @@ Một ứng dụng web Flask toàn diện được thiết kế để cung cấp
 1. **Dashboard thị trường tiền mã hóa** theo thời gian thực với các chỉ số quan trọng
 2. **Trình tạo báo cáo AI** - công cụ cho phép chuyển đổi tài liệu văn bản thành báo cáo web tương tác một cách tự động
 
-**🔗 Xem trực tiếp tại:** [https://crypto-dashboard-app-thich#### 🔄 **Retry Logic với Exponential Backoff**
-* **Node-level retry**: Mỗi node có thể retry riêng lẻ
-* **Thời gian chờ tăng dần**: 30s → 60s → 90s
-* **State preservation**: Giữ nguyên state khi retry
-* **Áp dụng cho**: Research, interface generation, và database operations
-* **Enhanced code extraction**: Improved regex patterns để extract HTML/CSS/JS từ AI response
-
-#### 🎯 **Real-time Data Focus**
-* **No fallback mode**: Đảm bảo 100% thông tin real-time
-* **Google Search required**: Luôn yêu cầu internet access cho dữ liệu mới nhất
-* **Quality assurance**: Chỉ chấp nhận báo cáo PASS validation
-* **Fresh data guarantee**: Mỗi báo cáo đều có thông tin từ internet
-
-#### ✅ **Enhanced Validation System**
-* **Dedicated validation node**: Specialized step cho quality checking
-* **Strict criteria**: Chỉ chấp nhận PASS, retry cho FAIL/UNKNOWN
-* **Real-time validation**: Kiểm tra chất lượng dữ liệu real-time
-* **No compromise**: Không chấp nhận báo cáo chất lượng thấp
-
-#### 📋 **Table-based Progress Tracking**
-* **Real-time updates**: SocketIO integration cho instant progress updates
-* **Structured display**: Bảng 4 cột (Bước, Tên Công Việc, Chi Tiết, Trạng Thái)
-* **Visual indicators**: Color-coded status badges và progress bar
-* **Session tracking**: Unique session IDs cho multiple concurrent reports(h   │   ├── 📄 alternative_me.py # Fear & Greed Index
-   │   ├── 📄 taapi.py        # Technical Analysis API
-   │   ├── 📄 report_generator.py # AI report creation (legacy)
-   │   ├── 📄 report_workflow.py # LangGraph workflow implementation
-   │   └── 📄 auto_report_scheduler.py # Scheduler với LangGraph integration://crypto-dashboard-app-thichuong.vercel.app/)
+**🔗 Xem trực tiếp tại:** [https://crypto-dashboard-app-thichuong.vercel.app/](https://crypto-dashboard-app-thichuong.vercel.app/)
 
 ## ✨ Tính Năng Nổi Bật
 
-### 📈 Dashboard Thị Trường Crypto
+### 📈 Dashboard Thị T   │   ├── 📄 alternative_me.py # Fear & Greed Index
+   │   ├── 📄 taapi.py        # Technical Analysis API (legacy)
+   │   ├── 📄 report_generator.py # AI report creation (legacy)
+   │   ├── 📄 report_workflow.py # LangGraph workflow (simplified)
+   │   ├── 📄 progress_tracker.py # Progress tracking với SocketIO
+   │   └── 📄 auto_report_scheduler.py # Scheduler với LangGraph integrationCrypto
 * **Dữ liệu thời gian thực** với hệ thống caching thông minh (10 phút):
   * Giá **Bitcoin (BTC)** với biến động 24h và biểu đồ line chart
   * Tổng vốn hóa thị trường & khối lượng giao dịch toàn cầu
@@ -56,14 +34,15 @@ Một ứng dụng web Flask toàn diện được thiết kế để cung cấp
   * **📊 Modular Architecture**: Các nodes độc lập dễ test và maintain
   * **🔄 Smart Routing**: Conditional flows với retry logic (real-time only)
   * **📈 State Management**: Tracking toàn bộ quá trình từ input đến output
-  * **📋 Table-based Progress**: Giao diện theo dõi tiến độ dạng bảng với real-time updates
+  * **🎯 Simplified UI**: Clean, minimalist interface chỉ với button loading states
+  * **✅ Enhanced Validation**: Flexible validation cho phép báo cáo thiếu một số dữ liệu
   * Scheduler tự động chạy mỗi 3 giờ (có thể tùy chỉnh)
   * Báo cáo nghiên cứu sâu về thị trường tiền điện tử với Google Search integration
   * Phân tích tâm lý thị trường, kỹ thuật, và các yếu tố vĩ mô
   * Tạo giao diện web tương tác tự động từ dữ liệu mới nhất
   * **🛡️ Advanced Error Handling**: Retry logic với exponential backoff
-  * **🎯 Real-time Data Only**: Chỉ sử dụng thông tin mới nhất từ internet
-  * **✅ Validation System**: Kiểm tra chất lượng báo cáo tự động (PASS/FAIL only)
+  * **🎯 Real-time Data Only**: Chỉ sử dụng thông tin mới nhất từ internet (removed RSI dependency)
+  * **✅ Smart Validation System**: Kiểm tra chất lượng với fallback graceful
   * **🔍 Observability**: Detailed logging và monitoring cho từng step
 
 ### 🎨 Giao Diện & UX
@@ -101,7 +80,8 @@ Tính năng cốt lõi cho phép người dùng tạo báo cáo web tương tác
      - `extract_code_node`: Code parsing và optimization với improved regex patterns
      - `save_database_node`: Persistent storage
    * **Error handling**: Automatic retry với conditional routing (no fallback - real-time only)
-   * **Progress tracking**: Table-based progress display với real-time SocketIO updates
+   * **Progress tracking**: Simplified UI với button loading states và activity log
+   * **Enhanced validation**: Flexible validation system cho phép báo cáo thiếu một số dữ liệu không quan trọng
 
 3. **🎨 Code Generation**
    * **HTML**: Semantic structure với accessibility support
@@ -297,13 +277,13 @@ vercel --prod
     - Log tất cả các attempt truy cập
   - **Tính năng**:
     - Theo dõi trạng thái scheduler thời gian thực
-    - **📋 Table-based Progress Tracking**: Bảng tiến độ với 4 cột (Bước, Tên Công Việc, Chi Tiết, Trạng Thái)
-    - **� Real-time Updates**: SocketIO integration cho progress updates
+    - **🎯 Simplified UI**: Clean interface với button loading states
+    - **📋 Activity Log**: Real-time progress tracking qua activity log
     - Tạo báo cáo thủ công bằng một click
     - Xem nhật ký hoạt động chi tiết
     - Kiểm tra cấu hình hệ thống
     - **🛡️ Error Recovery**: Workflow state inspection và manual retry
-    - **🎯 Real-time Data Monitoring**: Theo dõi chất lượng dữ liệu real-time (no fallback)
+    - **✅ Enhanced Validation**: Flexible validation system với graceful fallbacks
 
 ### 📊 Xem Báo Cáo
 - Trang chủ hiển thị báo cáo mới nhất
@@ -417,18 +397,26 @@ Hệ thống được thiết kế để hoạt động ổn định với thôn
 * **Thời gian chờ tăng dần**: 30s → 60s → 90s
 * **State preservation**: Giữ nguyên state khi retry
 * **Áp dụng cho**: Research, interface generation, và database operations
+* **Enhanced code extraction**: Improved regex patterns để extract HTML/CSS/JS từ AI response
 
-#### � **Real-time Data Focus**
-* **No fallback mode**: Đảm bảo 100% thông tin real-time
+#### 🎯 **Real-time Data Focus**
+* **Simplified data sources**: Chỉ sử dụng 3 API cơ bản (CoinGecko, Alternative.me)
+* **No RSI dependency**: Loại bỏ TAAPI/RSI để tăng reliability
 * **Google Search required**: Luôn yêu cầu internet access cho dữ liệu mới nhất
 * **Quality assurance**: Chỉ chấp nhận báo cáo PASS validation
 * **Fresh data guarantee**: Mỗi báo cáo đều có thông tin từ internet
 
 #### ✅ **Enhanced Validation System**
-* **Dedicated validation node**: Specialized step cho quality checking
-* **Strict criteria**: Chỉ chấp nhận PASS, retry cho FAIL/UNKNOWN
-* **Real-time validation**: Kiểm tra chất lượng dữ liệu real-time
-* **No compromise**: Không chấp nhận báo cáo chất lượng thấp
+* **Flexible validation**: Cho phép báo cáo thiếu một số dữ liệu không quan trọng
+* **Smart criteria**: Chỉ kiểm tra dữ liệu thực sự được đề cập trong báo cáo
+* **Graceful fallback**: Basic content validation khi không có real-time data
+* **No penalization**: Không bị FAIL vì thiếu dữ liệu không cần thiết
+
+#### 🎨 **Simplified UI Experience**
+* **Minimalist design**: Loại bỏ complex progress overlay
+* **Button-focused feedback**: Loading states và visual indicators trên nút chính
+* **Activity log**: Real-time updates thông qua activity log thay vì bảng phức tạp
+* **Clean workflow**: Giảm thiểu UI clutter và tập trung vào core functionality
 
 ⚙️ **Configuration Options**
 ```env
@@ -442,7 +430,7 @@ THINKING_BUDGET=32768          # AI thinking budget (128-32768)
 * **State inspection**: Real-time monitoring state changes
 * **Performance tracking**: Timing và resource usage per node
 * **Error tracing**: Complete error context với workflow path
-* **Dashboard integration**: Visual workflow status trên auto-update system
+* **Simplified UI**: Clean activity log interface thay vì complex progress tables
 
 ---
 
@@ -564,3 +552,33 @@ pip install langgraph langchain-core
 ```
 
 **Note**: LangGraph yêu cầu Python 3.8+ và các dependencies tương thích với LangChain ecosystem.
+
+---
+
+## 🆕 Recent Updates & Improvements
+
+### v2.5.0 - Enhanced Reliability & UX (January 2025)
+
+#### 🎯 **UI/UX Improvements**
+* **Simplified Interface**: Loại bỏ complex progress overlay popup
+* **Button-focused Feedback**: Loading states và visual indicators trực tiếp trên nút
+* **Clean Activity Log**: Real-time progress tracking thông qua activity log thay vì bảng phức tạp
+* **Minimalist Design**: Giảm thiểu UI clutter, tập trung vào core functionality
+
+#### 🔧 **System Architecture Improvements**
+* **Simplified Data Pipeline**: Giảm từ 4 xuống 3 API sources (loại bỏ TAAPI/RSI dependency)
+* **Enhanced Reliability**: Loại bỏ các failure points không cần thiết
+* **Improved Error Handling**: Graceful fallback validation khi không có real-time data
+* **Reduced Complexity**: Streamlined workflow với fewer dependencies
+
+#### ✅ **Validation System Enhancements**
+* **Flexible Validation**: Cho phép báo cáo thiếu một số dữ liệu không quan trọng
+* **Smart Criteria**: Chỉ kiểm tra dữ liệu thực sự được đề cập trong báo cáo
+* **No False Negatives**: Không penalize báo cáo vì thiếu dữ liệu optional
+* **Enhanced Pass Rate**: Tăng tỷ lệ thành công của workflow
+
+#### 🛡️ **Reliability Improvements**
+* **Reduced API Dependencies**: Từ 4 xuống 3 external API calls
+* **Better Error Recovery**: Improved fallback mechanisms
+* **Simplified State Management**: Cleaner workflow state transitions
+* **Enhanced Logging**: Better debugging và monitoring capabilities

@@ -634,7 +634,7 @@ def create_interface_node(state: ReportState) -> ReportState:
         progress_tracker.error_progress(session_id, error_msg)
         return state
         
-    if not interface_response.text or not isinstance(interface_response.text, str):
+    if not interface_response.text:
         error_msg = "Không nhận được nội dung interface từ AI hoặc không phải string"
         state["error_messages"].append(error_msg)
         state["success"] = False
