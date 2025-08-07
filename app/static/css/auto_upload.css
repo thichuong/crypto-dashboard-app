@@ -49,6 +49,79 @@
     }
 }
 
+/* Progress Table Styles */
+.step-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    font-size: 12px;
+}
+
+.step-status.pending {
+    background: rgba(156, 163, 175, 0.2);
+    color: #9CA3AF;
+}
+
+.step-status.running {
+    background: rgba(59, 130, 246, 0.2);
+    color: #3B82F6;
+    animation: pulse 2s infinite;
+}
+
+.step-status.completed {
+    background: rgba(34, 197, 94, 0.2);
+    color: #22C55E;
+}
+
+.step-status.error {
+    background: rgba(239, 68, 68, 0.2);
+    color: #EF4444;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(1.1);
+    }
+}
+
+/* Progress Bar Animation */
+@keyframes progressSlide {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+#progress-bar .animate-pulse {
+    animation: progressSlide 2s infinite;
+}
+
+/* Progress Card Animation */
+#progress-card {
+    animation: slideInDown 0.5s ease-out;
+}
+
+@keyframes slideInDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* Auto Update Container */
 .auto-update-container {
     max-width: 800px;

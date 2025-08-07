@@ -401,7 +401,7 @@ def research_deep_node(state: ReportState) -> ReportState:
         full_report_text = response.text
         
         # Kiểm tra nội dung response
-        if not full_report_text or not isinstance(full_report_text, str):
+        if not full_report_text:
             error_msg = f"Lần thử {state['current_attempt']}: Không nhận được nội dung báo cáo từ AI hoặc không phải string"
             state["error_messages"].append(error_msg)
             progress_tracker.update_substep(session_id, error_msg)
@@ -531,7 +531,7 @@ def validate_report_node(state: ReportState) -> ReportState:
             
         validation_text = validation_response.text
         
-        if not validation_text or not isinstance(validation_text, str):
+        if not validation_text:
             error_msg = f"Lần thử {state['current_attempt']}: Không nhận được kết quả validation từ AI"
             state["error_messages"].append(error_msg)
             state["validation_result"] = "UNKNOWN"
