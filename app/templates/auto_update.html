@@ -176,19 +176,32 @@
         let socket = null;
         let currentSessionId = null;
         
-        // Initialize SocketIO
+        // Initialize SocketIO with unified configuration for both Vercel and local
         function initializeSocket() {
             console.log('[SOCKETIO] Initializing socket connection...');
-            socket = io();
+            
+            // Unified SocketIO configuration - polling only for universal compatibility
+            const socketConfig = {
+                transports: ['polling'],  // Only polling for both Vercel and local
+                timeout: 60000,           // Long timeout for stability
+                forceNew: true,           // Force new connection
+                reconnection: true,       // Enable reconnection
+                reconnectionDelay: 2000,  // 2 second delay between attempts
+                reconnectionAttempts: 5,  // Try 5 times
+                pingTimeout: 60000,       // Match server config
+                pingInterval: 25000       // Match server config
+            };
+            
+            socket = io(socketConfig);
             
             socket.on('connect', function() {
-                console.log('[SOCKETIO] Connected to server');
+                console.log('[SOCKETIO] Connected to server successfully');
                 addLogEntry('🔗 Kết nối server thành công', 'info');
             });
             
-            socket.on('disconnect', function() {
-                console.log('[SOCKETIO] Disconnected from server');
-                addLogEntry('⚠️ Mất kết nối server', 'info');
+            socket.on('disconnect', function(reason) {
+                console.log('[SOCKETIO] Disconnected from server. Reason:', reason);
+                addLogEntry('⚠️ Mất kết nối server: ' + reason, 'info');
             });
             
             socket.on('progress_update', function(data) {
@@ -198,7 +211,22 @@
             
             socket.on('connect_error', function(error) {
                 console.error('[SOCKETIO] Connection error:', error);
-                addLogEntry('❌ Lỗi kết nối SocketIO: ' + error, 'error');
+                addLogEntry('❌ Lỗi kết nối SocketIO: ' + (error.message || error), 'error');
+            });
+            
+            socket.on('reconnect', function(attemptNumber) {
+                console.log('[SOCKETIO] Reconnected after', attemptNumber, 'attempts');
+                addLogEntry('🔄 Đã kết nối lại server', 'info');
+            });
+            
+            socket.on('reconnect_error', function(error) {
+                console.error('[SOCKETIO] Reconnection error:', error);
+                addLogEntry('❌ Lỗi kết nối lại: ' + (error.message || error), 'error');
+            });
+            
+            socket.on('reconnect_failed', function() {
+                console.log('[SOCKETIO] Reconnection failed completely');
+                addLogEntry('❌ Không thể kết nối lại server', 'error');
             });
         }
         
@@ -245,7 +273,7 @@
         
         // Leave progress room when done
         function leaveProgressRoom() {
-            if (currentSessionId && socket) {
+            if (currentSessionId && socket && socket.connected) {
                 socket.emit('leave_progress', { session_id: currentSessionId });
                 currentSessionId = null;
             }
@@ -381,13 +409,14 @@
                     // Set session ID and join room for progress updates
                     currentSessionId = data.session_id;
                     console.log('[WORKFLOW] Started with session ID:', currentSessionId);
-                    if (socket) {
+                    
+                    if (socket && socket.connected) {
                         console.log('[SOCKETIO] Joining progress room:', currentSessionId);
                         socket.emit('join_progress', { session_id: currentSessionId });
                         addLogEntry(`📡 Đã kết nối progress tracking: ${currentSessionId}`, 'info');
                     } else {
-                        console.error('[SOCKETIO] Socket not available!');
-                        addLogEntry('⚠️ Cảnh báo: Socket không khả dụng', 'error');
+                        console.error('[SOCKETIO] Socket not connected');
+                        addLogEntry('⚠️ Cảnh báo: Socket chưa kết nối', 'error');
                     }
                     
                     addLogEntry('✅ Workflow đã được khởi chạy thành công', 'success');

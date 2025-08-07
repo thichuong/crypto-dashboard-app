@@ -26,8 +26,17 @@ def create_app():
     app = Flask(__name__)
     app.secret_key = os.getenv('SECRET_KEY', 'a_very_secret_key')
     
-    # Khởi tạo SocketIO
-    socketio = SocketIO(app, cors_allowed_origins="*")
+    # Khởi tạo SocketIO với cấu hình thống nhất cho cả Vercel và local
+    # Sử dụng polling làm transport chính để tương thích với serverless
+    socketio = SocketIO(
+        app, 
+        cors_allowed_origins="*",
+        transports=['polling'],  # Chỉ sử dụng polling cho tính nhất quán
+        ping_timeout=60,         # Timeout dài hơn cho stability
+        ping_interval=25,        # Interval phù hợp
+        logger=False,            # Tắt logger để giảm overhead
+        engineio_logger=False    # Tắt engine logger
+    )
     
     # Khởi tạo progress tracker với socketio
     init_progress_tracker(socketio)
@@ -42,6 +51,8 @@ def create_app():
         print("INFO: Running in production mode")
     else:
         print("INFO: Running in development mode")
+    
+    print("INFO: SocketIO configured with polling transport for universal compatibility")
 
     # --- CẤU HÌNH DATABASE ĐỘNG ---
     if postgres_url := os.getenv('POSTGRES_URL'):
@@ -248,6 +259,22 @@ def create_app():
             'latest_report_time': latest_report_time,
             'total_reports': total_reports
         })
+
+    @app.route('/api/progress/<session_id>')
+    def get_progress_api(session_id):
+        """API endpoint để lấy progress (thay thế SocketIO trên Vercel)"""
+        try:
+            progress_data = progress_tracker.get_progress(session_id)
+            if not progress_data:
+                return jsonify({'error': 'Session not found'}), 404
+            
+            return jsonify({
+                'success': True,
+                'session_id': session_id,
+                'progress': progress_data
+            })
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
 
     @app.route('/test-progress/<session_id>')
     def test_progress(session_id):

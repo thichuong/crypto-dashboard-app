@@ -82,16 +82,21 @@ class ProgressTracker:
             return self.current_progress.get(session_id, {})
     
     def _emit_progress(self, session_id: str):
-        """Phát broadcast tiến độ qua WebSocket"""
-        if self.socketio and session_id in self.current_progress:
-            progress_data = self.current_progress[session_id].copy()
-            print(f"[PROGRESS_TRACKER] Emitting progress for {session_id}: {progress_data}")
+        """Phát broadcast tiến độ qua SocketIO (thống nhất cho cả Vercel và local)"""
+        if session_id not in self.current_progress:
+            return
+            
+        progress_data = self.current_progress[session_id].copy()
+        print(f"[PROGRESS_TRACKER] Emitting progress for {session_id}: {progress_data}")
+        
+        if self.socketio:
+            # Sử dụng SocketIO với polling transport (tương thích cả Vercel và local)
             self.socketio.emit('progress_update', {
                 'session_id': session_id,
                 'progress': progress_data
             }, room=session_id)
         else:
-            print(f"[PROGRESS_TRACKER] Cannot emit progress - socketio: {self.socketio is not None}, session exists: {session_id in self.current_progress if hasattr(self, 'current_progress') else False}")
+            print(f"[PROGRESS_TRACKER] Cannot emit progress - no SocketIO available")
     
     def _cleanup_session(self, session_id: str, delay: int):
         """Dọn dẹp session sau delay giây"""

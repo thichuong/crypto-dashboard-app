@@ -17,6 +17,7 @@ if app.debug and not os.getenv('VERCEL'):
 
 # Vercel expects an app variable to be exported
 # This is the WSGI callable that Vercel will use
+
 if __name__ == '__main__':
     # Lấy host và port từ biến môi trường hoặc dùng giá trị mặc định
     host = os.environ.get('FLASK_RUN_HOST', '127.0.0.1')
@@ -25,5 +26,5 @@ if __name__ == '__main__':
     # Chỉ enable debug mode khi không phải trên Vercel
     debug_mode = not os.getenv('VERCEL', False)
     
-    # Chạy ứng dụng với SocketIO
+    # Chạy ứng dụng với SocketIO (thống nhất cho cả local và production)
     socketio.run(app, host=host, port=port, debug=debug_mode)
