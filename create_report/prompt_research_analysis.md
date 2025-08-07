@@ -1,42 +1,14 @@
-# 📊 [DEPRECATED] Prompt Báo Cáo Nghiên Cứu Chuyên Sâu - Thị Trường Crypto
-
-> **⚠️ THÔNG BÁO QUAN TRỌNG**: File này đã được tách ra thành 2 prompt chuyên biệt:
-> - `prompt_research_analysis.md` - Phần phân tích và nghiên cứu
-> - `prompt_data_validation.md` - Phần xác thực dữ liệu với hệ thống thời gian thực
-> 
-> Hệ thống mới sẽ tự động sử dụng dữ liệu real-time từ `dashboard_summary()` để xác thực độ chính xác của báo cáo.
-
----
-
-## 📋 Thay đổi trong Workflow mới:
-
-### 🔄 Quy trình cũ:
-1. Tạo báo cáo nghiên cứu (có tự validation)
-2. Kiểm tra validation trong chính báo cáo đó
-3. Tạo giao diện nếu PASS
-
-### 🆕 Quy trình mới:
-1. **Phân tích nghiên cứu** - Sử dụng `prompt_research_analysis.md`
-2. **Xác thực dữ liệu** - Sử dụng `prompt_data_validation.md` + dữ liệu real-time từ `dashboard_summary()`
-3. **Tạo giao diện** nếu validation PASS
-
-### ✅ Lợi ích:
-- **Độ chính xác cao hơn**: Sử dụng dữ liệu thời gian thực từ hệ thống
-- **Tách biệt trách nhiệm**: Nghiên cứu và validation được xử lý riêng biệt
-- **Dễ bảo trì**: Có thể cập nhật từng phần độc lập
-
----
-
-**Nội dung cũ được giữ lại bên dưới để tham khảo:**
+# 📊 Prompt Phân Tích Nghiên Cứu - Thị Trường Crypto
 
 ## 🎯 Thông Tin Cơ Bản
 
 **Vai trò:** Nhà phân tích Thị trường Tài chính Cấp cao  
 **Nhiệm vụ:** Soạn thảo một Báo cáo Nghiên cứu Chuyên sâu (Deep Research Report) về thị trường tiền điện tử cho ngày hôm nay, **<<@day>>** tháng **<<@month>>** năm **<<@year>>**
-**Yêu cầu Bắt buộc:** Báo cáo phải được tạo ra dựa trên các dữ liệu có thể kiểm chứng. Ở cuối báo cáo, phải có một phần tự đánh giá độ chính xác.
+**Yêu cầu Bắt buộc:** Báo cáo phải được tạo ra dựa trên các dữ liệu có thể kiểm chứng.
+
 ---
 
-## 📑 PHẦN A: NỘI DUNG BÁO CÁO
+## 📑 NỘI DUNG BÁO CÁO
 
 ### 1. 📈 Tóm tắt báo cáo (Executive Summary)
 
@@ -123,35 +95,4 @@ Chỉ sử dụng các nguồn tin tức tài chính và crypto uy tín bằng t
 
 ---
 
-## 🔍 PHẦN B: CƠ CHẾ KIỂM TRA VÀ XÁC THỰC
-
-### I. 📊 Bảng Đối chiếu Dữ liệu (Data Verification Table)
-
-**Nhiệm vụ:** Ở cuối báo cáo, tạo một bảng Markdown tên là **"Bảng Đối chiếu Dữ liệu & Nguồn"**
-
-**Quy trình:**
-- Với mỗi dữ liệu số liệu cụ thể (giá, chỉ số, %) được đề cập trong **PHẦN A**, hãy thêm một dòng tương ứng vào bảng này
-
-**Cấu trúc bảng:**
-```markdown
-| Dữ liệu / Chỉ số | Giá trị Báo cáo | Nguồn | Thời gian lấy dữ liệu |
-|------------------|-----------------|-------|----------------------|
-```
-
-### II. ✅ Tự đánh giá Độ chính xác (Self-Assessment of Accuracy)
-
-Sau bảng trên, dựa vào kết quả đối chiếu, hãy đưa ra kết luận cuối cùng theo định dạng chính xác sau:
-
-#### ✅ **Nếu dữ liệu chính xác** (sai lệch không đáng kể):
-```
-KẾT QUẢ KIỂM TRA: PASS
-```
-
-#### ❌ **Nếu có bất kỳ dữ liệu quan trọng nào sai lệch lớn hoặc không thể xác thực:**
-```
-KẾT QUẢ KIỂM TRA: FAIL
-```
-
----
-
-> **📝 Lưu ý:** Báo cáo này phải tuân thủ nghiêm ngặt các yêu cầu về độ chính xác và tính kịp thời của dữ liệu để đảm bảo chất lượng phân tích.
+> **📝 Lưu ý:** Báo cáo này sẽ được xác thực dữ liệu ở bước tiếp theo để đảm bảo chất lượng phân tích.

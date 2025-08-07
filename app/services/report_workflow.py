@@ -2,6 +2,7 @@ import os
 import re
 import time
 import uuid
+import json
 from datetime import datetime, timezone
 from typing import TypedDict, Optional, List, Literal
 from google import genai
@@ -20,14 +21,15 @@ class ReportState(TypedDict):
     # Input parameters
     api_key: str
     max_attempts: int
-    use_fallback_on_500: bool
     
     # File paths
-    deep_research_prompt_path: Optional[str]
+    research_analysis_prompt_path: Optional[str]
+    data_validation_prompt_path: Optional[str]
     create_report_prompt_path: Optional[str]
     
     # Processing state
-    deep_research_prompt: Optional[str]
+    research_analysis_prompt: Optional[str]
+    data_validation_prompt: Optional[str]
     create_report_prompt: Optional[str]
     research_content: Optional[str]
     validation_result: Optional[str]
@@ -42,7 +44,6 @@ class ReportState(TypedDict):
     # Control flow
     current_attempt: int
     error_messages: List[str]
-    fallback_used: bool
     success: bool
     
     # Gemini client
@@ -141,6 +142,75 @@ def _extract_code_blocks(response_text):
     }
 
 
+def _get_realtime_dashboard_data():
+    """Lấy dữ liệu thời gian thực từ các services cơ bản"""
+    try:
+        # Import trực tiếp các service cần thiết (không có RSI)
+        from ..services import coingecko, alternative_me
+        import concurrent.futures
+        
+        print("Calling essential real-time data services...")
+        
+        # Định nghĩa các service calls cơ bản
+        def call_global_data():
+            return coingecko.get_global_market_data()
+        
+        def call_btc_data():
+            return coingecko.get_btc_price()
+        
+        def call_fng_data():
+            return alternative_me.get_fng_index()
+        
+        # Gọi tất cả API song song với timeout
+        with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+            future_global = executor.submit(call_global_data)
+            future_btc = executor.submit(call_btc_data)
+            future_fng = executor.submit(call_fng_data)
+            
+            # Chờ tất cả hoàn thành với timeout 10 giây
+            try:
+                global_data, global_error, global_status = future_global.result(timeout=10)
+                btc_data, btc_error, btc_status = future_btc.result(timeout=10)
+                fng_data, fng_error, fng_status = future_fng.result(timeout=10)
+            except concurrent.futures.TimeoutError:
+                print("Timeout when getting real-time data")
+                return None
+
+        # Xử lý lỗi và tạo fallback data
+        if fng_error:
+            fng_data = {"fng_value": 50, "fng_value_classification": "Neutral"}
+
+        # Kiểm tra dữ liệu quan trọng
+        if global_error and btc_error:
+            print("Both global and BTC data failed, using fallback")
+            return {
+                "market_cap": None,
+                "volume_24h": None,
+                "btc_price_usd": None,
+                "btc_change_24h": None,
+                "fng_value": 50,
+                "fng_classification": "Neutral",
+                "data_source": "fallback"
+            }
+
+        # Kết hợp tất cả dữ liệu thành một object duy nhất
+        combined_data = {
+            **(global_data or {}),
+            **(btc_data or {}),
+            **(fng_data or {}),
+            "data_source": "real_time"
+        }
+        
+        print(f"Successfully got real-time data: {list(combined_data.keys())}")
+        return combined_data
+        
+    except Exception as e:
+        print(f"Error getting real-time data: {e}")
+        import traceback
+        print(traceback.format_exc())
+        return None
+
+
 def _check_report_validation(report_text):
     """
     Kiểm tra kết quả validation của báo cáo.
@@ -189,28 +259,32 @@ def prepare_data_node(state: ReportState) -> ReportState:
     # Thiết lập đường dẫn tới các prompt files
     progress_tracker.update_substep(session_id, "Đang thiết lập đường dẫn prompts...")
     current_dir = os.path.dirname(__file__)
-    state["deep_research_prompt_path"] = os.path.abspath(
-        os.path.join(current_dir, '..', '..', 'create_report', 'prompt_deep_research_report.md')
+    state["research_analysis_prompt_path"] = os.path.abspath(
+        os.path.join(current_dir, '..', '..', 'create_report', 'prompt_research_analysis.md')
+    )
+    state["data_validation_prompt_path"] = os.path.abspath(
+        os.path.join(current_dir, '..', '..', 'create_report', 'prompt_data_validation.md')
     )
     state["create_report_prompt_path"] = os.path.abspath(
         os.path.join(current_dir, '..', '..', 'create_report', 'prompt_create_report.md')
     )
     
-    print(f"Deep research prompt path: {state['deep_research_prompt_path']}")
+    print(f"Research analysis prompt path: {state['research_analysis_prompt_path']}")
+    print(f"Data validation prompt path: {state['data_validation_prompt_path']}")
     print(f"Create report prompt path: {state['create_report_prompt_path']}")
     
-    # Đọc prompt deep research và thay thế ngày tháng
+    # Đọc prompt research analysis và thay thế ngày tháng
     progress_tracker.update_substep(session_id, "Đang đọc prompt nghiên cứu...")
-    deep_research_prompt = _read_prompt_file(state["deep_research_prompt_path"])
-    if deep_research_prompt is None:
-        error_msg = "Không thể đọc prompt deep research"
+    research_analysis_prompt = _read_prompt_file(state["research_analysis_prompt_path"])
+    if research_analysis_prompt is None:
+        error_msg = "Không thể đọc prompt research analysis"
         state["error_messages"].append(error_msg)
         state["success"] = False
         progress_tracker.error_progress(session_id, error_msg)
         print(f"[PROGRESS] Error in prepare_data_node: {error_msg}")
         return state
         
-    state["deep_research_prompt"] = _replace_date_placeholders(deep_research_prompt)
+    state["research_analysis_prompt"] = _replace_date_placeholders(research_analysis_prompt)
     
     # Khởi tạo Gemini client
     progress_tracker.update_substep(session_id, "Đang khởi tạo Gemini AI...")
@@ -226,6 +300,19 @@ def prepare_data_node(state: ReportState) -> ReportState:
         progress_tracker.error_progress(session_id, error_msg)
         print(f"[PROGRESS] Error in prepare_data_node: {error_msg}")
         return state
+    
+    # Đọc prompt data validation 
+    progress_tracker.update_substep(session_id, "Đang đọc prompt xác thực dữ liệu...")
+    data_validation_prompt = _read_prompt_file(state["data_validation_prompt_path"])
+    if data_validation_prompt is None:
+        error_msg = "Không thể đọc prompt data validation"
+        state["error_messages"].append(error_msg)
+        state["success"] = False
+        progress_tracker.error_progress(session_id, error_msg)
+        print(f"[PROGRESS] Error in prepare_data_node: {error_msg}")
+        return state
+    
+    state["data_validation_prompt"] = data_validation_prompt
     
     # Đọc prompt tạo giao diện
     progress_tracker.update_substep(session_id, "Đang đọc prompt tạo giao diện...")
@@ -277,7 +364,7 @@ def research_deep_node(state: ReportState) -> ReportState:
             types.Content(
                 role="user",
                 parts=[
-                    types.Part.from_text(text=state["deep_research_prompt"]),
+                    types.Part.from_text(text=state["research_analysis_prompt"]),
                 ],
             ),
         ]
@@ -331,42 +418,157 @@ def research_deep_node(state: ReportState) -> ReportState:
         state["error_messages"].append(error_msg)
         progress_tracker.update_substep(session_id, error_msg)
         
-        # Không sử dụng fallback - báo cáo cần thông tin real-time
+        # báo cáo cần thông tin real-time
         state["success"] = False
     
     return state
 
 
 def validate_report_node(state: ReportState) -> ReportState:
-    """Node để validate báo cáo nghiên cứu"""
+    """Node để validate báo cáo nghiên cứu bằng dữ liệu thời gian thực"""
     session_id = state["session_id"]
-    progress_tracker.update_step(session_id, 3, "Kiểm tra chất lượng báo cáo...", "Đang phân tích nội dung báo cáo")
+    progress_tracker.update_step(session_id, 3, "Xác thực dữ liệu với hệ thống thời gian thực...", "Đang lấy dữ liệu dashboard và kiểm tra độ chính xác")
     
     if not state["research_content"]:
         state["validation_result"] = "UNKNOWN"
         progress_tracker.update_substep(session_id, "Không có nội dung để kiểm tra")
+        state["success"] = False
         return state
     
-    # Kiểm tra validation
-    progress_tracker.update_substep(session_id, "Đang phân tích kết quả validation...")
-    validation_result = _check_report_validation(state["research_content"])
-    state["validation_result"] = validation_result
-    
-    print(f"Lần thử {state['current_attempt']}: Kết quả validation = {validation_result}")
-    
-    if validation_result == 'PASS':
-        print(f"Lần thử {state['current_attempt']}: Báo cáo PASS - Sử dụng toàn bộ nội dung")
-        progress_tracker.update_substep(session_id, "✓ Báo cáo đạt chất lượng yêu cầu!")
-        state["success"] = True
-    elif validation_result == 'FAIL':
-        print(f"Lần thử {state['current_attempt']}: Báo cáo FAIL - Thử lại...")
-        progress_tracker.update_substep(session_id, "✗ Báo cáo chưa đạt yêu cầu, sẽ thử lại...")
+    try:
+        # Lấy dữ liệu thời gian thực từ dashboard
+        progress_tracker.update_substep(session_id, "Đang lấy dữ liệu thời gian thực từ hệ thống...")
+        realtime_data = _get_realtime_dashboard_data()
+        
+        if not realtime_data:
+            # Fallback: Nếu không lấy được dữ liệu thời gian thực, sử dụng validation đơn giản
+            print(f"[WARNING] Không thể lấy dữ liệu thời gian thực, chuyển sang validation cơ bản")
+            progress_tracker.update_substep(session_id, "⚠️ Không có dữ liệu real-time, sử dụng validation cơ bản...")
+            
+            # Fallback validation: kiểm tra xem báo cáo có nội dung hợp lệ không
+            if len(state["research_content"]) > 1000:  # Báo cáo đủ dài
+                # Kiểm tra có chứa các thông tin cơ bản không
+                content_lower = state["research_content"].lower()
+                has_btc = any(keyword in content_lower for keyword in ['bitcoin', 'btc'])
+                has_analysis = any(keyword in content_lower for keyword in ['phân tích', 'analysis', 'thị trường', 'market'])
+                has_numbers = re.search(r'\d+\.?\d*\s*%|\$\d+', state["research_content"])
+                
+                if has_btc and has_analysis and has_numbers:
+                    print(f"Lần thử {state['current_attempt']}: Fallback validation PASS - Báo cáo có nội dung hợp lệ")
+                    progress_tracker.update_substep(session_id, "✓ Báo cáo có nội dung đầy đủ, chấp nhận!")
+                    state["validation_result"] = "PASS"
+                    state["success"] = True
+                    return state
+                else:
+                    print(f"Lần thử {state['current_attempt']}: Fallback validation FAIL - Thiếu nội dung cơ bản")
+                    progress_tracker.update_substep(session_id, "✗ Báo cáo thiếu nội dung cơ bản...")
+                    state["validation_result"] = "FAIL"
+                    state["success"] = False
+                    return state
+            else:
+                print(f"Lần thử {state['current_attempt']}: Fallback validation FAIL - Báo cáo quá ngắn")
+                progress_tracker.update_substep(session_id, "✗ Báo cáo quá ngắn...")
+                state["validation_result"] = "FAIL"
+                state["success"] = False
+                return state
+        
+        # Chuẩn bị prompt validation với dữ liệu thời gian thực
+        progress_tracker.update_substep(session_id, "Đang chuẩn bị prompt xác thực...")
+        validation_prompt = state["data_validation_prompt"]
+        validation_prompt = validation_prompt.replace("{{REAL_TIME_DATA}}", json.dumps(realtime_data, ensure_ascii=False, indent=2))
+        validation_prompt = validation_prompt.replace("{{REPORT_CONTENT}}", state["research_content"])
+        
+        # Tạo request cho validation (không cần Google Search)
+        progress_tracker.update_substep(session_id, "Đang gọi AI để xác thực dữ liệu...")
+        validation_contents = [
+            types.Content(
+                role="user",
+                parts=[
+                    types.Part.from_text(text=validation_prompt),
+                ],
+            ),
+        ]
+        
+        # Cấu hình đơn giản cho validation
+        simple_config = types.GenerateContentConfig(
+            temperature=0.1,  # Thấp hơn để đảm bảo tính nhất quán
+            candidate_count=1,
+        )
+        
+        # Retry cho validation
+        for validation_attempt in range(3):
+            try:
+                print(f"Validation attempt {validation_attempt + 1}/3...")
+                validation_response = state["client"].models.generate_content(
+                    model=state["model"],
+                    contents=validation_contents,
+                    config=simple_config
+                )
+                break
+            except Exception as validation_error:
+                print(f"Validation attempt {validation_attempt + 1} failed: {validation_error}")
+                if validation_attempt < 2:
+                    wait_time = (validation_attempt + 1) * 15  # 15s, 30s
+                    progress_tracker.update_substep(session_id, f"Lỗi xác thực, chờ {wait_time}s...")
+                    time.sleep(wait_time)
+                else:
+                    error_msg = "Không thể xác thực dữ liệu sau 3 lần thử"
+                    state["error_messages"].append(error_msg)
+                    state["validation_result"] = "UNKNOWN"
+                    state["success"] = False
+                    progress_tracker.error_progress(session_id, error_msg)
+                    return state
+        
+        # Kiểm tra validation response
+        progress_tracker.update_substep(session_id, "Đang xử lý kết quả xác thực...")
+        if not validation_response or not hasattr(validation_response, 'text'):
+            error_msg = f"Lần thử {state['current_attempt']}: Validation response không hợp lệ từ AI"
+            state["error_messages"].append(error_msg)
+            state["validation_result"] = "UNKNOWN"
+            state["success"] = False
+            progress_tracker.update_substep(session_id, error_msg)
+            return state
+            
+        validation_text = validation_response.text
+        
+        if not validation_text or not isinstance(validation_text, str):
+            error_msg = f"Lần thử {state['current_attempt']}: Không nhận được kết quả validation từ AI"
+            state["error_messages"].append(error_msg)
+            state["validation_result"] = "UNKNOWN"
+            state["success"] = False
+            progress_tracker.update_substep(session_id, error_msg)
+            return state
+        
+        # Phân tích kết quả validation
+        validation_result = _check_report_validation(validation_text)
+        state["validation_result"] = validation_result
+        
+        print(f"Lần thử {state['current_attempt']}: Kết quả validation = {validation_result}")
+        
+        if validation_result == 'PASS':
+            print(f"Lần thử {state['current_attempt']}: Báo cáo PASS - Dữ liệu chính xác")
+            progress_tracker.update_substep(session_id, "✓ Dữ liệu báo cáo chính xác, đạt yêu cầu!")
+            state["success"] = True
+        elif validation_result == 'FAIL':
+            print(f"Lần thử {state['current_attempt']}: Báo cáo FAIL - Dữ liệu không chính xác")
+            progress_tracker.update_substep(session_id, "✗ Dữ liệu không chính xác, cần tạo lại báo cáo...")
+            state["success"] = False
+        else:
+            # UNKNOWN case
+            print(f"Lần thử {state['current_attempt']}: Không xác định được kết quả validation")
+            progress_tracker.update_substep(session_id, "? Không xác định được kết quả, thử lại...")
+            state["success"] = False
+        
+        # Lưu kết quả validation để debug
+        print(f"[DEBUG] Validation response: {validation_text[:500]}...")
+        
+    except Exception as e:
+        error_msg = f"Lần thử {state['current_attempt']}: Lỗi khi xác thực dữ liệu: {e}"
+        print(error_msg)
+        state["error_messages"].append(error_msg)
+        state["validation_result"] = "UNKNOWN"
         state["success"] = False
-    else:
-        # UNKNOWN case - yêu cầu thông tin real-time nên không chấp nhận UNKNOWN
-        print(f"Lần thử {state['current_attempt']}: Không tìm thấy kết quả validation - Thử lại...")
-        progress_tracker.update_substep(session_id, "? Không xác định được chất lượng, thử lại...")
-        state["success"] = False
+        progress_tracker.update_substep(session_id, error_msg)
     
     return state
 
@@ -610,7 +812,7 @@ def create_report_workflow():
     
     workflow = StateGraph(ReportState)
     
-    # Thêm các nodes (bỏ fallback_research)
+    # Thêm các nodes
     workflow.add_node("prepare_data", prepare_data_node)
     workflow.add_node("research_deep", research_deep_node)
     workflow.add_node("validate_report", validate_report_node)
@@ -621,11 +823,11 @@ def create_report_workflow():
     # Thiết lập entry point
     workflow.set_entry_point("prepare_data")
     
-    # Thiết lập các edges (bỏ fallback edges)
+    # Thiết lập các edges 
     workflow.add_edge("prepare_data", "research_deep")
     workflow.add_edge("research_deep", "validate_report")
     
-    # Conditional routing sau validation (bỏ fallback option)
+    # Conditional routing sau validation
     workflow.add_conditional_edges(
         "validate_report",
         should_retry_or_continue,
@@ -672,15 +874,16 @@ def generate_auto_research_report_langgraph(api_key: str, max_attempts: int = 3,
     # Khởi tạo progress tracking
     progress_tracker.start_progress(session_id)
     
-    # Khởi tạo state (bỏ use_fallback_on_500)
+    # Khởi tạo state 
     initial_state = ReportState(
         session_id=session_id,
         api_key=api_key,
         max_attempts=max_attempts,
-        use_fallback_on_500=False,  # Không sử dụng fallback
-        deep_research_prompt_path=None,
+        research_analysis_prompt_path=None,
+        data_validation_prompt_path=None,
         create_report_prompt_path=None,
-        deep_research_prompt=None,
+        research_analysis_prompt=None,
+        data_validation_prompt=None,
         create_report_prompt=None,
         research_content=None,
         validation_result=None,
@@ -691,7 +894,6 @@ def generate_auto_research_report_langgraph(api_key: str, max_attempts: int = 3,
         report_id=None,
         current_attempt=0,
         error_messages=[],
-        fallback_used=False,
         success=False,
         client=None,
         model="gemini-2.5-pro"
