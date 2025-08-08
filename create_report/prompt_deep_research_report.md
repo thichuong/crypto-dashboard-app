@@ -1,33 +1,25 @@
-# 📊 [DEPRECATED] Prompt Báo Cáo Nghiên Cứu Chuyên Sâu - Thị Trường Crypto
+````markdown
+# 📊 Prompt Báo Cáo Nghiên Cứu Chuyên Sâu - Thị Trường Crypto (Enhanced với Real-time Data)
 
-> **⚠️ THÔNG BÁO QUAN TRỌNG**: File này đã được tách ra thành 2 prompt chuyên biệt:
-> - `prompt_research_analysis.md` - Phần phân tích và nghiên cứu
-> - `prompt_data_validation.md` - Phần xác thực dữ liệu với hệ thống thời gian thực
-> 
-> Hệ thống mới sẽ tự động sử dụng dữ liệu real-time từ `dashboard_summary()` để xác thực độ chính xác của báo cáo.
+> **🔄 CẬP NHẬT**: Prompt này đã được nâng cấp để tích hợp dữ liệu real-time từ hệ thống dashboard.
+> Sử dụng dữ liệu thời gian thực để cross-check và đảm bảo độ chính xác cao nhất trong quá trình research.
 
 ---
 
-## 📋 Thay đổi trong Workflow mới:
+## � DỮ LIỆU THỜI GIAN THỰC THAM KHẢO
 
-### 🔄 Quy trình cũ:
-1. Tạo báo cáo nghiên cứu (có tự validation)
-2. Kiểm tra validation trong chính báo cáo đó
-3. Tạo giao diện nếu PASS
+**Dữ liệu cập nhật từ hệ thống dashboard:**
 
-### 🆕 Quy trình mới:
-1. **Phân tích nghiên cứu** - Sử dụng `prompt_research_analysis.md`
-2. **Xác thực dữ liệu** - Sử dụng `prompt_data_validation.md` + dữ liệu real-time từ `dashboard_summary()`
-3. **Tạo giao diện** nếu validation PASS
+```json
+{{REAL_TIME_DATA}}
+```
 
-### ✅ Lợi ích:
-- **Độ chính xác cao hơn**: Sử dụng dữ liệu thời gian thực từ hệ thống
-- **Tách biệt trách nhiệm**: Nghiên cứu và validation được xử lý riêng biệt
-- **Dễ bảo trì**: Có thể cập nhật từng phần độc lập
+**Hướng dẫn sử dụng:** 
+- Sử dụng dữ liệu này để cross-reference với thông tin thu thập được từ Google Search
+- Ưu tiên dữ liệu real-time cho các số liệu cơ bản (giá BTC, Fear & Greed Index, Market Cap)
+- Nếu có sự khác biệt, hãy note và explain trong báo cáo
 
 ---
-
-**Nội dung cũ được giữ lại bên dưới để tham khảo:**
 
 ## 🎯 Thông Tin Cơ Bản
 
@@ -42,11 +34,13 @@
 
 - Cung cấp một cái nhìn **tổng quan ngắn gọn** về những diễn biến quan trọng nhất của thị trường trong **24 giờ qua**
 - Nêu bật **kết luận chính** và **triển vọng ngắn hạn**
+- **Cross-check với real-time data**: Sử dụng dữ liệu BTC price và 24h change từ hệ thống để verify
 
 ### 2. 🧠 Phân tích Tâm lý Thị trường
 
 #### **Chỉ số Sợ hãi & Tham lam (Fear & Greed Index):**
-- Lấy chỉ số mới nhất
+- Lấy chỉ số mới nhất từ Google Search
+- **Cross-check**: So sánh với dữ liệu FNG từ hệ thống real-time
 - Phân tích ý nghĩa của mức chỉ số hiện tại so với lịch sử (ngày hôm qua, tuần trước)
 - Tác động của nó đến hành vi của nhà đầu tư
 
@@ -87,6 +81,7 @@ Liệt kê và phân tích các tin tức vĩ mô toàn cầu mới nhất có k
 
 #### **Bitcoin (BTC) và Ethereum (ETH):**
 - Phân tích chi tiết hành động giá
+- **Verify với real-time data**: Cross-check giá BTC và % thay đổi 24h với dữ liệu hệ thống
 - Các mức giá quan trọng cần theo dõi
 
 #### **Altcoin nổi bật:**
@@ -123,7 +118,7 @@ Chỉ sử dụng các nguồn tin tức tài chính và crypto uy tín bằng t
 
 ---
 
-## 🔍 PHẦN B: CƠ CHẾ KIỂM TRA VÀ XÁC THỰC
+## 🔍 PHẦN B: CƠ CHẾ KIỂM TRA VÀ XÁC THỰC (Enhanced với Real-time Verification)
 
 ### I. 📊 Bảng Đối chiếu Dữ liệu (Data Verification Table)
 
@@ -131,25 +126,36 @@ Chỉ sử dụng các nguồn tin tức tài chính và crypto uy tín bằng t
 
 **Quy trình:**
 - Với mỗi dữ liệu số liệu cụ thể (giá, chỉ số, %) được đề cập trong **PHẦN A**, hãy thêm một dòng tương ứng vào bảng này
+- **QUAN TRỌNG**: Với các dữ liệu có trong real-time data, phải so sánh và note sự khác biệt (nếu có)
 
 **Cấu trúc bảng:**
 ```markdown
-| Dữ liệu / Chỉ số | Giá trị Báo cáo | Nguồn | Thời gian lấy dữ liệu |
-|------------------|-----------------|-------|----------------------|
+| Dữ liệu / Chỉ số | Giá trị Báo cáo | Giá trị Real-time | Độ lệch | Nguồn | Thời gian |
+|------------------|-----------------|-------------------|---------|-------|-----------|
+| BTC Price | $X | $Y | Z% | TradingView | HH:MM UTC |
+| 24h Change | X% | Y% | Z% | CoinMarketCap | HH:MM UTC |
+| Fear & Greed | X | Y | Z | Alternative.me | HH:MM UTC |
 ```
 
 ### II. ✅ Tự đánh giá Độ chính xác (Self-Assessment of Accuracy)
 
-Sau bảng trên, dựa vào kết quả đối chiếu, hãy đưa ra kết luận cuối cùng theo định dạng chính xác sau:
+Sau bảng trên, dựa vào kết quả đối chiếu với real-time data, hãy đưa ra kết luận cuối cùng theo định dạng chính xác sau:
 
-#### ✅ **Nếu dữ liệu chính xác** (sai lệch không đáng kể):
+**Tiêu chí đánh giá:**
+- BTC Price: Độ lệch ≤ 2% với real-time data
+- 24h Change: Độ lệch ≤ 20% với real-time data  
+- Fear & Greed Index: Độ lệch ≤ 10% với real-time data
+
+#### ✅ **Nếu dữ liệu chính xác** (trong ngưỡng cho phép):
 ```
 KẾT QUẢ KIỂM TRA: PASS
+Lý do: Tất cả dữ liệu quan trọng nằm trong ngưỡng chấp nhận được với real-time system
 ```
 
-#### ❌ **Nếu có bất kỳ dữ liệu quan trọng nào sai lệch lớn hoặc không thể xác thực:**
+#### ❌ **Nếu có bất kỳ dữ liệu quan trọng nào sai lệch lớn:**
 ```
 KẾT QUẢ KIỂM TRA: FAIL
+Lý do: [Mô tả cụ thể dữ liệu nào sai lệch và mức độ sai lệch so với real-time data]
 ```
 
 ---

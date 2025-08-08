@@ -1,4 +1,19 @@
-# 📊 Prompt Phân Tích Nghiên Cứu - Thị Trường Crypto
+# 📊 Prompt Phân Tích Nghiên Cứu - Thị Trường Crypto (Enhanced với Real-time Data)
+
+## 📊 DỮ LIỆU THỜI GIAN THỰC THAM KHẢO
+
+**Dữ liệu cập nhật từ hệ thống dashboard:**
+
+```json
+{{REAL_TIME_DATA}}
+```
+
+**Hướng dẫn sử dụng:** 
+- Sử dụng dữ liệu này để cross-reference với thông tin thu thập được từ Google Search
+- Ưu tiên dữ liệu real-time cho các số liệu cơ bản (giá BTC, Fear & Greed Index, Market Cap)
+- Nếu có sự khác biệt, hãy note và explain trong báo cáo
+
+---
 
 ## 🎯 Thông Tin Cơ Bản
 

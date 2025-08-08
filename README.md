@@ -298,34 +298,230 @@ vercel --prod
 
 Hệ thống sử dụng LangGraph để quản lý complex AI workflow với state management và error handling tiên tiến.
 
-#### 📋 **Workflow Nodes**
+#### � **LangGraph Workflow Diagram**
 
-```python
-# Workflow Structure - Real-time Data Only
-StateGraph(ReportState)
-├── prepare_data_node       # Document parsing & client setup
-├── research_deep_node      # AI research với Google Search (real-time)
-├── validate_report_node    # Quality assurance checking
-├── create_interface_node   # HTML/CSS/JS generation  
-├── extract_code_node       # Code parsing & optimization
-└── save_database_node      # Persistent storage
+```mermaid
+graph TD
+    A[🏁 START] --> B[prepare_data_node]
+    B --> C[research_deep_node]
+    C --> D[validate_report_node]
+    
+    D --> |validation PASS| E[create_interface_node]
+    D --> |validation FAIL & attempts < max| C
+    D --> |validation FAIL & attempts >= max| Z[❌ END - Failed]
+    
+    E --> F[extract_code_node]
+    F --> |extract success| G[save_database_node]
+    F --> |extract fail & attempts < 3| E
+    F --> |extract fail & attempts >= 3| Z
+    
+    G --> H[✅ END - Success]
+    
+    %% Styling
+    classDef startEnd fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef dataNode fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef processNode fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef validateNode fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef interfaceNode fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    
+    class A,H,Z startEnd
+    class B,G dataNode
+    class C,F processNode
+    class D validateNode
+    class E interfaceNode
 ```
 
-#### 🗃️ **State Schema**
+#### 📋 **Node Details & Functions**
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  🔧 prepare_data_node                                           │
+├─────────────────────────────────────────────────────────────────┤
+│  • Khởi tạo Gemini client với API key                         │
+│  • Đọc và xử lý prompt templates                              │
+│  • Setup file paths và environment                            │
+│  • Thay thế date placeholders                                 │
+└─────────────────────────────────────────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  🌐 research_deep_node                                          │
+├─────────────────────────────────────────────────────────────────┤
+│  • Google Search integration với AI tools                     │
+│  • Thu thập dữ liệu real-time từ internet                     │
+│  • Phân tích thị trường crypto với thinking budget            │
+│  • Retry logic với exponential backoff (30s→60s→90s)         │
+│  • Max attempts: configurable (default: 3)                   │
+└─────────────────────────────────────────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  ✅ validate_report_node                                        │
+├─────────────────────────────────────────────────────────────────┤
+│  • Lấy dữ liệu real-time từ dashboard APIs                    │
+│  • So sánh với research content từ AI                         │
+│  • Pattern matching: KẾT QUẢ KIỂM TRA: PASS/FAIL            │
+│  • Fallback validation nếu không có real-time data            │
+│  • Flexible criteria: chấp nhận báo cáo thiếu data không QT   │
+└─────────────────────────────────────────────────────────────────┘
+                               │
+                    ┌──────────┴──────────┐
+                    ▼                     ▼
+                  PASS                   FAIL
+                    │                     │
+                    ▼              (retry ≤ max_attempts)
+┌─────────────────────────────────────────────────────────────────┐
+│  🎨 create_interface_node                                       │
+├─────────────────────────────────────────────────────────────────┤
+│  • Tạo HTML structure với semantic markup                     │
+│  • Generate CSS với responsive design + themes                │
+│  • Create JavaScript với interactive charts                   │
+│  • AI chọn chart types: Line/Bar/Doughnut/Gauge              │
+│  • Retry với interface attempt counter (max: 3)              │
+└─────────────────────────────────────────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  🔍 extract_code_node                                           │
+├─────────────────────────────────────────────────────────────────┤
+│  • Regex parsing cho HTML/CSS/JS code blocks                  │
+│  • Enhanced patterns: ```html, ```css, ```js/javascript      │
+│  • Success validation với multiple criteria                   │
+│  • Fallback detection cho HTML tags ngoài code blocks        │
+│  • Return: {html, css, js, success} với status flag          │
+└─────────────────────────────────────────────────────────────────┘
+                               │
+                    ┌──────────┴──────────┐
+                    ▼                     ▼
+                 SUCCESS                 FAIL
+                    │                     │
+                    ▼        (retry interface ≤ 3 attempts)
+┌─────────────────────────────────────────────────────────────────┐
+│  💾 save_database_node                                          │
+├─────────────────────────────────────────────────────────────────┤
+│  • Tạo Report model instance                                  │
+│  • Save HTML, CSS, JS content vào database                   │
+│  • Handle Flask application context                           │
+│  • Update progress tracker với success status                │
+│  • Return final report ID                                     │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### 🛤️ **Conditional Routing Logic**
+
+```python
+# Validation Decision Tree
+def should_retry_or_continue(state: ReportState):
+    if state["validation_result"] == "PASS":
+        return "continue"  # → create_interface_node
+    elif state["current_attempt"] >= state["max_attempts"]:
+        return "end"       # → END (failed)
+    else:
+        return "retry"     # → research_deep_node
+
+# Interface Retry Decision Tree  
+def should_retry_interface_or_continue(state: ReportState):
+    if state["success"]:   # extract_code success
+        return "continue"  # → save_database_node
+    elif state.get("interface_attempt", 0) >= 3:
+        return "end"       # → END (failed)
+    else:
+        return "retry_interface"  # → create_interface_node
+```
+
+#### 📊 **Workflow Node Execution Flow**
+
+```
+Time: 0s     │ Step 1: prepare_data_node
+────────────────────────────────────────────────────
+             │ ✓ Setup Gemini client
+             │ ✓ Load prompt templates  
+             │ ✓ Initialize state variables
+Time: 5s     │
+
+Time: 5s     │ Step 2: research_deep_node (Attempt 1)
+────────────────────────────────────────────────────
+             │ 🌐 Google Search + AI analysis
+             │ 📊 Generate market research report
+             │ ⏱️  Average: 60-120s (depends on AI thinking)
+Time: 90s    │
+
+Time: 90s    │ Step 3: validate_report_node
+────────────────────────────────────────────────────
+             │ 📡 Fetch real-time dashboard data
+             │ 🔍 Compare with AI research content
+             │ ✅ Result: PASS → continue
+Time: 105s   │      FAIL → retry research (if attempts < max)
+
+Time: 105s   │ Step 4: create_interface_node (Attempt 1)
+────────────────────────────────────────────────────
+             │ 🎨 Generate HTML structure
+             │ 🎨 Create responsive CSS
+             │ 📊 Generate interactive JavaScript
+Time: 140s   │ ⏱️  Average: 30-45s
+
+Time: 140s   │ Step 5: extract_code_node
+────────────────────────────────────────────────────
+             │ 🔍 Parse HTML/CSS/JS from AI response
+             │ ✅ Validate extraction success
+             │ ✅ Success → continue
+Time: 142s   │      Fail → retry interface (if attempts < 3)
+
+Time: 142s   │ Step 6: save_database_node
+────────────────────────────────────────────────────
+             │ 💾 Create Report database record
+             │ 💾 Save HTML, CSS, JS content
+             │ 🎉 Return final report ID
+Time: 145s   │ ✅ WORKFLOW COMPLETE
+```
+
+#### 🔄 **Retry & Error Handling Scenarios**
+
+```
+Scenario 1: Research Retry
+┌─────────────────────────────────────────────────────┐
+│ research_deep → validate → FAIL → research_deep     │
+│ (attempt 1)     (FAIL)            (attempt 2)      │
+└─────────────────────────────────────────────────────┘
+
+Scenario 2: Interface Retry  
+┌─────────────────────────────────────────────────────┐
+│ create_interface → extract_code → FAIL              │
+│ (attempt 1)        (success: false)                │
+│                           ↓                        │
+│ create_interface ← ─ ─ ─ ─ ┘                       │
+│ (attempt 2)                                        │
+└─────────────────────────────────────────────────────┘
+
+Scenario 3: Max Attempts Reached
+┌─────────────────────────────────────────────────────┐
+│ research_deep → validate → FAIL → END              │
+│ (attempt 3)     (FAIL)            (max reached)    │
+└─────────────────────────────────────────────────────┘
+```
+
+#### � **Workflow State Schema**
+
 ```python
 class ReportState(TypedDict):
+    # Session tracking
+    session_id: str
+    
     # Input parameters
     api_key: str
     max_attempts: int
     
     # Processing state
+    research_analysis_prompt: Optional[str]
+    data_validation_prompt: Optional[str]
+    create_report_prompt: Optional[str]
     research_content: Optional[str]
     validation_result: Optional[str]
     interface_content: Optional[str]
     
     # Output
     html_content: Optional[str]
-    css_content: Optional[str] 
+    css_content: Optional[str]
     js_content: Optional[str]
     report_id: Optional[int]
     
@@ -333,18 +529,10 @@ class ReportState(TypedDict):
     current_attempt: int
     error_messages: List[str]
     success: bool
-```
-
-#### 🛤️ **Conditional Routing Logic**
-
-```python
-def should_retry_or_continue(state):
-    if validation_result == "PASS":
-        return "continue"
-    elif current_attempt >= max_attempts:
-        return "end"  # No fallback - real-time data only
-    else:
-        return "retry"
+    
+    # Gemini client
+    client: Optional[object]
+    model: str
 ```
 
 ### 🏗️ **Benefits của LangGraph Implementation**

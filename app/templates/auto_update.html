@@ -34,6 +34,26 @@
         </div>
     </div>
 
+    <!-- Validation Details Modal -->
+    <div id="validation-overlay" class="loading-overlay" style="display: none;">
+        <div class="validation-content">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-bold">Chi Tiết Validation</h3>
+                <button onclick="closeValidationOverlay()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div id="validation-details" class="validation-text">
+                <!-- Validation text will be inserted here -->
+            </div>
+            <div class="mt-4 flex justify-end">
+                <button onclick="closeValidationOverlay()" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-check mr-2"></i>Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+
     {% include 'components/theme_toggle.html' %}
 
     <div class="auto-update-container">
@@ -147,95 +167,16 @@
                 <span id="progress-details-text">Chuẩn bị bắt đầu quy trình tạo báo cáo...</span>
             </div>
             
-            <!-- Progress Steps Table -->
+            <!-- Progress Steps Log -->
             <div class="mt-4">
                 <h3 class="text-lg font-semibold mb-3" style="color: var(--text-primary);">
                     <i class="fas fa-list-ol mr-2"></i>
-                    Các Bước Thực Hiện
+                    Tiến Độ Chi Tiết
                 </h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm">
-                        <thead>
-                            <tr style="background: var(--bg-secondary);">
-                                <th class="px-3 py-2 text-left" style="color: var(--text-secondary);">Bước</th>
-                                <th class="px-3 py-2 text-left" style="color: var(--text-secondary);">Tên Công Việc</th>
-                                <th class="px-3 py-2 text-center" style="color: var(--text-secondary);">Trạng Thái</th>
-                                <th class="px-3 py-2 text-center" style="color: var(--text-secondary);">Thời Gian</th>
-                            </tr>
-                        </thead>
-                        <tbody id="progress-steps-table">
-                            <tr class="border-b" style="border-color: var(--border-color);">
-                                <td class="px-3 py-2 font-mono">1</td>
-                                <td class="px-3 py-2">Chuẩn bị dữ liệu và khởi tạo AI</td>
-                                <td class="px-3 py-2 text-center">
-                                    <span class="step-status pending">
-                                        <i class="fas fa-clock text-gray-400"></i>
-                                    </span>
-                                </td>
-                                <td class="px-3 py-2 text-center text-xs font-mono">--:--</td>
-                            </tr>
-                            <tr class="border-b" style="border-color: var(--border-color);">
-                                <td class="px-3 py-2 font-mono">2</td>
-                                <td class="px-3 py-2">Thu thập dữ liệu từ internet</td>
-                                <td class="px-3 py-2 text-center">
-                                    <span class="step-status pending">
-                                        <i class="fas fa-clock text-gray-400"></i>
-                                    </span>
-                                </td>
-                                <td class="px-3 py-2 text-center text-xs font-mono">--:--</td>
-                            </tr>
-                            <tr class="border-b" style="border-color: var(--border-color);">
-                                <td class="px-3 py-2 font-mono">3</td>
-                                <td class="px-3 py-2">Xác thực dữ liệu với hệ thống thời gian thực</td>
-                                <td class="px-3 py-2 text-center">
-                                    <span class="step-status pending">
-                                        <i class="fas fa-clock text-gray-400"></i>
-                                    </span>
-                                </td>
-                                <td class="px-3 py-2 text-center text-xs font-mono">--:--</td>
-                            </tr>
-                            <tr class="border-b" style="border-color: var(--border-color);">
-                                <td class="px-3 py-2 font-mono">4</td>
-                                <td class="px-3 py-2">Tạo giao diện báo cáo</td>
-                                <td class="px-3 py-2 text-center">
-                                    <span class="step-status pending">
-                                        <i class="fas fa-clock text-gray-400"></i>
-                                    </span>
-                                </td>
-                                <td class="px-3 py-2 text-center text-xs font-mono">--:--</td>
-                            </tr>
-                            <tr class="border-b" style="border-color: var(--border-color);">
-                                <td class="px-3 py-2 font-mono">5</td>
-                                <td class="px-3 py-2">Trích xuất mã nguồn</td>
-                                <td class="px-3 py-2 text-center">
-                                    <span class="step-status pending">
-                                        <i class="fas fa-clock text-gray-400"></i>
-                                    </span>
-                                </td>
-                                <td class="px-3 py-2 text-center text-xs font-mono">--:--</td>
-                            </tr>
-                            <tr class="border-b" style="border-color: var(--border-color);">
-                                <td class="px-3 py-2 font-mono">6</td>
-                                <td class="px-3 py-2">Lưu báo cáo vào database</td>
-                                <td class="px-3 py-2 text-center">
-                                    <span class="step-status pending">
-                                        <i class="fas fa-clock text-gray-400"></i>
-                                    </span>
-                                </td>
-                                <td class="px-3 py-2 text-center text-xs font-mono">--:--</td>
-                            </tr>
-                            <tr>
-                                <td class="px-3 py-2 font-mono">7</td>
-                                <td class="px-3 py-2">Hoàn thành</td>
-                                <td class="px-3 py-2 text-center">
-                                    <span class="step-status pending">
-                                        <i class="fas fa-clock text-gray-400"></i>
-                                    </span>
-                                </td>
-                                <td class="px-3 py-2 text-center text-xs font-mono">--:--</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div id="progress-log" class="log-container">
+                    <div class="log-entry log-info">
+                        <span class="log-timestamp">[Chờ bắt đầu]</span> Hệ thống đã sẵn sàng tạo báo cáo...
+                    </div>
                 </div>
             </div>
             
