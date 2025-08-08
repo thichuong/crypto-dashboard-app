@@ -331,14 +331,14 @@ def prepare_data_node(state: ReportState) -> ReportState:
     state["current_attempt"] = 0
     
     # Lấy dữ liệu real-time một lần duy nhất và cache vào state
-    progress_tracker.update_substep(session_id, "Đang lấy dữ liệu thời gian thực...")
+    progress_tracker.update_step(session_id, details="Đang lấy dữ liệu thời gian thực...")
     realtime_data = _get_realtime_dashboard_data()
     state["realtime_data"] = realtime_data
     
     if realtime_data:
-        progress_tracker.update_substep(session_id, "✓ Đã cache dữ liệu thời gian thực")
+        progress_tracker.update_step(session_id, details="✓ Đã cache dữ liệu thời gian thực")
     else:
-        progress_tracker.update_substep(session_id, "⚠️ Sẽ dùng validation fallback")
+        progress_tracker.update_step(session_id, details="⚠️ Sẽ dùng validation fallback")
     
     state["success"] = True
     return state
@@ -364,14 +364,14 @@ def research_deep_node(state: ReportState) -> ReportState:
                 "{{REAL_TIME_DATA}}", 
                 json.dumps(realtime_data, ensure_ascii=False, indent=2)
             )
-            progress_tracker.update_substep(session_id, "✓ Đã inject real-time data vào combined prompt")
+            progress_tracker.update_step(session_id, details="✓ Đã inject real-time data vào combined prompt")
         else:
             # Thay thế bằng fallback message
             combined_prompt = combined_prompt.replace(
                 "{{REAL_TIME_DATA}}", 
                 "{\n  \"notice\": \"Real-time data không khả dụng, sử dụng Google Search để lấy dữ liệu mới nhất\"\n}"
             )
-            progress_tracker.update_substep(session_id, "⚠️ Không có real-time data, sử dụng Google Search")
+            progress_tracker.update_step(session_id, details="⚠️ Không có real-time data, sử dụng Google Search")
         
         # Cấu hình tools với thinking budget cao hơn cho combined task
         tools = [
@@ -382,7 +382,7 @@ def research_deep_node(state: ReportState) -> ReportState:
                 thinking_budget=30000,  # Tăng thinking budget cho combined task
             ),
             tools=tools,
-            temperature=0.7,
+            temperature=0.9,
             candidate_count=1,
         )
         
@@ -399,7 +399,7 @@ def research_deep_node(state: ReportState) -> ReportState:
         # Retry cho combined API call
         for api_attempt in range(3):
             try:
-                progress_tracker.update_substep(session_id, f"Gọi Combined AI API (lần {api_attempt + 1}/3)...")
+                progress_tracker.update_step(session_id, details=f"Gọi Combined AI API (lần {api_attempt + 1}/3)...")
                 response = state["client"].models.generate_content(
                     model=state["model"],
                     contents=contents,
@@ -409,7 +409,7 @@ def research_deep_node(state: ReportState) -> ReportState:
             except Exception as api_error:
                 if api_attempt < 2:
                     wait_time = (api_attempt + 1) * 45  # Longer wait for complex combined calls
-                    progress_tracker.update_substep(session_id, f"Lỗi Combined API, chờ {wait_time}s...")
+                    progress_tracker.update_step(session_id, details=f"Lỗi Combined API, chờ {wait_time}s...")
                     time.sleep(wait_time)
                 else:
                     raise api_error
@@ -418,7 +418,7 @@ def research_deep_node(state: ReportState) -> ReportState:
         if not response or not hasattr(response, 'text'):
             error_msg = f"Lần thử {state['current_attempt']}: Combined response không hợp lệ từ AI"
             state["error_messages"].append(error_msg)
-            progress_tracker.update_substep(session_id, error_msg)
+            progress_tracker.update_step(session_id, details=error_msg)
             state["success"] = False
             return state
             
@@ -427,12 +427,12 @@ def research_deep_node(state: ReportState) -> ReportState:
         if not full_response_text:
             error_msg = f"Lần thử {state['current_attempt']}: Không nhận được nội dung từ Combined AI"
             state["error_messages"].append(error_msg)
-            progress_tracker.update_substep(session_id, error_msg)
+            progress_tracker.update_step(session_id, details=error_msg)
             state["success"] = False
             return state
         
         # Parse combined response để extract research content và validation result
-        progress_tracker.update_substep(session_id, "Parsing combined response...")
+        progress_tracker.update_step(session_id, details="Parsing combined response...")
         
         # Tìm validation result trong response
         validation_result = _check_report_validation(full_response_text)
@@ -452,18 +452,18 @@ def research_deep_node(state: ReportState) -> ReportState:
         # Set success based on validation result
         if validation_result == "PASS":
             state["success"] = True
-            progress_tracker.update_substep(session_id, f"✓ Combined Research + Validation PASS")
+            progress_tracker.update_step(session_id, details=f"✓ Combined Research + Validation PASS")
         elif validation_result == "FAIL":
             state["success"] = False
-            progress_tracker.update_substep(session_id, f"✗ Combined Research + Validation FAIL")
+            progress_tracker.update_step(session_id, details=f"✗ Combined Research + Validation FAIL")
         else:
             # UNKNOWN validation result - treat as success but log warning
             state["success"] = True
             state["validation_result"] = "UNKNOWN"
-            progress_tracker.update_substep(session_id, f"? Combined Response với validation UNKNOWN")
+            progress_tracker.update_step(session_id, details=f"? Combined Response với validation UNKNOWN")
         
         # Log response length for debugging
-        progress_tracker.update_substep(session_id, 
+        progress_tracker.update_step(session_id, details=
             f"✓ Combined response: {len(full_response_text)} chars, "
             f"research: {len(research_content)} chars, "
             f"validation: {validation_result}")
@@ -471,7 +471,7 @@ def research_deep_node(state: ReportState) -> ReportState:
     except Exception as e:
         error_msg = f"Lần thử {state['current_attempt']}: Lỗi khi gọi Combined AI: {e}"
         state["error_messages"].append(error_msg)
-        progress_tracker.update_substep(session_id, error_msg)
+        progress_tracker.update_step(session_id, details=error_msg)
         state["success"] = False
     
     return state
@@ -484,7 +484,7 @@ def validate_report_node(state: ReportState) -> ReportState:
     
     if not state["research_content"]:
         state["validation_result"] = "UNKNOWN"
-        progress_tracker.update_substep(session_id, "Không có research content để parse validation")
+        progress_tracker.update_step(session_id, details="Không có research content để parse validation")
         state["success"] = False
         return state
     
@@ -496,18 +496,18 @@ def validate_report_node(state: ReportState) -> ReportState:
         current_validation_result = state.get("validation_result", "UNKNOWN")
         
         if current_validation_result == "PASS":
-            progress_tracker.update_substep(session_id, "✓ Combined research đã validation PASS")
+            progress_tracker.update_step(session_id, details="✓ Combined research đã validation PASS")
             state["success"] = True
             return state
         
         elif current_validation_result == "FAIL":
-            progress_tracker.update_substep(session_id, "✗ Combined research validation FAIL - cần retry")
+            progress_tracker.update_step(session_id, details="✗ Combined research validation FAIL - cần retry")
             state["success"] = False
             return state
         
         else:
             # UNKNOWN hoặc chưa có validation result, thực hiện parsing bổ sung
-            progress_tracker.update_substep(session_id, "? Parsing validation result từ response...")
+            progress_tracker.update_step(session_id, details="? Parsing validation result từ response...")
             
             # Re-check validation result trong toàn bộ response (including research_content)
             full_response = state.get("research_content", "")
@@ -517,18 +517,18 @@ def validate_report_node(state: ReportState) -> ReportState:
             state["validation_result"] = validation_result
             
             if validation_result == "PASS":
-                progress_tracker.update_substep(session_id, "✓ Parsed validation result: PASS")
+                progress_tracker.update_step(session_id, details="✓ Parsed validation result: PASS")
                 state["success"] = True
                 return state
             
             elif validation_result == "FAIL":
-                progress_tracker.update_substep(session_id, "✗ Parsed validation result: FAIL")
+                progress_tracker.update_step(session_id, details="✗ Parsed validation result: FAIL")
                 state["success"] = False
                 return state
             
             else:
                 # Vẫn UNKNOWN, thực hiện fallback validation logic
-                progress_tracker.update_substep(session_id, "? Validation result vẫn UNKNOWN, sử dụng fallback logic...")
+                progress_tracker.update_step(session_id, details="? Validation result vẫn UNKNOWN, sử dụng fallback logic...")
                 
                 # Fallback validation - kiểm tra content quality
                 if len(research_content) > 2000:  # Combined response sẽ dài hơn
@@ -549,17 +549,17 @@ def validate_report_node(state: ReportState) -> ReportState:
                     quality_score = sum([has_btc, has_analysis, has_numbers, has_fng, has_validation_table])
                     
                     if quality_score >= 4:  # Cần ít nhất 4/5 elements
-                        progress_tracker.update_substep(session_id, f"✓ Fallback validation PASS (quality score: {quality_score}/5)")
+                        progress_tracker.update_step(session_id, details=f"✓ Fallback validation PASS (quality score: {quality_score}/5)")
                         state["validation_result"] = "PASS"
                         state["success"] = True
                         return state
                     else:
-                        progress_tracker.update_substep(session_id, f"✗ Fallback validation FAIL (quality score: {quality_score}/5)")
+                        progress_tracker.update_step(session_id, details=f"✗ Fallback validation FAIL (quality score: {quality_score}/5)")
                         state["validation_result"] = "FAIL"
                         state["success"] = False
                         return state
                 else:
-                    progress_tracker.update_substep(session_id, "✗ Combined response quá ngắn")
+                    progress_tracker.update_step(session_id, details="✗ Combined response quá ngắn")
                     state["validation_result"] = "FAIL"
                     state["success"] = False
                     return state
@@ -569,7 +569,7 @@ def validate_report_node(state: ReportState) -> ReportState:
         state["error_messages"].append(error_msg)
         state["validation_result"] = "UNKNOWN"
         state["success"] = False
-        progress_tracker.update_substep(session_id, error_msg)
+        progress_tracker.update_step(session_id, details=error_msg)
     
     return state
 
@@ -604,7 +604,7 @@ def create_interface_node(state: ReportState) -> ReportState:
     # Retry cho interface generation
     for interface_attempt in range(3):
         try:
-            progress_tracker.update_substep(session_id, f"Gọi AI tạo giao diện (lần {interface_attempt + 1}/3)...")
+            progress_tracker.update_step(session_id, details=f"Gọi AI tạo giao diện (lần {interface_attempt + 1}/3)...")
             interface_response = state["client"].models.generate_content(
                 model=state["model"],
                 contents=interface_contents,
@@ -614,7 +614,7 @@ def create_interface_node(state: ReportState) -> ReportState:
         except Exception as interface_error:
             if interface_attempt < 2:
                 wait_time = (interface_attempt + 1) * 20
-                progress_tracker.update_substep(session_id, f"Lỗi tạo giao diện, chờ {wait_time}s...")
+                progress_tracker.update_step(session_id, details=f"Lỗi tạo giao diện, chờ {wait_time}s...")
                 time.sleep(wait_time)
             else:
                 error_msg = "Không thể tạo interface sau 3 lần thử"
@@ -640,7 +640,7 @@ def create_interface_node(state: ReportState) -> ReportState:
     
     state["interface_content"] = interface_response.text
     state["success"] = True
-    progress_tracker.update_substep(session_id, "✓ Tạo giao diện hoàn thành")
+    progress_tracker.update_step(session_id, details="✓ Tạo giao diện hoàn thành")
     
     return state
 
@@ -685,7 +685,7 @@ def extract_code_node(state: ReportState) -> ReportState:
     state["js_content"] = js_content
     state["success"] = True
     
-    progress_tracker.update_substep(session_id, f"✓ Trích xuất thành công - HTML: {len(html_content)} chars, CSS: {len(css_content)} chars, JS: {len(js_content)} chars")
+    progress_tracker.update_step(session_id, details=f"✓ Trích xuất thành công - HTML: {len(html_content)} chars, CSS: {len(css_content)} chars, JS: {len(js_content)} chars")
     
     return state
 
@@ -694,14 +694,14 @@ def _save_to_database_with_context(state: ReportState, session_id: str) -> Repor
     """Helper function để lưu database với proper context"""
     try:
         # Tạo báo cáo mới và lưu vào database
-        progress_tracker.update_substep(session_id, "Tạo record báo cáo mới...")
+        progress_tracker.update_step(session_id, details="Tạo record báo cáo mới...")
         new_report = Report(
             html_content=state["html_content"],
             css_content=state["css_content"],
             js_content=state["js_content"]
         )
         
-        progress_tracker.update_substep(session_id, "Đang commit vào database...")
+        progress_tracker.update_step(session_id, details="Đang commit vào database...")
         db.session.add(new_report)
         db.session.commit()
         

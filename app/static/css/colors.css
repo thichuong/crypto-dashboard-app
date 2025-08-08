@@ -21,6 +21,7 @@
     --neutral-color: #f59e0b;
     --bull-card-bg: #f0fdf4;
     --bear-card-bg: #fef2f2;
+    --sideway-card-bg: #fffbeb;
     --table-row-hover-bg: #f0f9ff;
     
     /* -- Original Added Colors -- */
@@ -104,6 +105,7 @@
     --neutral-color: #f59e0b;
     --bull-card-bg: #052e16;
     --bear-card-bg: #450a0a;
+    --sideway-card-bg: #451a03;
     --table-row-hover-bg: #1e293b;
 
     /* -- Original Added Colors -- */

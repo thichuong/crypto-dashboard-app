@@ -192,7 +192,10 @@ Thực hiện research chi tiết với các phần sau:
 - Correlation breakdown possibilities
 - Liquidity crisis potential
 - Regulatory crackdown scenarios và mitigation strategies
-
+**Xây dựng các kịch bản có thể xảy ra** 
+- Tăng giá cho thị trường trong ngắn hạn (vài ngày đến một tuần tới)
+- Đi ngang cho thị trường trong ngắn hạn (vài ngày đến một tuần tới)
+- Giảm giá cho thị trường trong ngắn hạn (vài ngày đến một tuần tới)
 ---
 
 ### GIAI ĐOẠN 2: 🔍 SELF-VALIDATION & VERIFICATION

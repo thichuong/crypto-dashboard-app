@@ -7,7 +7,7 @@ let pollingInterval = null;
 
 // Progress tracking variables
 let lastUpdateTime = 0;
-let processedSubstepIds = new Set(); // Track processed substeps
+let processedLogIds = new Set(); // Track processed log entries
 
 // Polling API for progress tracking
 function startPollingAPI() {
@@ -57,7 +57,7 @@ function showProgressCard(sessionId) {
     
     // Reset state
     lastUpdateTime = 0;
-    processedSubstepIds.clear(); // Reset processed substeps
+    processedLogIds.clear(); // Reset processed log entries
     
     // Initialize progress display
     updateProgressBar(0, "Đang khởi tạo...");
@@ -70,7 +70,7 @@ function hideProgressCard() {
     const progressCard = document.getElementById('progress-card');
     progressCard.style.display = 'none';
     lastUpdateTime = 0;
-    processedSubstepIds.clear(); // Reset processed substeps
+    processedLogIds.clear(); // Reset processed log entries
 }
 
 // Initialize progress log
@@ -96,7 +96,19 @@ function updateProgressDetails(details) {
     progressDetailsText.textContent = details;
 }
 
-// Update progress from server - simplified version with substep queue
+// Helper function to extract timestamp from log string
+function extractTimestamp(logString) {
+    const match = logString.match(/\[(\d{2}):(\d{2}):(\d{2})\]/);
+    if (match) {
+        const hours = parseInt(match[1]);
+        const minutes = parseInt(match[2]);
+        const seconds = parseInt(match[3]);
+        return hours * 3600 + minutes * 60 + seconds;
+    }
+    return 0; // Default timestamp if no match
+}
+
+// Update progress from server - unified step queue version
 function updateProgressFromServer(progress) {
     console.log('[PROGRESS] Update:', progress);
     
@@ -117,74 +129,77 @@ function updateProgressFromServer(progress) {
         updateProgressDetails(cleanDetails);
     }
     
-    // Add log entry for major updates only
+    // Process unified step queue (contains both steps and substeps)
     const progressLogContainer = document.getElementById('progress-log');
+    const stepQueue = progress.step_queue || [];
     
-    // Show step name as main log entry (with original timestamp)
-    if (progress.current_step_name) {
-        const stepLogDiv = document.createElement('div');
-        stepLogDiv.className = 'log-entry log-info';
+    stepQueue.forEach(logEntry => {
+        const logId = `${currentSessionId}_${logEntry.type}_${logEntry.timestamp}_${logEntry.details}`;
         
-        // Enhanced step name formatting for combined workflow
-        let stepDisplayName = progress.current_step_name;
-        if (stepDisplayName.includes("Research + Validation")) {
-            stepDisplayName = stepDisplayName.replace("Research + Validation", "🔬 Research + Validation");
-        } else if (stepDisplayName.includes("Parse validation")) {
-            stepDisplayName = stepDisplayName.replace("Parse validation", "✅ Parse Validation");
-        } else if (stepDisplayName.includes("Chuẩn bị dữ liệu")) {
-            stepDisplayName = stepDisplayName.replace("Chuẩn bị dữ liệu", "📋 Chuẩn bị dữ liệu");
-        } else if (stepDisplayName.includes("Tạo giao diện")) {
-            stepDisplayName = stepDisplayName.replace("Tạo giao diện", "🎨 Tạo giao diện");
-        } else if (stepDisplayName.includes("Trích xuất mã nguồn")) {
-            stepDisplayName = stepDisplayName.replace("Trích xuất mã nguồn", "📄 Trích xuất mã nguồn");
-        } else if (stepDisplayName.includes("Lưu báo cáo")) {
-            stepDisplayName = stepDisplayName.replace("Lưu báo cáo", "💾 Lưu báo cáo");
-        }
-        
-        stepLogDiv.innerHTML = `<span class="log-timestamp">${stepDisplayName}</span>`;
-        progressLogContainer.appendChild(stepLogDiv);
-    }
-    
-    // Process substep queue - hiển thị tất cả substeps với enhanced formatting
-    const substepQueue = progress.substep_queue || [];
-    substepQueue.forEach(substepEntry => {
-        const substepId = `${currentSessionId}_${substepEntry.step}_${substepEntry.timestamp}_${substepEntry.details}`;
-        
-        // Only process new substeps that haven't been shown yet
-        if (!processedSubstepIds.has(substepId)) {
-            let cleanSubstepDetails = substepEntry.details.replace(/^\[\d{2}:\d{2}:\d{2}\]\s*/, '');
+        // Only process new log entries that haven't been shown yet
+        if (!processedLogIds.has(logId)) {
+            let cleanDetails = logEntry.details.replace(/^\[\d{2}:\d{2}:\d{2}\]\s*/, '');
             
-            // Enhanced substep message formatting for combined workflow
-            if (cleanSubstepDetails.includes("inject real-time data")) {
-                cleanSubstepDetails = cleanSubstepDetails.replace("inject real-time data", "📊 inject real-time data");
-            } else if (cleanSubstepDetails.includes("Combined Research + Validation")) {
-                cleanSubstepDetails = cleanSubstepDetails.replace("Combined Research + Validation", "🔬 Combined Research + Validation");
-            } else if (cleanSubstepDetails.includes("Combined response")) {
-                cleanSubstepDetails = cleanSubstepDetails.replace("Combined response", "📝 Combined response");
-            } else if (cleanSubstepDetails.includes("Parse validation")) {
-                cleanSubstepDetails = cleanSubstepDetails.replace("Parse validation", "✅ Parse validation");
-            } else if (cleanSubstepDetails.includes("Parsed validation result")) {
-                cleanSubstepDetails = cleanSubstepDetails.replace("Parsed validation result", "✅ Parsed validation result");
+            // Determine log type and styling based on entry type and content
+            let logDiv, logClass;
+            
+            if (logEntry.type === 'step') {
+                // Enhanced step name formatting for combined workflow
+                if (cleanDetails.includes("Research + Validation")) {
+                    cleanDetails = cleanDetails.replace("Research + Validation", "🔬 Research + Validation");
+                } else if (cleanDetails.includes("Parse validation")) {
+                    cleanDetails = cleanDetails.replace("Parse validation", "✅ Parse Validation");
+                } else if (cleanDetails.includes("Chuẩn bị dữ liệu")) {
+                    cleanDetails = cleanDetails.replace("Chuẩn bị dữ liệu", "📋 Chuẩn bị dữ liệu");
+                } else if (cleanDetails.includes("Tạo giao diện")) {
+                    cleanDetails = cleanDetails.replace("Tạo giao diện", "🎨 Tạo giao diện");
+                } else if (cleanDetails.includes("Trích xuất mã nguồn")) {
+                    cleanDetails = cleanDetails.replace("Trích xuất mã nguồn", "📄 Trích xuất mã nguồn");
+                } else if (cleanDetails.includes("Lưu báo cáo")) {
+                    cleanDetails = cleanDetails.replace("Lưu báo cáo", "💾 Lưu báo cáo");
+                }
+                
+                logDiv = document.createElement('div');
+                logDiv.className = 'log-entry log-info';
+                logDiv.innerHTML = `<span class="log-timestamp">${cleanDetails}</span>`;
+                
+            } else if (logEntry.type === 'detail') {
+                // Enhanced detail message formatting for combined workflow
+                if (cleanDetails.includes("inject real-time data")) {
+                    cleanDetails = cleanDetails.replace("inject real-time data", "📊 inject real-time data");
+                } else if (cleanDetails.includes("Combined Research + Validation")) {
+                    cleanDetails = cleanDetails.replace("Combined Research + Validation", "🔬 Combined Research + Validation");
+                } else if (cleanDetails.includes("Combined response")) {
+                    cleanDetails = cleanDetails.replace("Combined response", "📝 Combined response");
+                } else if (cleanDetails.includes("Parse validation")) {
+                    cleanDetails = cleanDetails.replace("Parse validation", "✅ Parse validation");
+                } else if (cleanDetails.includes("Parsed validation result")) {
+                    cleanDetails = cleanDetails.replace("Parsed validation result", "✅ Parsed validation result");
+                }
+                
+                let logType = 'log-step-complete';
+                if (cleanDetails.includes('✓') || cleanDetails.includes('Hoàn thành') || cleanDetails.includes('thành công') || cleanDetails.includes('PASS')) {
+                    logType = 'log-success';
+                } else if (cleanDetails.includes('✗') || cleanDetails.includes('Lỗi') || cleanDetails.includes('thất bại') || cleanDetails.includes('FAIL')) {
+                    logType = 'log-error';
+                } else if (cleanDetails.includes('⚠️') || cleanDetails.includes('UNKNOWN')) {
+                    logType = 'log-info';
+                } else if (cleanDetails.includes('🔬') || cleanDetails.includes('📊') || cleanDetails.includes('📝')) {
+                    logType = 'log-info';
+                }
+                
+                logDiv = document.createElement('div');
+                logDiv.className = `log-entry ${logType}`;
+                logDiv.innerHTML = `<span class="log-timestamp">📋 ${cleanDetails}</span>`;
             }
             
-            let logType = 'log-step-complete';
-            if (cleanSubstepDetails.includes('✓') || cleanSubstepDetails.includes('Hoàn thành') || cleanSubstepDetails.includes('thành công') || cleanSubstepDetails.includes('PASS')) {
-                logType = 'log-success';
-            } else if (cleanSubstepDetails.includes('✗') || cleanSubstepDetails.includes('Lỗi') || cleanSubstepDetails.includes('thất bại') || cleanSubstepDetails.includes('FAIL')) {
-                logType = 'log-error';
-            } else if (cleanSubstepDetails.includes('⚠️') || cleanSubstepDetails.includes('UNKNOWN')) {
-                logType = 'log-info';
-            } else if (cleanSubstepDetails.includes('🔬') || cleanSubstepDetails.includes('📊') || cleanSubstepDetails.includes('📝')) {
-                logType = 'log-info';
+            if (logDiv) {
+                console.log(`[PROGRESS] Adding log entry: ${logEntry.type} - ${logEntry.details} (timestamp: ${extractTimestamp(logEntry.details)})`);
+                progressLogContainer.appendChild(logDiv);
+                
+                // Mark this log entry as processed
+                processedLogIds.add(logId);
             }
-            
-            const substepLogDiv = document.createElement('div');
-            substepLogDiv.className = `log-entry ${logType}`;
-            substepLogDiv.innerHTML = `<span class="log-timestamp">📋 ${cleanSubstepDetails}</span>`;
-            progressLogContainer.appendChild(substepLogDiv);
-            
-            // Mark this substep as processed
-            processedSubstepIds.add(substepId);
         }
     });
     
@@ -437,6 +452,9 @@ function cancelProgress() {
             stopPollingAPI();
             currentSessionId = null;
             hideProgressCard();
+            
+            // Reset tracking sets
+            processedLogIds.clear();
             
             // Restore button
             const btn = document.getElementById('trigger-report-btn');

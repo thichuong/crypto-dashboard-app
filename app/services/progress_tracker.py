@@ -8,7 +8,7 @@ class ProgressTracker:
     
     def __init__(self):
         self.current_progress = {}
-        self.substep_queues = {}  # Lưu queue substeps cho mỗi session
+        self.step_queues = {}  # Lưu queue cho tất cả log entries (steps + substeps) theo session
         self.lock = Lock()
         
     def start_progress(self, session_id: str):
@@ -25,50 +25,65 @@ class ProgressTracker:
                 'details': '',
                 'last_update': time.time()
             }
-            # Khởi tạo substep queue cho session
-            self.substep_queues[session_id] = []
+            # Khởi tạo step queue cho session
+            self.step_queues[session_id] = []
     
-    def update_step(self, session_id: str, step: int, step_name: str, details: str = ''):
-        """Cập nhật bước chính"""
-        timestamp = datetime.now().strftime("[%H:%M:%S]")
+    def update_step(self, session_id: str, step: int = None, step_name: str = None, details: str = ''):
+        """Cập nhật progress - gộp step và substep thành một"""
+        timestamp = datetime.now().strftime("[%H:%M:%S.%f]")[:-3]  # Include milliseconds
         
         with self.lock:
             if session_id in self.current_progress:
                 progress = self.current_progress[session_id]
-                progress['step'] = step
-                progress['current_step_name'] = f"{timestamp} 🔄 Bước {step}: {step_name}"
-                progress['percentage'] = int((step / progress['total_steps']) * 100)
-                progress['details'] = f"{timestamp} {details}" if details else ""
-                progress['last_update'] = time.time()
-                print(f"[PROGRESS] Step {step}: {step_name}")
+                
+                # Nếu có step number và step_name, đây là major step
+                if step is not None and step_name is not None:
+                    progress['step'] = step
+                    progress['current_step_name'] = f"{timestamp} 🔄 Bước {step}: {step_name}"
+                    progress['percentage'] = int((step / progress['total_steps']) * 100)
+                    progress['details'] = f"{timestamp} {details}" if details else ""
+                    progress['last_update'] = time.time()
+                    print(f"[PROGRESS] Step {step}: {step_name}")
+                    
+                    # Thêm major step vào queue
+                    if session_id not in self.step_queues:
+                        self.step_queues[session_id] = []
+                    
+                    self.step_queues[session_id].append({
+                        'type': 'step',
+                        'details': f"{timestamp} 🔄 Bước {step}: {step_name}",
+                        'timestamp': timestamp,
+                        'step': step
+                    })
+                
+                # Nếu chỉ có details, đây là log entry detail
+                elif details:
+                    timestamped_details = f"{timestamp} {details}"
+                    progress['details'] = timestamped_details
+                    progress['last_update'] = time.time()
+                    
+                    # Thêm detail entry vào queue
+                    if session_id not in self.step_queues:
+                        self.step_queues[session_id] = []
+                    
+                    self.step_queues[session_id].append({
+                        'type': 'detail',
+                        'details': timestamped_details,
+                        'timestamp': timestamp,
+                        'step': progress.get('step', 0)
+                    })
+                
+                # Giữ tối đa 20 entries gần nhất trong queue
+                if session_id in self.step_queues:
+                    self.step_queues[session_id] = self.step_queues[session_id][-20:]
     
     def update_substep(self, session_id: str, details: str):
-        """Cập nhật chi tiết - thêm vào queue và update details hiện tại"""
-        timestamp = datetime.now().strftime("[%H:%M:%S]")
-        timestamped_details = f"{timestamp} {details}"
-        
-        with self.lock:
-            if session_id in self.current_progress:
-                # Update current details
-                self.current_progress[session_id]['details'] = timestamped_details
-                self.current_progress[session_id]['last_update'] = time.time()
-                
-                # Add to substep queue
-                if session_id not in self.substep_queues:
-                    self.substep_queues[session_id] = []
-                
-                self.substep_queues[session_id].append({
-                    'details': timestamped_details,
-                    'timestamp': timestamp,
-                    'step': self.current_progress[session_id].get('step', 0)
-                })
-                
-                # Giữ tối đa 8 substeps gần nhất
-                self.substep_queues[session_id] = self.substep_queues[session_id][-8:]
+        """Backward compatibility - gọi update_step với chỉ details"""
+        self.update_step(session_id, details=details)
     
     def complete_progress(self, session_id: str, success: bool = True, report_id: int = None):
         """Hoàn thành tiến độ"""
-        timestamp = datetime.now().strftime("[%H:%M:%S]")
+        timestamp = datetime.now().strftime("[%H:%M:%S.%f]")[:-3]  # Include milliseconds
         
         with self.lock:
             if session_id in self.current_progress:
@@ -81,13 +96,13 @@ class ProgressTracker:
                 progress['end_time'] = time.time()
                 progress['last_update'] = time.time()
                 
-                # Clean up substep queue after completion
-                if session_id in self.substep_queues:
-                    del self.substep_queues[session_id]
+                # Clean up step queue after completion
+                if session_id in self.step_queues:
+                    del self.step_queues[session_id]
     
     def error_progress(self, session_id: str, error_msg: str):
         """Báo lỗi trong quá trình"""
-        timestamp = datetime.now().strftime("[%H:%M:%S]")
+        timestamp = datetime.now().strftime("[%H:%M:%S.%f]")[:-3]  # Include milliseconds
         
         with self.lock:
             if session_id in self.current_progress:
@@ -98,18 +113,18 @@ class ProgressTracker:
                 progress['end_time'] = time.time()
                 progress['last_update'] = time.time()
                 
-                # Clean up substep queue after error
-                if session_id in self.substep_queues:
-                    del self.substep_queues[session_id]
+                # Clean up step queue after error
+                if session_id in self.step_queues:
+                    del self.step_queues[session_id]
     
     def get_progress(self, session_id: str) -> Dict[str, Any]:
-        """Lấy tiến độ hiện tại bao gồm substep queue"""
+        """Lấy tiến độ hiện tại bao gồm unified step queue"""
         with self.lock:
             progress = self.current_progress.get(session_id, {})
-            if session_id in self.substep_queues:
-                progress['substep_queue'] = self.substep_queues[session_id]
+            if session_id in self.step_queues:
+                progress['step_queue'] = self.step_queues[session_id]
             else:
-                progress['substep_queue'] = []
+                progress['step_queue'] = []
             return progress
 
 # Global instance
