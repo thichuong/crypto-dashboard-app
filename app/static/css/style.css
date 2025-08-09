@@ -169,3 +169,55 @@ header p {
     transform: scale(1.05); /* Làm cho mục active nổi bật hơn */
 }
 
+/* --- Progress Log Indicator --- */
+#progress-log-indicator {
+    position: absolute;
+    bottom: 10px;
+    right: 20px;
+    background: linear-gradient(135deg, var(--accent-color), var(--accent-secondary));
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    z-index: 100;
+    display: none;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#progress-log-indicator:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+}
+
+#progress-log-indicator i {
+    animation: bounce 1.5s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-3px);
+    }
+    60% {
+        transform: translateY(-2px);
+    }
+}
+
+/* Dark theme adjustments for progress indicator */
+[data-theme="dark"] #progress-log-indicator {
+    background: linear-gradient(135deg, var(--accent-color), #7c3aed);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+}
+
+[data-theme="dark"] #progress-log-indicator:hover {
+    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+}
+

@@ -204,6 +204,8 @@
     font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
     font-size: 0.875rem;
     line-height: 1.4;
+    scroll-behavior: smooth;
+    scroll-padding: 10px;
 }
 
 .log-container::-webkit-scrollbar {
@@ -218,6 +220,7 @@
 .log-container::-webkit-scrollbar-thumb {
     background: var(--border-color);
     border-radius: 4px;
+    transition: background 0.2s ease;
 }
 
 .log-container::-webkit-scrollbar-thumb:hover {
@@ -225,6 +228,39 @@
 }
 
 /* Log Entries */
+
+/* New Log Indicator */
+.new-log-indicator {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: var(--accent-color);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: none;
+    align-items: center;
+    gap: 4px;
+    z-index: 10;
+    transition: all 0.3s ease;
+    animation: pulse 2s infinite;
+}
+
+.new-log-indicator:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+/* Log Entries Styles */
 .log-entry {
     margin-bottom: 0.5rem;
     padding: 0.25rem 0;

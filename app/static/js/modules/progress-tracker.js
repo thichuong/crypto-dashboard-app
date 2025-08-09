@@ -92,6 +92,10 @@ export class ProgressTracker {
     processLogEntries(stepQueue) {
         const progressLogContainer = document.getElementById('progress-log');
         
+        // Check if user was scrolled to bottom before adding new entries
+        const wasScrolledToBottom = this.isScrolledToBottom(progressLogContainer);
+        let newEntriesAdded = false;
+        
         stepQueue.forEach(logEntry => {
             const logId = `${this.sessionId}_${logEntry.type}_${logEntry.timestamp}_${logEntry.details}`;
             
@@ -100,6 +104,7 @@ export class ProgressTracker {
                 if (logDiv) {
                     progressLogContainer.appendChild(logDiv);
                     this.processedLogIds.add(logId);
+                    newEntriesAdded = true;
                 }
             }
         });
@@ -107,6 +112,14 @@ export class ProgressTracker {
         // Keep only last 20 log entries
         while (progressLogContainer.children.length > 20) {
             progressLogContainer.removeChild(progressLogContainer.firstChild);
+        }
+        
+        // Auto-scroll to bottom if user was at bottom and new entries were added
+        if (newEntriesAdded && wasScrolledToBottom) {
+            this.scrollToBottom(progressLogContainer);
+        } else if (newEntriesAdded && !wasScrolledToBottom) {
+            // Show indicator if user is not at bottom and there are new entries
+            this.showProgressLogIndicator();
         }
     }
     
@@ -195,6 +208,9 @@ export class ProgressTracker {
         successLogDiv.innerHTML = `<i class="fas fa-check-circle text-green-500 mr-2"></i><span class="log-timestamp">🎉 Hoàn thành tạo báo cáo #${progress.report_id} (Combined Workflow)</span>`;
         progressLogContainer.appendChild(successLogDiv);
         
+        // Auto-scroll to show completion message
+        this.scrollToBottom(progressLogContainer);
+        
         // Show success overlay
         document.getElementById('success-message').textContent = 
             `Báo cáo #${progress.report_id} đã được tạo thành công với Combined Research + Validation!`;
@@ -214,6 +230,9 @@ export class ProgressTracker {
         errorLogDiv.className = 'log-entry log-error';
         errorLogDiv.innerHTML = `<i class="fas fa-times text-red-500 mr-2"></i><span class="log-timestamp">💥 Lỗi Combined Workflow: ${progress.details || 'Có lỗi xảy ra'}</span>`;
         progressLogContainer.appendChild(errorLogDiv);
+        
+        // Auto-scroll to show error message
+        this.scrollToBottom(progressLogContainer);
         
         // Show error overlay
         document.getElementById('error-message').textContent = 
@@ -239,6 +258,9 @@ export class ProgressTracker {
         this.updateProgressBar({ percentage: 0, current_step_name: "Đang khởi tạo..." });
         this.updateProgressDetails({ details: "Chuẩn bị bắt đầu quy trình tạo báo cáo..." });
         this.initializeProgressLog();
+        
+        // Setup scroll listener for progress log
+        this.setupProgressLogScrollListener();
     }
     
     hideProgressCard() {
@@ -246,16 +268,94 @@ export class ProgressTracker {
         progressCard.style.display = 'none';
         this.lastUpdateTime = 0;
         this.processedLogIds.clear();
+        
+        // Hide progress log indicator
+        this.hideProgressLogIndicator();
     }
     
     initializeProgressLog() {
         const progressLogContainer = document.getElementById('progress-log');
         progressLogContainer.innerHTML = '<div class="log-entry log-info"><span class="log-timestamp">[Khởi tạo]</span> 🚀 Bắt đầu quy trình tạo báo cáo (Combined Research + Validation)</div>';
+        
+        // Auto-scroll to bottom for initial log
+        this.scrollToBottom(progressLogContainer);
     }
     
     restoreButton() {
         const btn = document.getElementById('trigger-report-btn');
         btn.innerHTML = '<i class="fas fa-play mr-2"></i>Tạo Báo Cáo Ngay';
         btn.disabled = false;
+    }
+    
+    // Scroll helper methods for progress log
+    isScrolledToBottom(container) {
+        // Check if user is scrolled to bottom (within 5px tolerance)
+        const threshold = 5;
+        return container.scrollTop >= (container.scrollHeight - container.clientHeight - threshold);
+    }
+    
+    scrollToBottom(container) {
+        // Smooth scroll to bottom with slight delay to ensure content is rendered
+        setTimeout(() => {
+            container.scrollTo({
+                top: container.scrollHeight,
+                behavior: 'smooth'
+            });
+        }, 150); // Slightly longer delay for progress updates
+    }
+    
+    // Progress log indicator methods
+    showProgressLogIndicator() {
+        const progressLogContainer = document.getElementById('progress-log');
+        if (!progressLogContainer || this.isScrolledToBottom(progressLogContainer)) {
+            return;
+        }
+        
+        // Create or show progress log indicator
+        let indicator = document.getElementById('progress-log-indicator');
+        if (!indicator) {
+            indicator = document.createElement('div');
+            indicator.id = 'progress-log-indicator';
+            indicator.className = 'new-log-indicator';
+            indicator.innerHTML = '<i class="fas fa-arrow-down mr-1"></i>Tiến độ mới';
+            indicator.onclick = () => this.scrollToBottomAndHideProgressIndicator();
+            
+            const progressLogSection = progressLogContainer.closest('.mt-4');
+            if (progressLogSection) {
+                progressLogSection.style.position = 'relative';
+                progressLogSection.appendChild(indicator);
+            }
+        }
+        
+        indicator.style.display = 'flex';
+    }
+    
+    hideProgressLogIndicator() {
+        const indicator = document.getElementById('progress-log-indicator');
+        if (indicator) {
+            indicator.style.display = 'none';
+        }
+    }
+    
+    scrollToBottomAndHideProgressIndicator() {
+        const progressLogContainer = document.getElementById('progress-log');
+        if (progressLogContainer) {
+            this.scrollToBottom(progressLogContainer);
+            this.hideProgressLogIndicator();
+        }
+    }
+    
+    setupProgressLogScrollListener() {
+        // Setup scroll listener to hide indicator when user scrolls to bottom
+        setTimeout(() => {
+            const progressLogContainer = document.getElementById('progress-log');
+            if (progressLogContainer) {
+                progressLogContainer.addEventListener('scroll', () => {
+                    if (this.isScrolledToBottom(progressLogContainer)) {
+                        this.hideProgressLogIndicator();
+                    }
+                });
+            }
+        }, 500); // Wait for progress card to be fully shown
     }
 }

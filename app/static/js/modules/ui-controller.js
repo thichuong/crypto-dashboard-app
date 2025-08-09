@@ -14,6 +14,7 @@ export class UIController {
         LogManager.init();
         await this.statusManager.init();
         this.setupEventListeners();
+        this.progressTracker.setupProgressLogScrollListener();
     }
     
     setupEventListeners() {
