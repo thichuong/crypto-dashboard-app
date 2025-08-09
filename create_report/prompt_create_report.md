@@ -22,9 +22,26 @@ Bạn PHẢI trả về 3 khối mã riêng biệt và đầy đủ, được ba
 
 ## 4. Quy tắc xử lý nội dung
 
--   **Quan trọng:** Khi xử lý nội dung nguồn (ví dụ từ file Word, text), phải **loại bỏ hoàn toàn** tất cả các thẻ đánh dấu trích dẫn như ``, `[1]`, `[2]`, ``, v.v. 
--   Trình bày thông tin một cách **rõ ràng, nhấn mạnh các chỉ số, con số**. Sử dụng các list, thẻ `<strong>`, `<em>` để làm nổi bật các điểm chính thay vì các đoạn văn dài.
--   Phân tích nội dung để tạo ra các thành phần giao diện phù hợp như thẻ (cards), biểu đồ, bảng biểu, danh sách, v.v.
+-   **Quan trọng:** Khi xử lý nội dung nguồn (ví dụ từ file Word, text), phải **loại bỏ hoàn toàn** tất cả các thẻ đánh dấu trích dẫn như ``, `[1]`, `[2]`, ``, v.v.
+
+-   **BẢO TOÀN THÔNG TIN HOÀN CHỈNH:** 
+    -   **KHÔNG được bỏ sót** bất kỳ thông tin quan trọng nào từ nội dung gốc
+    -   **Hiển thị đầy đủ** tất cả các chỉ số, số liệu, phân tích, dự đoán, khuyến nghị
+    -   **Giữ nguyên** tất cả các chi tiết kỹ thuật, giải thích phương pháp phân tích
+    -   **Bao gồm** tất cả các phần tóm tắt, kết luận, và các điểm nhấn quan trọng
+    -   **Trình bày đầy đủ** các bảng dữ liệu, danh sách coin, thống kê chi tiết
+
+-   **CÁCH THỨC TRÌNH BÀY:**
+    -   Trình bày thông tin một cách **rõ ràng, nhấn mạnh các chỉ số, con số**
+    -   Sử dụng các list, thẻ `<strong>`, `<em>` để làm nổi bật các điểm chính
+    -   **Ưu tiên sử dụng bảng** (`<table>`) cho các dữ liệu có cấu trúc thay vì đoạn văn
+    -   **Tạo các section riêng biệt** cho từng chủ đề để tránh nhầm lẫn thông tin
+    -   **Sử dụng các thẻ chi tiết** (`<details>` và `<summary>`) cho các phần có nhiều thông tin để người dùng có thể mở rộng khi cần
+
+-   **PHÂN TÍCH VÀ TỔ CHỨC:**
+    -   Phân tích nội dung để tạo ra các thành phần giao diện phù hợp như thẻ (cards), biểu đồ, bảng biểu, danh sách, v.v.
+    -   **Nhóm thông tin liên quan** vào cùng một card/section
+    -   **Tạo hierarchy rõ ràng** với các mức tiêu đề từ h2 đến h4 tùy theo độ quan trọng
 
 -   **ĐỒNG BỘ ID:** Các `id` của các element trong `report.html` (ví dụ: `<div id="fear-greed-gauge-container">`) PHẢI khớp chính xác với các `id` được sử dụng trong `report.js` (ví dụ: `document.getElementById('fear-greed-gauge-container')`). Sử dụng quy tắc đặt tên `kebab-case` cho ID để đảm bảo tính nhất quán.
 

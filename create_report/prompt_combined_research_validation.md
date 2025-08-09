@@ -74,41 +74,146 @@ Thực hiện research chi tiết với các phần sau:
 - Divergence analysis và overbought/oversold conditions
 - MACD, Stochastic và các momentum indicators khác
 
-#### 1.4 �️ Dòng tiền Tổ chức (Institutional Flow)
+#### 1.4 💰 Dòng tiền Tổ chức (Institutional Flow Analysis)
 
-**📊 Bitcoin ETF Data:**
-- **Cross-check**: So sánh ETF flows từ Google với real-time institutional data
-- Phân tích net inflows/outflows của các Bitcoin ETF (GBTC, FBTC, ARKB, etc.)
-- So sánh volume và AUM changes của các ETF providers
-- Tác động của institutional demand đến price action
+**📊 Bitcoin ETF Data - Chi tiết theo từng Provider:**
+- **Cross-check**: So sánh ETF flows từ Google Search với real-time institutional data
+- **Search keywords**: "Bitcoin ETF flows today", "GBTC FBTC ARKB BITO flows", "Bitcoin ETF inflows outflows"
+- Phân tích net inflows/outflows của TỪNG Bitcoin ETF cụ thể:
+  - **Grayscale GBTC**: Volume, fee structure impact, outflow patterns
+  - **Fidelity FBTC**: Competitive positioning, growth trajectory
+  - **ARK ARKB**: Innovation focus, retail vs institutional flows
+  - **ProShares BITO**: Futures-based ETF performance comparison
+  - **iShares IBIT**: BlackRock institutional client adoption
+- So sánh AUM changes, expense ratios, và tracking error
+- Phân tích correlation giữa ETF flows và BTC spot price movements
+- Institutional demand impact on price discovery và market microstructure
 
-**🏦 Institutional Adoption:**
-- **Cross-check**: Xác thực tin tức về institutional adoption với real-time data
-- Corporate treasury allocations và public company holdings
-- Institutional trading patterns và large wallet movements
-- Analysis của các announcement và filing từ institutions
+**🏦 Institutional Adoption Tracking:**
+- **Cross-check**: Xác thực institutional news với real-time blockchain data
+- **Search keywords**: "Bitcoin institutional adoption 2024", "corporate Bitcoin treasury", "Wall Street crypto adoption"
+- **Corporate Treasury Analysis**:
+  - MicroStrategy, Tesla, Square holdings và recent changes
+  - New corporate announcements trong tháng hiện tại
+  - Quarterly earnings calls mentioning cryptocurrency
+  - Public company filing searches (SEC forms 8-K, 10-Q)
+- **Institutional Trading Patterns**:
+  - Large wallet movement analysis (>100 BTC transactions)
+  - Exchange flows from institutional-grade platforms
+  - Prime brokerage activity indicators
+  - Custody solution adoption rates
+- **Investment Vehicle Developments**:
+  - Pension fund allocations và endowment investments
+  - Insurance company crypto exposure
+  - Family office allocation trends
+  - RIA và wealth management platform integrations
 
-#### 1.5 🌍 Phân tích Vĩ mô (Macro Analysis)
+**🏛️ Mining & Infrastructure Institutional Flows:**
+- **Search keywords**: "Bitcoin mining institutional investment", "crypto infrastructure funding"
+- Public mining company performance (RIOT, MARA, CLSK, BITF)
+- Mining infrastructure investment và expansion plans
+- Hash rate correlation với institutional mining operations
+- Energy partnership announcements affecting mining sector
 
-**🏛️ Chính sách Fed và Lãi suất:**
-- **Cross-check**: So sánh thông tin Fed policy từ Google với real-time macro data
-- Phân tích latest Fed statements và FOMC meeting outcomes
-- Interest rate outlook và impact on risk assets
-- DXY (Dollar Index) correlation với crypto markets
-- Yield curve analysis và liquidity conditions
+#### 1.5 🌍 Phân tích Vĩ mô Chuyên sâu (Comprehensive Macro Analysis)
 
-**📜 Regulatory Environment:**
-- **Cross-check**: Xác thực regulatory news với real-time compliance data
-- SEC actions và regulatory clarity developments
-- Global regulatory landscape (EU MiCA, Asian regulations)
-- Political developments affecting crypto (election cycles, policy changes)
-- Impact của regulatory announcements on market sentiment
+**🏛️ Chính sách Fed và Monetary Policy Impact:**
+- **Cross-check**: So sánh Fed policy updates từ Google với real-time macro indicators
+- **Search keywords**: "Federal Reserve latest decision", "FOMC meeting crypto impact", "interest rates Bitcoin correlation"
+- **Fed Communications Analysis**:
+  - Latest FOMC meeting minutes và dot plot analysis
+  - Fed Chair Powell speeches và congressional testimony
+  - Regional Fed president statements về digital assets
+  - Federal Reserve research papers on cryptocurrency
+- **Interest Rate Environment**:
+  - Real yields vs nominal yields impact on crypto
+  - Term structure changes và curve steepening/flattening
+  - Fed funds futures market expectations
+  - Credit spread analysis và liquidity conditions
+- **Dollar Strength Analysis**:
+  - DXY correlation với crypto performance (rolling 30/60/90 day)
+  - Dollar milkshake theory implications
+  - International capital flow patterns
+  - Currency war dynamics affecting risk assets
 
-**💰 Macro Economic Indicators:**
-- **Cross-check**: Verify inflation data, employment figures với real-time metrics
-- CPI, PPI data và correlation với crypto performance
-- Global economic health indicators
-- Geopolitical events và safe haven demand
+**📜 Regulatory Landscape Deep Dive:**
+- **Cross-check**: Validate regulatory developments với real-time compliance tracking
+- **Search keywords**: "SEC crypto regulation latest", "Bitcoin ETF approval news", "crypto legal developments"
+- **US Regulatory Developments**:
+  - SEC enforcement actions và settlement patterns
+  - CFTC jurisdiction clarifications
+  - Congressional hearing outcomes và proposed legislation
+  - State-level regulatory developments (Wyoming, Miami, etc.)
+  - Presidential administration policy positions
+- **Global Regulatory Coordination**:
+  - EU MiCA implementation timeline và compliance requirements
+  - UK crypto regulation framework development
+  - Asian regulatory approaches (Japan, Singapore, Hong Kong)
+  - Basel Committee banking regulations on crypto exposure
+  - IMF và World Bank positions on digital assets
+- **Regulatory Impact Assessment**:
+  - Market reaction patterns to regulatory announcements
+  - Compliance cost implications for industry players
+  - Innovation impact từ regulatory clarity/uncertainty
+
+**💰 Macro Economic Indicators Comprehensive View:**
+- **Cross-check**: Verify economic data từ Google với real-time economic databases
+- **Search keywords**: "inflation data crypto correlation", "employment report Bitcoin", "GDP growth cryptocurrency"
+- **Inflation Dynamics**:
+  - CPI, Core CPI, PCE deflator trends và crypto correlation
+  - Producer Price Index và input cost pressures
+  - Inflation expectations (5Y5Y breakeven, TIPS spreads)
+  - Global inflation synchronization patterns
+- **Employment & Growth Indicators**:
+  - Non-farm payrolls và unemployment rate trends
+  - Labor force participation và wage growth
+  - GDP growth trajectories (US, EU, China, Japan)
+  - Manufacturing PMI và services PMI global readings
+- **Geopolitical Risk Factors**:
+  - US-China trade relationship developments
+  - Russia-Ukraine conflict economic implications
+  - Middle East tensions và energy price impacts
+  - Taiwan semiconductor supply chain considerations
+  - Election cycles trong major economies
+
+**🌐 Global Liquidity & Capital Flows:**
+- **Search keywords**: "global liquidity conditions", "central bank balance sheets", "capital flows emerging markets"
+- **Central Bank Policy Coordination**:
+  - ECB policy divergence từ Federal Reserve
+  - Bank of Japan yield curve control modifications
+  - People's Bank of China monetary policy shifts
+  - Emerging market central bank responses
+- **Cross-border Capital Flow Analysis**:
+  - Portfolio flows into/out of US assets
+  - Foreign exchange intervention patterns
+  - Cryptocurrency as international settlement mechanism
+  - Stablecoin adoption trong international trade
+
+**📅 Economic Calendar & Event Risk Management:**
+- **Search keywords**: "economic calendar this week", "earnings season crypto impact"
+- **Upcoming High-Impact Events**:
+  - Central bank meeting schedules và policy announcement dates
+  - Major economic data release calendar
+  - Earnings seasons và crypto-exposed company reports
+  - Options expiration dates với significant crypto positioning
+- **Seasonal Pattern Analysis**:
+  - Historical performance patterns by month/quarter
+  - Tax season implications (April, year-end)
+  - Holiday trading patterns và liquidity considerations
+  - "Uptober" và other crypto-specific seasonal trends
+
+**🔍 Advanced Correlation & Risk Analysis:**
+- **Search keywords**: "Bitcoin stock market correlation", "crypto traditional asset correlation", "risk-on risk-off crypto"
+- **Multi-asset Correlation Tracking**:
+  - BTC correlation với S&P 500, Nasdaq, Gold, Bonds
+  - Rolling correlation analysis (30, 60, 90, 180 day windows)
+  - Correlation breakdown scenarios và implications
+  - Cross-asset volatility spillover effects
+- **Risk Sentiment Indicators**:
+  - VIX và crypto volatility relationships
+  - High yield credit spreads như risk appetite proxy
+  - Commodity complex performance signals
+  - Currency carry trade dynamics
 
 #### 1.6 � Phân tích Top Coins Chi tiết
 
