@@ -57,9 +57,10 @@ function createGauge(container, value, config) {
     container.innerHTML = '';
     container.classList.add('gauge-container');
 
-    // Tạo SVG element chính
+    // Tạo SVG element chính với viewBox tối ưu cho responsive
     const svg = createSvgElement('svg', {
-        viewBox: "0 0 200 165",
+        viewBox: "0 0 200 140",
+        preserveAspectRatio: "xMidYMid meet",
         class: 'gauge-svg'
     });
 
@@ -106,17 +107,17 @@ function createGauge(container, value, config) {
     needleGroup.append(needlePointer, needlePivot);
     svg.appendChild(needleGroup);
 
-    // d. Tạo các nhãn văn bản
+    // d. Tạo các nhãn văn bản với vị trí tối ưu hơn
     const valueText = createSvgElement('text', {
         x: 100,
-        y: 105,
+        y: 100,
         class: 'gauge-text gauge-value-text'
     });
     valueText.textContent = value.toFixed(1);
 
     const labelText = createSvgElement('text', {
         x: 100,
-        y: 130,
+        y: 120,
         fill: valueColor, // Color được đặt trực tiếp vì nó là dữ liệu động
         class: 'gauge-text gauge-label-text'
     });

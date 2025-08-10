@@ -10,15 +10,20 @@
 .gauge-container {
     width: 100%;
     height: auto;
+    max-width: 280px; /* Giới hạn kích thước tối đa để không quá lớn */
+    max-height: 200px; /* Giới hạn chiều cao tối đa */
     display: flex;
     justify-content: center;
     align-items: center;
+    margin: 0 auto; /* Căn giữa trong container */
 }
 
 
 .gauge-svg {
     width: 100%;
     height: auto;
+    max-width: 100%;
+    max-height: 100%;
     overflow: visible; /* Allows elements like the needle to not be clipped */
 }
 
@@ -118,13 +123,13 @@
 
 .gauge-value-text {
     fill: var(--text-primary);
-    font-size: 32px;
+    font-size: 28px; /* Giảm kích thước từ 32px để phù hợp hơn */
     font-weight: 800;
 }
 
 
 .gauge-label-text {
-    font-size: 16px;
+    font-size: 14px; /* Giảm kích thước từ 16px để phù hợp hơn */
     font-weight: 600;
     /* The fill color is set dynamically via JavaScript */
 }
@@ -155,4 +160,44 @@
     fill: var(--text-accent); /* Changes color to the theme's accent color */
     transform: scale(1.1);   /* Scales the text up by 10% */
     cursor: pointer;         /* Changes the cursor to a pointer */
+}
+
+/* --- RESPONSIVE DESIGN --- */
+/* Điều chỉnh kích thước cho màn hình nhỏ */
+@media (max-width: 768px) {
+    .gauge-container {
+        max-width: 240px;
+        max-height: 170px;
+    }
+    
+    .gauge-value-text {
+        font-size: 24px;
+    }
+    
+    .gauge-label-text {
+        font-size: 12px;
+    }
+}
+
+/* Điều chỉnh kích thước cho màn hình rất nhỏ */
+@media (max-width: 480px) {
+    .gauge-container {
+        max-width: 200px;
+        max-height: 140px;
+    }
+    
+    .gauge-value-text {
+        font-size: 20px;
+    }
+    
+    .gauge-label-text {
+        font-size: 11px;
+    }
+}
+
+/* Adaptive sizing dựa trên kích thước container cha */
+.card .gauge-container,
+.report-card .gauge-container {
+    max-width: min(280px, 90%); /* Không quá 90% chiều rộng card */
+    max-height: min(200px, 60%); /* Không quá 60% chiều cao card */
 }
