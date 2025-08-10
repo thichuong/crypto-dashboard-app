@@ -6,208 +6,50 @@
 
 ## ✨ Tính Năng
 
-### 📈 Crypto Dashboard
-* **Real-time data**: BTC price, market cap, Fear & Greed Index, RSI
-* **Smart caching**: 10 phút với rate limiting thông minh  
-* **Interactive charts**: SVG-based với dark/light theme
-* **Responsive design**: Tối ưu cho mobile và desktop
-* **Auto-refresh**: Dữ liệu cập nhật tự động mỗi 10 phút
-
-### 🤖 AI Report Generator
-* **Manual**: Upload file (.docx, .odt, .pdf) → web report
-* **Auto**: Báo cáo crypto research tự động mỗi 3 giờ
-* **LangGraph Workflow**: 6-node pipeline với Google Search integration
-* **Combined Research + Validation**: 1 AI call cho research + validation
-* **Smart retry**: Exponential backoff với dual retry systems
-* **Real-time Data Caching**: Cache và inject dữ liệu thời gian thực vào prompts
-* **Multilingual support**: Hỗ trợ tiếng Việt và tiếng Anh
-* **Chart generation**: AI tự động tạo biểu đồ phù hợp (Line, Bar, Doughnut, Gauge)
-
-### 🖨️ PDF Export & Print
-* **Print-ready templates**: Tối ưu cho giấy A4 với layout chuyên nghiệp
-* **Auto-expand details**: Tự động mở tất cả accordion khi in
-* **Typography optimization**: Font sizes và spacing chuẩn cho in ấn
-* **Chart preservation**: Biểu đồ SVG được giữ nguyên chất lượng khi in
-* **Page break control**: Smart page breaks để tránh cắt nội dung
+* **📈 Real-time Dashboard**: BTC price, market cap, Fear & Greed Index, RSI với auto-refresh
+* **🤖 AI Report Generator**: Upload file hoặc tạo báo cáo crypto tự động với LangGraph
+* **🖨️ PDF Export**: A4 layout tối ưu cho in ấn với charts preservation
+* **📱 Responsive Design**: Tối ưu cho mobile và desktop với dark/light theme
 
 ## 🔄 LangGraph Workflow
 
-```mermaid
-graph TD
-    A[prepare_data] --> B[research_deep]
-    B --> C[validate_report]
-    C --> |PASS| D[create_interface]
-    C --> |FAIL| B
-    D --> E[extract_code]
-    E --> F[save_database]
-```
+6-node pipeline: `prepare_data` → `research_deep` → `validate_report` → `create_interface` → `extract_code` → `save_database`
 
-**6 Nodes chính:**
-1. **prepare_data**: Setup Gemini client, cache real-time data một lần
-2. **research_deep**: Combined research + validation với Google Search trong 1 AI call
-3. **validate_report**: Parse validation result từ combined response, fallback quality scoring
-4. **create_interface**: Generate HTML/CSS/JS với AI (separate retry counter)
-5. **extract_code**: Extract code blocks từ AI response với success validation
-6. **save_database**: Save vào database với Flask context
-
-**Smart Routing:**
-- Validation: PASS → continue, FAIL → retry research (max 3)
-- Interface: Success → save, Fail → retry interface (max 3)
-- **Dual Retry System**: Separate counters cho research và interface generation
-
-### 🔍 Workflow Features
-
-#### 🧠 AI Intelligence
-* **Google Gemini 2.5 Pro**: State-of-the-art LLM với thinking capabilities
-* **Thinking Budget 30,000**: Cho phép AI suy nghĩ sâu về complex combined operations
-* **Context-aware processing**: AI hiểu context và tạo nội dung phù hợp
-* **Multi-step reasoning**: Phân tích từng bước để đảm bảo chất lượng
-* **Combined Research + Validation**: Thực hiện research và validation trong 1 AI call
-
-#### 🔄 Error Handling & Reliability
-* **Exponential backoff**: 45s → 90s → 135s retry timing cho combined calls
-* **State preservation**: Không mất dữ liệu khi retry
-* **Graceful degradation**: Fallback khi API failures
-* **Circuit breaker pattern**: Ngăn cascade failures
-* **Dual Retry System**: Separate retry counters cho research (3x) và interface (3x)
-
-#### 📊 Data Processing
-* **Real-time integration**: Cache data từ multiple APIs một lần duy nhất
-* **Data injection**: Inject cached real-time data vào AI prompts
-* **Data validation**: Kiểm tra tính nhất quán của dữ liệu trong combined response
-* **Quality scoring**: 5-criteria system với fallback validation (4/5 criteria)
-* **Flexible success criteria**: Chấp nhận báo cáo chất lượng cao dù thiếu data không quan trọng
+* **Smart Routing**: Auto retry với exponential backoff
+* **Dual Retry System**: Separate counters cho research (3x) và interface (3x)  
+* **Real-time Data**: Cache và inject data từ multiple APIs
+* **Google Gemini 2.5 Pro**: AI với thinking budget 30,000
 
 ## 🛠️ Tech Stack
 
 **Backend:** Flask, SQLAlchemy, LangGraph, Google Gemini API  
 **Frontend:** Tailwind CSS, Custom SVG Charts  
 **Database:** PostgreSQL (prod) / SQLite (dev)  
-**APIs:** CoinGecko, Alternative.me, Google Search  
-**Workflow:** LangGraph StateGraph với conditional routing  
-**Deployment:** Vercel serverless platform  
-
-### 🏗️ Architecture Highlights
-
-#### Backend Architecture
-* **Flask Application Factory**: Modular design với blueprints
-* **SQLAlchemy ORM**: Database abstraction với migration support
-* **Redis Caching**: Production caching với fallback to SimpleCache
-* **Background Tasks**: Scheduler với APScheduler integration
-* **API Rate Limiting**: Smart throttling để tránh quota limits
-
-#### Frontend Design
-* **Utility-first CSS**: Tailwind CSS cho rapid development
-* **Custom Chart Library**: SVG-based charts với smooth animations
-* **Theme System**: Dark/Light mode với CSS custom properties
-* **Color Variables**: Extended color palette với bull/bear/sideway card backgrounds
-* **Progressive Enhancement**: Works without JavaScript
-* **Mobile-first**: Responsive design từ mobile lên desktop
-
-#### Data Pipeline
-* **Multi-source aggregation**: CoinGecko + Alternative.me APIs
-* **Smart caching strategy**: 10-minute TTL với stale-while-revalidate
-* **Error resilience**: Graceful fallbacks khi API down
-* **Data validation**: Type checking và business logic validation
+**Deployment:** Vercel serverless platform
 
 ## 🚀 Quick Start
 
 ```bash
 git clone https://github.com/thichuong/crypto-dashboard-app.git
 cd crypto-dashboard-app
-
-python -m venv venv
-source venv/bin/activate
-
+python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
-python build.py
-flask run
+python build.py && flask run
 ```
 
-### Environment Setup
-
+**Environment Setup:**
 ```env
-# Required for AI reports
-GEMINI_API_KEY=your_gemini_key
-
-# Auto Report Scheduler
-ENABLE_AUTO_REPORT_SCHEDULER=true
-AUTO_REPORT_INTERVAL_HOURS=3
-MAX_REPORT_ATTEMPTS=3
-
-# Optional API keys
-COINGECKO_API_KEY=your_key
-TAAPI_SECRET=your_key
+GEMINI_API_KEY=your_gemini_key          # Required for AI reports
+ENABLE_AUTO_REPORT_SCHEDULER=true       # Auto reports every 3 hours
+COINGECKO_API_KEY=optional              # Higher rate limits
 ```
 
 ## 📖 Cách Sử Dụng
 
-### 📊 Dashboard Features
-- **Trang chủ**: Xem dashboard real-time với các metrics quan trọng
-- **Auto refresh**: Dữ liệu cập nhật tự động mỗi 10 phút
-- **Interactive charts**: Hover để xem chi tiết, click để zoom
-- **Theme toggle**: Chuyển đổi dark/light mode dễ dàng
-- **Mobile responsive**: Hoạt động mượt mà trên mọi thiết bị
-
-### 📄 Manual Report Generation
-1. **Truy cập**: Vào `/upload` để tải file lên
-2. **API Key**: Nhập Gemini API Key từ Google AI Studio
-3. **Upload**: Chọn file (.docx, .odt, .pdf) - max 10MB
-4. **Process**: Nhấn "Tạo Báo Cáo" và chờ AI xử lý
-5. **Result**: Xem báo cáo interactive được tạo tự động
-6. **Print**: Sử dụng nút "In Báo cáo" để xuất PDF hoặc in trực tiếp
-
-### 🖨️ Print & PDF Export
-1. **Access**: Click nút "In Báo cáo" trên trang báo cáo
-2. **Preview**: Xem preview định dạng A4 với layout tối ưu
-3. **Auto-expand**: Tất cả details/accordion tự động mở
-4. **Print**: Nhấn "In Báo cáo" hoặc Ctrl+P để in
-5. **PDF Save**: Chọn "Save as PDF" trong print dialog
-6. **Quality**: Charts và typography được preserve hoàn hảo
-
-### ⚡ Auto Report System
-1. **Setup**: Cấu hình `GEMINI_API_KEY` trong `.env`
-2. **Enable**: Set `ENABLE_AUTO_REPORT_SCHEDULER=true`
-3. **Configure**: Tùy chỉnh interval với `AUTO_REPORT_INTERVAL_HOURS`
-4. **Monitor**: Kiểm tra status tại `/scheduler-status`
-5. **Access Control**: Sử dụng secret key cho admin access
-
-### 🔧 Advanced Configuration
-
-#### Environment Variables
-```env
-# Core Settings
-FLASK_ENV=development                    # development/production
-SECRET_KEY=your-secret-key              # Flask session key
-DATABASE_URL=sqlite:///instance/app.db   # Database connection
-
-# API Configuration  
-COINGECKO_API_KEY=optional-key          # For higher rate limits
-ALTERNATIVE_ME_API_KEY=optional-key     # Fear & Greed Index
-TAAPI_SECRET=optional-key               # Technical indicators
-
-# AI Report Settings
-GEMINI_API_KEY=required-for-ai          # Google Gemini API
-MAX_REPORT_ATTEMPTS=3                   # Retry attempts
-THINKING_BUDGET=30000                   # AI thinking budget
-
-# Scheduler Settings
-AUTO_REPORT_INTERVAL_HOURS=3            # Report generation interval
-AUTO_UPDATE_SECRET_KEY=admin-secret     # Admin panel access
-```
-
-#### Production Deployment
-```bash
-# Vercel deployment
-npm i -g vercel
-vercel --prod
-
-# Required environment variables on Vercel:
-# - DATABASE_URL (PostgreSQL)
-# - REDIS_URL (Redis instance)  
-# - GEMINI_API_KEY (AI reports)
-# - All other keys from .env
-```
+1. **Dashboard**: Xem real-time crypto data với auto-refresh
+2. **Manual Reports**: Upload file (.docx, .odt, .pdf) tại `/upload` 
+3. **Auto Reports**: Enable scheduler trong `.env` cho báo cáo tự động
+4. **Print/PDF**: Sử dụng template A4 tối ưu cho in ấn
 
 ## 🔧 Project Structure
 
@@ -215,84 +57,54 @@ vercel --prod
 crypto-dashboard-app/
 ├── 📁 app/                              # Main application package
 │   ├── __init__.py                      # Flask app factory
-│   ├── extensions.py                    # Flask extensions (SQLAlchemy, etc.)
+│   ├── config.py                        # Application configuration
+│   ├── extensions.py                    # Flask extensions
 │   ├── models.py                        # Database models
-│   ├── 📁 blueprints/                   # Route blueprints
-│   │   └── crypto.py                    # Main routes & API endpoints
-│   ├── 📁 services/                     # Business logic services
-│   │   ├── api_client.py                # Base HTTP client
-│   │   ├── coingecko.py                 # CoinGecko API integration
-│   │   ├── alternative_me.py            # Fear & Greed Index API
-│   │   ├── taapi.py                     # Technical Analysis API
-│   │   ├── report_workflow.py           # LangGraph workflow engine
-│   │   ├── auto_report_scheduler.py     # Background scheduler
-│   │   └── progress_tracker.py          # Real-time progress tracking
-│   ├── 📁 static/                       # Static assets
-│   │   ├── 📁 css/                      # Stylesheets
-│   │   │   ├── style.css               # Main styles
-│   │   │   ├── colors.css              # Color variables
-│   │   │   └── chart.css               # Chart-specific styles
-│   │   └── 📁 js/                       # JavaScript files
-│   │       ├── main.js                 # Core functionality
-│   │       ├── chart.js                # Chart library (built)
-│   │       ├── dashboard.js            # Dashboard interactions
-│   │       ├── report-initializer.js   # Report visuals initialization
-│   │       ├── simple-report-init.js   # Lightweight report init
-│   │       └── 📁 chart_modules/        # Individual chart components
-│   ├── 📁 templates/                    # Jinja2 templates
-│   │   ├── index.html                  # Dashboard homepage
-│   │   ├── upload.html                 # File upload page
-│   │   ├── pdf_template.html           # Print-optimized A4 template
-│   │   └── 📁 components/               # Reusable template components
-│   └── 📁 utils/                        # Utility functions
-│       └── cache.py                     # Caching utilities
+│   ├── error_handlers.py                # Error handling
+│   ├── template_helpers.py              # Template utilities
+│   ├── 📁 routes/                       # Route modules (NEW)
+│   │   ├── main_routes.py               # Main page routes
+│   │   ├── report_routes.py             # Report generation
+│   │   └── api_routes.py                # API endpoints
+│   ├── 📁 services/                     # Business logic
+│   │   ├── coingecko.py                 # CoinGecko API
+│   │   ├── report_workflow.py           # LangGraph workflow
+│   │   └── auto_report_scheduler.py     # Background scheduler
+│   ├── 📁 static/                       # CSS, JS, charts
+│   └── 📁 templates/                    # HTML templates
 ├── 📁 create_report/                    # AI prompt templates
-│   ├── prompt_combined_research_validation.md
-│   ├── prompt_create_report.md
-│   └── prompt_data_validation.md
-├── 📁 tests/                           # Testing & development tools
-│   ├── chart_tester.html               # Interactive chart testing
-│   ├── test_api.py                     # API integration tests
-│   └── README.md                       # Testing documentation
-├── 📁 instance/                        # Runtime data (gitignored)
-│   ├── local_dev.db                   # SQLite database (dev)
-│   ├── 📁 archive/                     # Historical report backups
-│   └── 📁 backup_cache/                # Cache backups
-├── 📄 build.py                         # Chart modules builder
-├── 📄 run.py                           # Production WSGI entry point
-├── 📄 requirements.txt                 # Python dependencies
-└── 📄 vercel.json                      # Vercel deployment config
+├── 📁 tests/                           # Testing tools
+└── 📄 requirements.txt                 # Dependencies
 ```
 
-### 🧪 Development & Testing
-
-#### Testing Tools
-* **Chart Tester**: `/tests/chart_tester.html` - Interactive chart testing suite
-* **API Tests**: Unit tests cho API integrations
-* **Rate Limit Testing**: Examples cho API optimization
-* **Mobile Testing**: Responsive design validation
-
-#### Development Workflow
-```bash
-# Development cycle
-python build.py        # Build chart modules
-flask run              # Start development server
-open tests/chart_tester.html  # Test charts
-
-# Code quality
-flake8 app/            # Linting
-pytest tests/          # Run tests
-```
-
-#### Chart Development
-* **Modular architecture**: Separate files cho từng chart type
-* **Build system**: `build.py` combines modules into `chart.js`
-* **Testing suite**: Comprehensive testing tools
-* **Performance optimization**: SVG rendering với smooth animations
+**Modular Architecture Benefits:**
+* Routes phân chia theo chức năng (main, report, API)
+* Easy maintenance với separated concerns
+* Better scalability cho team development
 
 ## 🆕 Recent Updates
 
-### v2.7.0 - Print & PDF Export Features (Current)
+### v2.8.0 - Modular Architecture Refactoring (Current)
+* **🏗️ Modular Structure**: Tách `app/__init__.py` thành các module riêng biệt
+* **📁 Route Organization**: Phân chia routes thành `main_routes.py`, `report_routes.py`, `api_routes.py`
+* **🔧 Clean Architecture**: Separation of concerns và single responsibility principle
+
+### Previous Versions
+* **v2.7.0**: Print & PDF Export với A4 layout optimization
+* **v2.6.0**: Combined Research + Validation với Google Gemini 2.5 Pro
+* **v2.5.0**: LangGraph integration với state management
+
+---
+
+## � Support & Contact
+
+**🔗 Demo**: [Live Application](https://crypto-dashboard-app-thichuong.vercel.app/)  
+**� Issues**: [GitHub Issues](https://github.com/thichuong/crypto-dashboard-app/issues)  
+**� License**: MIT License
+
+**⭐ Nếu project này hữu ích, hãy star repo để support development!**
+
+### v2.7.0 - Print & PDF Export Features
 * **�️ Print Templates**: Tối ưu A4 layout với PDF template chuyên nghiệp
 * **📄 Auto-expand Details**: Tự động mở tất cả accordion/details elements khi in
 * **🎨 Typography Optimization**: Font sizes, line heights và spacing chuẩn cho in ấn
@@ -315,7 +127,7 @@ pytest tests/          # Run tests
 * **Dashboard load time**: < 2s on 3G connection
 * **Chart rendering**: < 500ms cho complex charts
 * **API response time**: < 1s với caching
-* **Report generation**: 2-3 minutes cho complete workflow
+* **Report generation**: 5-10 minutes cho complete workflow
 * **Print preparation**: < 1s cho A4 layout optimization
 * **PDF export quality**: Vector-based charts với crisp text
 * **Mobile performance**: 90+ Lighthouse score
