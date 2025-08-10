@@ -23,6 +23,13 @@
 * **Multilingual support**: Hỗ trợ tiếng Việt và tiếng Anh
 * **Chart generation**: AI tự động tạo biểu đồ phù hợp (Line, Bar, Doughnut, Gauge)
 
+### 🖨️ PDF Export & Print
+* **Print-ready templates**: Tối ưu cho giấy A4 với layout chuyên nghiệp
+* **Auto-expand details**: Tự động mở tất cả accordion khi in
+* **Typography optimization**: Font sizes và spacing chuẩn cho in ấn
+* **Chart preservation**: Biểu đồ SVG được giữ nguyên chất lượng khi in
+* **Page break control**: Smart page breaks để tránh cắt nội dung
+
 ## 🔄 LangGraph Workflow
 
 ```mermaid
@@ -148,6 +155,15 @@ TAAPI_SECRET=your_key
 3. **Upload**: Chọn file (.docx, .odt, .pdf) - max 10MB
 4. **Process**: Nhấn "Tạo Báo Cáo" và chờ AI xử lý
 5. **Result**: Xem báo cáo interactive được tạo tự động
+6. **Print**: Sử dụng nút "In Báo cáo" để xuất PDF hoặc in trực tiếp
+
+### 🖨️ Print & PDF Export
+1. **Access**: Click nút "In Báo cáo" trên trang báo cáo
+2. **Preview**: Xem preview định dạng A4 với layout tối ưu
+3. **Auto-expand**: Tất cả details/accordion tự động mở
+4. **Print**: Nhấn "In Báo cáo" hoặc Ctrl+P để in
+5. **PDF Save**: Chọn "Save as PDF" trong print dialog
+6. **Quality**: Charts và typography được preserve hoàn hảo
 
 ### ⚡ Auto Report System
 1. **Setup**: Cấu hình `GEMINI_API_KEY` trong `.env`
@@ -220,10 +236,13 @@ crypto-dashboard-app/
 │   │       ├── main.js                 # Core functionality
 │   │       ├── chart.js                # Chart library (built)
 │   │       ├── dashboard.js            # Dashboard interactions
+│   │       ├── report-initializer.js   # Report visuals initialization
+│   │       ├── simple-report-init.js   # Lightweight report init
 │   │       └── 📁 chart_modules/        # Individual chart components
 │   ├── 📁 templates/                    # Jinja2 templates
 │   │   ├── index.html                  # Dashboard homepage
 │   │   ├── upload.html                 # File upload page
+│   │   ├── pdf_template.html           # Print-optimized A4 template
 │   │   └── 📁 components/               # Reusable template components
 │   └── 📁 utils/                        # Utility functions
 │       └── cache.py                     # Caching utilities
@@ -273,16 +292,17 @@ pytest tests/          # Run tests
 
 ## 🆕 Recent Updates
 
-### v2.6.0 - Combined Research + Validation (Current)
-* **🔄 Workflow Optimization**: Research + validation trong 1 AI call với thinking budget 30,000
-* **🧠 Enhanced AI**: Combined operations với Google Search integration
-* **💾 Smart Caching**: Cache real-time data một lần và inject vào prompts để tối ưu API calls
-* **🔁 Improved Retry**: 45s→90s→135s exponential backoff cho combined calls
-* **✅ Quality Scoring**: 5 criteria system với flexible success (4/5) và fallback validation
-* **🎯 Dual Retry**: Separate counters cho research (3x) và interface (3x) generation
-* **🎨 UI Enhancement**: Thêm sideway-card colors cho market neutral states
+### v2.7.0 - Print & PDF Export Features (Current)
+* **�️ Print Templates**: Tối ưu A4 layout với PDF template chuyên nghiệp
+* **📄 Auto-expand Details**: Tự động mở tất cả accordion/details elements khi in
+* **🎨 Typography Optimization**: Font sizes, line heights và spacing chuẩn cho in ấn
+* **� Chart Preservation**: SVG charts giữ nguyên chất lượng cao khi export PDF
+* **⚙️ Smart Page Breaks**: Intelligent page break control để tránh cắt nội dung
+* **📱 Print Controls**: In-browser print controls với preview A4 real-time
+* **🔧 JavaScript Modules**: Report initialization modules cho visual components
 
 ### Previous Versions
+* **v2.6.0**: Combined Research + Validation với thinking budget 30,000
 * **v2.5.0**: Simplified UI với button loading states
 * **v2.4.0**: Enhanced validation system với fallback logic
 * **v2.3.0**: LangGraph integration với state management
@@ -296,6 +316,8 @@ pytest tests/          # Run tests
 * **Chart rendering**: < 500ms cho complex charts
 * **API response time**: < 1s với caching
 * **Report generation**: 2-3 minutes cho complete workflow
+* **Print preparation**: < 1s cho A4 layout optimization
+* **PDF export quality**: Vector-based charts với crisp text
 * **Mobile performance**: 90+ Lighthouse score
 
 ### 📈 Scalability Features

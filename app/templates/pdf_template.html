@@ -20,17 +20,91 @@
     {% endif %}
     
     <style>
+        /* CSS tối ưu cho giấy A4 */
+        @page {
+            size: A4;
+            margin: 2cm 1.5cm;
+        }
+        
         /* CSS cho in ấn */
         @media print {
-            body {
-                -webkit-print-color-adjust: exact;
-                color-adjust: exact;
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
             }
+            
+            body {
+                font-size: 12pt;
+                line-height: 1.4;
+                background: white !important;
+            }
+            
             .no-print {
                 display: none !important;
             }
+            
             .print-break {
                 page-break-before: always;
+            }
+            
+            .avoid-break {
+                page-break-inside: avoid;
+            }
+            
+            h1, h2, h3, h4, h5, h6 {
+                page-break-after: avoid;
+                font-weight: bold;
+            }
+            
+            img, svg, canvas {
+                max-width: 100% !important;
+                height: auto !important;
+                page-break-inside: avoid;
+            }
+            
+            /* Tối ưu margin và padding cho in */
+            .container {
+                margin: 0 !important;
+                padding: 0 !important;
+                max-width: none !important;
+                width: 100% !important;
+            }
+            
+            header {
+                margin-bottom: 1.5cm !important;
+            }
+            
+            main {
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+        }
+        
+        /* CSS cho màn hình - tối ưu A4 */
+        @media screen {
+            body {
+                background-color: #f5f5f5;
+            }
+            
+            .a4-container {
+                max-width: 21cm;
+                min-height: 29.7cm;
+                margin: 2cm auto;
+                background: white;
+                box-shadow: 0 0 20px rgba(0,0,0,0.1);
+                padding: 2cm 1.5cm;
+            }
+            
+            .print-controls {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 1000;
+                background: white;
+                padding: 10px;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             }
         }
         
@@ -39,22 +113,85 @@
             display: none;
         }
         
-        /* Tối ưu layout cho in */
-        .container {
-            max-width: none !important;
-            margin: 0 !important;
-            padding: 20px !important;
+        /* Tối ưu typography cho A4 */
+        h1 {
+            font-size: 24pt;
+            line-height: 1.2;
+            margin-bottom: 1cm;
         }
         
-        .print-controls {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            background: white;
-            padding: 10px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        h2 {
+            font-size: 18pt;
+            line-height: 1.3;
+            margin: 0.8cm 0 0.4cm 0;
+        }
+        
+        h3 {
+            font-size: 14pt;
+            line-height: 1.3;
+            margin: 0.6cm 0 0.3cm 0;
+        }
+        
+        p {
+            font-size: 11pt;
+            line-height: 1.5;
+            margin-bottom: 0.5cm;
+        }
+        
+        /* Tối ưu cho biểu đồ và hình ảnh */
+        .chart-container {
+            page-break-inside: avoid;
+            margin: 0.5cm 0;
+        }
+        
+        /* Responsive cho các phần tử báo cáo */
+        section {
+            margin-bottom: 1cm;
+            page-break-inside: avoid;
+        }
+        
+        /* Tối ưu bảng nếu có */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10pt;
+            page-break-inside: avoid;
+        }
+        
+        th, td {
+            padding: 0.2cm;
+            border: 1px solid #ddd;
+        }
+        
+        /* Tối ưu details/summary cho PDF */
+        details {
+            page-break-inside: avoid;
+            margin-bottom: 0.5cm;
+        }
+        
+        /* Ẩn summary marker khi in để tiết kiệm không gian */
+        @media print {
+            details summary {
+                list-style: none;
+                display: block;
+                font-weight: bold;
+                margin-bottom: 0.2cm;
+            }
+            
+            details summary::-webkit-details-marker {
+                display: none;
+            }
+            
+            details summary::before {
+                display: none;
+            }
+            
+            /* Đảm bảo nội dung details được hiển thị đầy đủ */
+            details[open] > *:not(summary) {
+                display: block !important;
+                padding: 0;
+                margin-bottom: 0.3cm;
+            }
         }
     </style>
 </head>
@@ -70,15 +207,15 @@
         </button>
     </div>
 
-    <div class="container mx-auto p-4 md:p-8">
-        <header class="text-center mb-12">
-            <h1 class="text-4xl md:text-5xl font-extrabold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-green-500">Toàn Cảnh Thị Trường Tiền Mã Hóa</h1>
+    <div class="a4-container">
+        <header class="text-center mb-8">
+            <h1 class="font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-green-500">Toàn Cảnh Thị Trường Tiền Mã Hóa</h1>
             {% if report %}
-                <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                <p class="text-base text-gray-600 max-w-full mx-auto">
                     Báo cáo #{{ report.id }} (tạo lúc {{ (report.created_at + timedelta(hours=7)).strftime('%d-%m-%Y %H:%M') }})
                 </p>
             {% else %}
-                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Bài phân tích và tổng hợp</p>
+                <p class="text-base text-gray-600 max-w-full mx-auto">Bài phân tích và tổng hợp</p>
             {% endif %}
         </header>
 
@@ -86,7 +223,7 @@
             {% if report and report.html_content %}
                 {{ report.html_content | safe }}
             {% else %}
-                <div class="placeholder">
+                <div class="placeholder avoid-break">
                     <h2>Chưa có báo cáo nào được tạo.</h2>
                     <p>Vui lòng sử dụng trang tải lên để tạo báo cáo đầu tiên của bạn.</p>
                 </div>
@@ -99,18 +236,72 @@
         <script>
             {{ report.js_content | safe }}
         </script>
+    {% else %}
+        <script src="{{ url_for('static', filename='js/report.js') }}"></script>
     {% endif %}
    
     <script src="{{ url_for('static', filename='js/report-initializer.js') }}" defer></script>
 
-    
     <script>
-        // Auto print when page loads (optional)
-        // window.addEventListener('load', function() {
-        //     setTimeout(function() {
-        //         window.print();
-        //     }, 1000);
-        // });
+        // Tối ưu cho in A4
+        window.addEventListener('load', function() {
+            // Tự động mở tất cả các phần tử details cho PDF
+            const detailsElements = document.querySelectorAll('details');
+            detailsElements.forEach(details => {
+                details.setAttribute('open', 'true');
+            });
+            
+            // Điều chỉnh kích thước biểu đồ cho A4
+            const charts = document.querySelectorAll('.chart-container, .gauge-container, .doughnut-container, .bar-chart-container');
+            charts.forEach(chart => {
+                chart.style.maxWidth = '100%';
+                chart.style.height = 'auto';
+                chart.classList.add('avoid-break');
+            });
+            
+            // Thêm class avoid-break cho các section
+            const sections = document.querySelectorAll('section, .report-section');
+            sections.forEach(section => {
+                section.classList.add('avoid-break');
+            });
+            
+            // Điều chỉnh font size cho các elements
+            const adjustFontForPrint = () => {
+                document.body.style.fontSize = '11pt';
+                document.body.style.lineHeight = '1.5';
+            };
+            
+            // Auto print function (commented out by default)
+            // setTimeout(function() {
+            //     adjustFontForPrint();
+            //     window.print();
+            // }, 2000);
+        });
+        
+        // Tối ưu trước khi in
+        window.addEventListener('beforeprint', function() {
+            // Đảm bảo tất cả details đều được mở trước khi in
+            const detailsElements = document.querySelectorAll('details');
+            detailsElements.forEach(details => {
+                details.setAttribute('open', 'true');
+            });
+            
+            // Ẩn các element không cần thiết
+            const elementsToHide = document.querySelectorAll('.sidebar, .navigation, .breadcrumb');
+            elementsToHide.forEach(el => el.style.display = 'none');
+            
+            // Điều chỉnh margin cho charts
+            const charts = document.querySelectorAll('svg, canvas');
+            charts.forEach(chart => {
+                chart.style.margin = '0.5cm 0';
+            });
+        });
+        
+        // Khôi phục sau khi in
+        window.addEventListener('afterprint', function() {
+            const elementsToShow = document.querySelectorAll('.sidebar, .navigation, .breadcrumb');
+            elementsToShow.forEach(el => el.style.display = '');
+        });
     </script>
 </body>
 </html>
