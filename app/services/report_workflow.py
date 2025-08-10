@@ -438,16 +438,7 @@ def research_deep_node(state: ReportState) -> ReportState:
         validation_result = _check_report_validation(full_response_text)
         state["validation_result"] = validation_result
         
-        # Extract research content (everything before validation summary hoặc toàn bộ nếu không có)
-        validation_summary_start = full_response_text.find("### 🔍 VALIDATION SUMMARY")
-        if validation_summary_start > 0:
-            # Có validation summary, lấy phần trước đó làm research content
-            research_content = full_response_text[:validation_summary_start].strip()
-        else:
-            # Không có validation summary riêng, lấy toàn bộ
-            research_content = full_response_text
-        
-        state["research_content"] = research_content
+        state["research_content"] = full_response_text
         
         # Set success based on validation result
         if validation_result == "PASS":
@@ -465,7 +456,6 @@ def research_deep_node(state: ReportState) -> ReportState:
         # Log response length for debugging
         progress_tracker.update_step(session_id, details=
             f"✓ Combined response: {len(full_response_text)} chars, "
-            f"research: {len(research_content)} chars, "
             f"validation: {validation_result}")
         
     except Exception as e:
