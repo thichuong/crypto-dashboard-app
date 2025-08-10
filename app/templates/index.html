@@ -41,6 +41,11 @@
                 <a href="{{ url_for('report_list') }}" class="inline-block bg-gray-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-gray-800 transition-colors duration-300">
                     <i class="fas fa-history mr-2"></i> Xem Lịch Sử Báo Cáo
                 </a>
+                {% if report %}
+                <a href="{{ url_for('pdf_template', report_id=report.id) }}" target="_blank" class="inline-block bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-green-700 transition-colors duration-300">
+                    <i class="fas fa-print mr-2"></i> In Báo cáo
+                </a>
+                {% endif %}
             </div>
         </header>
 

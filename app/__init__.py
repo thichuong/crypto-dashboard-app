@@ -98,6 +98,11 @@ def create_app():
         report = db.get_or_404(Report, report_id)
         return render_template('index.html', report=report)
 
+    @app.route('/pdf-template/<int:report_id>')
+    def pdf_template(report_id):
+        report = db.get_or_404(Report, report_id)
+        return render_template('pdf_template.html', report=report)
+
     @app.route('/reports')
     def report_list():
         page = request.args.get('page', 1, type=int)
