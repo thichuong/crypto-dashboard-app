@@ -1,7 +1,6 @@
 # run.py
 from app import create_app
 import os
-from build import build_js
 
 # Gọi hàm create_app để tạo một instance của ứng dụng Flask
 app = create_app()
@@ -9,11 +8,6 @@ app = create_app()
 # Vercel configuration for maxDuration
 config = {"maxDuration": 30}
 
-# Đoạn mã này đảm bảo việc build chỉ xảy ra một lần khi bạn
-# khởi động ứng dụng ở chế độ debug (ví dụ: flask run --debug)
-# và sẽ không chạy trên môi trường production.
-if app.debug:
-    build_js()
 
 # Vercel expects an app variable to be exported
 # This is the WSGI callable that Vercel will use

@@ -231,7 +231,11 @@
         </main>
     </div>
     
-    <script src="{{ url_for('static', filename='js/chart.js') }}" defer></script>
+    <!-- Chart modules được tải trực tiếp thay thế cho chart.js -->
+    <script>
+        {{ get_chart_modules_content() | safe }}
+    </script>
+    
     {% if report and report.js_content %}
         <script>
             {{ report.js_content | safe }}

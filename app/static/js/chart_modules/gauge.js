@@ -2,7 +2,6 @@
  * =============================================================================
  * TẠO BIỂU ĐỒ ĐỒNG HỒ (GAUGE) ĐƯỢC CẢI TIẾN
  * =============================================================================
- * Phụ thuộc vào các hàm trong 'utils.js'.
  * Kiểu dáng được điều khiển bởi 'gauge-chart.css'.
  *
  * @param {HTMLElement} container - Element DOM để chứa biểu đồ.
@@ -12,6 +11,47 @@
  * @param {number} [config.max=100] - Giá trị tối đa của gauge.
  * @param {Array<object>} [config.segments=[]] - Mảng các đoạn màu.
  */
+
+/**
+ * Chuyển đổi tọa độ cực sang Descartes cho gauge chart.
+ * @param {number} centerX - Tọa độ X của tâm.
+ * @param {number} centerY - Tọa độ Y của tâm.
+ * @param {number} radius - Bán kính.
+ * @param {number} angleInDegrees - Góc (tính bằng độ).
+ * @returns {{x: number, y: number}} Tọa độ Descartes.
+ */
+function polarToCartesian_gauge(centerX, centerY, radius, angleInDegrees) {
+    const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
+    return {
+        x: centerX + radius * Math.cos(angleInRadians),
+        y: centerY + radius * Math.sin(angleInRadians),
+    };
+}
+
+/**
+ * Tạo chuỗi path data 'd' cho một cung tròn SVG trong gauge chart.
+ * @param {number} x - Tọa độ X của tâm.
+ * @param {number} y - Tọa độ Y của tâm.
+ * @param {number} radius - Bán kính của cung tròn.
+ * @param {number} startAngle - Góc bắt đầu (độ).
+ * @param {number} endAngle - Góc kết thúc (độ).
+ * @returns {string} Chuỗi data cho thuộc tính 'd' của thẻ <path>.
+ */
+function describeArc_gauge(x, y, radius, startAngle, endAngle) {
+    const startPoint = polarToCartesian_gauge(x, y, radius, startAngle);
+    const endPoint = polarToCartesian_gauge(x, y, radius, endAngle);
+
+    const largeArcFlag = endAngle - startAngle <= 180 ? '0' : '1';
+    const sweepFlag = '1'; // Vẽ cung theo chiều dương (cùng chiều kim đồng hồ)
+
+    const d = [
+        'M', startPoint.x, startPoint.y,
+        'A', radius, radius, 0, largeArcFlag, sweepFlag, endPoint.x, endPoint.y
+    ].join(' ');
+
+    return d;
+}
+
 function createGauge(container, value, config) {
     // --- 1. KIỂM TRA ĐẦU VÀO ---
     if (!container) {
@@ -66,7 +106,7 @@ function createGauge(container, value, config) {
 
     // a. Tạo đường track nền
     const trackPath = createSvgElement('path', {
-        d: describeArc(100, 100, 85, GAUGE_START_ANGLE, GAUGE_END_ANGLE),
+        d: describeArc_gauge(100, 100, 85, GAUGE_START_ANGLE, GAUGE_END_ANGLE),
         class: 'gauge-track'
     });
     svg.appendChild(trackPath);
@@ -80,7 +120,7 @@ function createGauge(container, value, config) {
         const end = GAUGE_START_ANGLE + (Math.min(segmentEndPercentage, 1) * ANGLE_SPAN);
         
         const segmentPath = createSvgElement('path', {
-            d: describeArc(100, 100, 85, start, end),
+            d: describeArc_gauge(100, 100, 85, start, end),
             stroke: segment.color, // Color được đặt trực tiếp vì nó là dữ liệu động
             class: 'gauge-segment'
         });

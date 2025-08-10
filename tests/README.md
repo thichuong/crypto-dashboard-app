@@ -65,7 +65,7 @@ Thư mục này chứa các file test và debug cho các component biểu đồ 
 1. Mở Developer Tools (F12)
 2. Kiểm tra Console tab để xem lỗi JavaScript
 3. Kiểm tra Network tab để xem file nào không load được
-4. Verify rằng các file dependencies (utils.js, chart modules) được load
+4. Verify rằng các file chart modules được load đúng cách
 
 ### Nếu hover không hoạt động:
 1. Kiểm tra console có error về event listeners không

@@ -2,7 +2,6 @@
  * =============================================================================
  * TẠO BIỂU ĐỒ TRÒN (DOUGHNUT CHART) ĐƯỢC CẢI TIẾN
  * =============================================================================
- * Phụ thuộc vào các hàm trong 'utils.js'.
  * Kiểu dáng được điều khiển bởi 'doughnut-chart.css'.
  *
  * @param {HTMLElement} container - Element DOM để chứa biểu đồ.
@@ -13,6 +12,46 @@
  * @param {number} [config.innerRadius=50] - Bán kính trong của biểu đồ.
  * @param {boolean} [config.showLegend=true] - Có hiển thị chú thích hay không.
  */
+
+/**
+ * Chuyển đổi tọa độ cực sang Descartes cho doughnut chart.
+ * @param {number} centerX - Tọa độ X của tâm.
+ * @param {number} centerY - Tọa độ Y của tâm.
+ * @param {number} radius - Bán kính.
+ * @param {number} angleInDegrees - Góc (tính bằng độ).
+ * @returns {{x: number, y: number}} Tọa độ Descartes.
+ */
+function polarToCartesian_doughnut(centerX, centerY, radius, angleInDegrees) {
+    const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
+    return {
+        x: centerX + radius * Math.cos(angleInRadians),
+        y: centerY + radius * Math.sin(angleInRadians),
+    };
+}
+
+/**
+ * Tạo chuỗi path data 'd' cho một cung của biểu đồ Doughnut.
+ * @returns {string}
+ */
+function describeDoughnutArc_doughnut(x, y, outerRadius, innerRadius, startAngle, endAngle) {
+    const startOuter = polarToCartesian_doughnut(x, y, outerRadius, endAngle);
+    const endOuter = polarToCartesian_doughnut(x, y, outerRadius, startAngle);
+    const startInner = polarToCartesian_doughnut(x, y, innerRadius, endAngle);
+    const endInner = polarToCartesian_doughnut(x, y, innerRadius, startAngle);
+
+    const largeArcFlag = endAngle - startAngle <= 180 ? '0' : '1';
+
+    const d = [
+        'M', startOuter.x, startOuter.y,
+        'A', outerRadius, outerRadius, 0, largeArcFlag, 0, endOuter.x, endOuter.y,
+        'L', endInner.x, endInner.y,
+        'A', innerRadius, innerRadius, 0, largeArcFlag, 1, startInner.x, startInner.y,
+        'Z'
+    ].join(' ');
+
+    return d;
+}
+
 function createDoughnutChart(container, data, config = {}) {
     // --- BACKWARD COMPATIBILITY ---
     // Nếu tham số thứ 3 là string, tạo config object với title
@@ -95,7 +134,7 @@ function createDoughnutChart(container, data, config = {}) {
         const angleSpan = percentage * 360;
         const endAngle = currentAngle + angleSpan;
         
-        const pathData = describeDoughnutArc(CENTER_X, CENTER_Y, cfg.outerRadius, cfg.innerRadius, currentAngle, endAngle);
+        const pathData = describeDoughnutArc_doughnut(CENTER_X, CENTER_Y, cfg.outerRadius, cfg.innerRadius, currentAngle, endAngle);
         
         const segmentPath = createSvgElement('path', {
             d: pathData,

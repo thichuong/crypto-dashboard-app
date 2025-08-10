@@ -123,13 +123,13 @@
 
 .gauge-value-text {
     fill: var(--text-primary);
-    font-size: 28px; /* Giảm kích thước từ 32px để phù hợp hơn */
+    font-size: 32px; /* Giữ kích thước desktop lớn */
     font-weight: 800;
 }
 
 
 .gauge-label-text {
-    font-size: 14px; /* Giảm kích thước từ 16px để phù hợp hơn */
+    font-size: 16px; /* Giữ kích thước desktop lớn */
     font-weight: 600;
     /* The fill color is set dynamically via JavaScript */
 }
@@ -163,35 +163,53 @@
 }
 
 /* --- RESPONSIVE DESIGN --- */
-/* Điều chỉnh kích thước cho màn hình nhỏ */
+/* Điều chỉnh kích thước cho màn hình nhỏ - TĂNG kích thước text cho mobile */
 @media (max-width: 768px) {
     .gauge-container {
-        max-width: 240px;
-        max-height: 170px;
+        max-width: 260px; /* Tăng kích thước container */
+        max-height: 180px;
     }
     
     .gauge-value-text {
-        font-size: 24px;
+        font-size: 30px; /* Tăng từ 24px lên 30px cho dễ đọc hơn */
     }
     
     .gauge-label-text {
-        font-size: 12px;
+        font-size: 15px; /* Tăng từ 12px lên 15px cho dễ đọc hơn */
     }
 }
 
-/* Điều chỉnh kích thước cho màn hình rất nhỏ */
+/* Điều chỉnh kích thước cho màn hình rất nhỏ - GIỮ kích thước text lớn hơn */
 @media (max-width: 480px) {
+    .gauge-container {
+        max-width: 220px; /* Tăng từ 200px */
+        max-height: 150px; /* Tăng từ 140px */
+    }
+    
+    .gauge-value-text {
+        font-size: 26px; /* Tăng từ 20px lên 26px cho dễ đọc */
+    }
+    
+    .gauge-label-text {
+        font-size: 13px; /* Tăng từ 11px lên 13px cho dễ đọc */
+    }
+}
+
+/* Tối ưu cho màn hình điện thoại nhỏ (320px trở xuống) */
+@media (max-width: 320px) {
     .gauge-container {
         max-width: 200px;
         max-height: 140px;
     }
     
     .gauge-value-text {
-        font-size: 20px;
+        font-size: 24px; /* Vẫn giữ kích thước lớn cho dễ đọc */
+        font-weight: 900; /* Tăng độ đậm để nổi bật hơn */
     }
     
     .gauge-label-text {
-        font-size: 11px;
+        font-size: 12px; /* Kích thước vừa phải cho label */
+        font-weight: 700; /* Tăng độ đậm */
     }
 }
 
