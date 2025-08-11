@@ -60,6 +60,11 @@
     --fng-neutral-color: #6b7280;
     --fng-greed-color: #84cc16;
     --fng-extreme-greed-color: #22c55e;
+    
+    /* -- Gauge Text Colors -- */
+    --gauge-value-text-color: #3b82f6;      /* Blue for value text */
+    --gauge-needle-color: #000000;          /* Black for needle */
+    --gauge-needle-pivot-color: #000000;    /* Black for needle pivot */
 
     /* -- Icon Colors -- */
     --icon-color-summary: #3b82f6;      /* Blue */
@@ -144,6 +149,11 @@
     --fng-neutral-color: #9ca3af;
     --fng-greed-color: #a3e635;
     --fng-extreme-greed-color: #4ade80;
+    
+    /* -- Gauge Text Colors (Dark Mode) -- */
+    --gauge-value-text-color: #60a5fa;      /* Light blue for value text in dark mode */
+    --gauge-needle-color: #ffffff;          /* White for needle in dark mode */
+    --gauge-needle-pivot-color: #ffffff;    /* White for needle pivot in dark mode */
     
     /* Icon colors are generally kept the same for brand recognition, so no overrides needed unless desired */
 }

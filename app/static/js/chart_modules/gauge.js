@@ -106,7 +106,7 @@ function createGauge(container, value, config) {
 
     // a. Tạo đường track nền
     const trackPath = createSvgElement('path', {
-        d: describeArc_gauge(100, 100, 85, GAUGE_START_ANGLE, GAUGE_END_ANGLE),
+        d: describeArc_gauge(100, 100, 75, GAUGE_START_ANGLE, GAUGE_END_ANGLE),
         class: 'gauge-track'
     });
     svg.appendChild(trackPath);
@@ -120,7 +120,7 @@ function createGauge(container, value, config) {
         const end = GAUGE_START_ANGLE + (Math.min(segmentEndPercentage, 1) * ANGLE_SPAN);
         
         const segmentPath = createSvgElement('path', {
-            d: describeArc_gauge(100, 100, 85, start, end),
+            d: describeArc_gauge(100, 100, 75, start, end),
             stroke: segment.color, // Color được đặt trực tiếp vì nó là dữ liệu động
             class: 'gauge-segment'
         });

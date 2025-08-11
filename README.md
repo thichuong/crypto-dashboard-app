@@ -84,7 +84,14 @@ crypto-dashboard-app/
 
 ## 🆕 Recent Updates
 
-### v2.8.0 - Modular Architecture Refactoring (Current)
+### v2.9.0 - Advanced Prompt Engineering & AI Tuning (Current)
+* **🧠 Advanced Prompt Engineering**: Tái cấu trúc prompt nghiên cứu cốt lõi để bao gồm các nguồn dữ liệu đa tầng (Tier 1: Bloomberg, Reuters; Tier 2: Tài liệu học thuật, hồ sơ SEC), tăng cường chiều sâu phân tích.
+* **🐋 Whale & Institutional Tracking**: Tích hợp các từ khóa và chiến lược cụ thể để giám sát các động thái của cá voi, thay đổi trong kho bạc của các công ty và dòng vốn của các quỹ tổ chức.
+* **⚡ Breaking News Analysis**: Thêm một module chuyên dụng để xác thực và đánh giá tác động của các tin tức nóng trong thời gian thực.
+* **⚙️ AI Configuration Optimization**: Tinh chỉnh các tham số `temperature` và `candidate_count` để ưu tiên độ chính xác thực tế và hiệu quả chi phí thay vì các kết quả sáng tạo (nhưng rủi ro).
+* **📚 Multi-dimensional Expert Analysis**: Mở rộng prompt để tham chiếu chéo thông tin chi tiết từ các nhà phân tích Phố Wall, chuyên gia crypto-native và nghiên cứu học thuật.
+
+### v2.8.0 - Modular Architecture Refactoring
 * **🏗️ Modular Structure**: Tách `app/__init__.py` thành các module riêng biệt
 * **📁 Route Organization**: Phân chia routes thành `main_routes.py`, `report_routes.py`, `api_routes.py`
 * **🔧 Clean Architecture**: Separation of concerns và single responsibility principle
@@ -127,7 +134,7 @@ crypto-dashboard-app/
 * **Dashboard load time**: < 2s on 3G connection
 * **Chart rendering**: < 500ms cho complex charts
 * **API response time**: < 1s với caching
-* **Report generation**: 2-5 minutes cho complete workflow
+* **Report generation**: 3-5 minutes cho complete workflow
 * **Print preparation**: < 1s cho A4 layout optimization
 * **PDF export quality**: Vector-based charts với crisp text
 * **Mobile performance**: 90+ Lighthouse score

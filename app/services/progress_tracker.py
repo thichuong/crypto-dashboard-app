@@ -57,7 +57,7 @@ class ProgressTracker:
                     })
                 
                 # Nếu chỉ có details, đây là log entry detail
-                elif details:
+                elif details is not None: # Luôn thêm vào queue nếu details được cung cấp, kể cả chuỗi rỗng
                     timestamped_details = f"{timestamp} {details}"
                     progress['details'] = timestamped_details
                     progress['last_update'] = time.time()
@@ -97,8 +97,8 @@ class ProgressTracker:
                 progress['last_update'] = time.time()
                 
                 # Clean up step queue after completion
-                if session_id in self.step_queues:
-                    del self.step_queues[session_id]
+                # if session_id in self.step_queues:
+                #     del self.step_queues[session_id]
     
     def error_progress(self, session_id: str, error_msg: str):
         """Báo lỗi trong quá trình"""
@@ -114,8 +114,8 @@ class ProgressTracker:
                 progress['last_update'] = time.time()
                 
                 # Clean up step queue after error
-                if session_id in self.step_queues:
-                    del self.step_queues[session_id]
+                # if session_id in self.step_queues:
+                #     del self.step_queues[session_id]
     
     def get_progress(self, session_id: str) -> Dict[str, Any]:
         """Lấy tiến độ hiện tại bao gồm unified step queue"""
