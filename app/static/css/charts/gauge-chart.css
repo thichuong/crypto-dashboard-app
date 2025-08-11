@@ -16,6 +16,8 @@
     justify-content: center;
     align-items: center;
     margin: 0 auto; /* Căn giữa trong container */
+    position: relative; /* Để có thể căn giữa tuyệt đối nếu cần */
+    box-sizing: border-box; /* Đảm bảo padding/border không ảnh hưởng sizing */
 }
 
 
@@ -25,6 +27,8 @@
     max-width: 100%;
     max-height: 100%;
     overflow: visible; /* Allows elements like the needle to not be clipped */
+    display: block; /* Loại bỏ khoảng trắng dưới inline element */
+    margin: 0 auto; /* Căn giữa SVG trong container */
 }
 
 
@@ -114,10 +118,15 @@
 
 /* --- Text Elements --- */
 
+.gauge-text-group {
+    /* Đảm bảo text group luôn ở giữa */
+    transform-origin: center center;
+}
 
 .gauge-text {
     text-anchor: middle; /* Center the text horizontally */
     font-family: sans-serif;
+    dominant-baseline: central; /* Center the text vertically */
 }
 
 
@@ -217,4 +226,27 @@
 .report-card .gauge-container {
     max-width: min(280px, 90%); /* Không quá 90% chiều rộng card */
     max-height: min(200px, 60%); /* Không quá 60% chiều cao card */
+}
+
+/* Đảm bảo gauge căn giữa trong mọi layout */
+.gauge-container {
+    /* Flexbox fallback cho trình duyệt cũ */
+    -webkit-box-pack: center;
+    -webkit-box-align: center;
+    -ms-flex-pack: center;
+    -ms-flex-align: center;
+}
+
+/* Đảm bảo gauge căn giữa trong grid layout */
+.grid-item .gauge-container,
+.flex-item .gauge-container {
+    place-self: center; /* CSS Grid căn giữa */
+    align-self: center; /* Flexbox căn giữa */
+    justify-self: center; /* CSS Grid căn giữa */
+}
+
+/* Override cho các container đặc biệt */
+div[id*="gauge-container"] {
+    margin-left: auto !important;
+    margin-right: auto !important;
 }

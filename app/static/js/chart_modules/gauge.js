@@ -59,7 +59,15 @@ function createGauge(container, value, config) {
         return;
     }
 
-    // --- 2. CẤU HÌNH & HẰNG SỐ ---
+    // --- 2. ĐẢM BẢO CONTAINER CÓ THUỘC TÍNH CĂN GIỮA ---
+    // Thêm styles inline để đảm bảo căn giữa hoàn hảo
+    container.style.display = 'flex';
+    container.style.justifyContent = 'center';
+    container.style.alignItems = 'center';
+    container.style.margin = '0 auto';
+    container.style.textAlign = 'center';
+
+    // --- 3. CẤU HÌNH & HẰNG SỐ ---
     const cfg = {
         min: 0,
         max: 100,
@@ -71,7 +79,7 @@ function createGauge(container, value, config) {
     const ANGLE_SPAN = GAUGE_END_ANGLE - GAUGE_START_ANGLE;
     const SVG_NS = "http://www.w3.org/2000/svg"; // Namespace cho SVG
 
-    // --- 3. TÍNH TOÁN LOGIC ---
+    // --- 4. TÍNH TOÁN LOGIC ---
     const clampedValue = Math.max(cfg.min, Math.min(cfg.max, value));
     const percentage = (clampedValue - cfg.min) / (cfg.max - cfg.min);
     const valueAngle = GAUGE_START_ANGLE + (percentage * ANGLE_SPAN);
@@ -82,7 +90,7 @@ function createGauge(container, value, config) {
     const valueColor = currentSegment.color;
     const classification = currentSegment.label || '';
 
-    // --- 4. TẠO CÁC THÀNH PHẦN SVG ---
+    // --- 5. TẠO CÁC THÀNH PHẦN SVG ---
 
     // Hàm trợ giúp để tạo phần tử SVG và đặt thuộc tính
     function createSvgElement(tag, attributes) {
@@ -97,9 +105,14 @@ function createGauge(container, value, config) {
     container.innerHTML = '';
     container.classList.add('gauge-container');
 
-    // Tạo SVG element chính với viewBox tối ưu cho responsive
+    // Tính toán viewBox với padding để đảm bảo căn giữa hoàn hảo
+    const SVG_WIDTH = 200;
+    const SVG_HEIGHT = 140;
+    const PADDING = 10; // Padding để tránh cắt
+    
+    // Tạo SVG element chính với viewBox tối ưu cho responsive và căn giữa
     const svg = createSvgElement('svg', {
-        viewBox: "0 0 200 140",
+        viewBox: `${-PADDING} ${-PADDING} ${SVG_WIDTH + 2*PADDING} ${SVG_HEIGHT + 2*PADDING}`,
         preserveAspectRatio: "xMidYMid meet",
         class: 'gauge-svg'
     });
@@ -147,24 +160,45 @@ function createGauge(container, value, config) {
     needleGroup.append(needlePointer, needlePivot);
     svg.appendChild(needleGroup);
 
-    // d. Tạo các nhãn văn bản với vị trí tối ưu hơn
+    // d. Tạo các nhãn văn bản với vị trí căn giữa tuyệt đối
+    const centerX = 100; // Tâm X của gauge
+    const centerY = 100; // Tâm Y của gauge
+    
+    // Tạo group để chứa text và đảm bảo căn giữa
+    const textGroup = createSvgElement('g', {
+        class: 'gauge-text-group'
+    });
+    
     const valueText = createSvgElement('text', {
-        x: 100,
-        y: 100,
-        class: 'gauge-text gauge-value-text'
+        x: centerX,
+        y: centerY - 10, // Đặt value text 10px trên tâm
+        class: 'gauge-text gauge-value-text',
+        'text-anchor': 'middle',
+        'dominant-baseline': 'central'
     });
     valueText.textContent = value.toFixed(1);
 
     const labelText = createSvgElement('text', {
-        x: 100,
-        y: 120,
+        x: centerX,
+        y: centerY + 20, // Đặt label text 20px dưới value text
         fill: valueColor, // Color được đặt trực tiếp vì nó là dữ liệu động
-        class: 'gauge-text gauge-label-text'
+        class: 'gauge-text gauge-label-text',
+        'text-anchor': 'middle',
+        'dominant-baseline': 'central'
     });
     labelText.textContent = classification;
 
-    svg.append(valueText, labelText);
+    textGroup.append(valueText, labelText);
+    svg.appendChild(textGroup);
 
-    // --- 5. RENDER BIỂU ĐỒ ---
+    // --- 6. RENDER BIỂU ĐỒ ---
     container.appendChild(svg);
+    
+    // --- 7. ĐẢM BẢO CĂN GIỮA SAU KHI RENDER ---
+    // Force center alignment sau khi append
+    setTimeout(() => {
+        if (container.offsetWidth > 0) {
+            container.style.textAlign = 'center';
+        }
+    }, 0);
 }
