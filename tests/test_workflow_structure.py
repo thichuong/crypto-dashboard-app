@@ -29,7 +29,7 @@ def test_workflow_imports():
         print("✓ Import routing functions thành công")
         
         # Test import main workflow
-        from app.services.report_workflow_new import create_report_workflow, generate_auto_research_report_langgraph
+        from app.services.report_workflow import create_report_workflow, generate_auto_research_report_langgraph
         print("✓ Import main workflow functions thành công")
         
         # Test tạo workflow

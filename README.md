@@ -127,7 +127,7 @@ crypto-dashboard-app/
 * **Dashboard load time**: < 2s on 3G connection
 * **Chart rendering**: < 500ms cho complex charts
 * **API response time**: < 1s với caching
-* **Report generation**: 5-10 minutes cho complete workflow
+* **Report generation**: 2-5 minutes cho complete workflow
 * **Print preparation**: < 1s cho A4 layout optimization
 * **PDF export quality**: Vector-based charts với crisp text
 * **Mobile performance**: 90+ Lighthouse score

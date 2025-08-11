@@ -8,6 +8,9 @@
 1. Soạn thảo Báo cáo Nghiên cứu Chuyên sâu về thị trường crypto cho ngày hôm nay
 2. Tự động xác thực và điều chỉnh báo cáo dựa trên dữ liệu thời gian thực
 3. Đảm bảo báo cáo cuối cùng có độ chính xác cao
+4. **Tìm thêm thông tin từ các nguồn uy tín toàn cầu** - Đa dạng hóa nguồn từ Bloomberg, Reuters, Financial Times, Wall Street Journal, CoinDesk, The Block, Decrypt, CryptoSlate
+5. **Tăng cường phân tích tin tức chính trị, kinh tế, crypto** - Theo dõi sát sao các sự kiện địa chính trị, chính sách tiền tệ, quy định pháp lý, và tin tức breaking news có thể gây biến động thị trường
+6. **Giám sát hoạt động giao dịch của các tổ chức lớn** - Phân tích chi tiết hoạt động mua bán của quỹ đầu tư, công ty niêm yết, cá voi (whale), và các tổ chức tài chính lớn
 
 **Ngày báo cáo:** **<<@day>>** tháng **<<@month>>** năm **<<@year>>**
 
@@ -25,6 +28,97 @@
 - Sử dụng dữ liệu này để cross-reference với thông tin thu thập được từ Google Search
 - Ưu tiên dữ liệu real-time cho các số liệu cơ bản (giá BTC, Fear & Greed Index, Market Cap)
 - Nếu có sự khác biệt, hãy note và explain trong báo cáo
+
+---
+
+## 🌐 CHIẾN LƯỢC THU THẬP THÔNG TIN ĐA NGUỒN
+
+### 📰 Nguồn Tin Uy Tín Bắt Buộc (Tier 1 Sources)
+
+**🏛️ Tài chính Truyền thống:**
+- **Bloomberg Terminal/Bloomberg Crypto** - Tin tức thể chế, phân tích chuyên sâu
+- **Reuters Markets** - Breaking news toàn cầu, chính sách tiền tệ
+- **Financial Times** - Phân tích vĩ mô, xu hướng institutional adoption
+- **Wall Street Journal** - Regulatory updates, corporate crypto strategies
+- **MarketWatch** - Real-time market sentiment, analyst opinions
+
+**💎 Crypto Native Sources:**
+- **CoinDesk** - Industry news, regulatory developments, institutional moves
+- **The Block** - On-chain analysis, venture funding, institutional research
+- **Decrypt** - Technology developments, DeFi innovations
+- **CryptoSlate** - Project updates, funding rounds, market analysis
+- **Coinbase Research** - Professional-grade institutional insights
+
+**📊 Data & Analytics Platforms:**
+- **Glassnode** - On-chain metrics, whale activity, network health
+- **CryptoQuant** - Exchange flows, miner data, institutional indicators
+- **Santiment** - Social sentiment, developer activity, network growth
+- **Messari** - Fundamental analysis, tokenomics, protocol revenue
+- **Nansen** - Wallet tracking, smart money flows, DeFi analytics
+
+### 🔍 Tin Tức Ảnh Hưởng Thị Trường - Monitoring Keywords
+
+**🏛️ Chính Trị & Chính Sách:**
+- **Search Terms**: "Federal Reserve crypto", "SEC Bitcoin ETF", "Congress crypto hearing", "Biden crypto executive order", "Trump crypto policy", "election crypto impact"
+- **Global Politics**: "China crypto ban", "EU MiCA regulation", "Russia crypto sanctions", "Ukraine crypto aid", "Middle East crypto adoption"
+- **Regulatory Milestones**: "stablecoin regulation", "DeFi regulation", "crypto tax policy", "CBDC development", "banking crypto guidelines"
+
+**💰 Kinh Tế Vĩ Mô:**
+- **Search Terms**: "inflation crypto correlation", "Federal Reserve meeting crypto", "interest rates Bitcoin", "dollar strength crypto", "recession Bitcoin hedge"
+- **Economic Indicators**: "unemployment crypto market", "GDP growth Bitcoin", "PMI crypto correlation", "oil prices crypto", "gold vs Bitcoin"
+- **Banking Crisis**: "bank failures crypto surge", "credit crunch Bitcoin", "liquidity crisis crypto safe haven"
+
+**⚡ Breaking Crypto News:**
+- **Search Terms**: "Bitcoin ETF approval", "crypto exchange hack", "major Bitcoin purchase", "crypto company bankruptcy", "stablecoin depeg"
+- **Technology Updates**: "Bitcoin upgrade", "Ethereum merge update", "layer 2 adoption", "DeFi exploit", "NFT market trends"
+- **Celebrity/Influencer Impact**: "Elon Musk crypto tweet", "Michael Saylor Bitcoin", "institutional crypto adoption", "CEO crypto comments"
+
+### 🐋 Giám Sát Hoạt Động Cá Voi & Tổ Chức
+
+**💼 Corporate Treasury Movements:**
+- **Search Terms**: "MicroStrategy Bitcoin purchase", "Tesla Bitcoin holdings", "Square crypto investment", "corporate Bitcoin treasury", "public company crypto adoption"
+- **Tracking Requirements**:
+  - Quarterly earnings calls mentioning crypto
+  - SEC filing searches (8-K, 10-Q, 10-K forms)
+  - Corporate press releases về crypto investments
+  - Board resolution announcements
+  - CFO statements về crypto strategy
+
+**🏦 Institutional Trading Intelligence:**
+- **Search Terms**: "Goldman Sachs crypto trading", "JPMorgan Bitcoin", "Morgan Stanley crypto", "BlackRock Bitcoin ETF", "Fidelity crypto institutional"
+- **Prime Brokerage Activity**:
+  - Large OTC transaction reports
+  - Institutional custody solution announcements
+  - Prime services crypto expansion news
+  - Qualified custodian registrations
+  - Institutional trading platform launches
+
+**🐋 Whale Activity Monitoring:**
+- **On-chain Tracking Keywords**: "Bitcoin whale movements", "large Bitcoin transactions", "dormant Bitcoin wallets", "exchange whale deposits", "whale accumulation patterns"
+- **Analysis Requirements**:
+  - Transactions >100 BTC identification
+  - Whale wallet behavior changes
+  - Exchange vs cold storage movements
+  - Long-term holder distribution changes
+  - Whale cluster analysis và smart money flows
+
+**💰 Investment Fund Activities:**
+- **Search Terms**: "crypto hedge fund", "Bitcoin fund performance", "institutional crypto fund", "pension fund crypto", "endowment crypto allocation"
+- **Fund Categories**:
+  - **Hedge Funds**: Pantera, Galaxy Digital, Bitwise, Grayscale funds
+  - **Asset Managers**: BlackRock, Fidelity, VanEck crypto products
+  - **Pension Funds**: Public pension crypto allocations
+  - **Endowments**: University endowment crypto investments
+  - **Family Offices**: Ultra-high-net-worth crypto adoption
+
+**📊 Market Maker & Trading Firm Intelligence:**
+- **Search Terms**: "Jump Trading crypto", "Alameda Research", "Cumberland crypto", "market maker crypto volumes", "crypto trading firm news"
+- **Activities to Track**:
+  - Market making announcements
+  - Trading volume disclosures
+  - New market partnerships
+  - Technology infrastructure investments
+  - Regulatory compliance updates
 
 ---
 
@@ -74,7 +168,7 @@ Thực hiện research chi tiết với các phần sau:
 - Divergence analysis và overbought/oversold conditions
 - MACD, Stochastic và các momentum indicators khác
 
-#### 1.4 💰 Dòng tiền Tổ chức (Institutional Flow Analysis)
+#### 1.4 💰 Dòng tiền Tổ chức & Phân tích Cá Voi (Enhanced Institutional & Whale Analysis)
 
 **📊 Bitcoin ETF Data - Chi tiết theo từng Provider:**
 - **Cross-check**: So sánh ETF flows từ Google Search với real-time institutional data
@@ -89,31 +183,83 @@ Thực hiện research chi tiết với các phần sau:
 - Phân tích correlation giữa ETF flows và BTC spot price movements
 - Institutional demand impact on price discovery và market microstructure
 
-**🏦 Institutional Adoption Tracking:**
-- **Cross-check**: Xác thực institutional news với real-time blockchain data
-- **Search keywords**: "Bitcoin institutional adoption 2024", "corporate Bitcoin treasury", "Wall Street crypto adoption"
-- **Corporate Treasury Analysis**:
-  - MicroStrategy, Tesla, Square holdings và recent changes
-  - New corporate announcements trong tháng hiện tại
-  - Quarterly earnings calls mentioning cryptocurrency
-  - Public company filing searches (SEC forms 8-K, 10-Q)
-- **Institutional Trading Patterns**:
-  - Large wallet movement analysis (>100 BTC transactions)
-  - Exchange flows from institutional-grade platforms
-  - Prime brokerage activity indicators
-  - Custody solution adoption rates
-- **Investment Vehicle Developments**:
-  - Pension fund allocations và endowment investments
-  - Insurance company crypto exposure
-  - Family office allocation trends
-  - RIA và wealth management platform integrations
+**🐋 Whale Movement Analysis - Comprehensive Tracking:**
+- **Cross-check**: Validate whale activity từ multiple on-chain sources với real-time blockchain data
+- **Search keywords**: "Bitcoin whale movements today", "large Bitcoin transactions", "whale accumulation Bitcoin", "dormant Bitcoin wallets activated"
+- **Large Transaction Monitoring (>100 BTC)**:
+  - Transaction value, timestamp, và origin/destination analysis
+  - Exchange deposits vs withdrawals patterns từ whale wallets
+  - Cold storage accumulation vs distribution trends
+  - Whale cluster behavior và coordinated movements
+  - Long-term holder (LTH) vs short-term holder (STH) dynamics
+- **Whale Wallet Behavior Analysis**:
+  - Top 100 Bitcoin addresses activity tracking
+  - Dormant wallet reactivation (>2 years inactive)
+  - Whale profit-taking patterns at resistance levels
+  - Accumulation phases during market dips
+  - Cross-chain whale activity (BTC to ETH, stablecoins)
+- **Smart Money Flow Indicators**:
+  - Nansen "Smart Money" wallet tracking
+  - Fund wallet activity correlation với price movements
+  - Whale vs retail sentiment divergence analysis
+  - Early adopter wallet behavior patterns
 
-**🏛️ Mining & Infrastructure Institutional Flows:**
-- **Search keywords**: "Bitcoin mining institutional investment", "crypto infrastructure funding"
-- Public mining company performance (RIOT, MARA, CLSK, BITF)
-- Mining infrastructure investment và expansion plans
-- Hash rate correlation với institutional mining operations
-- Energy partnership announcements affecting mining sector
+**🏦 Corporate Treasury Deep Dive:**
+- **Cross-check**: Xác thực corporate holdings với real-time SEC filings và earnings data
+- **Search keywords**: "MicroStrategy Bitcoin purchase", "corporate Bitcoin treasury 2024", "public company crypto holdings", "earnings call crypto mentions"
+- **Public Company Bitcoin Holdings Tracking**:
+  - **MicroStrategy (MSTR)**: Latest purchases, DCA strategy, financing methods
+  - **Tesla (TSLA)**: Holdings changes, Elon Musk statements impact
+  - **Block (SQ)**: Square crypto initiatives, Cash App Bitcoin metrics
+  - **Coinbase (COIN)**: Corporate holdings vs customer holdings
+  - **Marathon Digital, Riot Platforms**: Mining company treasury strategies
+- **Corporate Adoption Pipeline Analysis**:
+  - New corporate announcements quarterly tracking
+  - Board resolution filings về crypto investment approval
+  - CFO/CEO statements về future crypto strategy
+  - Shareholder meeting discussions về crypto allocation
+  - Credit rating impact từ crypto treasury decisions
+
+**🏛️ Institutional Trading Patterns - Advanced Analytics:**
+- **Cross-check**: So sánh institutional flow data với real-time prime brokerage metrics
+- **Search keywords**: "institutional Bitcoin trading volume", "crypto prime brokerage", "Wall Street crypto adoption", "bank crypto trading desk"
+- **Prime Brokerage Activity Indicators**:
+  - Goldman Sachs, JPMorgan, Morgan Stanley crypto desk activity
+  - Institutional OTC trading volume estimates
+  - Custody solution adoption rates (Coinbase Prime, BitGo, Anchorage)
+  - Prime services revenue growth từ crypto activities
+  - Compliance infrastructure development investments
+- **Institutional Flow Analysis**:
+  - Large block trades (>$10M) identification và timing
+  - Cross-venue arbitrage activity từ institutional traders
+  - Institutional vs retail flow separation on major exchanges
+  - After-hours trading patterns indicating institutional activity
+  - Options flow analysis indicating institutional hedging strategies
+
+**💼 Investment Vehicle Ecosystem:**
+- **Cross-check**: Validate fund performance data với real-time AUM và flow metrics
+- **Search keywords**: "crypto hedge fund performance", "Bitcoin fund flows", "institutional crypto fund AUM", "pension fund crypto allocation"
+- **Hedge Fund Performance Tracking**:
+  - Pantera Capital, Galaxy Digital, Polychain portfolio updates
+  - Fund launches và closures impact on market sentiment
+  - Performance attribution: alpha generation vs beta exposure
+  - Fund redemption patterns during market stress
+  - New fund registration và regulatory approvals
+- **Pension & Endowment Adoption**:
+  - Public pension fund crypto allocation announcements
+  - University endowment crypto investment decisions
+  - Sovereign wealth fund crypto exposure expansion
+  - Insurance company crypto investment policy changes
+  - Municipal government Bitcoin treasury adoptions
+
+**�️ Infrastructure Investment Intelligence:**
+- **Search keywords**: "crypto infrastructure funding", "blockchain infrastructure investment", "crypto venture capital", "mining infrastructure expansion"
+- **Infrastructure Development Tracking**:
+  - Mining operation expansion announcements và financing
+  - Data center partnerships for crypto mining
+  - Energy partnership developments affecting mining sector
+  - Custody infrastructure investment và technology upgrades
+  - Exchange infrastructure scaling investments
 
 #### 1.5 🌍 Phân tích Vĩ mô Chuyên sâu (Comprehensive Macro Analysis)
 
@@ -245,30 +391,108 @@ Thực hiện research chi tiết với các phần sau:
 - Market cap distribution changes
 - Narrative và theme-based performance analysis
 
-#### 1.7 �️ Ý kiến Chuyên gia và Sentiment
+#### 1.7 🗞️ Tin Tức Breaking & Phân tích Tác động (Breaking News Impact Analysis)
 
-**📺 Crypto Influencers & Analysts:**
-- **Cross-check**: So sánh predictions từ Google với real-time social sentiment
-- Latest takes từ Michael Saylor, Cathie Wood, Anthony Pompliano
-- Institutional analyst reports từ JPMorgan, Goldman Sachs, Fidelity
-- Technical analysis từ respected crypto traders và analysts
-- Consensus vs contrarian viewpoints analysis
+**⚡ Breaking News Monitoring - Real-time:**
+- **Cross-check**: Validate breaking news từ multiple Tier 1 sources
+- **Search keywords**: "crypto breaking news today", "Bitcoin news alert", "cryptocurrency market news", "SEC crypto announcement", "Federal Reserve crypto"
+- **Critical News Categories**:
+  - **Regulatory Bombshells**: SEC enforcement, new regulations, court decisions
+  - **Institutional Announcements**: Major fund launches, corporate adoptions, bank partnerships
+  - **Technical Developments**: Network upgrades, security incidents, protocol changes
+  - **Geopolitical Events**: Government actions, international agreements, sanctions
+  - **Market Structure Changes**: Exchange listings, trading halts, liquidity events
 
-**📱 Social Media Sentiment:**
-- **Cross-check**: Verify social trends với real-time sentiment data
-- Twitter/X trending topics và crypto-related discussions
-- Reddit sentiment từ r/cryptocurrency, r/bitcoin communities
-- YouTube crypto content creator perspectives
-- Fear & Greed correlation với social media sentiment
+**📺 Multi-Source News Validation Process:**
+- **Primary Verification** (Within 30 minutes):
+  - Bloomberg Terminal alerts và professional news feeds
+  - Reuters breaking news notifications
+  - CoinDesk real-time news feed
+  - Official announcements từ regulatory bodies
+- **Secondary Confirmation** (Within 1 hour):
+  - Cross-reference với 3+ independent tier 1 sources
+  - Official statements từ involved parties
+  - Social media verification từ verified accounts
+  - Market reaction analysis để confirm news impact
 
-**📊 On-chain Analytics Insights:**
-- **Cross-check**: Validate với real-time on-chain metrics
-- Whale movement analysis và large transaction monitoring
-- Exchange inflows/outflows và accumulation patterns
-- Long-term holder behavior và distribution analysis
-- Network activity và adoption metrics from Glassnode, CryptoQuant
+**🎯 News Impact Scoring System:**
+- **High Impact (Score 8-10)**: Fed decisions, major regulatory changes, large institutional adoptions
+- **Medium Impact (Score 5-7)**: Corporate earnings, exchange announcements, technical upgrades
+- **Low Impact (Score 1-4)**: Minor regulatory updates, small partnerships, routine operations
+- **Market Reaction Timeline**: Immediate (0-15 min), Short-term (1-24h), Medium-term (1-7 days)
 
-#### 1.8 🔮 Kết luận và Triển vọng
+#### 1.8 🎙️ Ý kiến Chuyên gia & Sentiment Đa chiều (Multi-dimensional Expert Analysis)
+
+**📺 Institutional Analyst Coverage - Wall Street Perspective:**
+- **Cross-check**: So sánh institutional research với real-time price action và sentiment data
+- **Search keywords**: "JPMorgan Bitcoin research", "Goldman Sachs crypto outlook", "Morgan Stanley Bitcoin price target", "Bank of America crypto report"
+- **Major Bank Research Coverage**:
+  - **JPMorgan**: Nikolaos Panigirtzoglou Bitcoin fair value models
+  - **Goldman Sachs**: Crypto trading desk insights, institutional client demand
+  - **Morgan Stanley**: Wealth management crypto recommendations
+  - **Bank of America**: Digital asset research, regulatory impact analysis
+  - **Citi**: Global crypto market outlook, central bank digital currency research
+- **Rating Agency Perspectives**:
+  - Standard & Poor's crypto credit ratings impact
+  - Moody's blockchain adoption assessments
+  - Fitch ratings on crypto exposure of traditional institutions
+
+**🎯 Crypto Native Expert Analysis:**
+- **Cross-check**: Validate expert predictions với real-time on-chain data và market performance
+- **Search keywords**: "Michael Saylor Bitcoin prediction", "Cathie Wood crypto outlook", "Anthony Pompliano Bitcoin", "Raoul Pal crypto macro"
+- **Tier 1 Crypto Thought Leaders**:
+  - **Michael Saylor (MicroStrategy)**: Corporate treasury strategy, Bitcoin monetization
+  - **Cathie Wood (ARK Invest)**: Innovation adoption curves, disruptive technology analysis
+  - **Anthony Pompliano**: Institutional adoption timeline, macroeconomic correlations
+  - **Raoul Pal (Real Vision)**: Macro liquidity cycles, generational wealth transfer
+  - **Nic Carter (Castle Island Ventures)**: Bitcoin fundamentals, ESG narrative analysis
+- **Technical Analysis Experts**:
+  - Willy Woo on-chain analysis và network value metrics
+  - Plan B Stock-to-Flow model updates và revisions
+  - Benjamin Cowen technical analysis và cycle theory
+  - Tone Vays traditional technical analysis approach
+
+**🏛️ Academic & Research Institution Insights:**
+- **Search keywords**: "MIT Bitcoin research", "Stanford crypto economics", "Harvard Business School Bitcoin", "Federal Reserve crypto research"
+- **Academic Research Tracking**:
+  - Federal Reserve economic research papers on cryptocurrency
+  - MIT Digital Currency Initiative findings
+  - Stanford crypto economics research
+  - Harvard Business School case studies on crypto adoption
+  - University endowment crypto investment research
+
+**📱 Social Media Sentiment - Advanced Analytics:**
+- **Cross-check**: Verify social trends với real-time sentiment scoring và price correlation
+- **Search keywords**: "crypto Twitter sentiment", "Bitcoin Reddit discussion", "cryptocurrency social sentiment", "fear greed index social media"
+- **Platform-Specific Analysis**:
+  - **Twitter/X**: Trending hashtags, influencer sentiment, thread engagement metrics
+  - **Reddit**: r/cryptocurrency, r/bitcoin comment sentiment, upvote patterns
+  - **YouTube**: Creator sentiment analysis, view/engagement trends on crypto content
+  - **LinkedIn**: Professional network discussions, institutional adoption sentiment
+  - **Telegram**: Community sentiment trong major crypto groups
+- **Sentiment Correlation Analysis**:
+  - Social sentiment vs Fear & Greed Index correlation
+  - Retail sentiment vs institutional flow divergence
+  - Geographic sentiment differences (US vs EU vs Asia)
+  - Sentiment lag vs price movement analysis
+
+**📊 On-chain Analytics Expert Interpretation:**
+- **Cross-check**: Validate on-chain insights với real-time network data và expert commentary
+- **Search keywords**: "Glassnode Bitcoin analysis", "CryptoQuant whale alert", "Santiment on-chain metrics", "Whalemap Bitcoin"
+- **On-chain Analytics Platforms**:
+  - **Glassnode**: Network health, holder behavior, market cycles
+  - **CryptoQuant**: Exchange flows, miner behavior, institutional indicators
+  - **Santiment**: Social sentiment correlation, developer activity, network growth
+  - **Messari**: Protocol fundamentals, tokenomics analysis, competitive landscape
+  - **Nansen**: Wallet labeling, smart money tracking, DeFi analytics
+
+**🔮 Contrarian vs Consensus Analysis:**
+- **Consensus View Tracking**: Majority opinion từ surveys, polls, và prediction markets
+- **Contrarian Indicator Analysis**: Extreme sentiment levels như contrarian signals
+- **Prediction Market Insights**: Polymarket, Augur betting odds on crypto events
+- **Options Market Sentiment**: Put/call ratios, implied volatility, max pain analysis
+
+#### 1.9 🔮 Kết luận và Triển vọng
 
 **📈 Short-term Outlook (1-4 tuần):**
 - **Cross-check**: Integrate tất cả findings với real-time data validation
@@ -379,14 +603,24 @@ Lý do: [Mô tả cụ thể dữ liệu nào vẫn sai lệch và tại sao kh�
 - Lấy dữ liệu mới nhất từ **TradingView** và **CoinMarketCap**
 - Cross-validate với **real-time data** từ hệ thống
 
-### 📰 Nguồn tham khảo:
-- Bloomberg Crypto, CoinDesk, Cointelegraph, The Block
+### 📰 Nguồn tham khảo chính (Tier 1):
+- **Tài chính Truyền thống**: Bloomberg, Reuters, Financial Times, Wall Street Journal, MarketWatch
+- **Crypto Native**: CoinDesk, The Block, Decrypt, CryptoSlate, Coinbase Research
+- **Analytics Platforms**: Glassnode, CryptoQuant, Santiment, Messari, Nansen
+
+### 🔍 Nguồn tham khảo bổ sung (Tier 2):
+- **Regulatory**: SEC.gov, CFTC.gov, Federal Reserve publications, Congressional hearings
+- **Corporate**: SEC EDGAR filings, earnings call transcripts, corporate press releases
+- **Academic**: MIT DCI, Stanford crypto research, Federal Reserve economic papers
+- **Social Intelligence**: Twitter verified accounts, Reddit communities, YouTube analytics
 
 ### 🌏 Ngôn ngữ:
 - Báo cáo cuối cùng: **tiếng Việt**
 - Validation summary: **tiếng Anh**
 
----
+### ⚠️ Chất lượng Nguồn:
+- **Bắt buộc verify từ 2+ independent tier 1 sources** cho mọi thông tin quan trọng
+- **Timestamp tracking** cho tất cả dữ liệu và tin tức
+- **Source attribution** cho mọi claims và predictions
+- **Bias assessment** cho expert opinions và institutional research
 
-> **📝 Lưu ý:** Prompt này kết hợp research và validation thành 1 workflow duy nhất để tối ưu hóa performance và đảm bảo consistency.
-````

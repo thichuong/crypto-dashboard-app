@@ -46,7 +46,7 @@ def research_deep_node(state: ReportState) -> ReportState:
                 thinking_budget=30000,  # Tăng thinking budget cho combined task
             ),
             tools=tools,
-            temperature=0.9,
+            temperature=0.5,
             candidate_count=1,
         )
         
