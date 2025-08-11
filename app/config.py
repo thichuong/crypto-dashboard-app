@@ -22,8 +22,29 @@ def configure_app(app):
     # --- CẤU HÌNH DATABASE ĐỘNG ---
     if postgres_url := os.getenv('POSTGRES_URL'):
         db_url = postgres_url.replace("postgres://", "postgresql://", 1)
+        
+        # Thêm SSL parameters cho Railway PostgreSQL
+        if "?" not in db_url:
+            db_url += "?sslmode=require&sslrootcert=DISABLE"
+        elif "sslmode" not in db_url:
+            db_url += "&sslmode=require&sslrootcert=DISABLE"
+            
         app.config['SQLALCHEMY_DATABASE_URI'] = db_url
-        print("INFO: Connecting to Postgres database")
+        
+        # Cấu hình connection pool và retry cho Railway
+        app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+            'pool_pre_ping': True,  # Test connection trước khi sử dụng
+            'pool_recycle': 300,    # Recycle connection sau 5 phút
+            'pool_timeout': 30,     # Timeout khi lấy connection từ pool
+            'max_overflow': 10,     # Tối đa 10 connection overflow
+            'echo': False,          # Tắt SQL logging cho production
+            'connect_args': {
+                "sslmode": "require",
+                "connect_timeout": 30,
+                "application_name": "crypto_dashboard_app"
+            }
+        }
+        print("INFO: Connecting to Postgres database with SSL optimization")
     else:
         db_path = os.path.join(app.instance_path, 'local_dev.db')
         os.makedirs(app.instance_path, exist_ok=True)

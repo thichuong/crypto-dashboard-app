@@ -6,6 +6,7 @@ import time
 from flask import jsonify
 from ..models import Report
 from ..services.progress_tracker import progress_tracker
+from ..utils.database_health import DatabaseHealthChecker
 
 
 def register_api_routes(app):
@@ -47,6 +48,47 @@ def register_api_routes(app):
                 'session_id': session_id,
                 'progress': progress_data
             })
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+
+    @app.route('/api/health')
+    def api_health_check():
+        """API endpoint để kiểm tra database health"""
+        try:
+            health_data = DatabaseHealthChecker.full_health_check()
+            
+            # Determine overall status
+            overall_healthy = (
+                health_data.get('connection', {}).get('healthy', False) and
+                health_data.get('operations', {}).get('success', False)
+            )
+            
+            return jsonify({
+                'status': 'healthy' if overall_healthy else 'unhealthy',
+                'timestamp': health_data.get('timestamp'),
+                'details': health_data
+            }), 200 if overall_healthy else 503
+            
+        except Exception as e:
+            return jsonify({
+                'status': 'error',
+                'error': str(e)
+            }), 500
+
+    @app.route('/api/health/database')
+    def api_database_health():
+        """Chi tiết health check cho database"""
+        try:
+            connection_check = DatabaseHealthChecker.check_connection()
+            ssl_check = DatabaseHealthChecker.check_ssl_connection()
+            pool_status = DatabaseHealthChecker.get_connection_pool_status()
+            
+            return jsonify({
+                'connection': connection_check,
+                'ssl': ssl_check,
+                'pool': pool_status
+            })
+            
         except Exception as e:
             return jsonify({'error': str(e)}), 500
 

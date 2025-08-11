@@ -30,7 +30,7 @@ def generate_auto_research_report(api_key, max_attempts=3, use_fallback_on_500=T
 
 def schedule_auto_report(app, api_key, interval_hours=6):
     """
-    Lên lịch tự động tạo báo cáo mỗi interval_hours giờ.
+    Lên lịch tự động tạo báo cáo mỗi interval_hours giờ với improved error handling.
     
     Args:
         app: Flask app instance
@@ -38,28 +38,71 @@ def schedule_auto_report(app, api_key, interval_hours=6):
         interval_hours (int): Khoảng thời gian giữa các lần tạo báo cáo (giờ)
     """
     def run_scheduler():
+        consecutive_failures = 0
+        max_consecutive_failures = 3
+        
         with app.app_context():
             while True:
                 try:
+                    start_time = datetime.now()
+                    print(f"[{start_time}] 🚀 Scheduler: Bắt đầu tạo báo cáo tự động...")
+                    
                     # Chạy tạo báo cáo với số lần thử tối đa và fallback
                     max_attempts = int(os.getenv('MAX_REPORT_ATTEMPTS', '3'))
                     use_fallback = os.getenv('USE_FALLBACK_ON_500', 'true').lower() == 'true'
-                    success = generate_auto_research_report(api_key, max_attempts, use_fallback)
-                    if success:
-                        print(f"[{datetime.now()}] Scheduler: Báo cáo đã được tạo thành công")
+                    
+                    result = generate_auto_research_report(api_key, max_attempts, use_fallback)
+                    
+                    if isinstance(result, dict) and result.get('success'):
+                        consecutive_failures = 0  # Reset failure counter
+                        end_time = datetime.now()
+                        duration = (end_time - start_time).total_seconds()
+                        report_id = result.get('report_id')
+                        print(f"[{end_time}] ✅ Scheduler: Báo cáo #{report_id} tạo thành công trong {duration:.1f}s")
+                    elif isinstance(result, bool) and result:
+                        consecutive_failures = 0  # Reset failure counter  
+                        end_time = datetime.now()
+                        duration = (end_time - start_time).total_seconds()
+                        print(f"[{end_time}] ✅ Scheduler: Báo cáo tạo thành công trong {duration:.1f}s")
                     else:
-                        print(f"[{datetime.now()}] Scheduler: Tạo báo cáo thất bại")
+                        consecutive_failures += 1
+                        error_info = ""
+                        if isinstance(result, dict) and result.get('errors'):
+                            error_info = f" - Errors: {result['errors'][:2]}"  # Show first 2 errors
+                        
+                        print(f"[{datetime.now()}] ❌ Scheduler: Tạo báo cáo thất bại ({consecutive_failures}/{max_consecutive_failures}){error_info}")
+                        
+                        # Nếu thất bại liên tiếp quá nhiều, tăng interval
+                        if consecutive_failures >= max_consecutive_failures:
+                            extended_interval = interval_hours * 2
+                            print(f"[{datetime.now()}] ⚠️ Scheduler: Too many failures, extending interval to {extended_interval}h")
+                            time.sleep(extended_interval * 3600)
+                            consecutive_failures = 0  # Reset counter
+                            continue
                         
                 except Exception as e:
-                    print(f"[{datetime.now()}] Scheduler error: {e}")
+                    consecutive_failures += 1
+                    print(f"[{datetime.now()}] ❌ Scheduler error ({consecutive_failures}/{max_consecutive_failures}): {e}")
+                    
+                    # Nếu lỗi liên tiếp quá nhiều, restart scheduler
+                    if consecutive_failures >= max_consecutive_failures:
+                        print(f"[{datetime.now()}] 🔄 Scheduler: Restarting due to consecutive failures...")
+                        time.sleep(300)  # Wait 5 minutes before restart
+                        consecutive_failures = 0
+                        continue
                 
                 # Chờ interval_hours giờ trước khi chạy lần tiếp theo
+                next_run = datetime.now().replace(microsecond=0) + timedelta(hours=interval_hours)
+                print(f"[{datetime.now()}] ⏰ Scheduler: Next run scheduled at {next_run}")
                 time.sleep(interval_hours * 3600)
+    
+    # Import timedelta ở đầu function
+    from datetime import timedelta
     
     # Tạo và khởi động thread cho scheduler
     scheduler_thread = threading.Thread(target=run_scheduler, daemon=True)
     scheduler_thread.start()
-    print(f"[{datetime.now()}] Auto report scheduler đã được khởi động (mỗi {interval_hours} giờ)")
+    print(f"[{datetime.now()}] 🎯 Auto report scheduler started (interval: {interval_hours}h, max failures: 3)")
 
 
 def start_auto_report_scheduler(app):

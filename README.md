@@ -2,7 +2,7 @@
 
 Ứng dụng Flask cung cấp dashboard thị trường crypto real-time và AI report generator sử dụng LangGraph workflow.
 
-**🔗 Demo:** [crypto-dashboard-app-thichuong.vercel.app](https://crypto-dashboard-app-thichuong.vercel.app/)
+**🔗 Demo:** [ai-crypto-reports.up.railway.app](https://ai-crypto-reports.up.railway.app/)
 
 ## ✨ Tính Năng
 
@@ -25,7 +25,7 @@
 **Backend:** Flask, SQLAlchemy, LangGraph, Google Gemini API  
 **Frontend:** Tailwind CSS, Custom SVG Charts  
 **Database:** PostgreSQL (prod) / SQLite (dev)  
-**Deployment:** Vercel serverless platform
+**Deployment:** Railway cloud platform
 
 ## 🚀 Quick Start
 
@@ -105,7 +105,7 @@ crypto-dashboard-app/
 
 ## � Support & Contact
 
-**🔗 Demo**: [Live Application](https://crypto-dashboard-app-thichuong.vercel.app/)  
+**🔗 Demo**: [Live Application](https://ai-crypto-reports.up.railway.app/)  
 **� Issues**: [GitHub Issues](https://github.com/thichuong/crypto-dashboard-app/issues)  
 **� License**: MIT License
 
@@ -201,7 +201,7 @@ git checkout -b feature/your-feature-name
 
 - **🔗 APIs**: CoinGecko, Alternative.me cho market data
 - **🤖 AI**: Google Gemini API cho intelligent report generation
-- **☁️ Deployment**: Vercel cho serverless hosting  
+- **☁️ Deployment**: Railway cho cloud hosting  
 - **🎨 Frontend**: Tailwind CSS cho utility-first styling
 - **📊 Charts**: Custom SVG library với d3.js inspiration
 - **🔄 Workflow**: LangGraph cho AI workflow orchestration
@@ -221,6 +221,6 @@ git checkout -b feature/your-feature-name
 **🐛 Issues**: [GitHub Issues](https://github.com/thichuong/crypto-dashboard-app/issues)  
 **💬 Discussions**: [GitHub Discussions](https://github.com/thichuong/crypto-dashboard-app/discussions)  
 **📧 Email**: thichuong@example.com  
-**🔗 Demo**: [Live Application](https://crypto-dashboard-app-thichuong.vercel.app/)
+**🔗 Demo**: [Live Application](https://ai-crypto-reports.up.railway.app/)
 
 **📄 License**: MIT License - see LICENSE file for details
