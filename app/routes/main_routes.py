@@ -11,6 +11,11 @@ def register_main_routes(app):
     Đăng ký các route chính của ứng dụng.
     """
     
+    @app.route('/health')
+    def health_check():
+        """Health check endpoint for Railway"""
+        return jsonify({'status': 'healthy', 'message': 'Crypto Dashboard is running'}), 200
+    
     @app.route('/')
     def index():
         latest_report = Report.query.order_by(Report.created_at.desc()).first()
