@@ -37,7 +37,7 @@
 * **Smart Routing**: Auto retry với exponential backoff
 * **Dual Retry System**: Separate counters cho research (3x) và interface (3x)  
 * **Real-time Data**: Cache và inject data từ multiple APIs
-* **Google Gemini 2.5 Pro**: AI với thinking budget 30,000
+* **Google Gemini **: AI với thinking
 
 ## 🛠️ Tech Stack
 
@@ -162,7 +162,7 @@ crypto-dashboard-app/
 
 ### Previous Versions
 * **v2.7.0**: Print & PDF Export với A4 layout optimization
-* **v2.6.0**: Combined Research + Validation với Google Gemini 2.5 Pro
+* **v2.6.0**: Combined Research + Validation với Google Gemini
 * **v2.5.0**: LangGraph integration với state management
 
 ---

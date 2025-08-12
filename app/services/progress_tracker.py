@@ -72,6 +72,7 @@ class ProgressTracker:
                         'timestamp': timestamp,
                         'step': progress.get('step', 0)
                     })
+                    print(f"[PROGRESS] Detail: {timestamped_details}")
                 
                 # Giữ tối đa 20 entries gần nhất trong queue
                 if session_id in self.step_queues:

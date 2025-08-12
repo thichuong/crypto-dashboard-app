@@ -12,7 +12,7 @@
 5. **Tăng cường phân tích tin tức chính trị, kinh tế, crypto** - Theo dõi sát sao các sự kiện địa chính trị, chính sách tiền tệ, quy định pháp lý, và tin tức breaking news có thể gây biến động thị trường
 6. **Giám sát hoạt động giao dịch của các tổ chức lớn** - Phân tích chi tiết hoạt động mua bán của quỹ đầu tư, công ty niêm yết, cá voi (whale), và các tổ chức tài chính lớn
 
-**Ngày báo cáo:** **<<@day>>** tháng **<<@month>>** năm **<<@year>>**
+**Ngày báo cáo:** Hôm nay ngày **<<@day>>** tháng **<<@month>>** năm **<<@year>>**
 
 ---
 

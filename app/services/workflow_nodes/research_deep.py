@@ -43,7 +43,7 @@ def research_deep_node(state: ReportState) -> ReportState:
         ]
         generate_content_config = types.GenerateContentConfig(
             thinking_config=types.ThinkingConfig(
-                thinking_budget=30000,  # Tăng thinking budget cho combined task
+                thinking_budget=24576,  # Tăng thinking budget cho combined task
             ),
             tools=tools,
             temperature=0.5,
@@ -73,7 +73,8 @@ def research_deep_node(state: ReportState) -> ReportState:
             except Exception as api_error:
                 if api_attempt < 2:
                     wait_time = (api_attempt + 1) * 45  # Longer wait for complex combined calls
-                    progress_tracker.update_step(session_id, details=f"Lỗi Combined API, chờ {wait_time}s...")
+                    # Log error và chờ retry
+                    progress_tracker.update_step(session_id, details=f"Lỗi Combined API, chờ {wait_time}s... ({api_error})")
                     time.sleep(wait_time)
                 else:
                     raise api_error

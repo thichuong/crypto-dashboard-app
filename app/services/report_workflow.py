@@ -113,7 +113,7 @@ def generate_auto_research_report_langgraph(api_key: str, max_attempts: int = 3,
         error_messages=[],
         success=False,
         client=None,
-        model="gemini-2.5-pro"
+        model="gemini-2.5-flash"
     )
     
     try:

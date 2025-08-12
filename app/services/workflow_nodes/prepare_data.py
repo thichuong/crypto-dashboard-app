@@ -47,7 +47,7 @@ def prepare_data_node(state: ReportState) -> ReportState:
     try:
         client = genai.Client(api_key=state["api_key"])
         state["client"] = client
-        state["model"] = "gemini-2.5-pro"
+        state["model"] = "gemini-2.5-flash"
     except Exception as e:
         error_msg = f"Lỗi khi khởi tạo Gemini client: {e}"
         state["error_messages"].append(error_msg)
