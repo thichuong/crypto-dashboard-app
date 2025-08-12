@@ -78,58 +78,82 @@ def dashboard_summary():
             future_fng = executor.submit(call_fng_data)
             future_rsi = executor.submit(call_rsi_data)
             
-            # Chờ tất cả hoàn thành với timeout 7 giây
+            # Xử lý từng API call riêng biệt với timeout 15 giây cho mỗi cái
+            timeout_warnings = {}
+            
+            # Xử lý Global Market Data
             try:
-                global_data, global_error, global_status = future_global.result(timeout=7)
-                btc_data, btc_error, btc_status = future_btc.result(timeout=7)
-                fng_data, fng_error, fng_status = future_fng.result(timeout=7)
-                rsi_data, rsi_error, rsi_status = future_rsi.result(timeout=7)
+                global_data, global_error, global_status = future_global.result(timeout=15)
             except concurrent.futures.TimeoutError:
-                # Nếu timeout, sử dụng giá trị mặc định
-                return jsonify({
-                    "error": "Request timeout",
-                    "message": "API calls took too long, using default values",
-                    "market_cap": None,
-                    "volume_24h": None,
-                    "btc_price_usd": None,
-                    "btc_change_24h": None,
-                    "fng_value": 50,
-                    "fng_classification": "Neutral",
-                    "rsi_14": 50
-                }), 200
+                global_data = {"market_cap": None, "volume_24h": None}
+                global_error = "Timeout"
+                global_status = 408
+                timeout_warnings["global_data"] = "API timeout - using default values"
+            
+            # Xử lý BTC Data
+            try:
+                btc_data, btc_error, btc_status = future_btc.result(timeout=15)
+            except concurrent.futures.TimeoutError:
+                btc_data = {"btc_price_usd": None, "btc_change_24h": None}
+                btc_error = "Timeout"
+                btc_status = 408
+                timeout_warnings["btc_data"] = "API timeout - using default values"
+            
+            # Xử lý Fear & Greed Data
+            try:
+                fng_data, fng_error, fng_status = future_fng.result(timeout=15)
+            except concurrent.futures.TimeoutError:
+                fng_data = {"fng_value": 50, "fng_value_classification": "Neutral"}
+                fng_error = "Timeout"
+                fng_status = 408
+                timeout_warnings["fng_data"] = "API timeout - using default values"
+            
+            # Xử lý RSI Data
+            try:
+                rsi_data, rsi_error, rsi_status = future_rsi.result(timeout=15)
+            except concurrent.futures.TimeoutError:
+                rsi_data = {"rsi_14": 50}
+                rsi_error = "Timeout"
+                rsi_status = 408
+                timeout_warnings["rsi_data"] = "API timeout - using default values"
 
         # Phân loại lỗi: critical vs non-critical
         critical_errors = {}
         warnings = {}
         
-        # Kiểm tra từng service
-        if global_error:
+        # Thêm timeout warnings vào warnings
+        warnings.update(timeout_warnings)
+        
+        # Kiểm tra từng service (không coi timeout là critical error)
+        if global_error and global_status != 408:  # 408 là timeout
             if global_status == 429:
                 warnings["global_data"] = "Rate limit reached - using cached data"
             else:
                 critical_errors["global_data"] = global_error
                 
-        if btc_error:
+        if btc_error and btc_status != 408:  # 408 là timeout
             if btc_status == 429:
                 warnings["btc_data"] = "Rate limit reached - using cached data"
             else:
                 critical_errors["btc_data"] = btc_error
                 
-        if fng_error:
+        if fng_error and fng_status != 408:  # 408 là timeout
             if fng_status == 429:
                 warnings["fng_data"] = "Rate limit reached - using default value"
                 fng_data = {"fng_value": 50, "fng_value_classification": "Neutral"}
-            else:
+            elif "Timeout" not in str(fng_error):  # Không hiển thị timeout warning 2 lần
                 warnings["fng_data"] = fng_error
                 fng_data = {"fng_value": 50, "fng_value_classification": "Neutral"}
                 
-        if rsi_error:
+        if rsi_error and rsi_status != 408:  # 408 là timeout
             if rsi_status == 429:
                 warnings["rsi_data"] = "Rate limit reached - using default value"
                 rsi_data = {"rsi_14": 50}
-            else:
+            elif "Timeout" not in str(rsi_error):  # Không hiển thị timeout warning 2 lần
                 warnings["rsi_data"] = rsi_error
                 rsi_data = {"rsi_14": 50}
+                warnings["rsi_data"] = rsi_error
+            # Nếu là timeout hoặc lỗi khác, đã set default value ở trên
 
         # Chỉ fail request nếu có critical error (không phải rate limit)
         if critical_errors:

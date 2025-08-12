@@ -6,22 +6,20 @@ from datetime import datetime, timedelta
 # Khởi tạo đối tượng cache nhưng chưa gắn vào app
 cache = Cache()
 
-# In-memory backup cache for serverless environments
+# In-memory backup cache for local environments
 _memory_cache = {}
 
 # Backup cache for rate-limited APIs (store in file system or memory)
 BACKUP_CACHE_DIR = "instance/backup_cache"
 
-def is_serverless_environment():
-    """Kiểm tra xem có đang chạy trên môi trường serverless không."""
-    # Railway sets RAILWAY_ENVIRONMENT environment variable
-    # AWS Lambda sets AWS_LAMBDA_FUNCTION_NAME
-    return os.getenv('AWS_LAMBDA_FUNCTION_NAME') or os.getenv('RAILWAY_ENVIRONMENT')
+def is_redis_available():
+    """Kiểm tra xem có Redis URL không (chạy trên Railway)."""
+    return bool(os.getenv('REDIS_URL'))
 
 def ensure_backup_cache_dir():
     """Đảm bảo thư mục backup cache tồn tại (chỉ cho local environment)."""
-    if is_serverless_environment():
-        return  # Skip file operations on serverless
+    if is_redis_available():
+        return  # Skip file operations when using Redis
         
     if not os.path.exists(BACKUP_CACHE_DIR):
         try:
@@ -38,8 +36,17 @@ def set_backup_cache(key, data, max_age_hours=24):
         "expires_at": (datetime.now() + timedelta(hours=max_age_hours)).isoformat()
     }
     
-    # Try file system first (for local development)
-    if not is_serverless_environment():
+    # Nếu có Redis, sử dụng Redis cache
+    if is_redis_available():
+        try:
+            # Sử dụng Flask-Caching với Redis
+            cache.set(f"backup_{key}", cache_data, timeout=max_age_hours * 3600)
+            return
+        except Exception:
+            pass  # Fall through to memory cache
+    
+    # Try file system for local development
+    if not is_redis_available():
         try:
             ensure_backup_cache_dir()
             cache_file = os.path.join(BACKUP_CACHE_DIR, f"{key}.json")
@@ -49,13 +56,24 @@ def set_backup_cache(key, data, max_age_hours=24):
         except Exception:
             pass  # Fall through to memory cache
     
-    # Fall back to memory cache (for serverless or when file system fails)
+    # Fall back to memory cache
     _memory_cache[key] = cache_data
 
 def get_backup_cache(key):
     """Lấy dữ liệu từ backup cache nếu còn hạn."""
-    # Try file system first (for local development)
-    if not is_serverless_environment():
+    # Nếu có Redis, thử lấy từ Redis trước
+    if is_redis_available():
+        try:
+            cache_data = cache.get(f"backup_{key}")
+            if cache_data:
+                expires_at = datetime.fromisoformat(cache_data["expires_at"])
+                if datetime.now() <= expires_at:
+                    return cache_data["data"]
+        except Exception:
+            pass
+    
+    # Try file system for local development
+    if not is_redis_available():
         cache_file = os.path.join(BACKUP_CACHE_DIR, f"{key}.json")
         try:
             if os.path.exists(cache_file):
