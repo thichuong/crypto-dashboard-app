@@ -1,15 +1,34 @@
 # 📊 Crypto Dashboard & AI Report Generator
 
-Ứng dụng Flask cung cấp dashboard thị trường crypto real-time và AI report generator sử dụng LangGraph workflow.
+Ứng dụng Flask hiện đại với **WebSocket real-time updates** và **Progressive Web App (PWA)** hỗ trợ, cung cấp dashboard thị trường crypto và AI report generator sử dụng LangGraph workflow.
 
 **🔗 Demo:** [ai-crypto-reports.up.railway.app](https://ai-crypto-reports.up.railway.app/)
 
-## ✨ Tính Năng
+## ✨ Tính Năng Nổi Bật
 
-* **📈 Real-time Dashboard**: BTC price, market cap, Fear & Greed Index, RSI với auto-refresh
-* **🤖 AI Report Generator**: Upload file hoặc tạo báo cáo crypto tự động với LangGraph
-* **🖨️ PDF Export**: A4 layout tối ưu cho in ấn với charts preservation
-* **📱 Responsive Design**: Tối ưu cho mobile và desktop với dark/light theme
+### 🚀 **Real-time Architecture**
+* **⚡ WebSocket Updates**: Instant data updates với < 1s latency
+* **� Smart Fallback**: Auto-switch từ WebSocket sang polling khi cần
+* **📱 PWA Support**: Installable app với offline functionality
+* **🔔 Push Notifications**: Background alerts cho report completion
+
+### 📈 **Crypto Dashboard**
+* **Real-time Data**: BTC price, market cap, Fear & Greed Index, RSI
+* **Live Charts**: SVG charts với real-time price updates
+* **Mobile Optimized**: Responsive design với dark/light theme
+* **Offline Mode**: Cached data availability khi offline
+
+### 🤖 **AI Report Generator** 
+* **LangGraph Workflow**: 6-node pipeline với state management
+* **File Upload**: Support .docx, .odt, .pdf files
+* **Auto Reports**: Scheduled background report generation
+* **Smart Retry**: Exponential backoff với dual retry system
+
+### 📱 **Progressive Web App Features**
+* **App Installation**: Add to home screen on mobile/desktop
+* **Offline Functionality**: Works without internet connection
+* **Background Sync**: Data synchronization when back online
+* **Native Experience**: App-like UI/UX với service worker support
 
 ## 🔄 LangGraph Workflow
 
@@ -22,10 +41,27 @@
 
 ## 🛠️ Tech Stack
 
-**Backend:** Flask, SQLAlchemy, LangGraph, Google Gemini API  
-**Frontend:** Tailwind CSS, Custom SVG Charts  
+**Backend:** Flask, Flask-SocketIO, SQLAlchemy, LangGraph, Google Gemini API  
+**Frontend:** WebSocket Client, Service Worker, Tailwind CSS, Custom SVG Charts  
+**Real-time:** Socket.IO, WebSocket with polling fallback  
+**PWA:** Service Worker, Web App Manifest, Push Notifications API  
 **Database:** PostgreSQL (prod) / SQLite (dev)  
 **Deployment:** Railway cloud platform
+
+### 🏗️ **Modern Architecture**
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    PWA CRYPTO DASHBOARD                     │
+├─────────────────┬─────────────────┬─────────────────────────┤
+│   Frontend      │   Backend       │   Infrastructure        │
+├─────────────────┼─────────────────┼─────────────────────────┤
+│ • WebSocket     │ • Socket.IO     │ • Service Worker        │
+│   Client        │   Server        │ • Push Notifications    │
+│ • PWA Manager   │ • Event         │ • Background Sync       │
+│ • Offline Cache │   Broadcasting  │ • Cache API             │
+│ • Push Handler  │ • Redis Pub/Sub │ • IndexedDB             │
+└─────────────────┴─────────────────┴─────────────────────────┘
+```
 
 ## 🚀 Quick Start
 
@@ -34,7 +70,7 @@ git clone https://github.com/thichuong/crypto-dashboard-app.git
 cd crypto-dashboard-app
 python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
-python build.py && flask run
+python run.py
 ```
 
 **Environment Setup:**
@@ -42,14 +78,42 @@ python build.py && flask run
 GEMINI_API_KEY=your_gemini_key          # Required for AI reports
 ENABLE_AUTO_REPORT_SCHEDULER=true       # Auto reports every 3 hours
 COINGECKO_API_KEY=optional              # Higher rate limits
+
+# WebSocket & PWA Settings (Optional)
+SOCKETIO_ASYNC_MODE=threading           # SocketIO async mode
+REDIS_URL=redis://localhost:6379        # Redis for scaling (optional)
+VAPID_PUBLIC_KEY=your_vapid_public      # Push notifications
+VAPID_PRIVATE_KEY=your_vapid_private    # Push notifications
 ```
+
+### 🔗 **WebSocket Connection**
+The app automatically connects via WebSocket for real-time updates. If WebSocket fails, it gracefully falls back to polling mode ensuring continuous functionality.
+
+### 📱 **PWA Installation**  
+1. Visit the app in Chrome/Edge/Safari
+2. Look for "Install" button in address bar
+3. Click "Install" for native app experience
+4. Enable notifications for background updates
 
 ## 📖 Cách Sử Dụng
 
-1. **Dashboard**: Xem real-time crypto data với auto-refresh
-2. **Manual Reports**: Upload file (.docx, .odt, .pdf) tại `/upload` 
-3. **Auto Reports**: Enable scheduler trong `.env` cho báo cáo tự động
-4. **Print/PDF**: Sử dụng template A4 tối ưu cho in ấn
+### 📊 **Real-time Dashboard**
+1. **Live Updates**: Dữ liệu crypto cập nhật real-time qua WebSocket
+2. **Connection Status**: Hiển thị trạng thái kết nối (WebSocket/Polling)
+3. **Offline Mode**: Xem cached data khi mất kết nối internet
+4. **PWA Features**: Install app để có trải nghiệm native
+
+### 📝 **Report Generation**  
+1. **Manual Reports**: Upload file (.docx, .odt, .pdf) tại `/upload`
+2. **Auto Reports**: Enable scheduler trong `.env` cho báo cáo tự động
+3. **Real-time Progress**: Live progress tracking qua WebSocket
+4. **Push Notifications**: Nhận thông báo khi báo cáo hoàn thành
+
+### 📱 **PWA Experience**
+1. **Install App**: Click "Install" button hoặc browser prompt
+2. **Offline Access**: App works offline với cached data
+3. **Background Sync**: Data tự động sync khi back online
+4. **Push Alerts**: Notifications cho report completion (background)
 
 ## 🔧 Project Structure
 
@@ -183,7 +247,6 @@ source venv/bin/activate
 pip install -r requirements.txt
 
 # Run development server
-python build.py
 flask run
 
 # Create feature branch

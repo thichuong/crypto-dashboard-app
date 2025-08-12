@@ -14,9 +14,9 @@ BACKUP_CACHE_DIR = "instance/backup_cache"
 
 def is_serverless_environment():
     """Kiểm tra xem có đang chạy trên môi trường serverless không."""
-    # Vercel sets VERCEL environment variable
+    # Railway sets RAILWAY_ENVIRONMENT environment variable
     # AWS Lambda sets AWS_LAMBDA_FUNCTION_NAME
-    return os.getenv('VERCEL') or os.getenv('AWS_LAMBDA_FUNCTION_NAME') or os.getenv('RAILWAY_ENVIRONMENT')
+    return os.getenv('AWS_LAMBDA_FUNCTION_NAME') or os.getenv('RAILWAY_ENVIRONMENT')
 
 def ensure_backup_cache_dir():
     """Đảm bảo thư mục backup cache tồn tại (chỉ cho local environment)."""

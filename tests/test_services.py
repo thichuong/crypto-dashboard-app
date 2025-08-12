@@ -30,7 +30,7 @@ def test_service(name, func):
 def main():
     print("=== Crypto Services Test ===")
     print(f"Serverless environment: {is_serverless_environment()}")
-    print(f"VERCEL env var: {os.getenv('VERCEL')}")
+    print(f"RAILWAY_ENVIRONMENT: {os.getenv('RAILWAY_ENVIRONMENT')}")
     print(f"AWS_LAMBDA_FUNCTION_NAME: {os.getenv('AWS_LAMBDA_FUNCTION_NAME')}")
     
     # Test each service

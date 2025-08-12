@@ -49,7 +49,7 @@ Bạn PHẢI trả về 3 khối mã riêng biệt và đầy đủ, được ba
 
 ### 5.1. `report.html`
 
--   **Cấu trúc Semantics:** Sử dụng các thẻ HTML có ý nghĩa (ví dụ: `<section>`, `<article>`, `<h2>`, `<p>`).
+-   **Cấu trúc Semantics:** Sử dụng các thẻ HTML có ý nghĩa (ví dụ: `<section>`, `<h2>`, `<p>`).
 -   **Tư duy Component:** Hãy coi mỗi biểu đồ hoặc khối thông tin là một "card" riêng. Bọc mỗi card trong một thẻ `<div>` với một class chung, ví dụ: `<div class="report-card">`.
 -   **Sáng tạo và linh hoạt:** Tự động gán một `id` duy nhất và một icon Font Awesome phù hợp cho tiêu đề `<h2>` của mỗi section, ưu tiên dùng icon của BTC, ETH khi tiêu đề nhắc đến.
 -   **Bố cục lưới lồng nhau thông minh (Smart Nested Grid):**

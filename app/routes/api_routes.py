@@ -37,7 +37,7 @@ def register_api_routes(app):
 
     @app.route('/api/progress/<session_id>')
     def get_progress_api(session_id):
-        """API endpoint để lấy progress (thay thế SocketIO trên Vercel)"""
+        """API endpoint để lấy progress (polling-based progress tracking)"""
         try:
             progress_data = progress_tracker.get_progress(session_id)
             if not progress_data:

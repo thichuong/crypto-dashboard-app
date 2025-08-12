@@ -11,6 +11,9 @@ from .utils.cache import cache
 from .blueprints.crypto import crypto_bp
 from .services.auto_report_scheduler import start_auto_report_scheduler
 
+# Import WebSocket manager
+from .websocket.manager import websocket_manager
+
 # Import các module đã tách
 from .config import configure_app
 from .routes import register_all_routes
@@ -29,6 +32,9 @@ def create_app():
     # Khởi tạo các phần mở rộng
     db.init_app(app)
     cache.init_app(app)
+    
+    # Initialize WebSocket manager
+    websocket_manager.init_app(app)
 
     with app.app_context():
         print("INFO: Initializing database tables...")

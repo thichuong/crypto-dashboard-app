@@ -1,22 +1,98 @@
 // status-manager.js - System Status Management
 import { APIClient } from './api-client.js';
 import { LogManager } from './log-manager.js';
+import { wsClient } from './websocket-client.js';
 
 export class StatusManager {
     constructor() {
         this.refreshInterval = null;
+        this.wsConnected = false;
+        this.fallbackToPolling = false;
+        this.statusUpdateHandler = null;
     }
     
     async init() {
+        // Try WebSocket first, fallback to polling if needed
+        await this.initializeWebSocket();
+        
+        // Initial status fetch
         await this.refresh();
-        this.startAutoRefresh();
+        
+        // Setup fallback polling if WebSocket fails
+        this.setupFallbackPolling();
     }
     
-    startAutoRefresh() {
-        // Auto refresh status every 30 seconds
+    async initializeWebSocket() {
+        try {
+            // Setup WebSocket connection
+            await wsClient.connect();
+            
+            // Subscribe to system status updates
+            wsClient.subscribe('system_status');
+            
+            // Listen for status updates
+            this.statusUpdateHandler = wsClient.onMessage('status_update', (data) => {
+                console.log('[StatusManager] Received real-time status update:', data);
+                this.updateUI(data.data);
+                LogManager.add(`Real-time cập nhật trạng thái: ${data.data.status}`, 'info');
+            });
+            
+            // Listen for connection status
+            wsClient.onConnectionChange((state, data) => {
+                this.wsConnected = (state === 'connected');
+                
+                if (state === 'connected') {
+                    console.log('[StatusManager] WebSocket connected, stopping polling fallback');
+                    this.stopPolling();
+                    LogManager.add('Kết nối WebSocket thành công - Chuyển sang real-time updates', 'success');
+                } else if (state === 'error' || state === 'max_reconnect_attempts') {
+                    console.warn('[StatusManager] WebSocket failed, falling back to polling');
+                    this.fallbackToPolling = true;
+                    this.startPolling();
+                    LogManager.add('WebSocket lỗi - Chuyển sang polling mode', 'warning');
+                }
+            });
+            
+        } catch (error) {
+            console.error('[StatusManager] WebSocket initialization failed:', error);
+            this.fallbackToPolling = true;
+            LogManager.add('Không thể kết nối WebSocket - Sử dụng polling mode', 'warning');
+        }
+    }
+    
+    setupFallbackPolling() {
+        // Start polling if WebSocket is not connected after 5 seconds
+        setTimeout(() => {
+            if (!this.wsConnected) {
+                console.log('[StatusManager] WebSocket not connected, starting polling fallback');
+                this.fallbackToPolling = true;
+                this.startPolling();
+            }
+        }, 5000);
+    }
+    
+    startPolling() {
+        if (this.refreshInterval) {
+            return; // Already polling
+        }
+        
+        console.log('[StatusManager] Starting polling mode');
+        
+        // Auto refresh status every 30 seconds (fallback mode)
         this.refreshInterval = setInterval(() => {
-            this.refresh();
+            // Only poll if WebSocket is not connected
+            if (!this.wsConnected) {
+                this.refresh();
+            }
         }, 30000);
+    }
+    
+    stopPolling() {
+        if (this.refreshInterval) {
+            clearInterval(this.refreshInterval);
+            this.refreshInterval = null;
+            console.log('[StatusManager] Stopped polling mode');
+        }
     }
     
     async refresh() {
