@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ví dụ Google Translate UI Tùy chỉnh</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Ẩn hoàn toàn Google Translate widget và banner dịch */
+        .goog-te-banner-frame,
+        .goog-te-gadget,
+        #google_translate_element {
+            display: none !important;
+        }
+        .skiptranslate {
+            display: none !important;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 p-8">
+
+    <!-- Custom UI for language selection -->
+    <div class="fixed top-4 right-4 z-50 bg-white p-4 rounded-lg shadow-lg">
+        <label for="custom-language-selector" class="text-sm font-medium text-gray-700">Chọn ngôn ngữ:</label>
+        <select id="custom-language-selector" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+            <option value="">Ngôn ngữ</option>
+            <option value="vi">Tiếng Việt</option>
+            <option value="en">English</option>
+            <option value="fr">Français</option>
+            <option value="ja">日本語</option>
+            <option value="es">Español</option>
+            <option value="ko">한국어</option>
+        </select>
+    </div>
+
+    <div class="container mx-auto max-w-2xl bg-white p-8 rounded-xl shadow-md">
+        <h1 class="text-3xl font-bold mb-4 text-center text-indigo-600">Đây là nội dung trang web của bạn</h1>
+        <p class="text-lg leading-relaxed mb-6">Chào mừng bạn đến với trang web này. Bạn có thể sử dụng dropdown ở góc trên bên phải để dịch toàn bộ nội dung trang web sang một ngôn ngữ khác. Đây là cách để bạn tùy chỉnh giao diện dịch thuật mà không làm mất đi thiết kế gốc.</p>
+        <p class="text-lg leading-relaxed">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        
+        <div class="mt-8 border-t pt-6">
+            <h2 class="text-2xl font-semibold mb-2">Các tính năng chính</h2>
+            <ul class="list-disc list-inside space-y-2">
+                <li>Giao diện tùy chỉnh hoàn toàn bằng HTML và CSS.</li>
+                <li>Sử dụng JavaScript để tương tác với Google Translate widget ẩn.</li>
+                <li>Thân thiện với người dùng và dễ dàng tích hợp vào mọi dự án.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Google Translate Widget (hidden) -->
+    <div id="google_translate_element"></div>
+
+    <script type="text/javascript">
+        // Function to get a cookie value
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+
+        // Function to set a cookie
+        function setCookie(name, value, days) {
+            const d = new Date();
+            d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+            const expires = `expires=${d.toUTCString()}`;
+            document.cookie = `${name}=${value};${expires};path=/`;
+        }
+
+        // Initialize the Google Translate widget
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'vi', // Original language of the page
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            }, 'google_translate_element');
+
+            // Set the dropdown value based on the cookie after the widget loads
+            const selectedLanguage = getCookie('googtrans');
+            if (selectedLanguage) {
+                const langCode = selectedLanguage.split('/')[2];
+                document.getElementById('custom-language-selector').value = langCode;
+            }
+        }
+
+        // Listen for changes on the custom dropdown
+        document.getElementById('custom-language-selector').addEventListener('change', function() {
+            const langCode = this.value;
+            if (langCode) {
+                // Remove existing cookie to reset the translation
+                setCookie('googtrans', '', -1);
+                // Set the new cookie for the selected language
+                setCookie('googtrans', `/vi/${langCode}`, 1);
+                // Reload the page to apply the new translation
+                location.reload();
+            }
+        });
+    </script>
+    
+    <!-- Google Translate JS -->
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+</body>
+</html>

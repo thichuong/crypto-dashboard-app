@@ -1,0 +1,231 @@
+<!-- Language Selector Component -->
+<div id="language_selector_wrapper" class="fixed top-4 right-20 z-50">
+    <!-- Custom UI Language Button (circle like theme button) -->
+    <div class="relative">
+        <button id="language_button" class="language-button" title="Select Language">
+            <span id="current_lang_text">VI</span>
+        </button>
+        
+        <!-- Dropdown Menu -->
+        <div id="language_dropdown" class="language-dropdown hidden">
+            <div class="language-option" data-value="vi">🇻🇳 VI</div>
+            <div class="language-option" data-value="en">🇺🇸 EN</div>
+            <div class="language-option" data-value="zh-CN">🇨🇳 CN</div>
+            <div class="language-option" data-value="ja">🇯🇵 JA</div>
+            <div class="language-option" data-value="ko">🇰🇷 KO</div>
+            <div class="language-option" data-value="fr">🇫🇷 FR</div>
+            <div class="language-option" data-value="de">🇩🇪 DE</div>
+            <div class="language-option" data-value="es">🇪🇸 ES</div>
+        </div>
+    </div>
+    
+    <!-- Hidden Google Translate Widget -->
+    <div id="google_translate_element" style="display: none;"></div>
+</div>
+
+<style>
+/* Language Button - Circle like theme button */
+.language-button {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background-color: var(--bg-secondary, #ffffff);
+    border: 1px solid var(--border-color, #e5e7eb);
+    color: var(--text-primary, #1f2937);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    font-weight: 600;
+    z-index: 1000;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+}
+
+.language-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Dark mode support */
+.dark .language-button {
+    background-color: #374151;
+    border-color: #4b5563;
+    color: #f9fafb;
+}
+
+/* Dropdown Menu */
+.language-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 0.5rem;
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    min-width: 8rem;
+    backdrop-filter: blur(16px);
+    background-color: rgba(255, 255, 255, 0.9);
+    z-index: 1001;
+}
+
+.dark .language-dropdown {
+    background-color: rgba(55, 65, 81, 0.9);
+    border-color: #4b5563;
+}
+
+.language-option {
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    transition: background-color 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.language-option:first-child {
+    border-top-left-radius: 0.75rem;
+    border-top-right-radius: 0.75rem;
+}
+
+.language-option:last-child {
+    border-bottom-left-radius: 0.75rem;
+    border-bottom-right-radius: 0.75rem;
+}
+
+.language-option:hover {
+    background-color: #f3f4f6;
+}
+
+.dark .language-option {
+    color: #f9fafb;
+}
+
+.dark .language-option:hover {
+    background-color: #4b5563;
+}
+
+/* Responsive positioning to avoid overlapping theme button */
+@media (max-width: 640px) {
+    #language_selector_wrapper {
+        top: 4.5rem !important;
+        right: 1rem !important;
+        transform: scale(0.9);
+    }
+}
+
+/* Ẩn hoàn toàn Google Translate widget và banner dịch */
+.goog-te-banner-frame,
+.goog-te-gadget,
+#google_translate_element {
+    display: none !important;
+}
+.skiptranslate {
+    display: none !important;
+}
+
+/* Loại bỏ top margin do Google Translate thêm vào */
+body {
+    top: 0 !important;
+}
+</style>
+
+<script>
+// Function to get a cookie value
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+// Function to set a cookie
+function setCookie(name, value, days) {
+    const d = new Date();
+    d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+    const expires = `expires=${d.toUTCString()}`;
+    document.cookie = `${name}=${value};${expires};path=/`;
+}
+
+// Language mapping
+const languageMapping = {
+    'vi': 'VI',
+    'en': 'EN', 
+    'zh-CN': 'CN',
+    'ja': 'JA',
+    'ko': 'KO',
+    'fr': 'FR',
+    'de': 'DE',
+    'es': 'ES'
+};
+
+// Initialize Google Translate
+function googleTranslateElementInit() {
+    new google.translate.TranslateElement({
+        pageLanguage: 'vi',
+        includedLanguages: 'en,vi,fr,ja,ko,zh-CN,de,es',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+        autoDisplay: false
+    }, 'google_translate_element');
+    
+    // Set the button text based on the cookie after the widget loads
+    const selectedLanguage = getCookie('googtrans');
+    if (selectedLanguage) {
+        const langCode = selectedLanguage.split('/')[2];
+        const currentLangText = document.getElementById('current_lang_text');
+        if (currentLangText && langCode && languageMapping[langCode]) {
+            currentLangText.textContent = languageMapping[langCode];
+        }
+    }
+}
+
+// Custom language selector functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const languageButton = document.getElementById('language_button');
+    const languageDropdown = document.getElementById('language_dropdown');
+    const languageOptions = document.querySelectorAll('.language-option');
+    const currentLangText = document.getElementById('current_lang_text');
+    
+    // Toggle dropdown
+    if (languageButton) {
+        languageButton.addEventListener('click', function(e) {
+            e.stopPropagation();
+            languageDropdown.classList.toggle('hidden');
+        });
+    }
+    
+    // Handle language selection
+    languageOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            const selectedLang = this.getAttribute('data-value');
+            const langText = languageMapping[selectedLang];
+            
+            if (selectedLang && langText) {
+                // Update button text
+                currentLangText.textContent = langText;
+                
+                // Hide dropdown
+                languageDropdown.classList.add('hidden');
+                
+                // Set the cookie to trigger the translation
+                setCookie('googtrans', `/vi/${selectedLang}`, 30);
+                
+                // Reload the page to apply the translation
+                location.reload();
+            }
+        });
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function() {
+        languageDropdown.classList.add('hidden');
+    });
+});
+</script>
+
+<!-- Load Google Translate Script -->
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
