@@ -44,6 +44,15 @@ class ReportState(TypedDict):
     error_messages: List[str]
     success: bool
     
+    # Component-specific attempt counters (for workflow v2)
+    html_attempt: Optional[int]
+    js_attempt: Optional[int]
+    css_attempt: Optional[int]
+    interface_attempt: Optional[int]  # For backward compatibility
+    
+    # Timestamps
+    created_at: Optional[str]
+    
     # Gemini client
     client: Optional[object]
     model: str
@@ -52,6 +61,12 @@ class ReportState(TypedDict):
 def read_prompt_file(file_path):
     """Đọc nội dung từ tệp prompt."""
     try:
+        # Nếu chỉ là tên file, tìm trong thư mục create_report
+        if not os.path.isabs(file_path) and not os.path.dirname(file_path):
+            current_dir = os.path.dirname(__file__)
+            project_root = os.path.abspath(os.path.join(current_dir, '..', '..', '..'))
+            file_path = os.path.join(project_root, 'create_report', file_path)
+        
         # Kiểm tra file tồn tại
         if not os.path.exists(file_path):
             print(f"Lỗi: File không tồn tại tại '{file_path}'")

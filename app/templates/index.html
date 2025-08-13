@@ -10,13 +10,11 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/colors.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/chart.css') }}">
-    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/report.css') }}">
     {% if report and report.css_content %}
         <style>
             {{ report.css_content | safe }}
         </style>
-    {% else %}
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/report.css') }}">
     {% endif %}
 </head>
 <body class="antialiased">

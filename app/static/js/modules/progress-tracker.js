@@ -150,16 +150,30 @@ export class ProgressTracker {
     }
     
     formatStepName(details) {
+        // Workflow v2 step mappings
         const stepMappings = {
-            "Research + Validation": "🔬 Research + Validation",
-            "Parse validation": "✅ Parse Validation",
+            "prepare_data": "📋 Chuẩn bị dữ liệu",
+            "research_deep": "🔬 Nghiên cứu sâu + Validation",
+            "validate_report": "✅ Kiểm tra kết quả",
+            "create_interface": "🎨 Tạo giao diện",
+            "extract_code": "📄 Trích xuất mã nguồn",
+            "save_database": "� Lưu báo cáo"
+        };
+        // Cũng hỗ trợ các tên tiếng Việt và cũ để backward compatibility
+        const legacyMappings = {
+            "Research + Validation": "🔬 Nghiên cứu sâu + Validation",
+            "Parse validation": "✅ Kiểm tra kết quả",
             "Chuẩn bị dữ liệu": "📋 Chuẩn bị dữ liệu",
             "Tạo giao diện": "🎨 Tạo giao diện",
             "Trích xuất mã nguồn": "📄 Trích xuất mã nguồn",
             "Lưu báo cáo": "💾 Lưu báo cáo"
         };
-        
         for (const [key, value] of Object.entries(stepMappings)) {
+            if (details.includes(key)) {
+                details = details.replace(key, value);
+            }
+        }
+        for (const [key, value] of Object.entries(legacyMappings)) {
             if (details.includes(key)) {
                 details = details.replace(key, value);
             }
@@ -168,14 +182,22 @@ export class ProgressTracker {
     }
     
     formatDetailMessage(details) {
+        // Workflow v2 detail mappings
         const detailMappings = {
-            "inject real-time data": "📊 inject real-time data",
+            "inject real-time data": "📊 Đã inject real-time data",
             "Combined Research + Validation": "🔬 Combined Research + Validation",
-            "Combined response": "📝 Combined response",
-            "Parse validation": "✅ Parse validation",
-            "Parsed validation result": "✅ Parsed validation result"
+            "Combined response": "📝 Phản hồi Combined",
+            "Parse validation": "✅ Kiểm tra kết quả",
+            "Parsed validation result": "✅ Đã parse kết quả validation",
+            "PASS": "✅ PASS",
+            "FAIL": "❌ FAIL",
+            "UNKNOWN": "⚠️ UNKNOWN",
+            "Chuẩn bị dữ liệu": "📋 Chuẩn bị dữ liệu",
+            "Nghiên cứu sâu": "🔬 Nghiên cứu sâu",
+            "Tạo giao diện": "🎨 Tạo giao diện",
+            "Trích xuất mã nguồn": "📄 Trích xuất mã nguồn",
+            "Lưu báo cáo": "💾 Lưu báo cáo"
         };
-        
         for (const [key, value] of Object.entries(detailMappings)) {
             if (details.includes(key)) {
                 details = details.replace(key, value);

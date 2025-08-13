@@ -63,16 +63,16 @@ def register_report_routes(app):
             # Tạo session_id mới cho tracking
             session_id = str(uuid.uuid4())
             
-            # Import và chạy workflow trong background thread
-            from ..services.report_workflow import generate_auto_research_report_langgraph
+            # Import và chạy workflow V2 trong background thread
+            from ..services.report_workflow_v2 import generate_auto_research_report_langgraph_v2
             
             def run_workflow_background():
-                """Chạy workflow trong background thread với application context"""
+                """Chạy workflow V2 trong background thread với application context"""
                 # Đảm bảo có application context
                 with app.app_context():
                     try:
-                        result = generate_auto_research_report_langgraph(api_key, session_id=session_id)
-                        print(f"Workflow completed: {result}")
+                        result = generate_auto_research_report_langgraph_v2(api_key, session_id=session_id)
+                        print(f"Workflow V2 completed: {result}")
                     except Exception as e:
                         print(f"Workflow error: {e}")
                         progress_tracker.error_progress(session_id, f"Lỗi workflow: {e}")

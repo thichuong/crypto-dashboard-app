@@ -1,36 +1,73 @@
-/* === STYLES FOR REPORT CONTAINER === */
+/* === COMPLETE REPORT STYLES === */
 
-/* --- Layout & Card Styling --- */
+/* === MAIN LAYOUT === */
+#report-container {
+    @media (min-width: 480px) {
+        #report-container section {
+            margin-bottom: 1.5rem;
+            padding: 0.5rem 0;
+            border-radius: 0.5rem;
+            background: transparent;
+            width: 80%;
+            box-shadow: none;
+        }
+    }
+}
 #report-container section {
-    margin-bottom: 3rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background: var(--bg-secondary);
+    box-shadow: var(--card-shadow);
 }
-
 #report-container h2 {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid var(--border-color);
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-#report-container h2 .fa-icon {
     font-size: 1.5rem;
-}
-
-#report-container h3 {
-    font-size: 1.2rem;
     font-weight: 600;
     color: var(--text-primary);
-    margin-bottom: 0.25rem;
+    margin-bottom: 1rem;
+    margin-top: 1rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
 }
 
+#report-container h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#report-container h4 {
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+}
+
+#report-container p {
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    color: var(--text-secondary);
+}
+
+#report-container strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* Monospace for numbers */
+#report-container .number,
+#report-container .price,
+#report-container .percentage {
+    font-family: var(--font-mono, 'Monaco', 'Menlo', 'Ubuntu Mono', monospace);
+    font-weight: 500;
+}
+
+/* === CARD SYSTEM === */
 #report-container .report-card {
     background-color: var(--card-bg);
     border: 1px solid var(--card-border);
@@ -39,21 +76,88 @@
     box-shadow: var(--card-shadow);
     display: flex;
     flex-direction: column;
-    height: 100%; /* Important for grid items to have same height */
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+#report-container .report-card:hover {
+    box-shadow: var(--card-shadow-hover);
+    transform: translateY(-2px);
 }
 
 #report-container .wide-card {
-    grid-column: 1 / -1; /* For use inside a grid parent if needed */
+    grid-column: 1 / -1;
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: var(--card-shadow);
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+    height: 100%;
 }
 
+/* === GRID LAYOUTS === */
 #report-container .content-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     gap: 1.5rem;
-    margin-top: 1.5rem;
+    align-items: start;
 }
 
-/* --- Component Specific Styles --- */
+#report-container .content-grid .report-card {
+    grid-column: 1 / -1; /* Span full width of content-grid */
+}
+
+#report-container .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* === CHART CONTAINERS === */
+#report-container .gauge-container,
+#report-container .doughnut-container,
+#report-container .line-chart-container,
+#report-container .bar-chart-container {
+    position: relative;
+    width: 100%;
+    min-height: 200px;
+    height: auto;
+    margin: 1rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+}
+
+#report-container .chart-legend {
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+#report-container .chart-value {
+    font-family: var(--font-mono, 'Monaco', 'Menlo', 'Ubuntu Mono', monospace);
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 1.125rem;
+}
+
+#report-container .chart-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* === COMPONENT STYLES === */
 #report-container .card-subtitle {
     font-size: 0.875rem;
     color: var(--text-secondary);
@@ -89,39 +193,19 @@
     line-height: 1;
 }
 
-#report-container .analysis-text strong {
-    color: var(--text-primary);
-    font-weight: 600;
-}
-
-/* --- Chart Containers --- */
-/* NO FIXED HEIGHT: Height will be determined by content */
-#report-container .gauge-container,
-#report-container .doughnut-container-wrapper,
-#report-container .bar-chart-container {
-    position: relative;
-    width: 100%;
-    min-height: 200px; /* Minimum height for visual balance */
-    margin: 1rem 0;
-    flex-grow: 1; /* Allow container to grow */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* --- Stat Grid in Summary Card --- */
-#report-container .stat-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
+/* === STAT ITEMS === */
 #report-container .stat-item {
     background-color: var(--bg-primary);
+    border: 1px solid var(--border-light);
     border-radius: 0.5rem;
     padding: 1rem;
     text-align: center;
+    transition: all 0.2s ease;
+}
+
+#report-container .stat-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 #report-container .stat-label {
@@ -129,6 +213,7 @@
     font-size: 0.8rem;
     color: var(--text-secondary);
     margin-bottom: 0.25rem;
+    font-weight: 500;
 }
 
 #report-container .stat-value {
@@ -136,24 +221,23 @@
     font-size: 1.5rem;
     font-weight: 700;
     color: var(--text-primary);
+    font-family: var(--font-mono, 'Monaco', 'Menlo', 'Ubuntu Mono', monospace);
 }
 
 #report-container .stat-change {
     font-size: 0.9rem;
     font-weight: 500;
+    font-family: var(--font-mono, 'Monaco', 'Menlo', 'Ubuntu Mono', monospace);
 }
-#report-container .stat-change.positive { color: var(--positive-color); }
-#report-container .stat-change.negative { color: var(--negative-color); }
-#report-container .stat-change.neutral { color: var(--neutral-color); }
 
-
-/* --- Support/Resistance Card --- */
+/* === LEVEL INDICATORS === */
 #report-container .level-container {
     display: flex;
     flex-direction: column;
     gap: 1rem;
     margin-top: 1rem;
 }
+
 #report-container .level-item {
     display: flex;
     justify-content: space-between;
@@ -161,78 +245,175 @@
     padding: 0.75rem 1rem;
     border-radius: 0.5rem;
     border-left: 4px solid;
+    transition: all 0.2s ease;
 }
-#report-container .level-item.resistance {
-    background-color: var(--bear-card-bg);
-    border-color: var(--negative-color);
+
+#report-container .level-item:hover {
+    transform: translateX(4px);
 }
-#report-container .level-item.support {
-    background-color: var(--bull-card-bg);
-    border-color: var(--positive-color);
-}
+
 #report-container .level-label {
     font-weight: 500;
     color: var(--text-secondary);
 }
+
 #report-container .level-value {
     font-weight: 700;
     font-size: 1.1rem;
     color: var(--text-primary);
+    font-family: var(--font-mono, 'Monaco', 'Menlo', 'Ubuntu Mono', monospace);
 }
 
-
-/* --- Table Styling --- */
+/* === TABLE SYSTEM === */
 #report-container .table-container {
     overflow-x: auto;
     width: 100%;
     margin-top: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-light);
+    -webkit-overflow-scrolling: touch;
 }
 
 #report-container table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 600px; /* Ensure table looks good on small viewports before scrolling */
+    min-width: 600px;
+    background-color: var(--card-bg);
 }
 
-#report-container th, #report-container td {
+#report-container th, 
+#report-container td {
     padding: 0.75rem 1rem;
     text-align: left;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-light);
     vertical-align: middle;
 }
 
 #report-container th {
-    background-color: var(--bg-primary);
+    background-color: var(--bg-secondary);
     color: var(--text-secondary);
     font-weight: 600;
     font-size: 0.875rem;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 #report-container td {
     color: var(--text-primary);
 }
-#report-container tbody tr:hover {
-    background-color: var(--table-row-hover-bg);
+
+#report-container tbody tr {
+    transition: background-color 0.2s ease;
 }
-#report-container td.positive { color: var(--positive-color); font-weight: 600; }
-#report-container td.negative { color: var(--negative-color); font-weight: 600; }
-#report-container td.neutral { color: var(--neutral-color); font-weight: 600; }
+
+#report-container tbody tr:hover {
+    background-color: var(--table-row-hover-bg, rgba(0, 0, 0, 0.02));
+}
+
 #report-container td i.fa-fw {
     margin-right: 0.5rem;
 }
 
-
-/* --- Bull/Bear Cards --- */
-#report-container .bull-card {
-    background-color: var(--bull-card-bg);
-    border-color: var(--positive-color);
+/* === INTERACTIVE ELEMENTS === */
+#report-container .interactive-element {
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
-#report-container .bull-card h3 { color: var(--positive-color); }
-#report-container .bull-card li::before { color: var(--positive-color); }
 
-#report-container .bear-card {
-    background-color: var(--bear-card-bg);
-    border-color: var(--negative-color);
+#report-container .interactive-element:hover {
+    opacity: 0.8;
 }
-#report-container .bear-card h3 { color: var(--negative-color); }
-#report-container .bear-card li::before { color: var(--negative-color); }
+
+#report-container .tooltip {
+    position: absolute;
+    background-color: var(--tooltip-bg, rgba(0, 0, 0, 0.9));
+    color: var(--tooltip-text, white);
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+/* === LOADING STATES === */
+#report-container .skeleton {
+    background: linear-gradient(90deg, var(--skeleton-base, #f0f0f0) 25%, var(--skeleton-highlight, #e0e0e0) 50%, var(--skeleton-base, #f0f0f0) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: 0.25rem;
+}
+
+@keyframes skeleton-loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* === RESPONSIVE DESIGN === */
+
+/* Tablet */
+@media (min-width: 768px) {
+    #report-container {
+        padding: 2rem;
+    }
+    
+    #report-container .content-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    #report-container .stat-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* === RESPONSIVE DESIGN === */
+
+/* Only mobile-specific styles for max-width: 480px */
+@media (max-width: 480px) {
+    #report-container {
+        padding: 0.75rem;
+        gap: 1rem;
+    }
+    #report-container h1 {
+        font-size: 1.5rem;
+    }
+    #report-container h2 {
+        font-size: 1.25rem;
+    }
+    #report-container .wide-card
+    #report-container .report-card {
+        padding: 0.75rem !important;
+    }
+    #report-container section {
+        margin-bottom: 1.5rem !important;
+        padding: 0.5rem 0 !important;
+        border-radius: 0.5rem;
+        box-shadow: none;
+        background: transparent;
+        width: 100%;
+    }
+    .crypto-table {
+        font-size: 0.8rem;
+    }
+    .crypto-table th,
+    .crypto-table td {
+        padding: 0.25rem !important;
+    }
+    .chart-container {
+        min-height: 200px !important;
+    }
+    .horizontal-layout {
+        flex-direction: column !important;
+    }
+}
+
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    .report-card,
+    .stats-card,
+    .chart-container * {
+        transition: none !important;
+        animation: none !important;
+    }
+}

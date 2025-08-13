@@ -7,7 +7,7 @@ from google import genai
 from google.genai import types
 from ..extensions import db
 from ..models import Report
-from .report_workflow import generate_auto_research_report_langgraph
+from .report_workflow_v2 import generate_auto_research_report_langgraph_v2
 
 
 
@@ -15,17 +15,23 @@ from .report_workflow import generate_auto_research_report_langgraph
 
 def generate_auto_research_report(api_key, max_attempts=3, use_fallback_on_500=True):
     """
-    Wrapper function cho LangGraph workflow để giữ tương thích với code cũ.
+    Wrapper function cho LangGraph workflow V2 để giữ tương thích với code cũ.
     
     Args:
         api_key (str): API key của Gemini
         max_attempts (int): Số lần thử tối đa để tạo báo cáo PASS
-        use_fallback_on_500 (bool): Có sử dụng fallback mode khi gặp lỗi 500
+        use_fallback_on_500 (bool): Có sử dụng fallback mode khi gặp lỗi 500 (legacy parameter, ignored in V2)
         
     Returns:
         bool: True nếu tạo báo cáo thành công, False nếu thất bại
     """
-    return generate_auto_research_report_langgraph(api_key, max_attempts, use_fallback_on_500)
+    # Sử dụng workflow V2, parameter use_fallback_on_500 được ignore vì V2 có error handling tốt hơn
+    result = generate_auto_research_report_langgraph_v2(api_key, max_attempts)
+    
+    # Convert dict result to boolean for backward compatibility
+    if isinstance(result, dict):
+        return result.get('success', False)
+    return result
 
 
 def schedule_auto_report(app, api_key, interval_hours=6):
