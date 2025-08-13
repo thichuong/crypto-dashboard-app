@@ -27,10 +27,10 @@ function createLineChart(container, data, options = {}) {
         strokeWidth = 2.5
     } = options;
 
-    // Kích thước và padding của SVG
-    const width = 320;
-    const height = 240;
-    const p = 50; // Padding tăng để tránh nhãn vẽ ra ngoài
+    // Kích thước và padding của SVG (tăng kích thước)
+    const width = 480;
+    const height = 340;
+    const p = 60; // Padding tăng để tránh nhãn vẽ ra ngoài
 
     // Tính toán các giá trị cần thiết để xác định tỷ lệ
     const maxValue = Math.max(...data);
@@ -107,4 +107,33 @@ function createLineChart(container, data, options = {}) {
     // Gán SVG vào container và thêm class
     container.innerHTML = svg;
     container.classList.add('line-chart-container');
+
+    // Tạo tooltip
+    let tooltip = container.querySelector('.line-chart-tooltip');
+    if (!tooltip) {
+        tooltip = document.createElement('div');
+        tooltip.className = 'line-chart-tooltip';
+        container.appendChild(tooltip);
+    }
+
+    // Xử lý tooltip cho các điểm
+    const svgEl = container.querySelector('svg');
+    const pointGroups = svgEl.querySelectorAll('.line-point-group');
+    pointGroups.forEach((group, i) => {
+        const dot = group.querySelector('.line-dot');
+        dot.addEventListener('mouseenter', (e) => {
+            const value = data[i];
+            tooltip.textContent = `${valuePrefix}${value.toFixed(2)}${valueSuffix}`;
+            tooltip.classList.add('active');
+        });
+        dot.addEventListener('mousemove', (e) => {
+            // Hiển thị tooltip tại vị trí con trỏ chuột
+            const rect = container.getBoundingClientRect();
+            tooltip.style.left = `${e.clientX - rect.left + 12}px`;
+            tooltip.style.top = `${e.clientY - rect.top - 32}px`;
+        });
+        dot.addEventListener('mouseleave', () => {
+            tooltip.classList.remove('active');
+        });
+    });
 }

@@ -86,134 +86,12 @@ Bạn là một chuyên gia CSS developer chuyên tạo theme colors và styling
 ## CRYPTO COLOR VARIABLES CÓ SẴN:
 
 ### **Core Crypto Colors (Từ CSS Variables):**
-```css
-/* Sử dụng các biến này thay vì hardcode */
-var(--bitcoin-color)      /* #F7931A */
-var(--ethereum-color)     /* #627EEA */
-var(--bnb-color)         /* #F3BA2F */
-var(--cardano-color)     /* #0033AD */
-var(--solana-color)      /* #a968fa */
-var(--xrp-color)         /* #00A3FF */
-var(--usdt-color)        /* #26A17B */
-var(--usdc-color)        /* #2775CA */
-var(--doge-color)        /* #C3A634 */
-var(--trx-color)         /* #EF0027 */
-```
 
 ### **Market Sentiment Colors (Từ CSS Variables):**
-```css
-/* Fear & Greed Index Colors */
-var(--fng-extreme-fear-color)    /* Extreme fear */
-var(--fng-fear-color)            /* Fear */
-var(--fng-neutral-color)         /* Neutral */
-var(--fng-greed-color)           /* Greed */
-var(--fng-extreme-greed-color)   /* Extreme greed */
-
-/* General Market Colors */
-var(--positive-color)            /* Bull market / gains */
-var(--negative-color)            /* Bear market / losses */
-var(--neutral-color)             /* Sideways / neutral */
-```
 
 ### **Technical Analysis Colors (Từ CSS Variables):**
-```css
-var(--positive-color)            /* Support levels, bullish signals */
-var(--negative-color)            /* Resistance levels, bearish signals */
-var(--neutral-color)             /* Breakouts, neutral zones */
-var(--accent-color)              /* Volume spikes, highlights */
-```
 
 ## CONTENT-SPECIFIC STYLING EXAMPLES (SỬ DỤNG CSS VARIABLES):
-
-### **Fear & Greed Index Styling:**
-```css
-#report-container .fng-extreme-fear { 
-    color: var(--fng-extreme-fear-color); 
-    background: rgba(220, 38, 38, 0.1);
-}
-
-#report-container .fng-fear { 
-    color: var(--fng-fear-color);
-    background: rgba(251, 146, 60, 0.1);
-}
-
-#report-container .fng-neutral { 
-    color: var(--fng-neutral-color);
-    background: rgba(156, 163, 175, 0.1);
-}
-
-#report-container .fng-greed { 
-    color: var(--fng-greed-color);
-    background: rgba(163, 230, 53, 0.1);
-}
-
-#report-container .fng-extreme-greed { 
-    color: var(--fng-extreme-greed-color);
-    background: rgba(34, 197, 94, 0.1);
-}
-```
-
-### **Price Movement Indicators:**
-```css
-#report-container .price-up::before {
-    content: "▲ ";
-    color: var(--positive-color);
-}
-
-#report-container .price-down::before {
-    content: "▼ ";
-    color: var(--negative-color);
-}
-
-#report-container .price-stable::before {
-    content: "◆ ";
-    color: var(--neutral-color);
-}
-```
-
-### **Crypto-Specific Styling:**
-```css
-#report-container .bitcoin-highlight {
-    color: var(--bitcoin-color);
-    background: rgba(247, 147, 26, 0.1);
-    border-left: 3px solid var(--bitcoin-color);
-}
-
-#report-container .ethereum-highlight {
-    color: var(--ethereum-color);
-    background: rgba(98, 126, 234, 0.1);
-    border-left: 3px solid var(--ethereum-color);
-}
-
-#report-container .altcoin-highlight {
-    color: var(--accent-color);
-    background: rgba(129, 140, 248, 0.1);
-    border-left: 3px solid var(--accent-color);
-}
-```
-
-### **Volume & Momentum Indicators:**
-```css
-#report-container .high-volume {
-    background: linear-gradient(90deg, transparent, rgba(129, 140, 248, 0.2));
-    border-left: 3px solid var(--accent-color);
-}
-
-#report-container .momentum-bullish {
-    border-left: 4px solid var(--positive-color);
-    background: var(--bull-card-bg);
-}
-
-#report-container .momentum-bearish {
-    border-left: 4px solid var(--negative-color);
-    background: var(--bear-card-bg);
-}
-
-#report-container .momentum-neutral {
-    border-left: 4px solid var(--neutral-color);
-    background: var(--sideway-card-bg);
-}
-```
 
 ## OUTPUT YÊU CẦU:
 
@@ -229,7 +107,7 @@ var(--accent-color)              /* Volume spikes, highlights */
 - ❌ Card structures  
 - ❌ Typography base styles
 - ❌ Responsive breakpoints
-- ❌ Chart container sizing
+- ❌ Chart container
 
 ### **3. QUY TẮC QUAN TRỌNG:**
 - ✅ **LUÔN SỬ DỤNG CSS VARIABLES**: `var(--variable-name)` thay vì hardcode màu
