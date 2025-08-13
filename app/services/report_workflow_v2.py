@@ -10,6 +10,7 @@ from .workflow_nodes.prepare_data import prepare_data_node
 from .workflow_nodes.research_deep import research_deep_node
 from .workflow_nodes.validate_report import validate_report_node
 from .workflow_nodes.create_interface_components import create_html_node, create_javascript_node, create_css_node
+from .workflow_nodes.generate_report_content import generate_report_content_node
 from .workflow_nodes.save_database import save_database_node
 from .workflow_nodes.routing import (
     should_retry_or_continue,
@@ -29,6 +30,7 @@ def create_report_workflow_v2():
     workflow.add_node("prepare_data", prepare_data_node)
     workflow.add_node("research_deep", research_deep_node)
     workflow.add_node("validate_report", validate_report_node)
+    workflow.add_node("generate_report_content", generate_report_content_node)
     workflow.add_node("create_html", create_html_node)
     workflow.add_node("create_javascript", create_javascript_node)
     workflow.add_node("create_css", create_css_node)
@@ -42,15 +44,18 @@ def create_report_workflow_v2():
     workflow.add_edge("research_deep", "validate_report")
     
     # Conditional routing sau validation
+    # After validation, generate the report text before HTML
     workflow.add_conditional_edges(
         "validate_report",
         should_retry_or_continue,
         {
             "retry": "research_deep",
-            "continue": "create_html",
+            "continue": "generate_report_content",
             "end": END
         }
     )
+    # Link from report content to HTML generation
+    workflow.add_edge("generate_report_content", "create_html")
     
     # HTML Component với retry logic
     workflow.add_conditional_edges(
@@ -119,7 +124,7 @@ def generate_auto_research_report_langgraph_v2(api_key: str, max_attempts: int =
         session_id = str(uuid.uuid4())
     
     # Khởi tạo progress tracking
-    progress_tracker.start_progress(session_id)
+    progress_tracker.start_progress(session_id, total_steps=9)
     progress_tracker.update_step(session_id, 0, "Bắt đầu", "Khởi tạo workflow phiên bản 2")
     
     try:

@@ -240,17 +240,49 @@ Bạn là một lập trình viên frontend chuyên tạo giao diện HTML seman
     <table class="crypto-table">
         <thead>
             <tr>
+                <th>Rank</th>
                 <th>Coin</th>
                 <th>Price</th>
                 <th>24h Change</th>
                 <th>Market Cap</th>
+                <th>Volume</th>
             </tr>
         </thead>
         <tbody>
-            <!-- Data rows -->
+            <tr>
+                <td data-label="Rank">#1</td>
+                <td data-label="Coin">Bitcoin (BTC)</td>
+                <td data-label="Price">$43,250.00</td>
+                <td data-label="24h Change">+2.45%</td>
+                <td data-label="Market Cap">$847.2B</td>
+                <td data-label="Volume">$15.2B</td>
+            </tr>
+            <tr>
+                <td data-label="Rank">#2</td>
+                <td data-label="Coin">Ethereum (ETH)</td>
+                <td data-label="Price">$2,580.00</td>
+                <td data-label="24h Change">-1.23%</td>
+                <td data-label="Market Cap">$310.5B</td>
+                <td data-label="Volume">$8.7B</td>
+            </tr>
+            <!-- More data rows... -->
         </tbody>
     </table>
 </div>
+```
+
+**📱 MOBILE CARD LAYOUT:**
+- **Desktop/Tablet**: Hiển thị bảng thông thường
+- **Mobile (≤580px)**: Mỗi row hiển thị thành card riêng biệt
+- **Required**: Mỗi `<td>` phải có attribute `data-label` để hiển thị tên cột trên mobile
+- **Format**: `<td data-label="Tên Cột">Giá trị</td>`
+
+**VÍ DỤ SỬ DỤNG:**
+```html
+<!-- Desktop: Table format | Mobile: Card format -->
+<td data-label="Coin">Bitcoin (BTC)</td>
+<td data-label="Price">$43,250.00</td>
+<td data-label="24h Change" style="color: var(--color-gain);">+2.45%</td>
 ```
 
 ## SECTIONS YÊU CẦU:

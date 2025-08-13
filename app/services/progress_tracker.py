@@ -10,14 +10,28 @@ class ProgressTracker:
         self.current_progress = {}
         self.step_queues = {}  # Lưu queue cho tất cả log entries (steps + substeps) theo session
         self.lock = Lock()
+        self.websocket_manager = None
         
-    def start_progress(self, session_id: str):
-        """Bắt đầu theo dõi tiến độ cho một session"""
-        print(f"[PROGRESS] Starting session: {session_id}")
+    def set_websocket_manager(self, websocket_manager):
+        """Set WebSocket manager for broadcasting updates"""
+        self.websocket_manager = websocket_manager
+        
+    def _broadcast_progress(self, session_id: str):
+        """Broadcast progress update via WebSocket"""
+        if self.websocket_manager:
+            try:
+                progress_data = self.get_progress(session_id)
+                self.websocket_manager.broadcast_progress_update(session_id, progress_data)
+            except Exception as e:
+                print(f"[PROGRESS] WebSocket broadcast error: {e}")
+        
+    def start_progress(self, session_id: str, total_steps: int = 9):
+        """Bắt đầu theo dõi tiến độ cho một session. Có thể truyền vào số bước (total_steps) động."""
+        print(f"[PROGRESS] Starting session: {session_id} | total_steps={total_steps}")
         with self.lock:
             self.current_progress[session_id] = {
                 'step': 0,
-                'total_steps': 6,
+                'total_steps': total_steps,
                 'current_step_name': 'Khởi tạo...',
                 'percentage': 0,
                 'status': 'running',
@@ -27,6 +41,9 @@ class ProgressTracker:
             }
             # Khởi tạo step queue cho session
             self.step_queues[session_id] = []
+        
+        # Broadcast initial progress
+        self._broadcast_progress(session_id)
     
     def update_step(self, session_id: str, step: int = None, step_name: str = None, details: str = ''):
         """Cập nhật progress - gộp step và substep thành một"""
@@ -77,6 +94,9 @@ class ProgressTracker:
                 # Giữ tối đa 20 entries gần nhất trong queue
                 if session_id in self.step_queues:
                     self.step_queues[session_id] = self.step_queues[session_id][-20:]
+                
+                # Broadcast progress update
+                self._broadcast_progress(session_id)
     
     def update_substep(self, session_id: str, details: str):
         """Backward compatibility - gọi update_step với chỉ details"""
@@ -100,6 +120,9 @@ class ProgressTracker:
                 # Clean up step queue after completion
                 # if session_id in self.step_queues:
                 #     del self.step_queues[session_id]
+        
+        # Broadcast completion
+        self._broadcast_progress(session_id)
     
     def error_progress(self, session_id: str, error_msg: str):
         """Báo lỗi trong quá trình"""
@@ -117,6 +140,9 @@ class ProgressTracker:
                 # Clean up step queue after error
                 # if session_id in self.step_queues:
                 #     del self.step_queues[session_id]
+        
+        # Broadcast error
+        self._broadcast_progress(session_id)
     
     def get_progress(self, session_id: str) -> Dict[str, Any]:
         """Lấy tiến độ hiện tại bao gồm unified step queue"""

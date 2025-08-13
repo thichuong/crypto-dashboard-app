@@ -88,7 +88,7 @@ def generate_auto_research_report_langgraph(api_key: str, max_attempts: int = 3,
         session_id = str(uuid.uuid4())
     
     # Khởi tạo progress tracking
-    progress_tracker.start_progress(session_id)
+    progress_tracker.start_progress(session_id, total_steps=6)
     
     # Khởi tạo state 
     initial_state = ReportState(

@@ -23,6 +23,7 @@ Bạn là một chuyên gia CSS developer chuyên tạo theme colors và styling
 ### ✅ **Chart Containers** (Đã có):
 - `.gauge-container`, `.doughnut-container`
 - `.line-chart-container`, `.bar-chart-container`
+- `.chart-container`
 - Chart responsive sizing
 
 ### ✅ **Table System** (Đã có):

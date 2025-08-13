@@ -29,6 +29,7 @@ class ReportState(TypedDict):
     data_validation_prompt: Optional[str]
     create_report_prompt: Optional[str]
     research_content: Optional[str]
+    report_content: Optional[str]
     validation_result: Optional[str]
     interface_content: Optional[str]
     realtime_data: Optional[dict]  # Cache for real-time dashboard data

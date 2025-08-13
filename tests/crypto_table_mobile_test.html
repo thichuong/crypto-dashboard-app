@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Table Mobile Test</title>
+    <link rel="stylesheet" href="/app/static/css/report.css">
+    <style>
+        /* CSS Variables for testing */
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --card-bg: #ffffff;
+            --card-border: #e5e7eb;
+            --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --card-shadow-hover: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --border-light: #e5e7eb;
+            --accent-color: #3b82f6;
+            --success-color: #10b981;
+            --error-color: #ef4444;
+            --font-mono: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--bg-primary);
+        }
+        
+        .test-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: var(--text-primary);
+        }
+        
+        .device-simulator {
+            border: 2px solid #ccc;
+            border-radius: 20px;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        @media (max-width: 580px) {
+            .device-simulator {
+                border: none;
+                padding: 10px;
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Crypto Table Mobile View Test</h1>
+        
+        <div class="device-simulator">
+            <div id="report-container">
+                <section>
+                    <h2>📈 Top Cryptocurrencies</h2>
+                    <div class="table-container">
+                        <table class="crypto-table">
+                            <thead>
+                                <tr>
+                                    <th>Coin</th>
+                                    <th>Price</th>
+                                    <th>24h Change</th>
+                                    <th>Market Cap</th>
+                                    <th>Volume</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td data-label="Coin">
+                                        <i class="fa fa-bitcoin"></i>
+                                        <span class="value">Bitcoin (BTC)</span>
+                                    </td>
+                                    <td data-label="Price">
+                                        <span class="value">$45,123.45</span>
+                                    </td>
+                                    <td data-label="24h Change">
+                                        <span class="value positive">+2.34%</span>
+                                    </td>
+                                    <td data-label="Market Cap">
+                                        <span class="value">$850.2B</span>
+                                    </td>
+                                    <td data-label="Volume">
+                                        <span class="value">$28.4B</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td data-label="Coin">
+                                        <i class="fa fa-ethereum"></i>
+                                        <span class="value">Ethereum (ETH)</span>
+                                    </td>
+                                    <td data-label="Price">
+                                        <span class="value">$2,890.12</span>
+                                    </td>
+                                    <td data-label="24h Change">
+                                        <span class="value negative">-1.45%</span>
+                                    </td>
+                                    <td data-label="Market Cap">
+                                        <span class="value">$347.8B</span>
+                                    </td>
+                                    <td data-label="Volume">
+                                        <span class="value">$15.2B</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td data-label="Coin">
+                                        <i class="fa fa-coins"></i>
+                                        <span class="value">Cardano (ADA)</span>
+                                    </td>
+                                    <td data-label="Price">
+                                        <span class="value">$0.4567</span>
+                                    </td>
+                                    <td data-label="24h Change">
+                                        <span class="value positive">+5.67%</span>
+                                    </td>
+                                    <td data-label="Market Cap">
+                                        <span class="value">$15.4B</span>
+                                    </td>
+                                    <td data-label="Volume">
+                                        <span class="value">$892M</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </div>
+        
+        <div style="margin-top: 20px; padding: 15px; background: #f0f9ff; border-radius: 8px;">
+            <h3>Instructions:</h3>
+            <ul>
+                <li>Resize your browser window to below 580px to see the mobile card view</li>
+                <li>On desktop, you'll see the normal table layout</li>
+                <li>On mobile, each table row becomes a card with labeled data</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

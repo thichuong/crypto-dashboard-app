@@ -117,7 +117,7 @@ def _save_to_database_with_context(state: ReportState, session_id: str) -> Repor
 def save_database_node(state: ReportState) -> ReportState:
     """Node để lưu báo cáo vào database"""
     session_id = state["session_id"]
-    progress_tracker.update_step(session_id, 7, "Lưu báo cáo", "Đang lưu HTML, CSS, JS vào cơ sở dữ liệu")
+    progress_tracker.update_step(session_id, 8, "Lưu báo cáo", "Đang lưu HTML, CSS, JS vào cơ sở dữ liệu")
     
     try:
         # Import Flask app để có application context

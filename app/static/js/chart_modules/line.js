@@ -29,8 +29,8 @@ function createLineChart(container, data, options = {}) {
 
     // Kích thước và padding của SVG
     const width = 320;
-    const height = 160;
-    const p = 35; // Padding
+    const height = 240;
+    const p = 50; // Padding tăng để tránh nhãn vẽ ra ngoài
 
     // Tính toán các giá trị cần thiết để xác định tỷ lệ
     const maxValue = Math.max(...data);
@@ -47,6 +47,14 @@ function createLineChart(container, data, options = {}) {
     const points = data.map((d, i) => `${toX(i)},${toY(d)}`).join(' ');
     const areaPoints = `${p},${height - p} ${points} ${width - p},${height - p}`;
 
+    // Xác định các chỉ số cần hiển thị: đầu, cuối, cao nhất, thấp nhất
+    const firstIdx = 0;
+    const lastIdx = data.length - 1;
+    const maxIdx = data.indexOf(maxValue);
+    const minIdx = data.indexOf(minValue);
+    // Tạo mảng các chỉ số cần hiển thị, loại bỏ trùng lặp
+    const showIndices = Array.from(new Set([firstIdx, lastIdx, maxIdx, minIdx]));
+
     // Tạo mã SVG động
     const svg = `
         <svg viewBox="0 0 ${width} ${height}" style="width: 100%; height: auto; overflow: visible;" class="line-chart-interactive">
@@ -62,18 +70,37 @@ function createLineChart(container, data, options = {}) {
             <polyline fill="none" stroke="${color}" stroke-width="${strokeWidth}" stroke-linecap="round"
                       stroke-linejoin="round" points="${points}" class="line-path" />
 
-            ${data.map((d, i) => `
-                <g class="line-point-group">
-                    <circle cx="${toX(i)}" cy="${toY(d)}" r="9" fill="transparent" />
-                    <circle cx="${toX(i)}" cy="${toY(d)}" r="4" fill="${color}"
-                            stroke="var(--bg-secondary)" stroke-width="2" class="line-dot"
-                            style="animation-delay: ${i * 80}ms"/>
-                    <text x="${toX(i)}" y="${toY(d) - 15}" text-anchor="middle" font-size="12px"
-                          fill="var(--text-primary)" font-weight="600" class="value-label">
+            ${data.map((d, i) => {
+                let label = '';
+                if (i === firstIdx) {
+                    // Nhãn đầu ở bên trái
+                    label = `<text x="${toX(i) - 12}" y="${toY(d) + 3}" text-anchor="end"
+                        fill="var(--text-primary)" font-weight="600" class="value-label h3">
                         ${valuePrefix}${d.toFixed(1)}${valueSuffix}
-                    </text>
-                </g>
-            `).join('')}
+                    </text>`;
+                } else if (i === lastIdx) {
+                    // Nhãn cuối ở bên phải
+                    label = `<text x="${toX(i) + 12}" y="${toY(d) + 3}" text-anchor="start"
+                        fill="var(--text-primary)" font-weight="600" class="value-label h3">
+                        ${valuePrefix}${d.toFixed(1)}${valueSuffix}
+                    </text>`;
+                } else if (i === maxIdx || i === minIdx) {
+                    // Nhãn max/min ở phía trên
+                    label = `<text x="${toX(i)}" y="${toY(d) - 12}" text-anchor="middle"
+                        fill="var(--text-primary)" font-weight="600" class="value-label h3">
+                        ${valuePrefix}${d.toFixed(1)}${valueSuffix}
+                    </text>`;
+                }
+                return `
+                    <g class="line-point-group">
+                        <circle cx="${toX(i)}" cy="${toY(d)}" r="9" fill="transparent" />
+                        <circle cx="${toX(i)}" cy="${toY(d)}" r="4" fill="${color}"
+                                stroke="var(--bg-secondary)" stroke-width="2" class="line-dot"
+                                style="animation-delay: ${i * 80}ms"/>
+                        ${showIndices.includes(i) ? label : ''}
+                    </g>
+                `;
+            }).join('')}
         </svg>
     `;
 

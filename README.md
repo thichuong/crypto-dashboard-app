@@ -32,12 +32,40 @@
 
 ## 🔄 LangGraph Workflow
 
-6-node pipeline: `prepare_data` → `research_deep` → `validate_report` → `create_interface` → `extract_code` → `save_database`
 
-* **Smart Routing**: Auto retry với exponential backoff
-* **Dual Retry System**: Separate counters cho research (3x) và interface (3x)  
-* **Real-time Data**: Cache và inject data từ multiple APIs
-* **Google Gemini **: AI với thinking
+### LangGraph V2 Pipeline (component-based)
+
+**Pipeline các bước:**
+`prepare_data` → `research_deep` → `validate_report` → `generate_report_content` → `create_html` → `create_javascript` → `create_css` → `save_database`
+
+**Chi tiết các bước:**
+- **prepare_data**: Chuẩn bị dữ liệu đầu vào, session, API key
+- **research_deep**: Nghiên cứu chuyên sâu, retry tối đa 3 lần nếu lỗi
+- **validate_report**: Kiểm tra chất lượng báo cáo, routing thông minh (retry hoặc tiếp tục)
+- **generate_report_content**: Sinh nội dung báo cáo (text)
+- **create_html**: Tạo giao diện HTML, retry tối đa 3 lần nếu lỗi
+- **create_javascript**: Sinh mã JavaScript cho dashboard, retry tối đa 3 lần nếu lỗi
+- **create_css**: Sinh CSS cho giao diện, retry tối đa 3 lần nếu lỗi
+- **save_database**: Lưu kết quả vào database
+
+**Logic retry thông minh:**
+- Mỗi bước giao diện (HTML, JS, CSS) đều có retry riêng biệt (tối đa 3 lần)
+- Nếu vượt quá số lần retry, workflow sẽ kết thúc với trạng thái lỗi
+- Metadata trả về gồm số lần thử cho từng bước, trạng thái validation, thời gian thực thi, session_id
+
+**Progress tracking:**
+- Theo dõi tiến trình từng bước qua session_id
+- Cập nhật trạng thái, lỗi và thời gian thực thi
+
+**Kết quả trả về:**
+- `success`, `session_id`, `report_id`, `html_content`, `css_content`, `js_content`, `research_content`, `error_messages`, `execution_time`, `validation_result`, số lần thử cho từng bước
+
+**Tích hợp:**
+- Google Gemini API cho AI research
+- Cache và inject data từ nhiều nguồn API
+
+**Backward compatibility:**
+- Vẫn hỗ trợ workflow cũ qua các hàm wrapper
 
 ## 🛠️ Tech Stack
 

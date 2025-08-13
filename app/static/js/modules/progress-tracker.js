@@ -1,28 +1,51 @@
-// progress-tracker.js - Simplified Progress Tracking
+// progress-tracker.js - WebSocket-based Progress Tracking
 import { APIClient } from './api-client.js';
 import { LogManager } from './log-manager.js';
+import { wsClient } from './websocket-client.js';
 
 export class ProgressTracker {
     constructor() {
         this.sessionId = null;
-        this.pollingInterval = null;
         this.processedLogIds = new Set();
         this.lastUpdateTime = 0;
+        this.wsUnsubscribeFunc = null;
+        this.pollingInterval = null;
+        this.useWebSocket = true;
     }
     
     startTracking(sessionId) {
         this.sessionId = sessionId;
         this.showProgressCard();
-        this.startPolling();
-        LogManager.add('📡 Bắt đầu theo dõi tiến độ', 'info');
+        
+        if (this.useWebSocket && wsClient.isConnected) {
+            this.startWebSocketTracking();
+            LogManager.add('📡 Bắt đầu theo dõi tiến độ qua WebSocket', 'info');
+        } else {
+            this.startPollingFallback();
+            LogManager.add('📡 Bắt đầu theo dõi tiến độ qua Polling (fallback)', 'info');
+        }
     }
     
     stopTracking() {
+        // Stop WebSocket tracking
+        if (this.wsUnsubscribeFunc) {
+            this.wsUnsubscribeFunc();
+            this.wsUnsubscribeFunc = null;
+            LogManager.add('⏹️ Dừng theo dõi tiến độ WebSocket', 'info');
+        }
+        
+        // Stop polling fallback
         if (this.pollingInterval) {
             clearInterval(this.pollingInterval);
             this.pollingInterval = null;
-            LogManager.add('⏹️ Dừng theo dõi tiến độ', 'info');
+            LogManager.add('⏹️ Dừng theo dõi tiến độ Polling', 'info');
         }
+        
+        // Unsubscribe from WebSocket channel
+        if (this.sessionId) {
+            wsClient.unsubscribe(`progress_${this.sessionId}`);
+        }
+        
         this.sessionId = null;
         this.processedLogIds.clear();
         this.lastUpdateTime = 0;
@@ -33,8 +56,38 @@ export class ProgressTracker {
         this.hideProgressCard();
         this.restoreButton();
     }
+
+    async startWebSocketTracking() {
+        try {
+            // Ensure WebSocket is connected
+            if (!wsClient.isConnected) {
+                await wsClient.connect();
+            }
+            
+            // Subscribe to progress updates for this session
+            wsClient.subscribe(`progress_${this.sessionId}`);
+            
+            // Register message handler for progress updates
+            this.wsUnsubscribeFunc = wsClient.onMessage('progress_update', (data) => {
+                if (data.session_id === this.sessionId) {
+                    this.processUpdate(data.data);
+                }
+            });
+            
+            // Also get initial progress state via API as fallback
+            const progress = await APIClient.getProgress(this.sessionId);
+            if (progress) {
+                this.processUpdate(progress);
+            }
+        } catch (error) {
+            console.warn('[ProgressTracker] WebSocket tracking failed, falling back to polling:', error);
+            LogManager.add('⚠️ WebSocket thất bại, chuyển sang polling', 'warning');
+            this.startPollingFallback();
+        }
+    }
     
-    async startPolling() {
+    startPollingFallback() {
+        this.useWebSocket = false;
         this.pollingInterval = setInterval(async () => {
             const progress = await APIClient.getProgress(this.sessionId);
             if (progress) {
@@ -63,19 +116,35 @@ export class ProgressTracker {
         // Handle completion states
         if (progress.status === 'completed') {
             this.handleCompletion(progress);
+            this.stopTracking(); // Stop WebSocket tracking
         } else if (progress.status === 'error') {
             this.handleError(progress);
+            this.stopTracking(); // Stop WebSocket tracking
         }
     }
     
     updateProgressBar(progress) {
-        const cleanStepName = (progress.current_step_name || "").replace(/^\[\d{2}:\d{2}:\d{2}\]\s*/, '');
+        // Hiển thị đúng tên bước theo workflow mới
+        let cleanStepName = (progress.current_step_name || "").replace(/^[\d\[\]: ]*/, '');
+        // Nếu là bước mới, dùng formatStepName để chuyển đổi
+        cleanStepName = this.formatStepName(cleanStepName);
         const percentage = progress.percentage || 0;
-        
+
         const progressBar = document.getElementById('progress-bar');
         const progressPercentage = document.getElementById('progress-percentage');
         const progressStepName = document.getElementById('progress-step-name');
-        
+
+        // Đổi màu progress bar theo từng bước (ví dụ: màu khác cho HTML, JS, CSS)
+        if (progress.current_step_name && progress.current_step_name.includes('html')) {
+            progressBar.style.backgroundColor = '#4F46E5'; // Indigo cho HTML
+        } else if (progress.current_step_name && progress.current_step_name.includes('javascript')) {
+            progressBar.style.backgroundColor = '#F59E42'; // Orange cho JS
+        } else if (progress.current_step_name && progress.current_step_name.includes('css')) {
+            progressBar.style.backgroundColor = '#10B981'; // Green cho CSS
+        } else {
+            progressBar.style.backgroundColor = '#2563EB'; // Blue mặc định
+        }
+
         progressBar.style.width = `${percentage}%`;
         progressPercentage.textContent = `${percentage}%`;
         progressStepName.textContent = cleanStepName;
@@ -153,13 +222,15 @@ export class ProgressTracker {
         // Workflow v2 step mappings
         const stepMappings = {
             "prepare_data": "📋 Chuẩn bị dữ liệu",
-            "research_deep": "🔬 Nghiên cứu sâu + Validation",
+            "research_deep": "🔬 Nghiên cứu sâu",
             "validate_report": "✅ Kiểm tra kết quả",
-            "create_interface": "🎨 Tạo giao diện",
-            "extract_code": "📄 Trích xuất mã nguồn",
-            "save_database": "� Lưu báo cáo"
+            "generate_report_content": "📝 Tạo nội dung báo cáo",
+            "create_html": "🎨 Tạo HTML giao diện",
+            "create_javascript": "💻 Tạo JavaScript giao diện",
+            "create_css": "🎨 Tạo CSS giao diện",
+            "save_database": "💾 Lưu báo cáo"
         };
-        // Cũng hỗ trợ các tên tiếng Việt và cũ để backward compatibility
+        // Legacy mappings giữ nguyên
         const legacyMappings = {
             "Research + Validation": "🔬 Nghiên cứu sâu + Validation",
             "Parse validation": "✅ Kiểm tra kết quả",
@@ -180,7 +251,7 @@ export class ProgressTracker {
         }
         return details;
     }
-    
+
     formatDetailMessage(details) {
         // Workflow v2 detail mappings
         const detailMappings = {
@@ -196,7 +267,15 @@ export class ProgressTracker {
             "Nghiên cứu sâu": "🔬 Nghiên cứu sâu",
             "Tạo giao diện": "🎨 Tạo giao diện",
             "Trích xuất mã nguồn": "📄 Trích xuất mã nguồn",
-            "Lưu báo cáo": "💾 Lưu báo cáo"
+            "Lưu báo cáo": "💾 Lưu báo cáo",
+            // Thêm các bước mới
+            "Tạo nội dung báo cáo": "📝 Tạo nội dung báo cáo",
+            "Tạo HTML giao diện": "🎨 Tạo HTML giao diện",
+            "Tạo JavaScript giao diện": "💻 Tạo JavaScript giao diện",
+            "Tạo CSS giao diện": "🎨 Tạo CSS giao diện",
+            "retry_html": "🔄 Đang thử lại HTML",
+            "retry_js": "🔄 Đang thử lại JavaScript",
+            "retry_css": "🔄 Đang thử lại CSS"
         };
         for (const [key, value] of Object.entries(detailMappings)) {
             if (details.includes(key)) {

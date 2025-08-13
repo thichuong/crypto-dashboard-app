@@ -16,7 +16,8 @@ def create_html_node(state: ReportState) -> ReportState:
         state[html_attempt_key] = 0
     state[html_attempt_key] += 1
     
-    progress_tracker.update_step(session_id, 4, f"Tạo HTML (lần {state[html_attempt_key]})", "Tạo cấu trúc HTML")
+    # Bước tạo HTML sau khi đã có nội dung báo cáo markdown
+    progress_tracker.update_step(session_id, 5, f"Tạo HTML (lần {state[html_attempt_key]})", "Tạo cấu trúc HTML từ nội dung báo cáo")
     
     # Đọc prompt tạo HTML
     html_prompt = read_prompt_file('prompt_create_html.md')
@@ -28,7 +29,9 @@ def create_html_node(state: ReportState) -> ReportState:
         return state
     
     # Tạo request tạo HTML
-    full_request = f"{html_prompt}\n\n---\n\n**NỘI DUNG BÁO CÁO CẦN XỬ LÝ:**\n\n{state['research_content']}"
+    # Chuyển nội dung báo cáo markdown thành HTML semantic
+    report_md = state.get('report_content') or state.get('research_content', '')
+    full_request = f"{html_prompt}\n\n---\n\n**NỘI DUNG BÁO CÁO:**\n\n{report_md}"
     
     html_contents = [
         types.Content(
@@ -98,7 +101,8 @@ def create_javascript_node(state: ReportState) -> ReportState:
         state[js_attempt_key] = 0
     state[js_attempt_key] += 1
     
-    progress_tracker.update_step(session_id, 5, f"Tạo JavaScript (lần {state[js_attempt_key]})", "Tạo tương tác JS")
+    # Bước tạo JavaScript
+    progress_tracker.update_step(session_id, 6, f"Tạo JavaScript (lần {state[js_attempt_key]})", "Tạo tương tác JS từ nội dung HTML")
     
     # Đọc prompt tạo JavaScript
     js_prompt = read_prompt_file('prompt_create_javascript.md')
@@ -177,7 +181,8 @@ def create_css_node(state: ReportState) -> ReportState:
         state[css_attempt_key] = 0
     state[css_attempt_key] += 1
     
-    progress_tracker.update_step(session_id, 6, f"Tạo CSS (lần {state[css_attempt_key]})", "Tạo styling CSS")
+    # Bước tạo CSS
+    progress_tracker.update_step(session_id, 7, f"Tạo CSS (lần {state[css_attempt_key]})", "Tạo styling CSS từ nội dung HTML")
     
     # Đọc prompt tạo CSS
     css_prompt = read_prompt_file('prompt_create_css.md')

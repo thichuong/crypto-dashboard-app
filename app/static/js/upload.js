@@ -1,5 +1,8 @@
 // Upload page JavaScript functionality
 
+// Import WebSocket client
+import { wsClient } from './modules/websocket-client.js';
+
 // Function to notify all iframes about theme change
 function notifyIframesThemeChange(theme) {
     const iframes = document.querySelectorAll('iframe');
@@ -16,7 +19,15 @@ function notifyIframesThemeChange(theme) {
 }
 
 // Initialize upload page functionality
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
+    // Initialize WebSocket connection for progress tracking
+    try {
+        await wsClient.connect();
+        console.log('[Upload] WebSocket connected successfully');
+    } catch (error) {
+        console.warn('[Upload] WebSocket connection failed, will use polling fallback:', error);
+    }
+    
     // Theme handling is now managed by theme-manager.js
     // Just need to notify iframes when theme changes
     const observer = new MutationObserver((mutations) => {

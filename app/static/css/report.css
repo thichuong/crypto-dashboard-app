@@ -118,6 +118,19 @@
 }
 
 /* === CHART CONTAINERS === */
+#report-container .chart-container {
+    background-color: var(--bg-secondary); /* A lighter background for charts */
+    border-radius: 0.5rem;
+    padding: 1rem;
+    /*! border: 1px solid var(--border-color); */
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    min-height: 200px; /* Ensure charts have some height */
+    display: flex; /* To center chart if needed by JS */
+    justify-content: center;
+    align-items: center;
+    color: var(--text-primary); /* Ensure chart labels/text are readable */
+}
 #report-container .gauge-container,
 #report-container .doughnut-container,
 #report-container .line-chart-container,
@@ -277,7 +290,6 @@
 #report-container table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 600px;
     background-color: var(--card-bg);
 }
 
@@ -368,8 +380,12 @@
 
 /* === RESPONSIVE DESIGN === */
 
-/* Only mobile-specific styles for max-width: 480px */
-@media (max-width: 480px) {
+/* Only mobile-specific styles for max-width: 580px 
+   Note: For crypto-table to work properly in card mode, 
+   HTML should include data-label attributes on each td element.
+   Example: <td data-label="Coin Name">Bitcoin</td>
+*/
+@media (max-width: 580px) {
     #report-container {
         padding: 0.75rem;
         gap: 1rem;
@@ -392,13 +408,66 @@
         background: transparent;
         width: 100%;
     }
+    /* Crypto table card layout for mobile */
     .crypto-table {
         font-size: 0.8rem;
     }
-    .crypto-table th,
-    .crypto-table td {
-        padding: 0.25rem !important;
+    
+    .crypto-table thead {
+        display: none; /* Hide table header on mobile */
     }
+    
+    .crypto-table tbody {
+        display: block;
+    }
+    
+    .crypto-table tbody tr {
+        display: block;
+        background-color: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 0.75rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        box-shadow: var(--card-shadow);
+        transition: all 0.3s ease;
+    }
+    
+    .crypto-table tbody tr:hover {
+        box-shadow: var(--card-shadow-hover);
+        transform: translateY(-2px);
+    }
+    
+    .crypto-table tbody td {
+        display: block;
+        padding: 0.5rem 0 !important;
+        border-bottom: none;
+        text-align: left;
+        position: relative;
+        padding-left: 40% !important;
+    }
+    
+    .crypto-table tbody td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 35%;
+        padding-right: 1rem;
+        white-space: nowrap;
+        font-weight: 600;
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+    }
+    
+    .crypto-table tbody td:last-child {
+        margin-bottom: 0;
+    }
+    
+    /* Adjust table container for mobile card layout */
+    .crypto-table .table-container {
+        border: none;
+        overflow: visible;
+    }
+    
     .chart-container {
         min-height: 200px !important;
     }

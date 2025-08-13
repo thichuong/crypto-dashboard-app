@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Table Mobile Card Test</title>
+    <link rel="stylesheet" href="../app/static/css/colors.css">
+    <link rel="stylesheet" href="../app/static/css/report.css">
+    <style>
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 2rem;
+        }
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .size-indicator {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: var(--accent-color);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="size-indicator" id="sizeIndicator"></div>
+    
+    <div class="test-container">
+        <h1>Test Crypto Table Mobile Card Layout</h1>
+        <p>Resize browser window to see mobile card layout (below 580px width)</p>
+        
+        <div id="report-container">
+            <section>
+                <h2>Top 10 Cryptocurrency</h2>
+                <div class="table-container">
+                    <table class="crypto-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Coin</th>
+                                <th>Price</th>
+                                <th>24h Change</th>
+                                <th>Market Cap</th>
+                                <th>Volume</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td data-label="Rank">#1</td>
+                                <td data-label="Coin">Bitcoin (BTC)</td>
+                                <td data-label="Price">$43,250.00</td>
+                                <td data-label="24h Change" style="color: var(--color-gain);">+2.45%</td>
+                                <td data-label="Market Cap">$847.2B</td>
+                                <td data-label="Volume">$15.2B</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Rank">#2</td>
+                                <td data-label="Coin">Ethereum (ETH)</td>
+                                <td data-label="Price">$2,580.00</td>
+                                <td data-label="24h Change" style="color: var(--color-loss);">-1.23%</td>
+                                <td data-label="Market Cap">$310.5B</td>
+                                <td data-label="Volume">$8.7B</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Rank">#3</td>
+                                <td data-label="Coin">Binance Coin (BNB)</td>
+                                <td data-label="Price">$315.40</td>
+                                <td data-label="24h Change" style="color: var(--color-gain);">+0.89%</td>
+                                <td data-label="Market Cap">$48.3B</td>
+                                <td data-label="Volume">$1.2B</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Rank">#4</td>
+                                <td data-label="Coin">XRP (XRP)</td>
+                                <td data-label="Price">$0.6234</td>
+                                <td data-label="24h Change" style="color: var(--color-gain);">+5.67%</td>
+                                <td data-label="Market Cap">$35.8B</td>
+                                <td data-label="Volume">$2.1B</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Rank">#5</td>
+                                <td data-label="Coin">Solana (SOL)</td>
+                                <td data-label="Price">$98.75</td>
+                                <td data-label="24h Change" style="color: var(--color-loss);">-3.21%</td>
+                                <td data-label="Market Cap">$42.1B</td>
+                                <td data-label="Volume">$1.8B</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        function updateSizeIndicator() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            document.getElementById('sizeIndicator').textContent = `${width}×${height}px`;
+        }
+        
+        window.addEventListener('resize', updateSizeIndicator);
+        updateSizeIndicator();
+    </script>
+</body>
+</html>

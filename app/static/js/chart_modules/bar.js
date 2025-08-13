@@ -66,8 +66,8 @@ function createBarChart(container, data, options = {}) {
                 <rect width="${barWidth}" height="${barHeight}"
                       fill="${d.color || 'var(--accent-color)'}" rx="3" class="bar-rect"
                       style="animation-delay: ${i * 100}ms;" />
-                <text x="${barWidth / 2}" y="${labelY}" text-anchor="middle" font-size="12px" font-weight="600"
-                      fill="var(--text-primary)" class="bar-value-label">${valuePrefix}${d.value}${valueSuffix}</text>
+            <text x="${barWidth / 2}" y="${labelY}" text-anchor="middle" font-weight="600"
+                fill="var(--text-primary)" class="bar-value-label h3">${valuePrefix}${d.value}${valueSuffix}</text>
             </g>
         `;
 

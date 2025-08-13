@@ -11,8 +11,9 @@ from .utils.cache import cache
 from .blueprints.crypto import crypto_bp
 from .services.auto_report_scheduler import start_auto_report_scheduler
 
-# Import WebSocket manager
+# Import WebSocket manager và progress tracker
 from .websocket.manager import websocket_manager
+from .services.progress_tracker import progress_tracker
 
 # Import các module đã tách
 from .config import configure_app
@@ -35,6 +36,9 @@ def create_app():
     
     # Initialize WebSocket manager
     websocket_manager.init_app(app)
+    
+    # Connect progress tracker to WebSocket manager
+    progress_tracker.set_websocket_manager(websocket_manager)
 
     with app.app_context():
         print("INFO: Initializing database tables...")
