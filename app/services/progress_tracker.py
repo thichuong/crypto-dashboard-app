@@ -8,7 +8,6 @@ class ProgressTracker:
     
     def __init__(self):
         self.current_progress = {}
-        self.step_queues = {}  # Lưu queue cho tất cả log entries (steps + substeps) theo session
         self.lock = Lock()
         self.websocket_manager = None
         
@@ -18,10 +17,12 @@ class ProgressTracker:
         
     def _broadcast_progress(self, session_id: str):
         """Broadcast progress update via WebSocket"""
-        if self.websocket_manager:
+        if self.websocket_manager and session_id in self.current_progress:
             try:
-                progress_data = self.get_progress(session_id)
+                # Directly broadcast current progress data
+                progress_data = self.current_progress[session_id]
                 self.websocket_manager.broadcast_progress_update(session_id, progress_data)
+                print(f"[PROGRESS] WebSocket broadcasted to progress_{session_id}")
             except Exception as e:
                 print(f"[PROGRESS] WebSocket broadcast error: {e}")
         
@@ -39,9 +40,7 @@ class ProgressTracker:
                 'details': '',
                 'last_update': time.time()
             }
-            # Khởi tạo step queue cho session
-            self.step_queues[session_id] = []
-        
+            
         # Broadcast initial progress
         self._broadcast_progress(session_id)
     
@@ -61,39 +60,13 @@ class ProgressTracker:
                     progress['details'] = f"{timestamp} {details}" if details else ""
                     progress['last_update'] = time.time()
                     print(f"[PROGRESS] Step {step}: {step_name}")
-                    
-                    # Thêm major step vào queue
-                    if session_id not in self.step_queues:
-                        self.step_queues[session_id] = []
-                    
-                    self.step_queues[session_id].append({
-                        'type': 'step',
-                        'details': f"{timestamp} 🔄 Bước {step}: {step_name}",
-                        'timestamp': timestamp,
-                        'step': step
-                    })
                 
                 # Nếu chỉ có details, đây là log entry detail
-                elif details is not None: # Luôn thêm vào queue nếu details được cung cấp, kể cả chuỗi rỗng
+                elif details is not None:
                     timestamped_details = f"{timestamp} {details}"
                     progress['details'] = timestamped_details
                     progress['last_update'] = time.time()
-                    
-                    # Thêm detail entry vào queue
-                    if session_id not in self.step_queues:
-                        self.step_queues[session_id] = []
-                    
-                    self.step_queues[session_id].append({
-                        'type': 'detail',
-                        'details': timestamped_details,
-                        'timestamp': timestamp,
-                        'step': progress.get('step', 0)
-                    })
                     print(f"[PROGRESS] Detail: {timestamped_details}")
-                
-                # Giữ tối đa 20 entries gần nhất trong queue
-                if session_id in self.step_queues:
-                    self.step_queues[session_id] = self.step_queues[session_id][-20:]
                 
                 # Broadcast progress update
                 self._broadcast_progress(session_id)
@@ -116,10 +89,6 @@ class ProgressTracker:
                 progress['report_id'] = report_id
                 progress['end_time'] = time.time()
                 progress['last_update'] = time.time()
-                
-                # Clean up step queue after completion
-                # if session_id in self.step_queues:
-                #     del self.step_queues[session_id]
         
         # Broadcast completion
         self._broadcast_progress(session_id)
@@ -136,23 +105,9 @@ class ProgressTracker:
                 progress['details'] = f"{timestamp} {error_msg}"
                 progress['end_time'] = time.time()
                 progress['last_update'] = time.time()
-                
-                # Clean up step queue after error
-                # if session_id in self.step_queues:
-                #     del self.step_queues[session_id]
         
         # Broadcast error
         self._broadcast_progress(session_id)
-    
-    def get_progress(self, session_id: str) -> Dict[str, Any]:
-        """Lấy tiến độ hiện tại bao gồm unified step queue"""
-        with self.lock:
-            progress = self.current_progress.get(session_id, {})
-            if session_id in self.step_queues:
-                progress['step_queue'] = self.step_queues[session_id]
-            else:
-                progress['step_queue'] = []
-            return progress
 
 # Global instance
 progress_tracker = ProgressTracker()

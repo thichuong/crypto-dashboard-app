@@ -39,6 +39,9 @@ def create_app():
     
     # Connect progress tracker to WebSocket manager
     progress_tracker.set_websocket_manager(websocket_manager)
+    
+    # Connect progress tracker to WebSocket manager
+    progress_tracker.set_websocket_manager(websocket_manager)
 
     with app.app_context():
         print("INFO: Initializing database tables...")

@@ -6,7 +6,6 @@ import { wsClient } from './websocket-client.js';
 export class ProgressTracker {
     constructor() {
         this.sessionId = null;
-        this.processedLogIds = new Set();
         this.lastUpdateTime = 0;
         this.wsUnsubscribeFunc = null;
         this.pollingInterval = null;
@@ -47,7 +46,6 @@ export class ProgressTracker {
         }
         
         this.sessionId = null;
-        this.processedLogIds.clear();
         this.lastUpdateTime = 0;
     }
     
@@ -111,7 +109,7 @@ export class ProgressTracker {
         // Update UI
         this.updateProgressBar(progress);
         this.updateProgressDetails(progress);
-        this.processLogEntries(progress.step_queue || []);
+        this.updateProgressLog(progress);
         
         // Handle completion states
         if (progress.status === 'completed') {
@@ -158,93 +156,64 @@ export class ProgressTracker {
         }
     }
     
-    processLogEntries(stepQueue) {
-        const progressLogContainer = document.getElementById('progress-log');
+    updateProgressLog(progress) {
+        const progressLog = document.getElementById('progress-log');
+        if (!progressLog) return;
         
-        // Check if user was scrolled to bottom before adding new entries
-        const wasScrolledToBottom = this.isScrolledToBottom(progressLogContainer);
-        let newEntriesAdded = false;
+        // Create log entry for current step
+        const stepText = progress.current_step_name || '';
+        const details = progress.details || '';
+        const timestamp = new Date().toLocaleTimeString();
         
-        stepQueue.forEach(logEntry => {
-            const logId = `${this.sessionId}_${logEntry.type}_${logEntry.timestamp}_${logEntry.details}`;
+        // Only add new log entry if step or details changed
+        if (stepText || details) {
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry log-info';
             
-            if (!this.processedLogIds.has(logId)) {
-                const logDiv = this.createLogElement(logEntry);
-                if (logDiv) {
-                    progressLogContainer.appendChild(logDiv);
-                    this.processedLogIds.add(logId);
-                    newEntriesAdded = true;
+            let logText = '';
+            if (stepText && !stepText.includes('Khởi tạo')) {
+                logText = stepText;
+            }
+            if (details) {
+                // Clean up details text
+                const cleanDetails = details.replace(/^\[\d{2}:\d{2}:\d{2}\.\d+\s*/, '').replace(/^\[\d{2}:\d{2}:\d{2}\]\s*/, '');
+                if (cleanDetails && cleanDetails !== logText) {
+                    logText = cleanDetails;
                 }
             }
-        });
-        
-        // Keep only last 20 log entries
-        while (progressLogContainer.children.length > 20) {
-            progressLogContainer.removeChild(progressLogContainer.firstChild);
-        }
-        
-        // Auto-scroll to bottom if user was at bottom and new entries were added
-        if (newEntriesAdded && wasScrolledToBottom) {
-            this.scrollToBottom(progressLogContainer);
-        } else if (newEntriesAdded && !wasScrolledToBottom) {
-            // Show indicator if user is not at bottom and there are new entries
-            this.showProgressLogIndicator();
-        }
-    }
-    
-    createLogElement(logEntry) {
-        let cleanDetails = logEntry.details.replace(/^\[\d{2}:\d{2}:\d{2}\]\s*/, '');
-        
-        // Format step entries
-        if (logEntry.type === 'step') {
-            cleanDetails = this.formatStepName(cleanDetails);
-            const logDiv = document.createElement('div');
-            logDiv.className = 'log-entry log-info';
-            logDiv.innerHTML = `<span class="log-timestamp">${cleanDetails}</span>`;
-            return logDiv;
-        }
-        
-        // Format detail entries
-        if (logEntry.type === 'detail') {
-            cleanDetails = this.formatDetailMessage(cleanDetails);
-            const logType = this.determineLogType(cleanDetails);
             
-            const logDiv = document.createElement('div');
-            logDiv.className = `log-entry ${logType}`;
-            logDiv.innerHTML = `<span class="log-timestamp">📋 ${cleanDetails}</span>`;
-            return logDiv;
+            if (logText) {
+                logEntry.innerHTML = `
+                    <span class="log-timestamp">[${timestamp}]</span> ${logText}
+                `;
+                
+                // Remove initial "waiting" entry
+                const initialEntry = progressLog.querySelector('.log-entry');
+                if (initialEntry && initialEntry.textContent.includes('Chờ bắt đầu')) {
+                    initialEntry.remove();
+                }
+                
+                // Add new entry and scroll to bottom
+                progressLog.appendChild(logEntry);
+                progressLog.scrollTop = progressLog.scrollHeight;
+            }
         }
-        
-        return null;
     }
     
     formatStepName(details) {
-        // Workflow v2 step mappings
+        // Workflow v2 step mappings để làm sạch tên bước
         const stepMappings = {
             "prepare_data": "📋 Chuẩn bị dữ liệu",
-            "research_deep": "🔬 Nghiên cứu sâu",
+            "research_deep": "🔬 Nghiên cứu sâu", 
             "validate_report": "✅ Kiểm tra kết quả",
             "generate_report_content": "📝 Tạo nội dung báo cáo",
             "create_html": "🎨 Tạo HTML giao diện",
-            "create_javascript": "💻 Tạo JavaScript giao diện",
+            "create_javascript": "💻 Tạo JavaScript giao diện", 
             "create_css": "🎨 Tạo CSS giao diện",
             "save_database": "💾 Lưu báo cáo"
         };
-        // Legacy mappings giữ nguyên
-        const legacyMappings = {
-            "Research + Validation": "🔬 Nghiên cứu sâu + Validation",
-            "Parse validation": "✅ Kiểm tra kết quả",
-            "Chuẩn bị dữ liệu": "📋 Chuẩn bị dữ liệu",
-            "Tạo giao diện": "🎨 Tạo giao diện",
-            "Trích xuất mã nguồn": "📄 Trích xuất mã nguồn",
-            "Lưu báo cáo": "💾 Lưu báo cáo"
-        };
+        
         for (const [key, value] of Object.entries(stepMappings)) {
-            if (details.includes(key)) {
-                details = details.replace(key, value);
-            }
-        }
-        for (const [key, value] of Object.entries(legacyMappings)) {
             if (details.includes(key)) {
                 details = details.replace(key, value);
             }
@@ -252,211 +221,77 @@ export class ProgressTracker {
         return details;
     }
 
-    formatDetailMessage(details) {
-        // Workflow v2 detail mappings
-        const detailMappings = {
-            "inject real-time data": "📊 Đã inject real-time data",
-            "Combined Research + Validation": "🔬 Combined Research + Validation",
-            "Combined response": "📝 Phản hồi Combined",
-            "Parse validation": "✅ Kiểm tra kết quả",
-            "Parsed validation result": "✅ Đã parse kết quả validation",
-            "PASS": "✅ PASS",
-            "FAIL": "❌ FAIL",
-            "UNKNOWN": "⚠️ UNKNOWN",
-            "Chuẩn bị dữ liệu": "📋 Chuẩn bị dữ liệu",
-            "Nghiên cứu sâu": "🔬 Nghiên cứu sâu",
-            "Tạo giao diện": "🎨 Tạo giao diện",
-            "Trích xuất mã nguồn": "📄 Trích xuất mã nguồn",
-            "Lưu báo cáo": "💾 Lưu báo cáo",
-            // Thêm các bước mới
-            "Tạo nội dung báo cáo": "📝 Tạo nội dung báo cáo",
-            "Tạo HTML giao diện": "🎨 Tạo HTML giao diện",
-            "Tạo JavaScript giao diện": "💻 Tạo JavaScript giao diện",
-            "Tạo CSS giao diện": "🎨 Tạo CSS giao diện",
-            "retry_html": "🔄 Đang thử lại HTML",
-            "retry_js": "🔄 Đang thử lại JavaScript",
-            "retry_css": "🔄 Đang thử lại CSS"
-        };
-        for (const [key, value] of Object.entries(detailMappings)) {
-            if (details.includes(key)) {
-                details = details.replace(key, value);
-            }
-        }
-        return details;
-    }
-    
-    determineLogType(details) {
-        if (details.includes('✓') || details.includes('Hoàn thành') || details.includes('thành công') || details.includes('PASS')) {
-            return 'log-success';
-        } else if (details.includes('✗') || details.includes('Lỗi') || details.includes('thất bại') || details.includes('FAIL')) {
-            return 'log-error';
-        } else if (details.includes('⚠️') || details.includes('UNKNOWN')) {
-            return 'log-info';
-        } else if (details.includes('🔬') || details.includes('📊') || details.includes('📝')) {
-            return 'log-info';
-        }
-        return 'log-step-complete';
-    }
-    
     handleCompletion(progress) {
         this.updateProgressBar({ percentage: 100, current_step_name: 'Hoàn thành!' });
-        this.updateProgressDetails({ details: `Báo cáo #${progress.report_id} đã được tạo thành công với Combined Research + Validation!` });
-        
-        // Add success log
-        const progressLogContainer = document.getElementById('progress-log');
-        const successLogDiv = document.createElement('div');
-        successLogDiv.className = 'log-entry log-success';
-        successLogDiv.innerHTML = `<i class="fas fa-check-circle text-green-500 mr-2"></i><span class="log-timestamp">🎉 Hoàn thành tạo báo cáo #${progress.report_id} (Combined Workflow)</span>`;
-        progressLogContainer.appendChild(successLogDiv);
-        
-        // Auto-scroll to show completion message
-        this.scrollToBottom(progressLogContainer);
+        this.updateProgressDetails({ details: `Báo cáo #${progress.report_id} đã được tạo thành công!` });
         
         // Show success overlay
         document.getElementById('success-message').textContent = 
-            `Báo cáo #${progress.report_id} đã được tạo thành công với Combined Research + Validation!`;
+            `Báo cáo #${progress.report_id} đã được tạo thành công!`;
         document.getElementById('success-overlay').style.display = 'flex';
         
         this.restoreButton();
-        LogManager.add('🎉 Hoàn thành tạo báo cáo với Combined Workflow!', 'success');
+        LogManager.add('🎉 Hoàn thành tạo báo cáo!', 'success');
     }
     
     handleError(progress) {
         this.updateProgressBar({ percentage: progress.percentage || 0, current_step_name: 'Lỗi xảy ra' });
-        this.updateProgressDetails({ details: progress.details || 'Có lỗi xảy ra trong quá trình Combined Research + Validation' });
-        
-        // Add error log
-        const progressLogContainer = document.getElementById('progress-log');
-        const errorLogDiv = document.createElement('div');
-        errorLogDiv.className = 'log-entry log-error';
-        errorLogDiv.innerHTML = `<i class="fas fa-times text-red-500 mr-2"></i><span class="log-timestamp">💥 Lỗi Combined Workflow: ${progress.details || 'Có lỗi xảy ra'}</span>`;
-        progressLogContainer.appendChild(errorLogDiv);
-        
-        // Auto-scroll to show error message
-        this.scrollToBottom(progressLogContainer);
+        this.updateProgressDetails({ details: progress.details || 'Có lỗi xảy ra trong quá trình tạo báo cáo' });
         
         // Show error overlay
         document.getElementById('error-message').textContent = 
-            progress.details || 'Có lỗi xảy ra trong quá trình Combined Research + Validation';
+            progress.details || 'Có lỗi xảy ra trong quá trình tạo báo cáo';
         document.getElementById('error-overlay').style.display = 'flex';
         
         this.restoreButton();
-        LogManager.add('💥 Có lỗi xảy ra trong Combined Workflow!', 'error');
+        LogManager.add('💥 Có lỗi xảy ra!', 'error');
     }
     
     showProgressCard() {
         const progressCard = document.getElementById('progress-card');
         const sessionIdElement = document.getElementById('progress-session-id');
+        const progressLog = document.getElementById('progress-log');
         
         progressCard.style.display = 'block';
         sessionIdElement.textContent = `Session: ${this.sessionId.substring(0, 8)}...`;
         
         // Reset state
         this.lastUpdateTime = 0;
-        this.processedLogIds.clear();
+        
+        // Reset progress log
+        if (progressLog) {
+            progressLog.innerHTML = `
+                <div class="log-entry log-info">
+                    <span class="log-timestamp">[Chờ bắt đầu]</span> Hệ thống đã sẵn sàng tạo báo cáo...
+                </div>
+            `;
+        }
         
         // Initialize progress display
         this.updateProgressBar({ percentage: 0, current_step_name: "Đang khởi tạo..." });
         this.updateProgressDetails({ details: "Chuẩn bị bắt đầu quy trình tạo báo cáo..." });
-        this.initializeProgressLog();
-        
-        // Setup scroll listener for progress log
-        this.setupProgressLogScrollListener();
     }
     
     hideProgressCard() {
         const progressCard = document.getElementById('progress-card');
+        const progressLog = document.getElementById('progress-log');
+        
         progressCard.style.display = 'none';
         this.lastUpdateTime = 0;
-        this.processedLogIds.clear();
         
-        // Hide progress log indicator
-        this.hideProgressLogIndicator();
-    }
-    
-    initializeProgressLog() {
-        const progressLogContainer = document.getElementById('progress-log');
-        progressLogContainer.innerHTML = '<div class="log-entry log-info"><span class="log-timestamp">[Khởi tạo]</span> 🚀 Bắt đầu quy trình tạo báo cáo (Combined Research + Validation)</div>';
-        
-        // Auto-scroll to bottom for initial log
-        this.scrollToBottom(progressLogContainer);
+        // Clear progress log
+        if (progressLog) {
+            progressLog.innerHTML = `
+                <div class="log-entry log-info">
+                    <span class="log-timestamp">[Chờ bắt đầu]</span> Hệ thống đã sẵn sàng tạo báo cáo...
+                </div>
+            `;
+        }
     }
     
     restoreButton() {
         const btn = document.getElementById('trigger-report-btn');
         btn.innerHTML = '<i class="fas fa-play mr-2"></i>Tạo Báo Cáo Ngay';
         btn.disabled = false;
-    }
-    
-    // Scroll helper methods for progress log
-    isScrolledToBottom(container) {
-        // Check if user is scrolled to bottom (within 5px tolerance)
-        const threshold = 5;
-        return container.scrollTop >= (container.scrollHeight - container.clientHeight - threshold);
-    }
-    
-    scrollToBottom(container) {
-        // Smooth scroll to bottom with slight delay to ensure content is rendered
-        setTimeout(() => {
-            container.scrollTo({
-                top: container.scrollHeight,
-                behavior: 'smooth'
-            });
-        }, 150); // Slightly longer delay for progress updates
-    }
-    
-    // Progress log indicator methods
-    showProgressLogIndicator() {
-        const progressLogContainer = document.getElementById('progress-log');
-        if (!progressLogContainer || this.isScrolledToBottom(progressLogContainer)) {
-            return;
-        }
-        
-        // Create or show progress log indicator
-        let indicator = document.getElementById('progress-log-indicator');
-        if (!indicator) {
-            indicator = document.createElement('div');
-            indicator.id = 'progress-log-indicator';
-            indicator.className = 'new-log-indicator';
-            indicator.innerHTML = '<i class="fas fa-arrow-down mr-1"></i>Tiến độ mới';
-            indicator.onclick = () => this.scrollToBottomAndHideProgressIndicator();
-            
-            const progressLogSection = progressLogContainer.closest('.mt-4');
-            if (progressLogSection) {
-                progressLogSection.style.position = 'relative';
-                progressLogSection.appendChild(indicator);
-            }
-        }
-        
-        indicator.style.display = 'flex';
-    }
-    
-    hideProgressLogIndicator() {
-        const indicator = document.getElementById('progress-log-indicator');
-        if (indicator) {
-            indicator.style.display = 'none';
-        }
-    }
-    
-    scrollToBottomAndHideProgressIndicator() {
-        const progressLogContainer = document.getElementById('progress-log');
-        if (progressLogContainer) {
-            this.scrollToBottom(progressLogContainer);
-            this.hideProgressLogIndicator();
-        }
-    }
-    
-    setupProgressLogScrollListener() {
-        // Setup scroll listener to hide indicator when user scrolls to bottom
-        setTimeout(() => {
-            const progressLogContainer = document.getElementById('progress-log');
-            if (progressLogContainer) {
-                progressLogContainer.addEventListener('scroll', () => {
-                    if (this.isScrolledToBottom(progressLogContainer)) {
-                        this.hideProgressLogIndicator();
-                    }
-                });
-            }
-        }, 500); // Wait for progress card to be fully shown
     }
 }

@@ -37,9 +37,11 @@ def register_api_routes(app):
 
     @app.route('/api/progress/<session_id>')
     def get_progress_api(session_id):
-        """API endpoint để lấy progress (polling-based progress tracking)"""
+        """API endpoint để lấy progress (fallback cho polling)"""
         try:
-            progress_data = progress_tracker.get_progress(session_id)
+            with progress_tracker.lock:
+                progress_data = progress_tracker.current_progress.get(session_id, {})
+                
             if not progress_data:
                 return jsonify({'error': 'Session not found'}), 404
             
