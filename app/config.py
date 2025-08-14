@@ -19,32 +19,36 @@ def configure_app(app):
     else:
         print("INFO: Running in development mode")
 
-    # --- CẤU HÌNH DATABASE ĐỘNG ---
-    if postgres_url := os.getenv('POSTGRES_URL'):
-        db_url = postgres_url.replace("postgres://", "postgresql://", 1)
+    # --- CẤU HÌNH DATABASE ---
+    # Prefer DATABASE_URL (common in hosting providers) but fall back to POSTGRES_URL
+    db_env = os.getenv('DATABASE_URL') or os.getenv('POSTGRES_URL')
+    if db_env:
+        # Normalize scheme for SQLAlchemy (older URLs may use postgres://)
+        db_url = db_env.replace("postgres://", "postgresql://", 1)
         
-        # Thêm SSL parameters cho Railway PostgreSQL
+        # Add SSL parameters commonly required for Railway/Postgres hosts
         if "?" not in db_url:
             db_url += "?sslmode=require&sslrootcert=DISABLE"
         elif "sslmode" not in db_url:
             db_url += "&sslmode=require&sslrootcert=DISABLE"
-            
+        
         app.config['SQLALCHEMY_DATABASE_URI'] = db_url
         
-        # Cấu hình connection pool và retry cho Railway
+        # Connection pooling and engine options tuned for hosted Postgres
         app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
-            'pool_pre_ping': True,  # Test connection trước khi sử dụng
-            'pool_recycle': 300,    # Recycle connection sau 5 phút
-            'pool_timeout': 30,     # Timeout khi lấy connection từ pool
-            'max_overflow': 10,     # Tối đa 10 connection overflow
-            'echo': False,          # Tắt SQL logging cho production
+            'pool_pre_ping': True,
+            'pool_recycle': 300,
+            'pool_timeout': 30,
+            'max_overflow': 10,
+            'echo': False,
             'connect_args': {
                 "sslmode": "require",
                 "connect_timeout": 30,
                 "application_name": "crypto_dashboard_app"
             }
         }
-        print("INFO: Connecting to Postgres database with SSL optimization")
+        source = 'DATABASE_URL' if os.getenv('DATABASE_URL') else 'POSTGRES_URL'
+        print(f"INFO: Connecting to Postgres database from env var: {source}")
     else:
         db_path = os.path.join(app.instance_path, 'local_dev.db')
         os.makedirs(app.instance_path, exist_ok=True)
