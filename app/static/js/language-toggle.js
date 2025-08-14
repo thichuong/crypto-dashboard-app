@@ -10,6 +10,9 @@
         'create-report': { vi: 'Tạo Báo cáo Mới', en: 'Create New Report' },
         'view-report-history': { vi: 'Xem Lịch Sử Báo Cáo', en: 'View Report History' },
         'print-report': { vi: 'In Báo cáo', en: 'Print Report' },
+        'close': { vi: 'Đóng', en: 'Close' },
+        'no-report-created': { vi: 'Chưa có báo cáo nào được tạo.', en: 'No reports have been created yet.' },
+        'please-upload': { vi: 'Vui lòng sử dụng trang tải lên để tạo báo cáo đầu tiên của bạn.', en: 'Please use the upload page to create your first report.' },
         'whole-market': { vi: 'Toàn bộ thị trường', en: 'Whole market' },
         'loading': { vi: 'Đang tải...', en: 'Loading...' },
         'connection-issue': { vi: 'Lỗi kết nối', en: 'Connection issue' },
@@ -58,6 +61,21 @@
         if (viContainer) viContainer.style.display = (lang === 'vi') ? 'block' : 'none';
         if (enContainer) enContainer.style.display = (lang === 'en') ? 'block' : 'none';
 
+        // swap title and subtitle elements for PDF template
+        const titleVi = document.getElementById('title-vi');
+        const titleEn = document.getElementById('title-en');
+        const subtitleVi = document.getElementById('subtitle-vi');
+        const subtitleEn = document.getElementById('subtitle-en');
+        const descriptionVi = document.getElementById('description-vi');
+        const descriptionEn = document.getElementById('description-en');
+        
+        if (titleVi) titleVi.style.display = (lang === 'vi') ? 'block' : 'none';
+        if (titleEn) titleEn.style.display = (lang === 'en') ? 'block' : 'none';
+        if (subtitleVi) subtitleVi.style.display = (lang === 'vi') ? 'block' : 'none';
+        if (subtitleEn) subtitleEn.style.display = (lang === 'en') ? 'block' : 'none';
+        if (descriptionVi) descriptionVi.style.display = (lang === 'vi') ? 'block' : 'none';
+        if (descriptionEn) descriptionEn.style.display = (lang === 'en') ? 'block' : 'none';
+
         // translate elements that use data-i18n
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
@@ -94,6 +112,86 @@
         } catch (e) {
             // ignore
         }
+
+        // Re-initialize report visuals after language change (if on a report page)
+        if (document.getElementById('report-container')) {
+            setTimeout(() => {
+                callInitializeReportVisuals();
+            }, 100);
+        }
+    }
+
+    // =====================================
+    // REPORT VISUALS INITIALIZATION LOGIC
+    // =====================================
+    
+    /**
+     * Centralized function to call initializeAllVisuals_report()
+     * This is now the single place where this function is called to avoid duplicates
+     */
+    function callInitializeReportVisuals() {
+        // Check if report container exists (only call on pages with reports)
+        const reportContainer = document.getElementById('report-container');
+        if (!reportContainer) {
+            return; // Not a report page
+        }
+
+        // Check if the function exists
+        if (typeof initializeAllVisuals_report !== 'function') {
+            console.warn("⚠️ initializeAllVisuals_report function not found");
+            return;
+        }
+
+        // Check if chart libraries are loaded
+        if (typeof createGauge !== 'function' || 
+            typeof createDoughnutChart !== 'function' || 
+            typeof createBarChart !== 'function') {
+            console.warn("⚠️ Chart libraries not loaded yet. Retrying...");
+            setTimeout(callInitializeReportVisuals, 500);
+            return;
+        }
+
+        try {
+            console.log("🎨 Calling initializeAllVisuals_report() from language-toggle.js");
+            initializeAllVisuals_report();
+        } catch (error) {
+            console.error("❌ Error calling initializeAllVisuals_report:", error);
+        }
+    }
+
+    /**
+     * Initialize report visuals with retry mechanism
+     */
+    function initializeReportVisualsWithRetry(maxRetries = 3, delay = 1000) {
+        let attempts = 0;
+        
+        function attempt() {
+            attempts++;
+            console.log(`🔄 Attempting to initialize report visuals (${attempts}/${maxRetries})`);
+            
+            const reportContainer = document.getElementById('report-container');
+            if (!reportContainer) {
+                return; // Not a report page
+            }
+
+            const hasFunction = typeof initializeAllVisuals_report === 'function';
+            const hasChartLibs = typeof createGauge === 'function' && 
+                                typeof createDoughnutChart === 'function' && 
+                                typeof createBarChart === 'function';
+
+            if (hasFunction && hasChartLibs) {
+                callInitializeReportVisuals();
+                return;
+            }
+
+            if (attempts < maxRetries) {
+                setTimeout(attempt, delay);
+            } else {
+                console.warn("⚠️ Failed to initialize report visuals after max retries");
+            }
+        }
+        
+        attempt();
     }
 
     function toggleLanguage(){
@@ -106,6 +204,11 @@
         const initial = getPreferredLanguage();
         // set initial UI
         updateUI(initial);
+
+        // Initialize report visuals after DOM is ready and language is set
+        setTimeout(() => {
+            initializeReportVisualsWithRetry();
+        }, 100);
 
         // Notify other scripts about initial language so they can initialize correctly
         try {

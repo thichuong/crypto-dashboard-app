@@ -3,6 +3,8 @@
  * 
  * File chuyên dụng để khởi tạo các visualization trong báo cáo.
  * Được sử dụng riêng cho trang PDF template và các trang báo cáo khác.
+ * 
+ * NOTE: Logic gọi initializeAllVisuals_report() đã được chuyển vào language-toggle.js
  */
 
 /**
@@ -12,91 +14,27 @@
 function initializeReportVisuals() {
     console.log("🎨 Bắt đầu khởi tạo report visuals...");
     
-    // Kiểm tra xem các thư viện cần thiết đã được tải chưa
-    if (typeof createGauge !== 'function' || 
-        typeof createDoughnutChart !== 'function' || 
-        typeof createBarChart !== 'function') {
-        console.warn("⚠️ Thư viện charting chưa được tải. Đợi và thử lại...");
-        
-        // Thử lại sau 500ms
-        setTimeout(initializeReportVisuals, 500);
-        return;
-    }
-    
-    // Kiểm tra xem hàm initializeAllVisuals_report có tồn tại không
-    if (typeof initializeAllVisuals_report !== 'function') {
-        console.warn("⚠️ Hàm initializeAllVisuals_report chưa được tải. Đợi và thử lại...");
-        
-        // Thử lại sau 500ms
-        setTimeout(initializeReportVisuals, 500);
-        return;
-    }
-    
-    try {
-        // Gọi hàm khởi tạo từ report.js
-        initializeAllVisuals_report();
-        console.log("✅ Đã khởi tạo thành công tất cả report visuals");
-    } catch (error) {
-        console.error("❌ Lỗi khi khởi tạo report visuals:", error);
-    }
+    // Logic moved to language-toggle.js to avoid multiple calls
+    console.log("ℹ️ Logic đã được chuyển vào language-toggle.js");
 }
 
 /**
  * Khởi tạo với retry mechanism
  * Đảm bảo các visualization được tạo thành công
+ * NOTE: Disabled - logic moved to language-toggle.js
  */
 function initializeReportVisualsWithRetry(maxRetries = 5, retryDelay = 1000) {
-    let attempts = 0;
-    
-    function attempt() {
-        attempts++;
-        console.log(`🔄 Thử khởi tạo report visuals (lần ${attempts}/${maxRetries})`);
-        
-        // Kiểm tra các điều kiện cần thiết
-        const hasChartLibrary = typeof createGauge === 'function' && 
-                               typeof createDoughnutChart === 'function' && 
-                               typeof createBarChart === 'function';
-        
-        const hasReportFunction = typeof initializeAllVisuals_report === 'function';
-        
-        if (hasChartLibrary && hasReportFunction) {
-            try {
-                initializeAllVisuals_report();
-                console.log("✅ Khởi tạo report visuals thành công!");
-                return true;
-            } catch (error) {
-                console.error("❌ Lỗi khi khởi tạo:", error);
-            }
-        } else {
-            console.log("⏳ Chưa đủ điều kiện để khởi tạo:", {
-                hasChartLibrary,
-                hasReportFunction
-            });
-        }
-        
-        // Thử lại nếu chưa đạt max retries
-        if (attempts < maxRetries) {
-            setTimeout(attempt, retryDelay);
-        } else {
-            console.warn("⚠️ Đã thử tối đa nhưng không thể khởi tạo report visuals");
-        }
-        
-        return false;
-    }
-    
-    attempt();
+    console.log("ℹ️ initializeReportVisualsWithRetry: Logic đã được chuyển vào language-toggle.js");
+    // Logic moved to language-toggle.js to avoid multiple calls
 }
 
 /**
  * Khởi tạo khi DOM ready
+ * NOTE: Disabled - logic moved to language-toggle.js
  */
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("📄 DOM đã sẵn sàng, chuẩn bị khởi tạo report visuals...");
-    
-    // Đợi một chút để đảm bảo tất cả script khác đã được tải
-    setTimeout(() => {
-        initializeReportVisualsWithRetry();
-    }, 100);
+    console.log("📄 DOM đã sẵn sàng, nhưng logic khởi tạo đã được chuyển vào language-toggle.js");
+    // Logic moved to language-toggle.js to avoid multiple calls
 });
 
 /**

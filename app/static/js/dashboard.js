@@ -445,11 +445,8 @@ async function CreateNav() {
         // Lưu observer vào DOM node để có thể disconnect khi tạo lại nav
         reportContainer._navObserver = observer;
 
-        // Gọi hàm vẽ các biểu đồ từ report.js SAU KHI nội dung đã được tải.
-        if (typeof initializeAllVisuals_report === 'function') {
-                    initializeAllVisuals_report();
-                }
-
+        // Note: initializeAllVisuals_report() is now called from language-toggle.js
+ 
     } catch (error) {
         console.error('Lỗi tải báo cáo:', error);
         document.getElementById('report-container').innerHTML = '<p class="text-red-600 font-semibold">Lỗi: Không thể tải nội dung báo cáo chi tiết.</p>';
@@ -477,14 +474,13 @@ function initDashboard() {
             const lang = e?.detail?.language;
             // Rebuild navigation to match the newly visible report content (VI/EN)
             try { CreateNav(); } catch(err) { console.error('CreateNav lỗi sau khi đổi ngôn ngữ', err); }
-            // Re-initialize report visuals for the selected language if function available
-            try { if (typeof initializeAllVisuals_report === 'function') initializeAllVisuals_report(lang); } catch(err) { console.error('initializeAllVisuals_report lỗi', err); }
             // Re-render dashboard cards & small charts from cached summary if available (no network call)
             try { if (window.dashboardSummaryCache) renderDashboardFromCache(lang); } catch(err) { console.error('renderDashboardFromCache lỗi', err); }
         });
     }
     
     CreateNav();
+
 
 }
 

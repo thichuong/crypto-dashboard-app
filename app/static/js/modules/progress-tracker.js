@@ -294,4 +294,53 @@ export class ProgressTracker {
         btn.innerHTML = '<i class="fas fa-play mr-2"></i>Tạo Báo Cáo Ngay';
         btn.disabled = false;
     }
+    
+    static showNewLogIndicator() {
+        const progressLog = document.getElementById('progress-log');
+        if (!progressLog || this.isScrolledToBottom(progressLog)) {
+            return;
+        }
+        
+        // Create or show new log indicator
+        let indicator = document.getElementById('new-progress-log-indicator');
+        if (!indicator) {
+            indicator = document.createElement('div');
+            indicator.id = 'new-progress-log-indicator';
+            indicator.className = 'new-log-indicator';
+            indicator.innerHTML = '<i class="fas fa-arrow-down mr-1"></i>Log mới';
+            indicator.onclick = () => this.scrollToBottomAndHideIndicator();
+            
+            const progressLogSection = progressLog.closest('.progress-log-container') || progressLog.parentElement;
+            if (progressLogSection) {
+                progressLogSection.style.position = 'relative';
+                progressLogSection.appendChild(indicator);
+            }
+        }
+        
+        indicator.style.display = 'flex';
+    }
+    
+    static hideNewLogIndicator() {
+        const indicator = document.getElementById('new-progress-log-indicator');
+        if (indicator) {
+            indicator.style.display = 'none';
+        }
+    }
+    
+    static scrollToBottomAndHideIndicator() {
+        const progressLog = document.getElementById('progress-log');
+        if (progressLog) {
+            progressLog.scrollTo({
+                top: progressLog.scrollHeight,
+                behavior: 'smooth'
+            });
+            this.hideNewLogIndicator();
+        }
+    }
+    
+    static isScrolledToBottom(container) {
+        // Check if user is scrolled to bottom (within 5px tolerance)
+        const threshold = 5;
+        return container.scrollTop >= (container.scrollHeight - container.clientHeight - threshold);
+    }
 }

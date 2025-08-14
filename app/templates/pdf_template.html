@@ -21,36 +21,56 @@
 </head>
 <body class="pdf-template antialiased">
 
+    {% include 'components/language_toggle.html' %}
+
     <!-- Nút điều khiển in (ẩn khi in) -->
     <div class="print-controls no-print">
         <button onclick="window.print()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors mr-2">
-            <i class="fas fa-print mr-2"></i>In Báo cáo
+            <i class="fas fa-print mr-2"></i><span data-i18n="print-report">In Báo cáo</span>
         </button>
         <button onclick="window.close()" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors">
-            <i class="fas fa-times mr-2"></i>Đóng
+            <i class="fas fa-times mr-2"></i><span data-i18n="close">Đóng</span>
         </button>
     </div>
     
     <div class="mobile-wrapper">
         <div class="a4-container">
             <header class="text-center mb-8">
-                <h1 class="font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-green-500">Toàn Cảnh Thị Trường Tiền Mã Hóa</h1>
+                <h1 class="font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-green-500">
+                    <span id="title-vi" style="display: block;">Toàn Cảnh Thị Trường Tiền Mã Hóa</span>
+                    <span id="title-en" style="display: none;">Comprehensive Cryptocurrency Market Overview</span>
+                </h1>
                 {% if report %}
                     <p class="text-base text-gray-600 max-w-full mx-auto">
-                        Báo cáo #{{ report.id }} (tạo lúc {{ (report.created_at + timedelta(hours=7)).strftime('%d-%m-%Y %H:%M') }})
+                        <span id="subtitle-vi" style="display: block;">
+                            Báo cáo #{{ report.id }} (tạo lúc {{ (report.created_at + timedelta(hours=7)).strftime('%d-%m-%Y %H:%M') }})
+                        </span>
+                        <span id="subtitle-en" style="display: none;">
+                            Report #{{ report.id }} (created at {{ (report.created_at + timedelta(hours=7)).strftime('%m-%d-%Y %H:%M') }})
+                        </span>
                     </p>
                 {% else %}
-                    <p class="text-base text-gray-600 max-w-full mx-auto">Bài phân tích và tổng hợp</p>
+                    <p class="text-base text-gray-600 max-w-full mx-auto">
+                        <span id="description-vi" style="display: block;">Bài phân tích và tổng hợp</span>
+                        <span id="description-en" style="display: none;">Analysis and Summary</span>
+                    </p>
                 {% endif %}
             </header>
 
-            <main id="report-container" class="max-w-none">
+            <main id="report-container" class="max-w-none" {% if report %}data-report-id="{{ report.id }}"{% endif %}>
                 {% if report and report.html_content %}
-                    {{ report.html_content | safe }}
+                    <div id="report-content-vi" style="display: block;">
+                        {{ report.html_content | safe }}
+                    </div>
+                    {% if report.html_content_en %}
+                        <div id="report-content-en" style="display: none;">
+                            {{ report.html_content_en | safe }}
+                        </div>
+                    {% endif %}
                 {% else %}
                     <div class="placeholder avoid-break">
-                        <h2>Chưa có báo cáo nào được tạo.</h2>
-                        <p>Vui lòng sử dụng trang tải lên để tạo báo cáo đầu tiên của bạn.</p>
+                        <h2 data-i18n="no-report-created">Chưa có báo cáo nào được tạo.</h2>
+                        <p data-i18n="please-upload">Vui lòng sử dụng trang tải lên để tạo báo cáo đầu tiên của bạn.</p>
                     </div>
                 {% endif %}
             </main>
@@ -72,5 +92,6 @@
    
     <script src="{{ url_for('static', filename='js/report-initializer.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/pdf-template.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/language-toggle.js') }}" defer></script>
 </body>
 </html>

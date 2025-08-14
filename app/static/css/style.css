@@ -41,8 +41,8 @@ body {
 /* --- Language Toggle Button --- */
 .language-toggle {
     position: fixed;
-    top: 1rem;
-    right: 5rem; /* Đặt bên trái theme toggle */
+    top: 5rem; /* Đặt bên dưới theme toggle */
+    right: 1rem; /* Cùng vị trí right với theme toggle */
     width: 3rem;
     height: 3rem;
     border-radius: 50%;

@@ -78,7 +78,9 @@
         print-color-adjust: exact !important;
     }
     
-    .pdf-template .no-print {
+    .pdf-template .no-print,
+    .pdf-template .theme-toggle,
+    .pdf-template .language-toggle {
         display: none !important;
     }
     

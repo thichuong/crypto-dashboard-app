@@ -291,9 +291,7 @@ async function CreateNav() {
         if (typeof initializeAllVisuals === 'function') {
             initializeAllVisuals();
         }
-        else if (typeof initializeAllVisuals_report === 'function') {
-            initializeAllVisuals_report();
-        }
+        // Note: initializeAllVisuals_report() is now called from language-toggle.js
 
 
     } catch (error) {
