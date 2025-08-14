@@ -23,7 +23,7 @@ Bạn là một chuyên gia CSS developer chuyên tạo theme colors và styling
 ### ✅ **Chart Containers** (Đã có):
 - `.gauge-container`, `.doughnut-container`
 - `.line-chart-container`, `.bar-chart-container`
-- `.chart-container`
+- `.chart-container` - **KHÔNG TẠO CSS CHO CLASS NÀY**
 - Chart responsive sizing
 
 ### ✅ **Table System** (Đã có):
@@ -107,7 +107,7 @@ Bạn là một chuyên gia CSS developer chuyên tạo theme colors và styling
 - ❌ Card structures  
 - ❌ Typography base styles
 - ❌ Responsive breakpoints
-- ❌ Chart container
+- ❌ Chart containers (đặc biệt `.chart-container`)
 
 ### **3. QUY TẮC QUAN TRỌNG:**
 - ✅ **LUÔN SỬ DỤNG CSS VARIABLES**: `var(--variable-name)` thay vì hardcode màu

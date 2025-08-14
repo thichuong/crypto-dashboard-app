@@ -6,6 +6,12 @@
  * @returns {string} - Chuỗi đã được định dạng.
  */
 function formatNumber(num) {
+    // Sử dụng formatNumberLocalized nếu có sẵn, nếu không dùng format cũ
+    if (window.languageManager && window.languageManager.formatNumberLocalized) {
+        return window.languageManager.formatNumberLocalized(num);
+    }
+    
+    // Fallback to old format
     if (num === null || num === undefined) return 'N/A';
     if (num >= 1e12) return (num / 1e12).toFixed(2) + ' nghìn tỷ';
     if (num >= 1e9) return (num / 1e9).toFixed(2) + ' tỷ';
@@ -14,14 +20,25 @@ function formatNumber(num) {
 }
 
 /**
+ * Lấy text đã dịch
+ */
+function getTranslatedText(key) {
+    if (window.languageManager && window.languageManager.getTranslatedText) {
+        return window.languageManager.getTranslatedText(key);
+    }
+    return key; // fallback
+}
+
+/**
  * Hiển thị thông báo lỗi thân thiện trên một card cụ thể.
  * @param {string} containerId - ID của container cần hiển thị lỗi.
  * @param {string} message - Thông báo lỗi.
  */
-function displayError(containerId, message = 'Không thể tải dữ liệu.') {
+function displayError(containerId, message) {
     const container = document.getElementById(containerId);
     if (container) {
-        container.innerHTML = `<p class="text-sm text-red-600">${message}</p>`;
+        const errorMsg = message || getTranslatedText('error-loading-data');
+        container.innerHTML = `<p class="text-sm text-red-600">${errorMsg}</p>`;
     }
 }
 
@@ -91,7 +108,7 @@ async function fetchDashboardSummary() {
         if (marketCapContainer) {
             marketCapContainer.innerHTML = `
                 <p class="text-3xl font-bold text-gray-900">${'$' + formatNumber(data.market_cap)}</p>
-                <p class="text-sm text-gray-500">Toàn thị trường</p>`;
+                <p class="text-sm text-gray-500">${getTranslatedText('whole-market')}</p>`;
         }
 
         // Cập nhật Khối lượng giao dịch
@@ -99,7 +116,7 @@ async function fetchDashboardSummary() {
         if (volumeContainer) {
             volumeContainer.innerHTML = `
                 <p class="text-3xl font-bold text-gray-900">${'$' + formatNumber(data.volume_24h)}</p>
-                <p class="text-sm text-gray-500">Toàn thị trường</p>`;
+                <p class="text-sm text-gray-500">${getTranslatedText('whole-market')}</p>`;
         }
 
         // Cập nhật giá BTC
@@ -119,11 +136,11 @@ async function fetchDashboardSummary() {
             const fngConfig = {
                 min: 0, max: 100,
                 segments: [
-                    { limit: 24, color: 'var(--fng-extreme-fear-color)', label: 'Sợ hãi Cực độ' },
-                    { limit: 49, color: 'var(--fng-fear-color)', label: 'Sợ hãi' },
-                    { limit: 54, color: 'var(--fng-neutral-color)', label: 'Trung tính' },
-                    { limit: 74, color: 'var(--fng-greed-color)', label: 'Tham lam' },
-                    { limit: 100, color: 'var(--fng-extreme-greed-color)', label: 'Tham lam Cực độ' }
+                    { limit: 24, color: 'var(--fng-extreme-fear-color)', label: getTranslatedText('extreme-fear') },
+                    { limit: 49, color: 'var(--fng-fear-color)', label: getTranslatedText('fear') },
+                    { limit: 54, color: 'var(--fng-neutral-color)', label: getTranslatedText('neutral') },
+                    { limit: 74, color: 'var(--fng-greed-color)', label: getTranslatedText('greed') },
+                    { limit: 100, color: 'var(--fng-extreme-greed-color)', label: getTranslatedText('extreme-greed') }
                 ]
             };
             createGauge(fngContainer, fngValue, fngConfig);
@@ -138,9 +155,9 @@ async function fetchDashboardSummary() {
             const rsiConfig = {
                 min: 0, max: 100,
                 segments: [
-                    { limit: 30, color: 'var(--rsi-oversold-color)', label: 'Quá bán' },
-                    { limit: 70, color: 'var(--rsi-neutral-color)', label: 'Trung tính' },
-                    { limit: 100, color: 'var(--rsi-overbought-color)', label: 'Quá mua' }
+                    { limit: 30, color: 'var(--rsi-oversold-color)', label: getTranslatedText('oversold') },
+                    { limit: 70, color: 'var(--rsi-neutral-color)', label: getTranslatedText('neutral') },
+                    { limit: 100, color: 'var(--rsi-overbought-color)', label: getTranslatedText('overbought') }
                 ]
             };
             createGauge(rsiContainer, rsiValue, rsiConfig);
@@ -156,7 +173,7 @@ async function fetchDashboardSummary() {
         displayFallbackData();
         
         // Hiển thị thông báo lỗi nhẹ nhàng
-        showErrorNotification('Đang gặp sự cố kết nối. Hiển thị dữ liệu mặc định.');
+        showErrorNotification(getTranslatedText('connection-issue'));
     }
 }
 
@@ -168,23 +185,23 @@ function displayFallbackData() {
     const marketCapContainer = document.getElementById('market-cap-container');
     if (marketCapContainer) {
         marketCapContainer.innerHTML = `
-            <p class="text-3xl font-bold text-gray-400">Đang tải...</p>
-            <p class="text-sm text-gray-500">Toàn thị trường</p>`;
+            <p class="text-3xl font-bold text-gray-400">${getTranslatedText('loading')}</p>
+            <p class="text-sm text-gray-500">${getTranslatedText('whole-market')}</p>`;
     }
 
     // Hiển thị volume fallback
     const volumeContainer = document.getElementById('volume-24h-container');
     if (volumeContainer) {
         volumeContainer.innerHTML = `
-            <p class="text-3xl font-bold text-gray-400">Đang tải...</p>
-            <p class="text-sm text-gray-500">Toàn thị trường</p>`;
+            <p class="text-3xl font-bold text-gray-400">${getTranslatedText('loading')}</p>
+            <p class="text-sm text-gray-500">${getTranslatedText('whole-market')}</p>`;
     }
 
     // Hiển thị BTC price fallback
     const btcContainer = document.getElementById('btc-price-container');
     if (btcContainer) {
         btcContainer.innerHTML = `
-            <p class="text-3xl font-bold text-gray-400">Đang tải...</p>
+            <p class="text-3xl font-bold text-gray-400">${getTranslatedText('loading')}</p>
             <p class="text-sm text-gray-500">Bitcoin</p>`;
     }
 
@@ -194,11 +211,11 @@ function displayFallbackData() {
         const fngConfig = {
             min: 0, max: 100,
             segments: [
-                { limit: 24, color: 'var(--fng-extreme-fear-color)', label: 'Sợ hãi Cực độ' },
-                { limit: 49, color: 'var(--fng-fear-color)', label: 'Sợ hãi' },
-                { limit: 54, color: 'var(--fng-neutral-color)', label: 'Trung tính' },
-                { limit: 74, color: 'var(--fng-greed-color)', label: 'Tham lam' },
-                { limit: 100, color: 'var(--fng-extreme-greed-color)', label: 'Tham lam Cực độ' }
+                { limit: 24, color: 'var(--fng-extreme-fear-color)', label: getTranslatedText('extreme-fear') },
+                { limit: 49, color: 'var(--fng-fear-color)', label: getTranslatedText('fear') },
+                { limit: 54, color: 'var(--fng-neutral-color)', label: getTranslatedText('neutral') },
+                { limit: 74, color: 'var(--fng-greed-color)', label: getTranslatedText('greed') },
+                { limit: 100, color: 'var(--fng-extreme-greed-color)', label: getTranslatedText('extreme-greed') }
             ]
         };
         createGauge(fngContainer, 50, fngConfig); // Default neutral value
@@ -210,9 +227,9 @@ function displayFallbackData() {
         const rsiConfig = {
             min: 0, max: 100,
             segments: [
-                { limit: 30, color: 'var(--rsi-oversold-color)', label: 'Quá bán' },
-                { limit: 70, color: 'var(--rsi-neutral-color)', label: 'Trung tính' },
-                { limit: 100, color: 'var(--rsi-overbought-color)', label: 'Quá mua' }
+                { limit: 30, color: 'var(--rsi-oversold-color)', label: getTranslatedText('oversold') },
+                { limit: 70, color: 'var(--rsi-neutral-color)', label: getTranslatedText('neutral') },
+                { limit: 100, color: 'var(--rsi-overbought-color)', label: getTranslatedText('overbought') }
             ]
         };
         createGauge(rsiContainer, 50, rsiConfig); // Default neutral value
@@ -254,7 +271,6 @@ function showErrorNotification(message) {
  */
 async function CreateNav() {
     try {
-
         const reportContainer = document.getElementById('report-container');
         const navLinksContainer = document.getElementById('report-nav-links');
 
@@ -263,21 +279,53 @@ async function CreateNav() {
             console.error("Không tìm thấy container cho báo cáo (#report-container) hoặc mục lục (#report-nav-links).");
             return;
         }
-        
+
+        // Ngắt observer cũ (nếu có) để tránh quan sát trùng lặp
+        if (reportContainer._navObserver) {
+            try { reportContainer._navObserver.disconnect(); } catch(e){}
+            reportContainer._navObserver = null;
+        }
+
         // Xóa nội dung cũ của mục lục trước khi tạo mới để tránh trùng lặp
         navLinksContainer.innerHTML = '';
 
-        const reportSections = reportContainer.querySelectorAll('section');
+        // Nếu có 2 container nội dung (vi/en), chỉ lấy các section từ phần đang hiển thị
+        const viContainer = document.getElementById('report-content-vi');
+        const enContainer = document.getElementById('report-content-en');
+        let activeContent = reportContainer; // fallback: toàn bộ reportContainer
 
+        if (viContainer || enContainer) {
+            const viVisible = viContainer && window.getComputedStyle(viContainer).display !== 'none';
+            const enVisible = enContainer && window.getComputedStyle(enContainer).display !== 'none';
+            if (viVisible) activeContent = viContainer;
+            else if (enVisible) activeContent = enContainer;
+            else activeContent = viContainer || enContainer || reportContainer;
+        }
+
+        const reportSections = activeContent.querySelectorAll('section');
+
+        // Build navigation links only from the active content's sections
         reportSections.forEach(section => {
             const h2 = section.querySelector('h2');
             if (h2 && section.id) {
                 const li = document.createElement('li');
                 const a = document.createElement('a');
                 a.href = `#${section.id}`;
+                // remove any icon node inside h2 when constructing the label
                 const h2Text = h2.cloneNode(true);
-                h2Text.querySelector('i')?.remove(); // Sửa selector cho icon để chính xác hơn
+                const icon = h2Text.querySelector('i');
+                if (icon && icon.parentNode) icon.parentNode.removeChild(icon);
                 a.textContent = h2Text.textContent.trim();
+                a.classList.add('block', 'py-1', 'px-2', 'rounded');
+                // smooth scroll on click and set active class immediately
+                a.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const target = activeContent.querySelector(`#${section.id}`);
+                    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    // update active class
+                    navLinksContainer.querySelectorAll('a').forEach(x => x.classList.remove('active'));
+                    a.classList.add('active');
+                });
                 li.appendChild(a);
                 navLinksContainer.appendChild(li);
             }
@@ -285,6 +333,7 @@ async function CreateNav() {
 
         const navLinks = navLinksContainer.querySelectorAll('a');
 
+        // Observe visible sections and update active link
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -296,21 +345,19 @@ async function CreateNav() {
                     });
                 }
             });
-        }, { rootMargin: "-30% 0px -70% 0px" });
+        }, { root: null, rootMargin: "-30% 0px -70% 0px", threshold: 0.1 });
 
         reportSections.forEach(section => {
             observer.observe(section);
         });
 
-        // Gọi hàm vẽ các biểu đồ từ report.js SAU KHI nội dung đã được tải.
-        // Điều này đảm bảo các phần tử DOM đã tồn tại để các biểu đồ có thể được vẽ.
-        if (typeof initializeAllVisuals === 'function') {
-            initializeAllVisuals();
-        }
-        else if (typeof initializeAllVisuals_report === 'function') {
-            initializeAllVisuals_report();
-        }
+        // Lưu observer vào DOM node để có thể disconnect khi tạo lại nav
+        reportContainer._navObserver = observer;
 
+        // Gọi hàm vẽ các biểu đồ từ report.js SAU KHI nội dung đã được tải.
+        if (typeof initializeAllVisuals_report === 'function') {
+                    initializeAllVisuals_report();
+                }
 
     } catch (error) {
         console.error('Lỗi tải báo cáo:', error);
@@ -333,18 +380,17 @@ function initDashboard() {
         
         // Đặt lịch gọi lại hàm tổng hợp sau mỗi 10 phút
         setInterval(fetchDashboardSummary, 600000);
+        
+        // Lắng nghe sự kiện thay đổi ngôn ngữ để refresh charts
+        window.addEventListener('languageChanged', (e) => {
+            fetchDashboardSummary();
+            // Rebuild navigation to match the newly visible report content (VI/EN)
+            try { CreateNav(); } catch(err) { console.error('CreateNav lỗi sau khi đổi ngôn ngữ', err); }
+        });
     }
     
     CreateNav();
 
-    
-    // Khởi tạo các visual nếu có
-    if (typeof initializeAllVisuals === 'function') {
-        initializeAllVisuals();
-    }
-    else if (typeof initializeAllVisuals_report === 'function') {
-        initializeAllVisuals_report();
-    }
 }
 
 // Khởi tạo dashboard khi DOM ready

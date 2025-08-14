@@ -93,3 +93,22 @@ def register_report_routes(app):
                 
         except Exception as e:
             return jsonify({'success': False, 'message': f'Đã xảy ra lỗi không mong muốn: {e}'})
+
+    @app.route('/report-fragment/<int:report_id>', methods=['GET'])
+    def report_fragment(report_id):
+        """
+        Trả về HTML fragment của báo cáo theo report_id và language query param (lang=vi|en).
+        Nếu lang=en và report.html_content_en tồn tại thì trả về nội dung tiếng Anh.
+        """
+        lang = request.args.get('lang', 'vi')
+        try:
+            report = Report.query.get(report_id)
+            if not report:
+                return jsonify({'success': False, 'message': 'Report not found'}), 404
+
+            if lang == 'en' and getattr(report, 'html_content_en', None):
+                return jsonify({'success': True, 'html': report.html_content_en})
+            else:
+                return jsonify({'success': True, 'html': report.html_content})
+        except Exception as e:
+            return jsonify({'success': False, 'message': str(e)}), 500

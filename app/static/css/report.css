@@ -381,8 +381,9 @@
 /* === RESPONSIVE DESIGN === */
 
 /* Only mobile-specific styles for max-width: 580px 
-   Note: Using semantic classes instead of data-label attributes
-   for better translation support with Google Translate
+   Note: For crypto-table to work properly in card mode, 
+   HTML should include data-label attributes on each td element.
+   Example: <td data-label="Coin Name">Bitcoin</td>
 */
 @media (max-width: 580px) {
     #report-container {
@@ -407,8 +408,7 @@
         background: transparent;
         width: 100%;
     }
-    
-    /* Crypto table semantic structure for mobile translation support */
+    /* Crypto table card layout for mobile */
     .crypto-table {
         font-size: 0.8rem;
     }
@@ -443,20 +443,19 @@
         border-bottom: none;
         text-align: left;
         position: relative;
+        padding-left: 40% !important;
     }
     
-    /* Semantic mobile labels - translatable by Google Translate */
-    .crypto-table .mobile-label {
-        display: inline;
+    .crypto-table tbody td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 35%;
+        padding-right: 1rem;
+        white-space: nowrap;
         font-weight: 600;
         color: var(--text-secondary);
         font-size: 0.875rem;
-        margin-right: 0.5rem;
-    }
-    
-    .crypto-table .content {
-        display: inline;
-        color: var(--text-primary);
     }
     
     .crypto-table tbody td:last-child {
@@ -474,17 +473,6 @@
     }
     .horizontal-layout {
         flex-direction: column !important;
-    }
-}
-
-/* Desktop/Tablet: Hide mobile labels */
-@media (min-width: 581px) {
-    .crypto-table .mobile-label {
-        display: none;
-    }
-    
-    .crypto-table .content {
-        display: inline;
     }
 }
 

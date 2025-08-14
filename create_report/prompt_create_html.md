@@ -234,9 +234,7 @@ Bạn là một lập trình viên frontend chuyên tạo giao diện HTML seman
 - Trích xuất số liệu CHÍNH XÁC từ nội dung báo cáo nghiên cứu
 - IDs phải khớp chính xác với JavaScript (`kebab-case`)
 
-### **4. Data Tables với Semantic Classes (Mobile-Friendly):**
-
-#### **TABLE STRUCTURE - SEMANTIC CLASSES:**
+### **4. Data Tables:**
 ```html
 <div class="table-container">
     <table class="crypto-table">
@@ -252,56 +250,20 @@ Bạn là một lập trình viên frontend chuyên tạo giao diện HTML seman
         </thead>
         <tbody>
             <tr>
-                <td class="rank-cell">
-                    <span class="mobile-label">Rank:</span>
-                    <span class="content">#1</span>
-                </td>
-                <td class="coin-cell">
-                    <span class="mobile-label">Coin:</span>
-                    <span class="content">Bitcoin (BTC)</span>
-                </td>
-                <td class="price-cell">
-                    <span class="mobile-label">Price:</span>
-                    <span class="content">$43,250.00</span>
-                </td>
-                <td class="change-cell">
-                    <span class="mobile-label">24h Change:</span>
-                    <span class="content" style="color: var(--color-gain);">+2.45%</span>
-                </td>
-                <td class="marketcap-cell">
-                    <span class="mobile-label">Market Cap:</span>
-                    <span class="content">$847.2B</span>
-                </td>
-                <td class="volume-cell">
-                    <span class="mobile-label">Volume:</span>
-                    <span class="content">$15.2B</span>
-                </td>
+                <td data-label="Rank">#1</td>
+                <td data-label="Coin">Bitcoin (BTC)</td>
+                <td data-label="Price">$43,250.00</td>
+                <td data-label="24h Change">+2.45%</td>
+                <td data-label="Market Cap">$847.2B</td>
+                <td data-label="Volume">$15.2B</td>
             </tr>
             <tr>
-                <td class="rank-cell">
-                    <span class="mobile-label">Rank:</span>
-                    <span class="content">#2</span>
-                </td>
-                <td class="coin-cell">
-                    <span class="mobile-label">Coin:</span>
-                    <span class="content">Ethereum (ETH)</span>
-                </td>
-                <td class="price-cell">
-                    <span class="mobile-label">Giá:</span>
-                    <span class="content">$2,580.00</span>
-                </td>
-                <td class="change-cell">
-                    <span class="mobile-label">Thay đổi 24h:</span>
-                    <span class="content" style="color: var(--color-loss);">-1.23%</span>
-                </td>
-                <td class="marketcap-cell">
-                    <span class="mobile-label">Vốn hóa:</span>
-                    <span class="content">$310.5B</span>
-                </td>
-                <td class="volume-cell">
-                    <span class="mobile-label">Khối lượng:</span>
-                    <span class="content">$8.7B</span>
-                </td>
+                <td data-label="Rank">#2</td>
+                <td data-label="Coin">Ethereum (ETH)</td>
+                <td data-label="Price">$2,580.00</td>
+                <td data-label="24h Change">-1.23%</td>
+                <td data-label="Market Cap">$310.5B</td>
+                <td data-label="Volume">$8.7B</td>
             </tr>
             <!-- More data rows... -->
         </tbody>
@@ -309,30 +271,18 @@ Bạn là một lập trình viên frontend chuyên tạo giao diện HTML seman
 </div>
 ```
 
-**📱 SEMANTIC MOBILE LAYOUT:**
-- **Desktop/Tablet**: Hiển thị bảng thông thường, `.mobile-label` ẩn
-- **Mobile (≤580px)**: Mỗi row thành card, `.mobile-label` hiển thị
-- **Translatable**: Google Translate dịch được cả `.mobile-label` text
-- **Semantic HTML**: Accessible và SEO-friendly
+**📱 MOBILE CARD LAYOUT:**
+- **Desktop/Tablet**: Hiển thị bảng thông thường
+- **Mobile (≤580px)**: Mỗi row hiển thị thành card riêng biệt
+- **Required**: Mỗi `<td>` phải có attribute `data-label` để hiển thị tên cột trên mobile
+- **Format**: `<td data-label="Tên Cột">Giá trị</td>`
 
-**IMPORTANT CSS CLASSES:**
-- `.mobile-label` - Label hiển thị trên mobile (translatable)
-- `.content` - Nội dung chính (always visible)  
-- Semantic classes: `.rank-cell`, `.coin-cell`, `.price-cell`, `.change-cell`, `.marketcap-cell`, `.volume-cell`
-
-**VÍ DỤ TRANSLATION-READY:**
+**VÍ DỤ SỬ DỤNG:**
 ```html
-<!-- Tiếng Việt (default) -->
-<td class="price-cell">
-    <span class="mobile-label">Giá:</span>
-    <span class="content">$43,250.00</span>
-</td>
-
-<!-- Google Translate → English -->
-<td class="price-cell">
-    <span class="mobile-label">Price:</span> <!-- Automatically translated -->
-    <span class="content">$43,250.00</span>
-</td>
+<!-- Desktop: Table format | Mobile: Card format -->
+<td data-label="Coin">Bitcoin (BTC)</td>
+<td data-label="Price">$43,250.00</td>
+<td data-label="24h Change" style="color: var(--color-gain);">+2.45%</td>
 ```
 
 ## SECTIONS YÊU CẦU:

@@ -90,33 +90,57 @@ Bạn là JavaScript developer tạo biểu đồ cho báo cáo crypto.
 
 ### **1. Hàm chính - BẮT BUỘC:**
 ```javascript
-function initializeAllVisuals_report() {
-    // Gọi tất cả biểu đồ ở đây
-    initializeFearGreedGauge_report();
-    initializeBTCDominance_report();
-    // ... các biểu đồ khác
+// initializeAllVisuals_report phải kiểm tra ngôn ngữ khi được gọi
+// và truyền ngôn ngữ đó cho các hàm khởi tạo biểu đồ con.
+function initializeAllVisuals_report(language = undefined) {
+  const lang = language || window.languageManager?.currentLanguage || 'vi';
+  // Gọi tất cả biểu đồ ở đây, truyền lang xuống các hàm con
+  initializeFearGreedGauge_report(lang);
+  initializeBTCDominance_report(lang);
+  // ... các biểu đồ khác, ví dụ:
+  // initializeBTCPriceLine_report(lang);
+  // initializeVolumeBar_report(lang);
 }
 ```
 
-### **2. Ví dụ Fear & Greed Gauge:**
+### **2. Ví dụ Fear & Greed Gauge (ngôn ngữ-aware):**
 ```javascript
-function initializeFearGreedGauge_report() {
-    const container = document.getElementById('fear-greed-gauge-container');
-    if (!container) return;
-    
-    const value = 45; // Lấy từ data
-    const config = {
-        min: 0,
-        max: 100,
-        segments: [
-            {limit: 25, color: 'var(--fng-extreme-fear-color)', label: 'Extreme Fear'},
-            {limit: 45, color: 'var(--fng-fear-color)', label: 'Fear'},
-            {limit: 75, color: 'var(--fng-greed-color)', label: 'Greed'},
-            {limit: 100, color: 'var(--fng-extreme-greed-color)', label: 'Extreme Greed'}
-        ]
-    };
-    
-    createGauge(container, value, config);
+// language: optional 'vi' or 'en'
+// Simple lookup: choose ID suffix (-en for English)
+function initializeFearGreedGauge_report(language) {
+  const lang = language
+  const id = lang === 'en' ? 'fear-greed-gauge-container-en' : 'fear-greed-gauge-container';
+  const container = document.getElementById(id);
+  if (!container) return;
+
+  const value = 45; // Lấy từ data (parse from CHART_DATA comment)
+
+  // Vietnamese labels/config
+  const config = {
+    min: 0,
+    max: 100,
+    segments: [
+      {limit: 25, color: 'var(--fng-extreme-fear-color)', label: 'Cực kỳ sợ hãi'},
+      {limit: 45, color: 'var(--fng-fear-color)', label: 'Sợ'},
+      {limit: 75, color: 'var(--fng-greed-color)', label: 'Tham lam'},
+      {limit: 100, color: 'var(--fng-extreme-greed-color)', label: 'Cực kỳ tham lam'}
+    ]
+  };
+
+  // English labels/config
+  const config_en = {
+    min: 0,
+    max: 100,
+    segments: [
+      {limit: 25, color: 'var(--fng-extreme-fear-color)', label: 'Extreme Fear'},
+      {limit: 45, color: 'var(--fng-fear-color)', label: 'Fear'},
+      {limit: 75, color: 'var(--fng-greed-color)', label: 'Greed'},
+      {limit: 100, color: 'var(--fng-extreme-greed-color)', label: 'Extreme Greed'}
+    ]
+  };
+
+  const cfg = lang === 'en' ? config_en : config;
+  createGauge(container, value, cfg);
 }
 ```
 
@@ -196,20 +220,23 @@ function initializeFearGreedGauge_report() {
 - `price-line-chart-container` → `initializeBTCPriceLine_report()`
 - `volume-bar-chart-container` → `initializeVolumeBar_report()`
 
-### **4. Ví dụ BTC Dominance với Data từ Comment:**
+### **4. Ví dụ BTC Dominance với Data từ Comment (ngôn ngữ-aware):**
 ```javascript
-function initializeBTCDominance_report() {
-    const container = document.getElementById('btc-dominance-doughnut-container');
+function initializeBTCDominance_report(language) {
+    const lang = language;
+    const id = lang === 'en' ? 'btc-dominance-doughnut-container-en' : 'btc-dominance-doughnut-container';
+    const container = document.getElementById(id);
     if (!container) return;
     
     // Đọc data từ comment HTML thay vì hardcode
     // Comment: <!-- CHART_DATA: {"type": "doughnut", "data": [...], "config": {...}} -->
     
     const data = [
-        {value: 52.5, color: 'var(--bitcoin-color)', label: 'Bitcoin'},
-        {value: 47.5, color: 'var(--ethereum-color)', label: 'Altcoins'}
+        {value: 52.5, color: 'var(--bitcoin-color)', label: lang === 'en' ? 'Bitcoin' : 'Bitcoin'},
+        {value: 47.5, color: 'var(--ethereum-color)', label: lang === 'en' ? 'Altcoins' : 'Altcoins'}
     ];
     
+    // Vietnamese config
     const config = {
         title: 'BTC.D',
         showLegend: true,
@@ -217,7 +244,16 @@ function initializeBTCDominance_report() {
         innerRadius: 50
     };
     
-    createDoughnutChart(container, data, config);
+    // English config (same for this chart but could differ)
+    const config_en = {
+        title: 'BTC.D',
+        showLegend: true,
+        outerRadius: 80,
+        innerRadius: 50
+    };
+    
+    const cfg = lang === 'en' ? config_en : config;
+    createDoughnutChart(container, data, cfg);
 }
 ```
 
@@ -242,6 +278,33 @@ function initializeBTCDominance_report() {
 - Biểu đồ tự động resize theo màn hình
 - Tối ưu cho mobile
 
+## HỖ TRỢ 2 NGÔN NGỮ (YÊU CẦU KỸ THUẬT)
+
+- Mục tiêu: mã JS sinh bởi AI phải rõ ràng hỗ trợ song ngữ (Tiếng Việt + Tiếng Anh).
+- Cấu hình biểu đồ: với mỗi biểu đồ/nhãn cần phân biệt ngôn ngữ, cung cấp hai biến cấu hình tĩnh bên trong file JS:
+  - `const config` — cấu hình (nhãn, valuePrefix/suffix, legends) cho bản Tiếng Việt
+  - `const config_en` — cấu hình tương ứng cho bản Tiếng Anh
+
+- Về hàm khởi tạo chính `initializeAllVisuals_report()`:
+  - **KHÔNG** được đăng ký event listeners bên trong file JS được tạo. Tuyệt đối không dùng `document.addEventListener` hoặc `window.addEventListener` trong file này.
+  - Hàm này không tự lắng nghe thay đổi ngôn ngữ; thay vào đó, khi được gọi, nó phải kiểm tra ngôn ngữ hiện tại (ví dụ: bằng tham số `language` hoặc đọc `window.languageManager?.currentLanguage`) và khởi tạo/redraw charts phù hợp. Ví dụ hợp lệ:
+
+```javascript
+function initializeAllVisuals_report(language = undefined) {
+  const lang = language || window.languageManager?.currentLanguage || 'vi';
+  // chọn config/config_en hoặc container IDs (-en) dựa trên lang
+}
+```
+
+- Lý do: việc lắng nghe sự kiện (document.addEventListener) sẽ do lớp bao bọc bên ngoài (app) đảm nhiệm. Outer app sẽ gọi `initializeAllVisuals_report('en')` hoặc `initializeAllVisuals_report()` khi cần cập nhật.
+
+- Nếu template chứa cả hai fragment (VN và EN) với container IDs khác nhau (EN có hậu tố `-en`), code JS nên dùng scoped lookup (ví dụ `root.querySelector('#fear-greed-gauge-container-en')`) hoặc mapping IDs theo `language` parameter.
+
+- Khi tạo `config` và `config_en`, đảm bảo chỉ dịch nhãn/text; màu và CSS variables giữ nguyên.
+
+
 ## OUTPUT:
 Chỉ trả về JavaScript code trong ```javascript``` block.
-Code ngắn gọn, đơn giản, không phức tạp.
+
+**YÊU CẦU OUTPUT:**
+- Code ngắn gọn, đơn giản, không phức tạp

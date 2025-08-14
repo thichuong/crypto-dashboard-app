@@ -38,6 +38,40 @@ body {
 [data-theme="dark"] .theme-toggle .fa-sun { display: block; }
 [data-theme="dark"] .theme-toggle .fa-moon { display: none; }
 
+/* --- Language Toggle Button --- */
+.language-toggle {
+    position: fixed;
+    top: 1rem;
+    right: 5rem; /* Đặt bên trái theme toggle */
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    z-index: 1000;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s ease;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+.language-toggle:hover {
+    transform: scale(1.1);
+}
+.language-toggle .lang-text {
+    font-weight: 600;
+    font-size: 0.625rem;
+    line-height: 1;
+}
+.language-toggle .fa-globe {
+    font-size: 0.875rem;
+}
+
 
 /* --- Cards, Headers, Sections using CSS Variables --- */
 

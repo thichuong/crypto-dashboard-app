@@ -151,21 +151,6 @@ function setCookie(name, value, days) {
     document.cookie = `${name}=${value};${expires};path=/`;
 }
 
-// Function to clear Google Translate cookies (lighter approach)
-function clearGoogleTranslateCookies() {
-    // Only clear the main cookie, not all variants
-    document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-}
-
-// Function to get current Google Translate language
-function getCurrentGoogleTranslateLanguage() {
-    const cookie = getCookie('googtrans');
-    if (cookie && cookie.includes('/')) {
-        return cookie.split('/')[2] || 'vi';
-    }
-    return 'vi';
-}
-
 // Language mapping
 const languageMapping = {
     'vi': 'VI',
@@ -187,18 +172,14 @@ function googleTranslateElementInit() {
         autoDisplay: false
     }, 'google_translate_element');
     
-    // Update button text based on current language
-    setTimeout(() => {
-        updateButtonText();
-    }, 1500);
-}
-
-// Function to update button text
-function updateButtonText() {
-    const currentLang = getCurrentGoogleTranslateLanguage();
-    const currentLangText = document.getElementById('current_lang_text');
-    if (currentLangText && languageMapping[currentLang]) {
-        currentLangText.textContent = languageMapping[currentLang];
+    // Set the button text based on the cookie after the widget loads
+    const selectedLanguage = getCookie('googtrans');
+    if (selectedLanguage) {
+        const langCode = selectedLanguage.split('/')[2];
+        const currentLangText = document.getElementById('current_lang_text');
+        if (currentLangText && langCode && languageMapping[langCode]) {
+            currentLangText.textContent = languageMapping[langCode];
+        }
     }
 }
 
@@ -224,40 +205,17 @@ document.addEventListener('DOMContentLoaded', function() {
             const langText = languageMapping[selectedLang];
             
             if (selectedLang && langText) {
-                // Update button text immediately
+                // Update button text
                 currentLangText.textContent = langText;
                 
                 // Hide dropdown
                 languageDropdown.classList.add('hidden');
                 
-                // Handle language switching
-                if (selectedLang === 'vi') {
-                    // Reset to Vietnamese (original language)
-                    clearGoogleTranslateCookies();
-                    setTimeout(() => {
-                        location.reload();
-                    }, 200);
-                } else {
-                    // Check if we need to clear existing translation first
-                    const currentLang = getCurrentGoogleTranslateLanguage();
-                    
-                    if (currentLang !== 'vi' && currentLang !== selectedLang) {
-                        // Clear existing translation first, then set new one
-                        clearGoogleTranslateCookies();
-                        setTimeout(() => {
-                            setCookie('googtrans', `/vi/${selectedLang}`, 30);
-                            setTimeout(() => {
-                                location.reload();
-                            }, 300);
-                        }, 100);
-                    } else {
-                        // Direct translation
-                        setCookie('googtrans', `/vi/${selectedLang}`, 30);
-                        setTimeout(() => {
-                            location.reload();
-                        }, 200);
-                    }
-                }
+                // Set the cookie to trigger the translation
+                setCookie('googtrans', `/vi/${selectedLang}`, 30);
+                
+                // Reload the page to apply the translation
+                location.reload();
             }
         });
     });

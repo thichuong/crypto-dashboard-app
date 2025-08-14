@@ -11,6 +11,7 @@ from .workflow_nodes.research_deep import research_deep_node
 from .workflow_nodes.validate_report import validate_report_node
 from .workflow_nodes.create_interface_components import create_html_node, create_javascript_node, create_css_node
 from .workflow_nodes.generate_report_content import generate_report_content_node
+from .workflow_nodes.translate_content import translate_content_node
 from .workflow_nodes.save_database import save_database_node
 from .workflow_nodes.routing import (
     should_retry_or_continue,
@@ -34,6 +35,7 @@ def create_report_workflow_v2():
     workflow.add_node("create_html", create_html_node)
     workflow.add_node("create_javascript", create_javascript_node)
     workflow.add_node("create_css", create_css_node)
+    workflow.add_node("translate_content", translate_content_node)
     workflow.add_node("save_database", save_database_node)
     
     # Thiết lập entry point
@@ -79,17 +81,21 @@ def create_report_workflow_v2():
         }
     )
     
-    # CSS Component với retry logic
+    # CSS Component với retry logic - after CSS, translate HTML content
     workflow.add_conditional_edges(
         "create_css",
         should_retry_css_or_continue,
         {
             "retry_css": "create_css",
-            "continue": "save_database",
+            "continue": "translate_content",  # Translate HTML to English after CSS
             "end": END
         }
     )
     
+    # After translation, save to database
+    workflow.add_edge("translate_content", "save_database")
+    
+    # Kết thúc workflow
     workflow.add_edge("save_database", END)
     
     return workflow.compile()
@@ -124,7 +130,7 @@ def generate_auto_research_report_langgraph_v2(api_key: str, max_attempts: int =
         session_id = str(uuid.uuid4())
     
     # Khởi tạo progress tracking
-    progress_tracker.start_progress(session_id, total_steps=9)
+    progress_tracker.start_progress(session_id, total_steps=11)  # Updated for translate_content step
     progress_tracker.update_step(session_id, 0, "Bắt đầu", "Khởi tạo workflow phiên bản 2")
     
     try:

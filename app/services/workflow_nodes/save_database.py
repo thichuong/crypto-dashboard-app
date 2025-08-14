@@ -34,7 +34,9 @@ def _save_to_database_with_retry(state: ReportState, session_id: str, max_retrie
             new_report = Report(
                 html_content=state["html_content"],
                 css_content=state["css_content"],
-                js_content=state["js_content"]
+                js_content=state["js_content"],
+                html_content_en=state.get("html_content_en"),  # Use translated HTML content
+                js_content_en=None     # No longer generated - JS supports multi-language natively
             )
             
             progress_tracker.update_step(session_id, details="Đang commit vào database...")
@@ -117,7 +119,7 @@ def _save_to_database_with_context(state: ReportState, session_id: str) -> Repor
 def save_database_node(state: ReportState) -> ReportState:
     """Node để lưu báo cáo vào database"""
     session_id = state["session_id"]
-    progress_tracker.update_step(session_id, 8, "Lưu báo cáo", "Đang lưu HTML, CSS, JS vào cơ sở dữ liệu")
+    progress_tracker.update_step(session_id, 9, "Lưu báo cáo", "Đang lưu HTML, CSS, JS vào cơ sở dữ liệu")
     
     try:
         # Import Flask app để có application context

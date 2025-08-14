@@ -38,6 +38,8 @@ class ReportState(TypedDict):
     html_content: Optional[str]
     css_content: Optional[str]
     js_content: Optional[str]
+    html_content_en: Optional[str]  # HTML content translated to English
+    js_content_en: Optional[str] # JS content translated to English
     report_id: Optional[int]
     
     # Control flow
