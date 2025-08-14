@@ -19,7 +19,6 @@ def check_environment_variables():
     env_vars = [
         'RAILWAY_ENVIRONMENT',
         'DATABASE_URL', 
-        'POSTGRES_URL',
         'PORT',
         'FLASK_ENV'
     ]

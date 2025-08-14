@@ -24,7 +24,7 @@
 
 4. **Database Setup**
    - Add PostgreSQL addon
-   - Set `POSTGRES_URL` environment variable
+   - Set `DATABASE_URL` environment variable
 
 5. **Redis Setup** (Optional)
    - Add Redis addon for caching

@@ -7,7 +7,7 @@ services:
       - "8080:8080"
     environment:
       - FLASK_ENV=production
-      - POSTGRES_URL=postgresql://crypto_user:${POSTGRES_PASSWORD}@postgres:5432/crypto_db
+      - DATABASE_URL=postgresql://crypto_user:${POSTGRES_PASSWORD}@postgres:5432/crypto_db
       - REDIS_URL=redis://redis:6379/0
       - SECRET_KEY=${SECRET_KEY}
       - GEMINI_API_KEY=${GEMINI_API_KEY}

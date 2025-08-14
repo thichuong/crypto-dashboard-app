@@ -299,8 +299,8 @@ class ConfigManager:
         }
         
         # Database URL
-        if postgres_url := os.getenv('POSTGRES_URL'):
-            db_url = postgres_url.replace("postgres://", "postgresql://", 1)
+        if database_url := os.getenv('DATABASE_URL'):
+            db_url = database_url.replace("postgres://", "postgresql://", 1)
             
             # Add SSL parameters for Railway PostgreSQL
             if "?" not in db_url:

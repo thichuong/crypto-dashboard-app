@@ -112,7 +112,7 @@ python run.py
 ### Railway Environment Variables
 ```bash
 # Required
-POSTGRES_URL=${{Postgres.DATABASE_URL}}
+DATABASE_URL=${{Postgres.DATABASE_URL}}
 REDIS_URL=${{Redis.REDIS_URL}}
 GEMINI_API_KEY=your_key
 

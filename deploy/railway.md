@@ -42,7 +42,6 @@ railway link
 ```bash
 # Database connection (auto-linked)
 DATABASE_URL=${{Postgres.DATABASE_URL}}
-POSTGRES_URL=${{Postgres.DATABASE_URL}}
 
 # Redis connection (auto-linked)
 REDIS_URL=${{Redis.REDIS_URL}}

@@ -20,8 +20,8 @@ def configure_app(app):
         print("INFO: Running in development mode")
 
     # --- CẤU HÌNH DATABASE ---
-    # Prefer POSTGRES_URL for local development, then DATABASE_URL for hosting platforms
-    db_env = os.getenv('POSTGRES_URL') or os.getenv('DATABASE_URL')
+    # Prefer DATABASE_URL for database connection
+    db_env = os.getenv('DATABASE_URL')
     if db_env:
         # Normalize scheme for SQLAlchemy (older URLs may use postgres://)
         db_url = db_env.replace("postgres://", "postgresql://", 1)
@@ -66,7 +66,7 @@ def configure_app(app):
             'connect_args': connect_args
         }
         
-        source = 'POSTGRES_URL' if os.getenv('POSTGRES_URL') else 'DATABASE_URL'
+        source = 'DATABASE_URL'
         print(f"INFO: Connecting to Postgres database from env var: {source}")
         
         # Debug info for Railway (only show host, not full URL for security)
