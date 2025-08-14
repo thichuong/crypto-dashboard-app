@@ -106,9 +106,9 @@ function createGauge(container, value, config) {
     container.classList.add('gauge-container');
 
     // Tính toán viewBox với padding để đảm bảo căn giữa hoàn hảo
-    const SVG_WIDTH = 200;
-    const SVG_HEIGHT = 140;
-    const PADDING = 10; // Padding để tránh cắt
+    const SVG_WIDTH = 300; // Tăng từ 200 lên 300
+    const SVG_HEIGHT = 210; // Tăng từ 140 lên 210
+    const PADDING = 15; // Tăng padding từ 10 lên 15
     
     // Tạo SVG element chính với viewBox tối ưu cho responsive và căn giữa
     const svg = createSvgElement('svg', {
@@ -119,7 +119,7 @@ function createGauge(container, value, config) {
 
     // a. Tạo đường track nền
     const trackPath = createSvgElement('path', {
-        d: describeArc_gauge(100, 100, 75, GAUGE_START_ANGLE, GAUGE_END_ANGLE),
+        d: describeArc_gauge(150, 150, 110, GAUGE_START_ANGLE, GAUGE_END_ANGLE), // Tăng center từ (100,100) lên (150,150) và radius từ 75 lên 110
         class: 'gauge-track'
     });
     svg.appendChild(trackPath);
@@ -133,7 +133,7 @@ function createGauge(container, value, config) {
         const end = GAUGE_START_ANGLE + (Math.min(segmentEndPercentage, 1) * ANGLE_SPAN);
         
         const segmentPath = createSvgElement('path', {
-            d: describeArc_gauge(100, 100, 75, start, end),
+            d: describeArc_gauge(150, 150, 110, start, end), // Cập nhật center và radius
             stroke: segment.color, // Color được đặt trực tiếp vì nó là dữ liệu động
             class: 'gauge-segment'
         });
@@ -145,24 +145,24 @@ function createGauge(container, value, config) {
     // c. Tạo kim chỉ
     const needleGroup = createSvgElement('g', {
         class: 'gauge-needle-group',
-        transform: `rotate(${valueAngle} 100 100)`
+        transform: `rotate(${valueAngle} 150 150)` // Cập nhật center rotation
     });
     const needlePointer = createSvgElement('path', {
-        d: 'M 100 20 L 97 100 L 103 100 Z',
+        d: 'M 150 30 L 145 150 L 155 150 Z', // Cập nhật needle path cho kích thước lớn hơn
         class: 'gauge-needle-pointer'
     });
     const needlePivot = createSvgElement('circle', {
-        cx: 100,
-        cy: 100,
-        r: 6,
+        cx: 150, // Cập nhật center X
+        cy: 150, // Cập nhật center Y
+        r: 8, // Tăng radius từ 6 lên 8
         class: 'gauge-needle-pivot'
     });
     needleGroup.append(needlePointer, needlePivot);
     svg.appendChild(needleGroup);
 
     // d. Tạo các nhãn văn bản với vị trí căn giữa tuyệt đối
-    const centerX = 100; // Tâm X của gauge
-    const centerY = 100; // Tâm Y của gauge
+    const centerX = 150; // Cập nhật tâm X của gauge
+    const centerY = 150; // Cập nhật tâm Y của gauge
     
     // Tạo group để chứa text và đảm bảo căn giữa
     const textGroup = createSvgElement('g', {
@@ -171,7 +171,7 @@ function createGauge(container, value, config) {
     
     const valueText = createSvgElement('text', {
         x: centerX,
-        y: centerY - 10, // Đặt value text 10px trên tâm
+        y: centerY + 30, // Điều chỉnh vị trí text theo tỷ lệ mới
         class: 'gauge-text gauge-value-text',
         'text-anchor': 'middle',
         'dominant-baseline': 'central'
@@ -180,7 +180,7 @@ function createGauge(container, value, config) {
 
     const labelText = createSvgElement('text', {
         x: centerX,
-        y: centerY + 20, // Đặt label text 20px dưới value text
+        y: centerY + 70, // Điều chỉnh vị trí label theo tỷ lệ mới
         fill: valueColor, // Color được đặt trực tiếp vì nó là dữ liệu động
         class: 'gauge-text gauge-label-text',
         'text-anchor': 'middle',

@@ -10,8 +10,8 @@
 .gauge-container {
     width: 100%;
     height: auto;
-    max-width: 280px; /* Giới hạn kích thước tối đa để không quá lớn */
-    max-height: 200px; /* Giới hạn chiều cao tối đa */
+    max-width: 800px; /* Tăng kích thước tối đa từ 560px lên 800px */
+    max-height: 600px; /* Tăng chiều cao tối đa từ 400px lên 600px */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -39,7 +39,7 @@
 .gauge-track {
     fill: none;
     stroke: var(--bg-primary); /* Use background color for the track */
-    stroke-width: 22;
+    stroke-width: 32; /* Tăng từ 22 lên 32 để phù hợp với kích thước lớn hơn */
     stroke-linecap: round;
 }
 
@@ -47,13 +47,13 @@
 /* Base style for the colored segments */
 .gauge-segment {
     fill: none;
-    stroke-width: 22;
+    stroke-width: 32; /* Tăng từ 22 lên 32 để phù hợp với kích thước lớn hơn */
     transition: stroke-width 0.3s ease, stroke 0.3s ease; /* Smooth transition for hover effect */
 }
 
 
 .gauge-segment:hover {
-    stroke-width: 26; /* Slightly larger on hover */
+    stroke-width: 38; /* Tăng từ 26 lên 38 để tương ứng với stroke-width mới */
     cursor: pointer; /* Indicate interactivity */
 }
 
@@ -130,18 +130,7 @@
 }
 
 
-.gauge-value-text {
-    fill: var(--gauge-value-text-color); /* Use dedicated text color */
-    font-size: 32px; /* Giữ kích thước desktop lớn */
-    font-weight: 800;
-}
 
-
-.gauge-label-text {
-    font-size: 16px; /* Giữ kích thước desktop lớn */
-    font-weight: 600;
-    /* The fill color is set dynamically via JavaScript */
-}
 
 /* --- Text Elements --- */
 
@@ -153,12 +142,12 @@
 
 .gauge-value-text {
     fill: var(--gauge-value-text-color); /* Use dedicated text color */
-    font-size: 32px;
+    font-size: 50px; /* Cập nhật để khớp với rule trên */
     font-weight: 800;
 }
 
 .gauge-label-text {
-    font-size: 16px;
+    font-size: 20px; /* Cập nhật để khớp với rule trên */
     font-weight: 600;
     /* The fill color is set dynamically via JavaScript */
 }
@@ -174,32 +163,32 @@
 /* Điều chỉnh kích thước cho màn hình nhỏ - TĂNG kích thước text cho mobile */
 @media (max-width: 768px) {
     .gauge-container {
-        max-width: 260px; /* Tăng kích thước container */
-        max-height: 180px;
+        max-width: 350px; /* Tăng kích thước container từ 260px lên 350px */
+        max-height: 250px; /* Tăng từ 180px lên 250px */
     }
     
     .gauge-value-text {
-        font-size: 30px; /* Tăng từ 24px lên 30px cho dễ đọc hơn */
+        font-size: 46px; /* Tăng từ 36px lên 46px cho dễ đọc hơn */
     }
     
     .gauge-label-text {
-        font-size: 15px; /* Tăng từ 12px lên 15px cho dễ đọc hơn */
+        font-size: 22px; /* Tăng từ 18px lên 22px cho dễ đọc hơn */
     }
 }
 
 /* Điều chỉnh kích thước cho màn hình rất nhỏ - GIỮ kích thước text lớn hơn */
 @media (max-width: 480px) {
     .gauge-container {
-        max-width: 220px; /* Tăng từ 200px */
-        max-height: 150px; /* Tăng từ 140px */
+        max-width: 300px; /* Tăng từ 220px lên 300px */
+        max-height: 200px; /* Tăng từ 150px lên 200px */
     }
     
     .gauge-value-text {
-        font-size: 26px; /* Tăng từ 20px lên 26px cho dễ đọc */
+        font-size: 40px; /* Tăng từ 32px lên 40px cho dễ đọc */
     }
     
     .gauge-label-text {
-        font-size: 13px; /* Tăng từ 11px lên 13px cho dễ đọc */
+        font-size: 20px; /* Tăng từ 16px lên 20px cho dễ đọc */
     }
 }
 
@@ -211,12 +200,12 @@
     }
     
     .gauge-value-text {
-        font-size: 24px; /* Vẫn giữ kích thước lớn cho dễ đọc */
+        font-size: 32px; /* Tăng từ 24px lên 32px cho dễ đọc */
         font-weight: 900; /* Tăng độ đậm để nổi bật hơn */
     }
     
     .gauge-label-text {
-        font-size: 12px; /* Kích thước vừa phải cho label */
+        font-size: 16px; /* Tăng từ 12px lên 16px cho label */
         font-weight: 700; /* Tăng độ đậm */
     }
 }
@@ -224,8 +213,8 @@
 /* Adaptive sizing dựa trên kích thước container cha */
 .card .gauge-container,
 .report-card .gauge-container {
-    max-width: min(280px, 90%); /* Không quá 90% chiều rộng card */
-    max-height: min(200px, 60%); /* Không quá 60% chiều cao card */
+    max-width: min(400px, 90%); /* Tăng từ 280px lên 400px - không quá 90% chiều rộng card */
+    max-height: min(300px, 60%); /* Tăng từ 200px lên 300px - không quá 60% chiều cao card */
 }
 
 /* Đảm bảo gauge căn giữa trong mọi layout */
