@@ -20,34 +20,53 @@ def configure_app(app):
         print("INFO: Running in development mode")
 
     # --- CẤU HÌNH DATABASE ---
-    # Prefer DATABASE_URL (common in hosting providers) but fall back to POSTGRES_URL
-    db_env = os.getenv('DATABASE_URL') or os.getenv('POSTGRES_URL')
+    # Prefer POSTGRES_URL for local development, then DATABASE_URL for hosting platforms
+    db_env = os.getenv('POSTGRES_URL') or os.getenv('DATABASE_URL')
     if db_env:
         # Normalize scheme for SQLAlchemy (older URLs may use postgres://)
         db_url = db_env.replace("postgres://", "postgresql://", 1)
         
-        # Add SSL parameters commonly required for Railway/Postgres hosts
-        if "?" not in db_url:
-            db_url += "?sslmode=require"
-        elif "sslmode" not in db_url:
-            db_url += "&sslmode=require"
+        # Determine if this is local development or production
+        is_local_postgres = 'localhost' in db_url or '127.0.0.1' in db_url
+        
+        # Configure SSL based on environment
+        if is_local_postgres:
+            # Local PostgreSQL typically doesn't require SSL
+            if "?" not in db_url:
+                db_url += "?sslmode=disable"
+            elif "sslmode" not in db_url:
+                db_url += "&sslmode=disable"
+        else:
+            # Production/hosted PostgreSQL requires SSL
+            if "?" not in db_url:
+                db_url += "?sslmode=require"
+            elif "sslmode" not in db_url:
+                db_url += "&sslmode=require"
         
         app.config['SQLALCHEMY_DATABASE_URI'] = db_url
         
-        # Connection pooling and engine options tuned for hosted Postgres
+        # Connection pooling and engine options
+        connect_args = {
+            "connect_timeout": 60 if not is_local_postgres else 10,
+            "application_name": "crypto_dashboard_app"
+        }
+        
+        # Add SSL mode to connect_args
+        if is_local_postgres:
+            connect_args["sslmode"] = "disable"
+        else:
+            connect_args["sslmode"] = "require"
+        
         app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
             'pool_pre_ping': True,
             'pool_recycle': 300,
             'pool_timeout': 30,
             'max_overflow': 10,
             'echo': False,
-            'connect_args': {
-                "sslmode": "require",
-                "connect_timeout": 60,  # Increased timeout for Railway
-                "application_name": "crypto_dashboard_app"
-            }
+            'connect_args': connect_args
         }
-        source = 'DATABASE_URL' if os.getenv('DATABASE_URL') else 'POSTGRES_URL'
+        
+        source = 'POSTGRES_URL' if os.getenv('POSTGRES_URL') else 'DATABASE_URL'
         print(f"INFO: Connecting to Postgres database from env var: {source}")
         
         # Debug info for Railway (only show host, not full URL for security)

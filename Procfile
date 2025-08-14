@@ -1,2 +1,2 @@
-release: python migrate_railway_v2.py
+release: python migrate_railway.py
 web: bash railway_start.sh
