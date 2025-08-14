@@ -1,3 +1,51 @@
+# Crypto Dashboard & AI Report Generator
+
+Ứng dụng Flask cung cấp dashboard thị trường tiền mã hoá thời gian thực và bộ tạo báo cáo AI tự động.
+
+Tính năng chính:
+- Dashboard real-time (WebSocket/Socket.IO) với biểu đồ SVG.
+- Trình tạo báo cáo AI sử dụng workflow (LangGraph) để nghiên cứu, xác thực và sinh nội dung báo cáo.
+- Xuất báo cáo sang HTML/PDF (A4) với hỗ trợ in ấn và layout tối ưu.
+- Hỗ trợ PWA: cài đặt trên thiết bị, offline cache và push notifications.
+- Hỗ trợ song ngữ (Tiếng Việt / English) cho nội dung báo cáo và giao diện chính.
+
+Nhanh chóng (Quick start):
+
+1. Tải mã nguồn
+
+```bash
+git clone https://github.com/thichuong/Crypto-Dashboard-and-AI-ReportGenerator.git
+cd Crypto-Dashboard-and-AI-ReportGenerator
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+2. Cấu hình môi trường (ví dụ `.env`)
+
+```env
+FLASK_ENV=development
+GEMINI_API_KEY=your_gemini_key
+ENABLE_AUTO_REPORT_SCHEDULER=true
+DATABASE_URL=sqlite:///instance/local_dev.db
+```
+
+3. Chạy ứng dụng
+
+```bash
+python run.py
+```
+
+Thư mục quan trọng:
+- `app/` — mã nguồn Flask (routes, services, templates)
+- `app/services/` — logic sinh báo cáo và workflow
+- `app/templates/` — HTML templates (bao gồm `index.html` và `pdf_template.html`)
+- `static/` — tài nguyên CSS/JS và module chart
+
+Góp phần:
+- Mọi đóng góp, báo lỗi, đề xuất tính năng: mở Issue trên GitHub.
+
+License: MIT
 # 📊 Crypto Dashboard & AI Report Generator
 
 Ứng dụng Flask hiện đại với **WebSocket real-time updates** và **Progressive Web App (PWA)** hỗ trợ, cung cấp dashboard thị trường crypto và AI report generator sử dụng LangGraph workflow.

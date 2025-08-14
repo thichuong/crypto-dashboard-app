@@ -15,7 +15,9 @@
 
     {% if report and report.css_content %}
         <style>
+            /* <![CDATA[ */
             {{ report.css_content | safe }}
+            /* ]]> */
         </style>
     {% endif %}
 </head>
@@ -93,5 +95,37 @@
     <script src="{{ url_for('static', filename='js/report-initializer.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/pdf-template.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/language-toggle.js') }}" defer></script>
+
+    <script>
+        // Inline language toggle for PDF template (fallback)
+        (function () {
+            const STORAGE_KEY = 'app_lang';
+            function getLang() { return localStorage.getItem(STORAGE_KEY) || 'vi'; }
+            function setLang(lang) { localStorage.setItem(STORAGE_KEY, lang); applyLang(lang); }
+            function applyLang(lang) {
+                const en = document.getElementById('report-content-en');
+                const vi = document.getElementById('report-content-vi');
+                if (en) en.style.display = (lang === 'en') ? 'block' : 'none';
+                if (vi) vi.style.display = (lang === 'vi') ? 'block' : 'none';
+                const titleEn = document.getElementById('title-en');
+                const titleVi = document.getElementById('title-vi');
+                if (titleEn) titleEn.style.display = (lang === 'en') ? 'block' : 'none';
+                if (titleVi) titleVi.style.display = (lang === 'vi') ? 'block' : 'none';
+                const subtitleEn = document.getElementById('subtitle-en');
+                const subtitleVi = document.getElementById('subtitle-vi');
+                if (subtitleEn) subtitleEn.style.display = (lang === 'en') ? 'block' : 'none';
+                if (subtitleVi) subtitleVi.style.display = (lang === 'vi') ? 'block' : 'none';
+            }
+
+            document.addEventListener('click', function (e) {
+                const btn = e.target.closest && e.target.closest('.lang-btn');
+                if (!btn) return;
+                const lang = btn.getAttribute('data-lang');
+                if (lang) setLang(lang);
+            });
+
+            document.addEventListener('DOMContentLoaded', function () { applyLang(getLang()); });
+        })();
+    </script>
 </body>
 </html>
