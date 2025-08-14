@@ -84,9 +84,15 @@ function createLineChart(container, data, options = {}) {
                         fill="var(--text-primary)" font-weight="600" class="value-label h3">
                         ${valuePrefix}${d.toFixed(1)}${valueSuffix}
                     </text>`;
-                } else if (i === maxIdx || i === minIdx) {
-                    // Nhãn max/min ở phía trên
+                } else if (i === maxIdx) {
+                    // Nhãn max ở phía trên
                     label = `<text x="${toX(i)}" y="${toY(d) - 12}" text-anchor="middle"
+                        fill="var(--text-primary)" font-weight="600" class="value-label h3">
+                        ${valuePrefix}${d.toFixed(1)}${valueSuffix}
+                    </text>`;
+                } else if (i === minIdx) {
+                    // Nhãn min ở phía dưới
+                    label = `<text x="${toX(i)}" y="${toY(d) + 18}" text-anchor="middle"
                         fill="var(--text-primary)" font-weight="600" class="value-label h3">
                         ${valuePrefix}${d.toFixed(1)}${valueSuffix}
                     </text>`;

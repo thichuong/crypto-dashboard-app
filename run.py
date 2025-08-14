@@ -15,4 +15,13 @@ if __name__ == '__main__':
     debug_mode = os.environ.get('RAILWAY_ENVIRONMENT') != 'production'
     
     # Chạy ứng dụng với SocketIO support
-    websocket_manager.socketio.run(app, host=host, port=port, debug=debug_mode)
+    # Disable the Flask reloader when using SocketIO; the reloader can cause
+    # Werkzeug to attempt writes before start_response which raises
+    # "write() before start_response" in some setups.
+    websocket_manager.socketio.run(
+        app,
+        host=host,
+        port=port,
+        debug=debug_mode,
+        use_reloader=False
+    )
