@@ -30,6 +30,20 @@ function getTranslatedText(key) {
 }
 
 /**
+ * Select an element for dashboard by language-aware id.
+ * If `lang` is 'en' it will try id + '-en' first, then fallback to base id.
+ * If no language specified, prefer window.languageManager.currentLanguage when available.
+ */
+function selectDashboardElementByLang(idBase, lang) {
+    const language = lang || (window.languageManager && window.languageManager.currentLanguage) || 'vi';
+    if (language === 'en') {
+        const enEl = document.getElementById(idBase + '-en');
+        if (enEl) return enEl;
+    }
+    return document.getElementById(idBase);
+}
+
+/**
  * Hiển thị thông báo lỗi thân thiện trên một card cụ thể.
  * @param {string} containerId - ID của container cần hiển thị lỗi.
  * @param {string} message - Thông báo lỗi.
@@ -39,6 +53,74 @@ function displayError(containerId, message) {
     if (container) {
         const errorMsg = message || getTranslatedText('error-loading-data');
         container.innerHTML = `<p class="text-sm text-red-600">${errorMsg}</p>`;
+    }
+}
+
+/**
+ * Re-render dashboard UI from previously cached summary data without re-fetching.
+ * Useful when only language changed.
+ */
+function renderDashboardFromCache(lang) {
+    const data = window.dashboardSummaryCache;
+    if (!data) return;
+
+    // market cap
+    const marketCapContainer = selectDashboardElementByLang('market-cap-container', lang);
+    if (marketCapContainer) {
+        marketCapContainer.innerHTML = `
+            <p class="text-3xl font-bold text-gray-900">${'$' + formatNumber(Number(marketCapContainer.dataset.marketCap || data.market_cap))}</p>
+            <p class="text-sm text-gray-500">${getTranslatedText('whole-market')}</p>`;
+    }
+
+    // volume
+    const volumeContainer = selectDashboardElementByLang('volume-24h-container', lang);
+    if (volumeContainer) {
+        volumeContainer.innerHTML = `
+            <p class="text-3xl font-bold text-gray-900">${'$' + formatNumber(Number(volumeContainer.dataset.volume24h || data.volume_24h))}</p>
+            <p class="text-sm text-gray-500">${getTranslatedText('whole-market')}</p>`;
+    }
+
+    // btc
+    const btcContainer = selectDashboardElementByLang('btc-price-container', lang);
+    if (btcContainer) {
+        const price = btcContainer.dataset.btcPriceUsd || data.btc_price_usd;
+        const change = Number(btcContainer.dataset.btcChange24h || data.btc_change_24h || 0);
+        const changeClass = change >= 0 ? 'text-green-600' : 'text-red-600';
+        btcContainer.innerHTML = `
+            <p class="text-3xl font-bold text-gray-900">${'$' + (price ? Number(price).toLocaleString('en-US') : 'N/A')}</p>
+            <p class="text-sm font-semibold ${changeClass}">${!isNaN(change) ? change.toFixed(2) : 'N/A'}% (24h)</p>`;
+    }
+
+    // Fear & Greed gauge
+    const fngContainer = selectDashboardElementByLang('fear-greed-container', lang);
+    const fngVal = fngContainer ? Number(fngContainer.dataset.value || data.fng_value) : null;
+    if (fngContainer && !isNaN(fngVal)) {
+        const fngConfig = {
+            min: 0, max: 100,
+            segments: [
+                { limit: 24, color: 'var(--fng-extreme-fear-color)', label: getTranslatedText('extreme-fear') },
+                { limit: 49, color: 'var(--fng-fear-color)', label: getTranslatedText('fear') },
+                { limit: 54, color: 'var(--fng-neutral-color)', label: getTranslatedText('neutral') },
+                { limit: 74, color: 'var(--fng-greed-color)', label: getTranslatedText('greed') },
+                { limit: 100, color: 'var(--fng-extreme-greed-color)', label: getTranslatedText('extreme-greed') }
+            ]
+        };
+        try { createGauge(fngContainer, fngVal, fngConfig); } catch(e) { console.error('createGauge lỗi khi render từ cache', e); }
+    }
+
+    // RSI
+    const rsiContainer = selectDashboardElementByLang('rsi-container', lang);
+    const rsiVal = rsiContainer ? Number(rsiContainer.dataset.value || data.rsi_14) : null;
+    if (rsiContainer && rsiVal !== null && !isNaN(rsiVal)) {
+        const rsiConfig = {
+            min: 0, max: 100,
+            segments: [
+                { limit: 30, color: 'var(--rsi-oversold-color)', label: getTranslatedText('oversold') },
+                { limit: 70, color: 'var(--rsi-neutral-color)', label: getTranslatedText('neutral') },
+                { limit: 100, color: 'var(--rsi-overbought-color)', label: getTranslatedText('overbought') }
+            ]
+        };
+        try { createGauge(rsiContainer, rsiVal, rsiConfig); } catch(e) { console.error('createGauge lỗi khi render RSI từ cache', e); }
     }
 }
 
@@ -104,33 +186,37 @@ async function fetchDashboardSummary() {
         }
 
         // Cập nhật Vốn hóa thị trường
-        const marketCapContainer = document.getElementById('market-cap-container');
+        const marketCapContainer = selectDashboardElementByLang('market-cap-container');
         if (marketCapContainer) {
             marketCapContainer.innerHTML = `
                 <p class="text-3xl font-bold text-gray-900">${'$' + formatNumber(data.market_cap)}</p>
                 <p class="text-sm text-gray-500">${getTranslatedText('whole-market')}</p>`;
+            // cache numeric value so we can re-render visuals without re-fetch
+            try { marketCapContainer.dataset.marketCap = String(data.market_cap); } catch(e){}
         }
 
         // Cập nhật Khối lượng giao dịch
-        const volumeContainer = document.getElementById('volume-24h-container');
+        const volumeContainer = selectDashboardElementByLang('volume-24h-container');
         if (volumeContainer) {
             volumeContainer.innerHTML = `
                 <p class="text-3xl font-bold text-gray-900">${'$' + formatNumber(data.volume_24h)}</p>
                 <p class="text-sm text-gray-500">${getTranslatedText('whole-market')}</p>`;
+            try { volumeContainer.dataset.volume24h = String(data.volume_24h); } catch(e){}
         }
 
         // Cập nhật giá BTC
-        const btcContainer = document.getElementById('btc-price-container');
+        const btcContainer = selectDashboardElementByLang('btc-price-container');
         if (btcContainer) {
             const change = data.btc_change_24h;
             const changeClass = change >= 0 ? 'text-green-600' : 'text-red-600';
             btcContainer.innerHTML = `
                 <p class="text-3xl font-bold text-gray-900">${'$' + (data.btc_price_usd ? data.btc_price_usd.toLocaleString('en-US') : 'N/A')}</p>
                 <p class="text-sm font-semibold ${changeClass}">${change !== null ? change.toFixed(2) : 'N/A'}% (24h)</p>`;
+            try { btcContainer.dataset.btcPriceUsd = String(data.btc_price_usd); btcContainer.dataset.btcChange24h = String(data.btc_change_24h); } catch(e){}
         }
 
         // Cập nhật chỉ số Sợ hãi & Tham lam
-        const fngContainer = document.getElementById('fear-greed-container');
+        const fngContainer = selectDashboardElementByLang('fear-greed-container');
         const fngValue = parseInt(data.fng_value, 10);
         if (!isNaN(fngValue)) {
             const fngConfig = {
@@ -144,12 +230,13 @@ async function fetchDashboardSummary() {
                 ]
             };
             createGauge(fngContainer, fngValue, fngConfig);
+            try { fngContainer.dataset.value = String(fngValue); } catch(e){}
         } else {
             displayError('fear-greed-container', 'Giá trị F&G không hợp lệ.');
         }
 
         // Cập nhật chỉ số RSI
-        const rsiContainer = document.getElementById('rsi-container');
+        const rsiContainer = selectDashboardElementByLang('rsi-container');
         const rsiValue = data.rsi_14;
         if (rsiValue !== null && rsiValue !== undefined) {
             const rsiConfig = {
@@ -161,9 +248,13 @@ async function fetchDashboardSummary() {
                 ]
             };
             createGauge(rsiContainer, rsiValue, rsiConfig);
+            try { rsiContainer.dataset.value = String(rsiValue); } catch(e){}
         } else {
              displayError('rsi-container', 'Không nhận được giá trị RSI.');
         }
+
+        // Cache the last successful summary so we can re-render visuals on language change without re-fetching
+        try { window.dashboardSummaryCache = data; } catch(e) {}
 
     } catch (error) {
         console.error('Lỗi fetchDashboardSummary:', error);
@@ -381,11 +472,15 @@ function initDashboard() {
         // Đặt lịch gọi lại hàm tổng hợp sau mỗi 10 phút
         setInterval(fetchDashboardSummary, 600000);
         
-        // Lắng nghe sự kiện thay đổi ngôn ngữ để refresh charts
+        // Lắng nghe sự kiện thay đổi ngôn ngữ — chỉ cập nhật UI (nav & visuals), không re-fetch dữ liệu
         window.addEventListener('languageChanged', (e) => {
-            fetchDashboardSummary();
+            const lang = e?.detail?.language;
             // Rebuild navigation to match the newly visible report content (VI/EN)
             try { CreateNav(); } catch(err) { console.error('CreateNav lỗi sau khi đổi ngôn ngữ', err); }
+            // Re-initialize report visuals for the selected language if function available
+            try { if (typeof initializeAllVisuals_report === 'function') initializeAllVisuals_report(lang); } catch(err) { console.error('initializeAllVisuals_report lỗi', err); }
+            // Re-render dashboard cards & small charts from cached summary if available (no network call)
+            try { if (window.dashboardSummaryCache) renderDashboardFromCache(lang); } catch(err) { console.error('renderDashboardFromCache lỗi', err); }
         });
     }
     

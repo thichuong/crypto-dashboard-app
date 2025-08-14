@@ -28,9 +28,9 @@ def configure_app(app):
         
         # Add SSL parameters commonly required for Railway/Postgres hosts
         if "?" not in db_url:
-            db_url += "?sslmode=require&sslrootcert=DISABLE"
+            db_url += "?sslmode=require"
         elif "sslmode" not in db_url:
-            db_url += "&sslmode=require&sslrootcert=DISABLE"
+            db_url += "&sslmode=require"
         
         app.config['SQLALCHEMY_DATABASE_URI'] = db_url
         
@@ -43,12 +43,20 @@ def configure_app(app):
             'echo': False,
             'connect_args': {
                 "sslmode": "require",
-                "connect_timeout": 30,
+                "connect_timeout": 60,  # Increased timeout for Railway
                 "application_name": "crypto_dashboard_app"
             }
         }
         source = 'DATABASE_URL' if os.getenv('DATABASE_URL') else 'POSTGRES_URL'
         print(f"INFO: Connecting to Postgres database from env var: {source}")
+        
+        # Debug info for Railway (only show host, not full URL for security)
+        try:
+            import urllib.parse
+            parsed = urllib.parse.urlparse(db_url)
+            print(f"INFO: Database host: {parsed.hostname}")
+        except:
+            pass
     else:
         db_path = os.path.join(app.instance_path, 'local_dev.db')
         os.makedirs(app.instance_path, exist_ok=True)
