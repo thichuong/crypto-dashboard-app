@@ -408,14 +408,19 @@ async function CreateNav() {
                 if (icon && icon.parentNode) icon.parentNode.removeChild(icon);
                 a.textContent = h2Text.textContent.trim();
                 a.classList.add('block', 'py-1', 'px-2', 'rounded');
-                // smooth scroll on click and set active class immediately
+                // smooth scroll on click và active ngay lập tức
                 a.addEventListener('click', (e) => {
                     e.preventDefault();
+                    
                     const target = activeContent.querySelector(`#${section.id}`);
-                    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    // update active class
-                    navLinksContainer.querySelectorAll('a').forEach(x => x.classList.remove('active'));
-                    a.classList.add('active');
+                    if (target) {
+                        // Active ngay lập tức khi click
+                        navLinksContainer.querySelectorAll('a').forEach(link => link.classList.remove('active'));
+                        a.classList.add('active');
+                        
+                        // Scroll tới target
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
                 });
                 li.appendChild(a);
                 navLinksContainer.appendChild(li);
@@ -424,23 +429,66 @@ async function CreateNav() {
 
         const navLinks = navLinksContainer.querySelectorAll('a');
 
-        // Observe visible sections and update active link
+        // Quan sát các section để tự động active nav link khi scroll
         const observer = new IntersectionObserver((entries) => {
+            // Tìm section có 20% đầu nằm trong vùng 0-20% viewport
+            let bestEntry = null;
+            let bestScore = -1;
+            
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    navLinks.forEach(link => {
-                        link.classList.remove('active');
-                        if (link.getAttribute('href').substring(1) === entry.target.id) {
-                            link.classList.add('active');
+                    const rect = entry.target.getBoundingClientRect();
+                    const viewportHeight = window.innerHeight;
+                    
+                    // Tính vùng 0-20% đầu của section
+                    const sectionTop = rect.top;
+                    if (rect.height * 0.2 <= viewportHeight * 0.2)
+                        {const section20Percent = rect.top + (rect.height * 0.2);}
+                    else
+                        {const section20Percent = rect.top + viewportHeight * 0.2;}
+                    
+                    // Tính vùng 0-20% của viewport
+                    const viewport20Percent = viewportHeight * 0.2;
+                    
+                    // Kiểm tra 2 vùng có chạm nhau không:
+                    // - sectionTop nằm trong vùng 0-20% viewport HOẶC
+                    // - section20Percent nằm trong vùng 0-20% viewport
+                    if ((sectionTop >= 0 && sectionTop <= viewport20Percent) || 
+                        (section20Percent <= viewport20Percent && section20Percent >= 0)) {
+                        // Tính điểm ưu tiên: section càng gần top càng cao điểm
+                        const score = viewport20Percent - sectionTop;
+                        
+                        if (score > bestScore) {
+                            bestScore = score;
+                            bestEntry = entry;
                         }
-                    });
+                    }
                 }
             });
-        }, { root: null, rootMargin: "-30% 0px -70% 0px", threshold: 0.1 });
+            
+            // Cập nhật nav link cho section tốt nhất
+            if (bestEntry) {
+                const targetId = bestEntry.target.id;
+                navLinks.forEach(link => {
+                    const isTarget = link.getAttribute('href').substring(1) === targetId;
+                    link.classList.toggle('active', isTarget);
+                });
+            }
+        }, { 
+            root: null, 
+            rootMargin: "0px", 
+            threshold: [0, 0.1, 0.2, 0.3, 0.5, 1.0] 
+        });
 
+        // Quan sát tất cả sections
         reportSections.forEach(section => {
             observer.observe(section);
         });
+
+        // Thiết lập nav link đầu tiên làm active ban đầu nếu chưa có active nào
+        if (navLinks.length > 0 && !navLinksContainer.querySelector('a.active')) {
+            navLinks[0].classList.add('active');
+        }
 
         // Lưu observer vào DOM node để có thể disconnect khi tạo lại nav
         reportContainer._navObserver = observer;
