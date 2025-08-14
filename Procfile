@@ -1,2 +1,2 @@
-release: python migrate_railway.py
-web: gunicorn --bind 0.0.0.0:$PORT --workers 1 --timeout 120 --preload run:app
+release: python migrate_railway_v2.py
+web: bash railway_start.sh

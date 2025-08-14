@@ -7,7 +7,7 @@
     "restartPolicyMaxRetries": 3,
     "healthcheckPath": "/health",
     "healthcheckTimeout": 100,
-    "startCommand": "python migrate_railway_v2.py && gunicorn --bind 0.0.0.0:$PORT --workers 2 --threads 2 --timeout 300 --keep-alive 5 --max-requests 1000 --max-requests-jitter 100 --preload run:app"
+    "startCommand": "bash railway_start.sh"
   },
   "environment": {
     "PYTHONUNBUFFERED": "1",
