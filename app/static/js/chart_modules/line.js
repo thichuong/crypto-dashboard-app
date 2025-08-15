@@ -122,24 +122,143 @@ function createLineChart(container, data, options = {}) {
         container.appendChild(tooltip);
     }
 
-    // Xử lý tooltip cho các điểm
+    // Xử lý tooltip cho các điểm và giữa các điểm (interpolated values)
     const svgEl = container.querySelector('svg');
     const pointGroups = svgEl.querySelectorAll('.line-point-group');
+
+    // Create SVG hover indicator: vertical line + focus dot
+    (function createHoverIndicator() {
+        const svgns = 'http://www.w3.org/2000/svg';
+        const hoverGroup = document.createElementNS(svgns, 'g');
+        hoverGroup.setAttribute('class', 'hover-indicator');
+
+        const hoverLine = document.createElementNS(svgns, 'line');
+        hoverLine.setAttribute('x1', 0);
+        hoverLine.setAttribute('x2', 0);
+        hoverLine.setAttribute('y1', p);
+        hoverLine.setAttribute('y2', height - p);
+        hoverLine.setAttribute('stroke', color);
+        hoverLine.setAttribute('stroke-width', 1);
+        hoverLine.setAttribute('stroke-dasharray', '4 3');
+        hoverLine.setAttribute('visibility', 'hidden');
+
+        const hoverDot = document.createElementNS(svgns, 'circle');
+        hoverDot.setAttribute('cx', 0);
+        hoverDot.setAttribute('cy', 0);
+        hoverDot.setAttribute('r', 5);
+        hoverDot.setAttribute('fill', color);
+        hoverDot.setAttribute('stroke', 'var(--bg-secondary)');
+        hoverDot.setAttribute('stroke-width', 2);
+        hoverDot.setAttribute('visibility', 'hidden');
+
+        hoverGroup.appendChild(hoverLine);
+        hoverGroup.appendChild(hoverDot);
+        svgEl.appendChild(hoverGroup);
+
+        // Expose references for later updates
+        svgEl.__hoverLine = hoverLine;
+        svgEl.__hoverDot = hoverDot;
+    })();
+
+    // Helper: show tooltip at client coordinates with formatted value
+    function showTooltipAt(clientX, clientY, value) {
+        tooltip.textContent = `${valuePrefix}${value.toFixed(2)}${valueSuffix}`;
+        tooltip.classList.add('active');
+        const rect = container.getBoundingClientRect();
+        tooltip.style.left = `${clientX - rect.left + 12}px`;
+        tooltip.style.top = `${clientY - rect.top - 32}px`;
+    }
+
+    function hideTooltip() {
+        tooltip.classList.remove('active');
+    }
+
+    // Point-specific handlers still trigger exact values but reuse helper
     pointGroups.forEach((group, i) => {
         const dot = group.querySelector('.line-dot');
         dot.addEventListener('mouseenter', (e) => {
             const value = data[i];
-            tooltip.textContent = `${valuePrefix}${value.toFixed(2)}${valueSuffix}`;
-            tooltip.classList.add('active');
+            showTooltipAt(e.clientX, e.clientY, value);
         });
         dot.addEventListener('mousemove', (e) => {
-            // Hiển thị tooltip tại vị trí con trỏ chuột
-            const rect = container.getBoundingClientRect();
-            tooltip.style.left = `${e.clientX - rect.left + 12}px`;
-            tooltip.style.top = `${e.clientY - rect.top - 32}px`;
+            // Keep tooltip following the cursor when on a point
+            const value = data[i];
+            showTooltipAt(e.clientX, e.clientY, value);
         });
         dot.addEventListener('mouseleave', () => {
-            tooltip.classList.remove('active');
+            // Don't immediately hide: let svg mousemove take over if still inside svg.
+            // Small timeout prevents flicker when moving between point and nearby area.
+            setTimeout(() => {
+                // If tooltip was re-activated by svg mousemove, don't hide it.
+                if (!tooltip.classList.contains('active')) return;
+                // If mouse is outside svg, hide
+                // Use document.elementFromPoint to check current element under cursor
+                // If it's not inside our container, hide tooltip.
+                const rect = container.getBoundingClientRect();
+                const cx = rect.left + rect.width / 2; // fallback
+                const el = document.elementFromPoint(cx, rect.top + rect.height / 2);
+                if (!container.contains(el)) hideTooltip();
+            }, 10);
         });
+    });
+
+    // SVG-level mousemove to compute interpolated value between points
+    svgEl.addEventListener('mousemove', (e) => {
+        // Compute mouse X relative to the displayed SVG width, then map to viewBox width
+        const rect = svgEl.getBoundingClientRect();
+        if (rect.width === 0) return;
+        // Normalize to SVG viewBox coordinates (the viewBox width is the `width` constant)
+        const mouseX = (e.clientX - rect.left) * (width / rect.width);
+
+        // If mouse is outside the start/end area (padding), hide tooltip/indicator and exit
+        if (mouseX < p || mouseX > (width - p)) {
+            hideTooltip();
+            const hoverLine = svgEl.__hoverLine;
+            const hoverDot = svgEl.__hoverDot;
+            if (hoverLine) hoverLine.setAttribute('visibility', 'hidden');
+            if (hoverDot) hoverDot.setAttribute('visibility', 'hidden');
+            return;
+        }
+
+        // Map normalized X to fractional data index
+        const usableWidth = width - 2 * p;
+        const idxFloat = ((mouseX - p) / usableWidth) * (data.length - 1);
+        const clamped = Math.max(0, Math.min(data.length - 1, idxFloat));
+        const prevIdx = Math.floor(clamped);
+        const nextIdx = Math.min(data.length - 1, Math.ceil(clamped));
+
+        let value;
+        if (prevIdx === nextIdx) {
+            value = data[prevIdx];
+        } else {
+            const t = clamped - prevIdx;
+            value = data[prevIdx] + t * (data[nextIdx] - data[prevIdx]);
+        }
+
+        showTooltipAt(e.clientX, e.clientY, value);
+
+        // Update hover indicator (use viewBox coordinates: mouseX is in viewBox space)
+        const hoverLine = svgEl.__hoverLine;
+        const hoverDot = svgEl.__hoverDot;
+        if (hoverLine && hoverDot) {
+            // Set vertical line x position and make visible
+            hoverLine.setAttribute('x1', mouseX);
+            hoverLine.setAttribute('x2', mouseX);
+            hoverLine.setAttribute('visibility', 'visible');
+
+            // Set dot at interpolated point on line
+            const dotY = toY(value);
+            hoverDot.setAttribute('cx', mouseX);
+            hoverDot.setAttribute('cy', dotY);
+            hoverDot.setAttribute('visibility', 'visible');
+        }
+    });
+
+    svgEl.addEventListener('mouseleave', () => {
+        hideTooltip();
+        const hoverLine = svgEl.__hoverLine;
+        const hoverDot = svgEl.__hoverDot;
+        if (hoverLine) hoverLine.setAttribute('visibility', 'hidden');
+        if (hoverDot) hoverDot.setAttribute('visibility', 'hidden');
     });
 }

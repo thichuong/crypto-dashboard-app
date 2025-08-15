@@ -1,6 +1,6 @@
 /* Định dạng nhãn giá trị cho line chart */
 .line-chart-interactive .value-label.h3 {
-    font-size: 0.5rem;
+    font-size: 1rem;
     font-weight: 600;
     font-family: inherit;
     fill: var(--text-primary);

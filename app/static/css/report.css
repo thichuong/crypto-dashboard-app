@@ -47,7 +47,7 @@
     color: var(--text-primary);
     margin-bottom: 0.75rem;
 }
-
+#report-container li,
 #report-container p {
     line-height: 1.6;
     margin-bottom: 1rem;
