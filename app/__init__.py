@@ -1,5 +1,6 @@
 # app/__init__.py
 
+import os
 from flask import Flask
 
 # Import các phần mở rộng và model
@@ -39,14 +40,29 @@ def create_app():
     
     # Connect progress tracker to WebSocket manager
     progress_tracker.set_websocket_manager(websocket_manager)
-    
-    # Connect progress tracker to WebSocket manager
-    progress_tracker.set_websocket_manager(websocket_manager)
 
-    with app.app_context():
-        print("INFO: Initializing database tables...")
-        db.create_all()
-        print("INFO: Database tables initialized.")
+    # Initialize database tables in a non-blocking way for Railway
+    def init_database():
+        try:
+            with app.app_context():
+                print("INFO: Initializing database tables...")
+                db.create_all()
+                print("INFO: Database tables initialized.")
+        except Exception as e:
+            print(f"WARNING: Database initialization failed: {e}")
+            print("INFO: App will continue running without database initialization")
+    
+    # For Railway, defer database initialization to prevent blocking startup
+    if os.getenv('RAILWAY_ENVIRONMENT'):
+        # In production (Railway), defer database initialization
+        import threading
+        db_thread = threading.Thread(target=init_database)
+        db_thread.daemon = True
+        db_thread.start()
+        print("INFO: Database initialization deferred to background thread")
+    else:
+        # In development, initialize immediately
+        init_database()
 
     # Khởi động auto report scheduler
     start_auto_report_scheduler(app)

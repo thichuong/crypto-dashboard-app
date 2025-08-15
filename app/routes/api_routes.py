@@ -55,7 +55,15 @@ def register_api_routes(app):
 
     @app.route('/api/health')
     def api_health_check():
-        """API endpoint để kiểm tra database health - graceful degradation for Railway"""
+        """Ultra-simple health check for Railway"""
+        return jsonify({
+            'status': 'healthy',
+            'timestamp': time.time()
+        }), 200
+
+    @app.route('/api/health/database')
+    def api_database_health():
+        """Database health check with graceful degradation"""
         try:
             # Try simple connection check but don't fail if it doesn't work
             try:
@@ -130,23 +138,6 @@ def register_api_routes(app):
                 'status': 'error',
                 'error': str(e)
             }), 500
-
-    @app.route('/api/health/database')
-    def api_database_health():
-        """Chi tiết health check cho database"""
-        try:
-            connection_check = DatabaseHealthChecker.check_connection()
-            ssl_check = DatabaseHealthChecker.check_ssl_connection()
-            pool_status = DatabaseHealthChecker.get_connection_pool_status()
-            
-            return jsonify({
-                'connection': connection_check,
-                'ssl': ssl_check,
-                'pool': pool_status
-            })
-            
-        except Exception as e:
-            return jsonify({'error': str(e)}), 500
 
     @app.route('/test-progress/<session_id>')
     def test_progress(session_id):
