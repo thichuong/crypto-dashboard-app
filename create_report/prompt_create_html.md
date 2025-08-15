@@ -104,7 +104,7 @@ Bạn là một lập trình viên frontend chuyên tạo giao diện HTML seman
 
 ### **1. Semantic Structure:**
 ```html
-<section class="grid grid-cols-1 md:grid-cols-2 gap-6" id="summary-section">
+<section id="summary-section">
     <h2><i class="fas fa-chart-line"></i> Tóm tắt Điều hành</h2>
     <div class="report-card">
         <!-- Executive summary content -->
