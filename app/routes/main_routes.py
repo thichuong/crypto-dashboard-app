@@ -1,6 +1,7 @@
 # app/routes/main_routes.py
 
 import os
+from datetime import timezone
 from flask import render_template, request, flash, jsonify
 from ..extensions import db
 from ..models import Report
@@ -39,16 +40,43 @@ def register_main_routes(app):
             except Exception as e:
                 print(f"ERROR: Không thể tạo file lưu trữ. Lỗi: {e}")
                 flash(f"Lưu ý: Không thể tạo file lưu trữ cho báo cáo. Lỗi: {e}", "warning")
+        # Ensure created_at is timezone-aware UTC for templates
+        if latest_report and latest_report.created_at is not None:
+            try:
+                if latest_report.created_at.tzinfo is None:
+                    latest_report.created_at = latest_report.created_at.replace(tzinfo=timezone.utc)
+                else:
+                    latest_report.created_at = latest_report.created_at.astimezone(timezone.utc)
+            except Exception:
+                # if any unexpected type, leave as-is and let template handle it
+                pass
+
         return render_template('index.html', report=latest_report)
 
     @app.route('/report/<int:report_id>')
     def view_report(report_id):
         report = db.get_or_404(Report, report_id)
+        if report and report.created_at is not None:
+            try:
+                if report.created_at.tzinfo is None:
+                    report.created_at = report.created_at.replace(tzinfo=timezone.utc)
+                else:
+                    report.created_at = report.created_at.astimezone(timezone.utc)
+            except Exception:
+                pass
         return render_template('index.html', report=report)
 
     @app.route('/pdf-template/<int:report_id>')
     def pdf_template(report_id):
         report = db.get_or_404(Report, report_id)
+        if report and report.created_at is not None:
+            try:
+                if report.created_at.tzinfo is None:
+                    report.created_at = report.created_at.replace(tzinfo=timezone.utc)
+                else:
+                    report.created_at = report.created_at.astimezone(timezone.utc)
+            except Exception:
+                pass
         return render_template('pdf_template.html', report=report)
 
     @app.route('/reports')
@@ -58,6 +86,17 @@ def register_main_routes(app):
         reports = Report.query.order_by(Report.created_at.desc()).paginate(
             page=page, per_page=per_page, error_out=False
         )
+        # Normalize created_at for each item in the current page
+        try:
+            for r in getattr(reports, 'items', []):
+                if getattr(r, 'created_at', None) is not None:
+                    if r.created_at.tzinfo is None:
+                        r.created_at = r.created_at.replace(tzinfo=timezone.utc)
+                    else:
+                        r.created_at = r.created_at.astimezone(timezone.utc)
+        except Exception:
+            pass
+
         return render_template('report_list.html', reports=reports)
     
     @app.route('/upload')

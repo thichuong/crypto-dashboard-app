@@ -29,7 +29,7 @@
             <h1 class="text-4xl md:text-5xl font-extrabold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-green-500"><span data-i18n="site-title">Toàn Cảnh Thị Trường Tiền Mã Hóa</span></h1>
             {% if report %}
                 <p class="text-lg text-gray-600 max-w-3xl mx-auto">
-                    <span data-i18n="report-display">Hiển thị báo cáo</span> (<span data-i18n="created-at">tạo lúc</span> {{ (report.created_at + timedelta(hours=7)).strftime('%d-%m-%Y %H:%M') }})
+                    <span data-i18n="report-display">Hiển thị báo cáo</span> (<span data-i18n="created-at">tạo lúc</span> {{ report.created_at.strftime('%d-%m-%Y %H:%M') }} UTC)
                 </p>
             {% else %}
                 <p class="text-lg text-gray-600 max-w-3xl mx-auto" data-i18n="analysis-summary">Bài phân tích và tổng hợp</p>

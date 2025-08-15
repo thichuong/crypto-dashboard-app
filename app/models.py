@@ -13,7 +13,8 @@ class Report(db.Model):
     js_content = db.Column(db.Text, nullable=True)
     html_content_en = db.Column(db.Text, nullable=True)  # Nội dung HTML đã dịch sang tiếng Anh
     js_content_en = db.Column(db.Text, nullable=True)    # Nội dung JS đã dịch sang tiếng Anh
-    created_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
+    # store timezone-aware UTC timestamps (maps to TIMESTAMPTZ in Postgres)
+    created_at = db.Column(db.DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
 
     def __repr__(self):
         return f'<Report {self.id}>'

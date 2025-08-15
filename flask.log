@@ -1,0 +1,517 @@
+Server initialized for threading.
+INFO: Running in development mode
+INFO: Connecting to Postgres database from env var: DATABASE_URL
+INFO: Database host: localhost
+INFO: Connecting to Redis for caching.
+INFO: Initializing database tables...
+INFO: Database tables initialized.
+INFO: Auto report scheduler chưa được bật. Thiết lập ENABLE_AUTO_REPORT_SCHEDULER=true để bật.
+ * Serving Flask app 'app'
+ * Debug mode: on
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://192.168.1.24:8000
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [15/Aug/2025 12:27:37] "GET /scheduler-status HTTP/1.1" 200 -
+127.0.0.1 - - [15/Aug/2025 12:27:43] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [15/Aug/2025 12:27:43] "[36mGET /static/css/colors.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:27:43] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:27:43] "[36mGET /static/css/chart.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:27:43] "[36mGET /static/css/report.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:27:43] "[36mGET /static/js/dashboard.js HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:27:43] "[36mGET /static/js/theme-manager.js HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:27:43] "[36mGET /static/js/language-toggle.js HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:27:43] "[36mGET /static/css/charts/doughnut-chart.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:27:43] "[36mGET /static/css/charts/bar-chart.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:27:43] "[36mGET /static/css/charts/line-chart.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:27:43] "[36mGET /static/css/charts/gauge-chart.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:27:43] "[36mGET /static/css/charts/charts-common.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:27:45] "GET /api/crypto/dashboard-summary HTTP/1.1" 200 -
+rnuyy7ZPh_9ZtF0UAAAA: Sending packet OPEN data {'sid': 'rnuyy7ZPh_9ZtF0UAAAA', 'upgrades': [], 'pingTimeout': 20000, 'pingInterval': 25000, 'maxPayload': 1000000}
+rnuyy7ZPh_9ZtF0UAAAA: Received request to upgrade to websocket
+rnuyy7ZPh_9ZtF0UAAAA: Upgrade to websocket successful
+rnuyy7ZPh_9ZtF0UAAAA: Received packet MESSAGE data 0
+emitting event "connected" to 8BL_KTx6LPGLrsWzAAAB [/]
+rnuyy7ZPh_9ZtF0UAAAA: Sending packet MESSAGE data 2["connected",{"client_id":"f2227322-e696-49fd-b3e3-5f62ff15b740","server_time":"2025-08-15T12:28:03.022521","message":"Connected to Crypto Dashboard WebSocket"}]
+rnuyy7ZPh_9ZtF0UAAAA: Sending packet MESSAGE data 0{"sid":"8BL_KTx6LPGLrsWzAAAB"}
+SnfNXxDAS14qKd0WAAAC: Sending packet OPEN data {'sid': 'SnfNXxDAS14qKd0WAAAC', 'upgrades': [], 'pingTimeout': 20000, 'pingInterval': 25000, 'maxPayload': 1000000}
+SnfNXxDAS14qKd0WAAAC: Received request to upgrade to websocket
+SnfNXxDAS14qKd0WAAAC: Upgrade to websocket successful
+SnfNXxDAS14qKd0WAAAC: Received packet MESSAGE data 0
+emitting event "connected" to TnUKZNzKijyvvDs0AAAD [/]
+SnfNXxDAS14qKd0WAAAC: Sending packet MESSAGE data 2["connected",{"client_id":"aebb241c-3979-485c-b2f0-85903b1be8d6","server_time":"2025-08-15T12:28:03.033573","message":"Connected to Crypto Dashboard WebSocket"}]
+SnfNXxDAS14qKd0WAAAC: Sending packet MESSAGE data 0{"sid":"TnUKZNzKijyvvDs0AAAD"}
+mvU5T3q8MOoBFbyMAAAE: Sending packet OPEN data {'sid': 'mvU5T3q8MOoBFbyMAAAE', 'upgrades': [], 'pingTimeout': 20000, 'pingInterval': 25000, 'maxPayload': 1000000}
+mvU5T3q8MOoBFbyMAAAE: Received request to upgrade to websocket
+mvU5T3q8MOoBFbyMAAAE: Upgrade to websocket successful
+mvU5T3q8MOoBFbyMAAAE: Received packet MESSAGE data 0
+emitting event "connected" to NVR4lczBTyIaQzeqAAAF [/]
+mvU5T3q8MOoBFbyMAAAE: Sending packet MESSAGE data 2["connected",{"client_id":"ae1f4698-d45a-4209-830a-a32e57e50ab1","server_time":"2025-08-15T12:28:03.044987","message":"Connected to Crypto Dashboard WebSocket"}]
+mvU5T3q8MOoBFbyMAAAE: Sending packet MESSAGE data 0{"sid":"NVR4lczBTyIaQzeqAAAF"}
+Hqyh6ihTMPS-4QEjAAAG: Sending packet OPEN data {'sid': 'Hqyh6ihTMPS-4QEjAAAG', 'upgrades': [], 'pingTimeout': 20000, 'pingInterval': 25000, 'maxPayload': 1000000}
+Hqyh6ihTMPS-4QEjAAAG: Received request to upgrade to websocket
+Hqyh6ihTMPS-4QEjAAAG: Upgrade to websocket successful
+Hqyh6ihTMPS-4QEjAAAG: Received packet MESSAGE data 0
+emitting event "connected" to em75UFFfFGED9G6DAAAH [/]
+Hqyh6ihTMPS-4QEjAAAG: Sending packet MESSAGE data 2["connected",{"client_id":"b2811f32-c03a-471b-8ce5-5dce58528f87","server_time":"2025-08-15T12:28:03.054519","message":"Connected to Crypto Dashboard WebSocket"}]
+3__L8RUp9krbnVw3AAAI: Sending packet OPEN data {'sid': '3__L8RUp9krbnVw3AAAI', 'upgrades': [], 'pingTimeout': 20000, 'pingInterval': 25000, 'maxPayload': 1000000}
+Hqyh6ihTMPS-4QEjAAAG: Sending packet MESSAGE data 0{"sid":"em75UFFfFGED9G6DAAAH"}
+3__L8RUp9krbnVw3AAAI: Received request to upgrade to websocket
+3__L8RUp9krbnVw3AAAI: Upgrade to websocket successful
+3__L8RUp9krbnVw3AAAI: Received packet MESSAGE data 0
+emitting event "connected" to SfSvhXzUfV0Sa9P5AAAJ [/]
+3__L8RUp9krbnVw3AAAI: Sending packet MESSAGE data 2["connected",{"client_id":"f79f85c8-ebd0-474a-a667-73a65f949b70","server_time":"2025-08-15T12:28:03.066131","message":"Connected to Crypto Dashboard WebSocket"}]
+3__L8RUp9krbnVw3AAAI: Sending packet MESSAGE data 0{"sid":"SfSvhXzUfV0Sa9P5AAAJ"}
+6JLp5Qe8E2qRbWMPAAAK: Sending packet OPEN data {'sid': '6JLp5Qe8E2qRbWMPAAAK', 'upgrades': [], 'pingTimeout': 20000, 'pingInterval': 25000, 'maxPayload': 1000000}
+6JLp5Qe8E2qRbWMPAAAK: Received request to upgrade to websocket
+6JLp5Qe8E2qRbWMPAAAK: Upgrade to websocket successful
+6JLp5Qe8E2qRbWMPAAAK: Received packet MESSAGE data 0
+emitting event "connected" to oHKmbBH3U7wVuFs4AAAL [/]
+6JLp5Qe8E2qRbWMPAAAK: Sending packet MESSAGE data 2["connected",{"client_id":"b00d403d-3aa5-4163-9064-d19a104789a4","server_time":"2025-08-15T12:28:03.078821","message":"Connected to Crypto Dashboard WebSocket"}]
+6JLp5Qe8E2qRbWMPAAAK: Sending packet MESSAGE data 0{"sid":"oHKmbBH3U7wVuFs4AAAL"}
+8BxFz1j97rgmZdtfAAAM: Sending packet OPEN data {'sid': '8BxFz1j97rgmZdtfAAAM', 'upgrades': [], 'pingTimeout': 20000, 'pingInterval': 25000, 'maxPayload': 1000000}
+8BxFz1j97rgmZdtfAAAM: Received request to upgrade to websocket
+8BxFz1j97rgmZdtfAAAM: Upgrade to websocket successful
+8BxFz1j97rgmZdtfAAAM: Received packet MESSAGE data 0
+emitting event "connected" to ZdezO9uSbqvzuYMvAAAN [/]
+8BxFz1j97rgmZdtfAAAM: Sending packet MESSAGE data 2["connected",{"client_id":"5444679b-1095-4d14-8624-84a6ffdf8223","server_time":"2025-08-15T12:28:03.089342","message":"Connected to Crypto Dashboard WebSocket"}]
+8BxFz1j97rgmZdtfAAAM: Sending packet MESSAGE data 0{"sid":"ZdezO9uSbqvzuYMvAAAN"}
+Awr94T9mehgVa4p1AAAO: Sending packet OPEN data {'sid': 'Awr94T9mehgVa4p1AAAO', 'upgrades': [], 'pingTimeout': 20000, 'pingInterval': 25000, 'maxPayload': 1000000}
+Awr94T9mehgVa4p1AAAO: Received request to upgrade to websocket
+Awr94T9mehgVa4p1AAAO: Upgrade to websocket successful
+Awr94T9mehgVa4p1AAAO: Received packet MESSAGE data 0
+emitting event "connected" to 8AoyankUAKn83oyBAAAP [/]
+Awr94T9mehgVa4p1AAAO: Sending packet MESSAGE data 2["connected",{"client_id":"3df2556d-0d88-46f0-a488-105cc74eca12","server_time":"2025-08-15T12:28:03.096721","message":"Connected to Crypto Dashboard WebSocket"}]
+Awr94T9mehgVa4p1AAAO: Sending packet MESSAGE data 0{"sid":"8AoyankUAKn83oyBAAAP"}
+6JLp5Qe8E2qRbWMPAAAK: Received packet MESSAGE data 2["subscribe",{"channel":"system_status"}]
+received event "subscribe" from oHKmbBH3U7wVuFs4AAAL [/]
+oHKmbBH3U7wVuFs4AAAL is entering room system_status [/]
+emitting event "subscribed" to oHKmbBH3U7wVuFs4AAAL [/]
+6JLp5Qe8E2qRbWMPAAAK: Sending packet MESSAGE data 2["subscribed",{"channel":"system_status","message":"Successfully subscribed to system_status"}]
+6JLp5Qe8E2qRbWMPAAAK: Received packet MESSAGE data 2["subscribe",{"channel":"system_status"}]
+received event "subscribe" from oHKmbBH3U7wVuFs4AAAL [/]
+oHKmbBH3U7wVuFs4AAAL is entering room system_status [/]
+6JLp5Qe8E2qRbWMPAAAK: Received packet MESSAGE data 2["subscribe",{"channel":"system_status"}]
+emitting event "subscribed" to oHKmbBH3U7wVuFs4AAAL [/]
+received event "subscribe" from oHKmbBH3U7wVuFs4AAAL [/]
+6JLp5Qe8E2qRbWMPAAAK: Sending packet MESSAGE data 2["subscribed",{"channel":"system_status","message":"Successfully subscribed to system_status"}]
+oHKmbBH3U7wVuFs4AAAL is entering room system_status [/]
+6JLp5Qe8E2qRbWMPAAAK: Received packet MESSAGE data 2["subscribe",{"channel":"system_status"}]
+received event "subscribe" from oHKmbBH3U7wVuFs4AAAL [/]
+emitting event "subscribed" to oHKmbBH3U7wVuFs4AAAL [/]
+6JLp5Qe8E2qRbWMPAAAK: Sending packet MESSAGE data 2["subscribed",{"channel":"system_status","message":"Successfully subscribed to system_status"}]
+oHKmbBH3U7wVuFs4AAAL is entering room system_status [/]
+6JLp5Qe8E2qRbWMPAAAK: Received packet MESSAGE data 2["subscribe",{"channel":"system_status"}]
+received event "subscribe" from oHKmbBH3U7wVuFs4AAAL [/]
+emitting event "subscribed" to oHKmbBH3U7wVuFs4AAAL [/]
+6JLp5Qe8E2qRbWMPAAAK: Sending packet MESSAGE data 2["subscribed",{"channel":"system_status","message":"Successfully subscribed to system_status"}]
+oHKmbBH3U7wVuFs4AAAL is entering room system_status [/]
+6JLp5Qe8E2qRbWMPAAAK: Received packet MESSAGE data 2["subscribe",{"channel":"system_status"}]
+received event "subscribe" from oHKmbBH3U7wVuFs4AAAL [/]
+emitting event "subscribed" to oHKmbBH3U7wVuFs4AAAL [/]
+6JLp5Qe8E2qRbWMPAAAK: Sending packet MESSAGE data 2["subscribed",{"channel":"system_status","message":"Successfully subscribed to system_status"}]
+6JLp5Qe8E2qRbWMPAAAK: Received packet MESSAGE data 2["subscribe",{"channel":"system_status"}]
+oHKmbBH3U7wVuFs4AAAL is entering room system_status [/]
+received event "subscribe" from oHKmbBH3U7wVuFs4AAAL [/]
+emitting event "subscribed" to oHKmbBH3U7wVuFs4AAAL [/]
+6JLp5Qe8E2qRbWMPAAAK: Sending packet MESSAGE data 2["subscribed",{"channel":"system_status","message":"Successfully subscribed to system_status"}]
+oHKmbBH3U7wVuFs4AAAL is entering room system_status [/]
+emitting event "subscribed" to oHKmbBH3U7wVuFs4AAAL [/]
+6JLp5Qe8E2qRbWMPAAAK: Sending packet MESSAGE data 2["subscribed",{"channel":"system_status","message":"Successfully subscribed to system_status"}]
+6JLp5Qe8E2qRbWMPAAAK: Received packet MESSAGE data 2["subscribe",{"channel":"system_status"}]
+received event "subscribe" from oHKmbBH3U7wVuFs4AAAL [/]
+oHKmbBH3U7wVuFs4AAAL is entering room system_status [/]
+emitting event "subscribed" to oHKmbBH3U7wVuFs4AAAL [/]
+6JLp5Qe8E2qRbWMPAAAK: Sending packet MESSAGE data 2["subscribed",{"channel":"system_status","message":"Successfully subscribed to system_status"}]
+B6aW2V-5_jLubGjvAAAQ: Sending packet OPEN data {'sid': 'B6aW2V-5_jLubGjvAAAQ', 'upgrades': [], 'pingTimeout': 20000, 'pingInterval': 25000, 'maxPayload': 1000000}
+B6aW2V-5_jLubGjvAAAQ: Received request to upgrade to websocket
+B6aW2V-5_jLubGjvAAAQ: Upgrade to websocket successful
+B6aW2V-5_jLubGjvAAAQ: Received packet MESSAGE data 0
+emitting event "connected" to -g5omV6AcokQ6DP2AAAR [/]
+B6aW2V-5_jLubGjvAAAQ: Sending packet MESSAGE data 2["connected",{"client_id":"b03442fe-dfe3-4d67-b2d5-b67262ab2245","server_time":"2025-08-15T12:28:04.160367","message":"Connected to Crypto Dashboard WebSocket"}]
+B6aW2V-5_jLubGjvAAAQ: Sending packet MESSAGE data 0{"sid":"-g5omV6AcokQ6DP2AAAR"}
+P-eOoRkVxW8PH3MBAAAS: Sending packet OPEN data {'sid': 'P-eOoRkVxW8PH3MBAAAS', 'upgrades': [], 'pingTimeout': 20000, 'pingInterval': 25000, 'maxPayload': 1000000}
+P-eOoRkVxW8PH3MBAAAS: Received request to upgrade to websocket
+P-eOoRkVxW8PH3MBAAAS: Upgrade to websocket successful
+P-eOoRkVxW8PH3MBAAAS: Received packet MESSAGE data 0
+emitting event "connected" to 2Mj2vSvqnGxkLPZXAAAT [/]
+P-eOoRkVxW8PH3MBAAAS: Sending packet MESSAGE data 2["connected",{"client_id":"2335e2e1-bec7-47a1-85b8-4f58c090f79b","server_time":"2025-08-15T12:28:04.172045","message":"Connected to Crypto Dashboard WebSocket"}]
+P-eOoRkVxW8PH3MBAAAS: Sending packet MESSAGE data 0{"sid":"2Mj2vSvqnGxkLPZXAAAT"}
+6JLp5Qe8E2qRbWMPAAAK: Received packet MESSAGE data 2["subscribe",{"channel":"system_status"}]
+received event "subscribe" from oHKmbBH3U7wVuFs4AAAL [/]
+oHKmbBH3U7wVuFs4AAAL is entering room system_status [/]
+emitting event "subscribed" to oHKmbBH3U7wVuFs4AAAL [/]
+6JLp5Qe8E2qRbWMPAAAK: Sending packet MESSAGE data 2["subscribed",{"channel":"system_status","message":"Successfully subscribed to system_status"}]
+6JLp5Qe8E2qRbWMPAAAK: Received packet MESSAGE data 2["subscribe",{"channel":"system_status"}]
+received event "subscribe" from oHKmbBH3U7wVuFs4AAAL [/]
+oHKmbBH3U7wVuFs4AAAL is entering room system_status [/]
+emitting event "subscribed" to oHKmbBH3U7wVuFs4AAAL [/]
+6JLp5Qe8E2qRbWMPAAAK: Sending packet MESSAGE data 2["subscribed",{"channel":"system_status","message":"Successfully subscribed to system_status"}]
+P7eeNexn1-DFeP_pAAAU: Sending packet OPEN data {'sid': 'P7eeNexn1-DFeP_pAAAU', 'upgrades': [], 'pingTimeout': 20000, 'pingInterval': 25000, 'maxPayload': 1000000}
+P7eeNexn1-DFeP_pAAAU: Received request to upgrade to websocket
+P7eeNexn1-DFeP_pAAAU: Upgrade to websocket successful
+P7eeNexn1-DFeP_pAAAU: Received packet MESSAGE data 0
+emitting event "connected" to cYEPgCdoTIF3CL1DAAAV [/]
+P7eeNexn1-DFeP_pAAAU: Sending packet MESSAGE data 2["connected",{"client_id":"004e331c-4bbc-4229-a843-a8f85aed3f0f","server_time":"2025-08-15T12:28:11.263695","message":"Connected to Crypto Dashboard WebSocket"}]
+P7eeNexn1-DFeP_pAAAU: Sending packet MESSAGE data 0{"sid":"cYEPgCdoTIF3CL1DAAAV"}
+6JLp5Qe8E2qRbWMPAAAK: Received packet MESSAGE data 2["subscribe",{"channel":"system_status"}]
+received event "subscribe" from oHKmbBH3U7wVuFs4AAAL [/]
+oHKmbBH3U7wVuFs4AAAL is entering room system_status [/]
+emitting event "subscribed" to oHKmbBH3U7wVuFs4AAAL [/]
+6JLp5Qe8E2qRbWMPAAAK: Sending packet MESSAGE data 2["subscribed",{"channel":"system_status","message":"Successfully subscribed to system_status"}]
+127.0.0.1 - - [15/Aug/2025 12:28:16] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [15/Aug/2025 12:28:17] "[36mGET /static/css/colors.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:28:17] "[36mGET /static/css/chart.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:28:17] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:28:17] "[36mGET /static/css/report.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:28:17] "[36mGET /static/js/theme-manager.js HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:28:17] "[36mGET /static/js/dashboard.js HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:28:17] "[36mGET /static/js/language-toggle.js HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:28:17] "[36mGET /static/css/charts/bar-chart.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:28:17] "[36mGET /static/css/charts/doughnut-chart.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:28:17] "[36mGET /static/css/charts/line-chart.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:28:17] "[36mGET /static/css/charts/gauge-chart.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:28:17] "[36mGET /static/css/charts/charts-common.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:28:17] "GET /api/crypto/dashboard-summary HTTP/1.1" 200 -
+127.0.0.1 - - [15/Aug/2025 12:28:17] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [15/Aug/2025 12:28:18] "[36mGET /static/css/colors.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:28:18] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:28:18] "[36mGET /static/css/chart.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:28:18] "[36mGET /static/css/report.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:28:18] "[36mGET /static/js/theme-manager.js HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:28:18] "[36mGET /static/js/dashboard.js HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:28:18] "[36mGET /static/js/language-toggle.js HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:28:18] "[36mGET /static/css/charts/bar-chart.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:28:18] "[36mGET /static/css/charts/doughnut-chart.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:28:18] "[36mGET /static/css/charts/line-chart.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:28:18] "[36mGET /static/css/charts/gauge-chart.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:28:18] "[36mGET /static/css/charts/charts-common.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:28:18] "GET /api/crypto/dashboard-summary HTTP/1.1" 200 -
+rnuyy7ZPh_9ZtF0UAAAA: Sending packet PING data None
+rnuyy7ZPh_9ZtF0UAAAA: Received packet PONG data 
+SnfNXxDAS14qKd0WAAAC: Sending packet PING data None
+SnfNXxDAS14qKd0WAAAC: Received packet PONG data 
+mvU5T3q8MOoBFbyMAAAE: Sending packet PING data None
+mvU5T3q8MOoBFbyMAAAE: Received packet PONG data 
+Hqyh6ihTMPS-4QEjAAAG: Sending packet PING data None
+Hqyh6ihTMPS-4QEjAAAG: Received packet PONG data 
+3__L8RUp9krbnVw3AAAI: Sending packet PING data None
+3__L8RUp9krbnVw3AAAI: Received packet PONG data 
+6JLp5Qe8E2qRbWMPAAAK: Sending packet PING data None
+6JLp5Qe8E2qRbWMPAAAK: Received packet PONG data 
+8BxFz1j97rgmZdtfAAAM: Sending packet PING data None
+8BxFz1j97rgmZdtfAAAM: Received packet PONG data 
+Awr94T9mehgVa4p1AAAO: Sending packet PING data None
+Awr94T9mehgVa4p1AAAO: Received packet PONG data 
+B6aW2V-5_jLubGjvAAAQ: Sending packet PING data None
+B6aW2V-5_jLubGjvAAAQ: Received packet PONG data 
+P-eOoRkVxW8PH3MBAAAS: Sending packet PING data None
+P-eOoRkVxW8PH3MBAAAS: Received packet PONG data 
+P7eeNexn1-DFeP_pAAAU: Sending packet PING data None
+P7eeNexn1-DFeP_pAAAU: Received packet PONG data 
+6JLp5Qe8E2qRbWMPAAAK: Received packet MESSAGE data 2["ping"]
+received event "ping" from oHKmbBH3U7wVuFs4AAAL [/]
+emitting event "pong" to oHKmbBH3U7wVuFs4AAAL [/]
+6JLp5Qe8E2qRbWMPAAAK: Sending packet MESSAGE data 2["pong",{"timestamp":"2025-08-15T12:28:41.309094"}]
+rnuyy7ZPh_9ZtF0UAAAA: Sending packet PING data None
+rnuyy7ZPh_9ZtF0UAAAA: Received packet PONG data 
+SnfNXxDAS14qKd0WAAAC: Sending packet PING data None
+SnfNXxDAS14qKd0WAAAC: Received packet PONG data 
+mvU5T3q8MOoBFbyMAAAE: Sending packet PING data None
+mvU5T3q8MOoBFbyMAAAE: Received packet PONG data 
+Hqyh6ihTMPS-4QEjAAAG: Sending packet PING data None
+Hqyh6ihTMPS-4QEjAAAG: Received packet PONG data 
+3__L8RUp9krbnVw3AAAI: Sending packet PING data None
+3__L8RUp9krbnVw3AAAI: Received packet PONG data 
+6JLp5Qe8E2qRbWMPAAAK: Sending packet PING data None
+6JLp5Qe8E2qRbWMPAAAK: Received packet PONG data 
+8BxFz1j97rgmZdtfAAAM: Sending packet PING data None
+8BxFz1j97rgmZdtfAAAM: Received packet PONG data 
+Awr94T9mehgVa4p1AAAO: Sending packet PING data None
+Awr94T9mehgVa4p1AAAO: Received packet PONG data 
+B6aW2V-5_jLubGjvAAAQ: Sending packet PING data None
+B6aW2V-5_jLubGjvAAAQ: Received packet PONG data 
+P-eOoRkVxW8PH3MBAAAS: Sending packet PING data None
+P-eOoRkVxW8PH3MBAAAS: Received packet PONG data 
+P7eeNexn1-DFeP_pAAAU: Sending packet PING data None
+P7eeNexn1-DFeP_pAAAU: Received packet PONG data 
+6JLp5Qe8E2qRbWMPAAAK: Received packet MESSAGE data 2["ping"]
+received event "ping" from oHKmbBH3U7wVuFs4AAAL [/]
+emitting event "pong" to oHKmbBH3U7wVuFs4AAAL [/]
+6JLp5Qe8E2qRbWMPAAAK: Sending packet MESSAGE data 2["pong",{"timestamp":"2025-08-15T12:29:11.311623"}]
+rnuyy7ZPh_9ZtF0UAAAA: Sending packet PING data None
+rnuyy7ZPh_9ZtF0UAAAA: Received packet PONG data 
+SnfNXxDAS14qKd0WAAAC: Sending packet PING data None
+SnfNXxDAS14qKd0WAAAC: Received packet PONG data 
+mvU5T3q8MOoBFbyMAAAE: Sending packet PING data None
+mvU5T3q8MOoBFbyMAAAE: Received packet PONG data 
+Hqyh6ihTMPS-4QEjAAAG: Sending packet PING data None
+Hqyh6ihTMPS-4QEjAAAG: Received packet PONG data 
+3__L8RUp9krbnVw3AAAI: Sending packet PING data None
+3__L8RUp9krbnVw3AAAI: Received packet PONG data 
+6JLp5Qe8E2qRbWMPAAAK: Sending packet PING data None
+6JLp5Qe8E2qRbWMPAAAK: Received packet PONG data 
+8BxFz1j97rgmZdtfAAAM: Sending packet PING data None
+8BxFz1j97rgmZdtfAAAM: Received packet PONG data 
+Awr94T9mehgVa4p1AAAO: Sending packet PING data None
+Awr94T9mehgVa4p1AAAO: Received packet PONG data 
+B6aW2V-5_jLubGjvAAAQ: Sending packet PING data None
+B6aW2V-5_jLubGjvAAAQ: Received packet PONG data 
+P-eOoRkVxW8PH3MBAAAS: Sending packet PING data None
+P-eOoRkVxW8PH3MBAAAS: Received packet PONG data 
+P7eeNexn1-DFeP_pAAAU: Sending packet PING data None
+P7eeNexn1-DFeP_pAAAU: Received packet PONG data 
+6JLp5Qe8E2qRbWMPAAAK: Received packet MESSAGE data 2["ping"]
+received event "ping" from oHKmbBH3U7wVuFs4AAAL [/]
+emitting event "pong" to oHKmbBH3U7wVuFs4AAAL [/]
+6JLp5Qe8E2qRbWMPAAAK: Sending packet MESSAGE data 2["pong",{"timestamp":"2025-08-15T12:29:41.311788"}]
+rnuyy7ZPh_9ZtF0UAAAA: Sending packet PING data None
+rnuyy7ZPh_9ZtF0UAAAA: Received packet PONG data 
+SnfNXxDAS14qKd0WAAAC: Sending packet PING data None
+SnfNXxDAS14qKd0WAAAC: Received packet PONG data 
+mvU5T3q8MOoBFbyMAAAE: Sending packet PING data None
+mvU5T3q8MOoBFbyMAAAE: Received packet PONG data 
+Hqyh6ihTMPS-4QEjAAAG: Sending packet PING data None
+Hqyh6ihTMPS-4QEjAAAG: Received packet PONG data 
+3__L8RUp9krbnVw3AAAI: Sending packet PING data None
+3__L8RUp9krbnVw3AAAI: Received packet PONG data 
+6JLp5Qe8E2qRbWMPAAAK: Sending packet PING data None
+6JLp5Qe8E2qRbWMPAAAK: Received packet PONG data 
+8BxFz1j97rgmZdtfAAAM: Sending packet PING data None
+8BxFz1j97rgmZdtfAAAM: Received packet PONG data 
+Awr94T9mehgVa4p1AAAO: Sending packet PING data None
+Awr94T9mehgVa4p1AAAO: Received packet PONG data 
+B6aW2V-5_jLubGjvAAAQ: Sending packet PING data None
+B6aW2V-5_jLubGjvAAAQ: Received packet PONG data 
+P-eOoRkVxW8PH3MBAAAS: Sending packet PING data None
+P-eOoRkVxW8PH3MBAAAS: Received packet PONG data 
+P7eeNexn1-DFeP_pAAAU: Sending packet PING data None
+P7eeNexn1-DFeP_pAAAU: Received packet PONG data 
+rnuyy7ZPh_9ZtF0UAAAA: Sending packet PING data None
+rnuyy7ZPh_9ZtF0UAAAA: Received packet PONG data 
+SnfNXxDAS14qKd0WAAAC: Sending packet PING data None
+SnfNXxDAS14qKd0WAAAC: Received packet PONG data 
+mvU5T3q8MOoBFbyMAAAE: Sending packet PING data None
+mvU5T3q8MOoBFbyMAAAE: Received packet PONG data 
+Hqyh6ihTMPS-4QEjAAAG: Sending packet PING data None
+Hqyh6ihTMPS-4QEjAAAG: Received packet PONG data 
+3__L8RUp9krbnVw3AAAI: Sending packet PING data None
+3__L8RUp9krbnVw3AAAI: Received packet PONG data 
+6JLp5Qe8E2qRbWMPAAAK: Sending packet PING data None
+6JLp5Qe8E2qRbWMPAAAK: Received packet PONG data 
+8BxFz1j97rgmZdtfAAAM: Sending packet PING data None
+8BxFz1j97rgmZdtfAAAM: Received packet PONG data 
+Awr94T9mehgVa4p1AAAO: Sending packet PING data None
+Awr94T9mehgVa4p1AAAO: Received packet PONG data 
+B6aW2V-5_jLubGjvAAAQ: Sending packet PING data None
+B6aW2V-5_jLubGjvAAAQ: Received packet PONG data 
+P-eOoRkVxW8PH3MBAAAS: Sending packet PING data None
+P-eOoRkVxW8PH3MBAAAS: Received packet PONG data 
+6JLp5Qe8E2qRbWMPAAAK: Received packet MESSAGE data 2["ping"]
+received event "ping" from oHKmbBH3U7wVuFs4AAAL [/]
+emitting event "pong" to oHKmbBH3U7wVuFs4AAAL [/]
+6JLp5Qe8E2qRbWMPAAAK: Sending packet MESSAGE data 2["pong",{"timestamp":"2025-08-15T12:30:11.534803"}]
+P7eeNexn1-DFeP_pAAAU: Sending packet PING data None
+P7eeNexn1-DFeP_pAAAU: Received packet PONG data 
+127.0.0.1 - - [15/Aug/2025 12:30:29] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [15/Aug/2025 12:30:29] "[36mGET /static/css/colors.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:30:29] "[36mGET /static/css/chart.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:30:29] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:30:29] "[36mGET /static/css/report.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:30:29] "[36mGET /static/js/theme-manager.js HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:30:29] "[36mGET /static/js/dashboard.js HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:30:29] "[36mGET /static/js/language-toggle.js HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:30:29] "[36mGET /static/css/charts/bar-chart.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:30:29] "[36mGET /static/css/charts/line-chart.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:30:29] "[36mGET /static/css/charts/doughnut-chart.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:30:29] "[36mGET /static/css/charts/gauge-chart.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:30:29] "[36mGET /static/css/charts/charts-common.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:30:29] "GET /api/crypto/dashboard-summary HTTP/1.1" 200 -
+127.0.0.1 - - [15/Aug/2025 12:30:30] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [15/Aug/2025 12:30:30] "[36mGET /static/css/colors.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:30:30] "[36mGET /static/css/chart.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:30:30] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:30:30] "[36mGET /static/css/report.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:30:30] "[36mGET /static/js/dashboard.js HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:30:30] "[36mGET /static/js/theme-manager.js HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:30:30] "[36mGET /static/js/language-toggle.js HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:30:30] "[36mGET /static/css/charts/bar-chart.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:30:30] "[36mGET /static/css/charts/line-chart.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:30:30] "[36mGET /static/css/charts/doughnut-chart.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:30:30] "[36mGET /static/css/charts/gauge-chart.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:30:30] "[36mGET /static/css/charts/charts-common.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Aug/2025 12:30:30] "GET /api/crypto/dashboard-summary HTTP/1.1" 200 -
+rnuyy7ZPh_9ZtF0UAAAA: Sending packet PING data None
+rnuyy7ZPh_9ZtF0UAAAA: Received packet PONG data 
+SnfNXxDAS14qKd0WAAAC: Sending packet PING data None
+SnfNXxDAS14qKd0WAAAC: Received packet PONG data 
+mvU5T3q8MOoBFbyMAAAE: Sending packet PING data None
+mvU5T3q8MOoBFbyMAAAE: Received packet PONG data 
+Hqyh6ihTMPS-4QEjAAAG: Sending packet PING data None
+Hqyh6ihTMPS-4QEjAAAG: Received packet PONG data 
+3__L8RUp9krbnVw3AAAI: Sending packet PING data None
+3__L8RUp9krbnVw3AAAI: Received packet PONG data 
+6JLp5Qe8E2qRbWMPAAAK: Sending packet PING data None
+6JLp5Qe8E2qRbWMPAAAK: Received packet PONG data 
+8BxFz1j97rgmZdtfAAAM: Sending packet PING data None
+8BxFz1j97rgmZdtfAAAM: Received packet PONG data 
+Awr94T9mehgVa4p1AAAO: Sending packet PING data None
+Awr94T9mehgVa4p1AAAO: Received packet PONG data 
+B6aW2V-5_jLubGjvAAAQ: Sending packet PING data None
+B6aW2V-5_jLubGjvAAAQ: Received packet PONG data 
+P-eOoRkVxW8PH3MBAAAS: Sending packet PING data None
+P-eOoRkVxW8PH3MBAAAS: Received packet PONG data 
+P7eeNexn1-DFeP_pAAAU: Sending packet PING data None
+P7eeNexn1-DFeP_pAAAU: Received packet PONG data 
+6JLp5Qe8E2qRbWMPAAAK: Received packet MESSAGE data 2["ping"]
+received event "ping" from oHKmbBH3U7wVuFs4AAAL [/]
+emitting event "pong" to oHKmbBH3U7wVuFs4AAAL [/]
+6JLp5Qe8E2qRbWMPAAAK: Sending packet MESSAGE data 2["pong",{"timestamp":"2025-08-15T12:30:41.532502"}]
+rnuyy7ZPh_9ZtF0UAAAA: Sending packet PING data None
+rnuyy7ZPh_9ZtF0UAAAA: Received packet PONG data 
+SnfNXxDAS14qKd0WAAAC: Sending packet PING data None
+SnfNXxDAS14qKd0WAAAC: Received packet PONG data 
+mvU5T3q8MOoBFbyMAAAE: Sending packet PING data None
+mvU5T3q8MOoBFbyMAAAE: Received packet PONG data 
+Hqyh6ihTMPS-4QEjAAAG: Sending packet PING data None
+Hqyh6ihTMPS-4QEjAAAG: Received packet PONG data 
+3__L8RUp9krbnVw3AAAI: Sending packet PING data None
+3__L8RUp9krbnVw3AAAI: Received packet PONG data 
+6JLp5Qe8E2qRbWMPAAAK: Sending packet PING data None
+6JLp5Qe8E2qRbWMPAAAK: Received packet PONG data 
+8BxFz1j97rgmZdtfAAAM: Sending packet PING data None
+8BxFz1j97rgmZdtfAAAM: Received packet PONG data 
+Awr94T9mehgVa4p1AAAO: Sending packet PING data None
+Awr94T9mehgVa4p1AAAO: Received packet PONG data 
+B6aW2V-5_jLubGjvAAAQ: Sending packet PING data None
+B6aW2V-5_jLubGjvAAAQ: Received packet PONG data 
+P-eOoRkVxW8PH3MBAAAS: Sending packet PING data None
+P-eOoRkVxW8PH3MBAAAS: Received packet PONG data 
+P7eeNexn1-DFeP_pAAAU: Sending packet PING data None
+P7eeNexn1-DFeP_pAAAU: Received packet PONG data 
+6JLp5Qe8E2qRbWMPAAAK: Received packet MESSAGE data 2["ping"]
+received event "ping" from oHKmbBH3U7wVuFs4AAAL [/]
+emitting event "pong" to oHKmbBH3U7wVuFs4AAAL [/]
+6JLp5Qe8E2qRbWMPAAAK: Sending packet MESSAGE data 2["pong",{"timestamp":"2025-08-15T12:31:11.535369"}]
+rnuyy7ZPh_9ZtF0UAAAA: Sending packet PING data None
+rnuyy7ZPh_9ZtF0UAAAA: Received packet PONG data 
+SnfNXxDAS14qKd0WAAAC: Sending packet PING data None
+SnfNXxDAS14qKd0WAAAC: Received packet PONG data 
+mvU5T3q8MOoBFbyMAAAE: Sending packet PING data None
+mvU5T3q8MOoBFbyMAAAE: Received packet PONG data 
+Hqyh6ihTMPS-4QEjAAAG: Sending packet PING data None
+Hqyh6ihTMPS-4QEjAAAG: Received packet PONG data 
+3__L8RUp9krbnVw3AAAI: Sending packet PING data None
+3__L8RUp9krbnVw3AAAI: Received packet PONG data 
+6JLp5Qe8E2qRbWMPAAAK: Sending packet PING data None
+6JLp5Qe8E2qRbWMPAAAK: Received packet PONG data 
+8BxFz1j97rgmZdtfAAAM: Sending packet PING data None
+8BxFz1j97rgmZdtfAAAM: Received packet PONG data 
+Awr94T9mehgVa4p1AAAO: Sending packet PING data None
+Awr94T9mehgVa4p1AAAO: Received packet PONG data 
+B6aW2V-5_jLubGjvAAAQ: Sending packet PING data None
+B6aW2V-5_jLubGjvAAAQ: Received packet PONG data 
+P-eOoRkVxW8PH3MBAAAS: Sending packet PING data None
+P-eOoRkVxW8PH3MBAAAS: Received packet PONG data 
+P7eeNexn1-DFeP_pAAAU: Sending packet PING data None
+P7eeNexn1-DFeP_pAAAU: Received packet PONG data 
+6JLp5Qe8E2qRbWMPAAAK: Received packet MESSAGE data 2["ping"]
+received event "ping" from oHKmbBH3U7wVuFs4AAAL [/]
+emitting event "pong" to oHKmbBH3U7wVuFs4AAAL [/]
+6JLp5Qe8E2qRbWMPAAAK: Sending packet MESSAGE data 2["pong",{"timestamp":"2025-08-15T12:31:41.534948"}]
+rnuyy7ZPh_9ZtF0UAAAA: Sending packet PING data None
+rnuyy7ZPh_9ZtF0UAAAA: Received packet PONG data 
+SnfNXxDAS14qKd0WAAAC: Sending packet PING data None
+SnfNXxDAS14qKd0WAAAC: Received packet PONG data 
+mvU5T3q8MOoBFbyMAAAE: Sending packet PING data None
+mvU5T3q8MOoBFbyMAAAE: Received packet PONG data 
+Hqyh6ihTMPS-4QEjAAAG: Sending packet PING data None
+Hqyh6ihTMPS-4QEjAAAG: Received packet PONG data 
+3__L8RUp9krbnVw3AAAI: Sending packet PING data None
+3__L8RUp9krbnVw3AAAI: Received packet PONG data 
+6JLp5Qe8E2qRbWMPAAAK: Sending packet PING data None
+6JLp5Qe8E2qRbWMPAAAK: Received packet PONG data 
+8BxFz1j97rgmZdtfAAAM: Sending packet PING data None
+8BxFz1j97rgmZdtfAAAM: Received packet PONG data 
+Awr94T9mehgVa4p1AAAO: Sending packet PING data None
+Awr94T9mehgVa4p1AAAO: Received packet PONG data 
+B6aW2V-5_jLubGjvAAAQ: Sending packet PING data None
+B6aW2V-5_jLubGjvAAAQ: Received packet PONG data 
+P-eOoRkVxW8PH3MBAAAS: Sending packet PING data None
+P-eOoRkVxW8PH3MBAAAS: Received packet PONG data 
+P7eeNexn1-DFeP_pAAAU: Sending packet PING data None
+P7eeNexn1-DFeP_pAAAU: Received packet PONG data 
+6JLp5Qe8E2qRbWMPAAAK: Received packet MESSAGE data 2["ping"]
+received event "ping" from oHKmbBH3U7wVuFs4AAAL [/]
+emitting event "pong" to oHKmbBH3U7wVuFs4AAAL [/]
+6JLp5Qe8E2qRbWMPAAAK: Sending packet MESSAGE data 2["pong",{"timestamp":"2025-08-15T12:32:11.535739"}]
+rnuyy7ZPh_9ZtF0UAAAA: Sending packet PING data None
+rnuyy7ZPh_9ZtF0UAAAA: Received packet PONG data 
+SnfNXxDAS14qKd0WAAAC: Sending packet PING data None
+SnfNXxDAS14qKd0WAAAC: Received packet PONG data 
+mvU5T3q8MOoBFbyMAAAE: Sending packet PING data None
+mvU5T3q8MOoBFbyMAAAE: Received packet PONG data 
+Hqyh6ihTMPS-4QEjAAAG: Sending packet PING data None
+Hqyh6ihTMPS-4QEjAAAG: Received packet PONG data 
+3__L8RUp9krbnVw3AAAI: Sending packet PING data None
+3__L8RUp9krbnVw3AAAI: Received packet PONG data 
+6JLp5Qe8E2qRbWMPAAAK: Sending packet PING data None
+6JLp5Qe8E2qRbWMPAAAK: Received packet PONG data 
+8BxFz1j97rgmZdtfAAAM: Sending packet PING data None
+8BxFz1j97rgmZdtfAAAM: Received packet PONG data 
+Awr94T9mehgVa4p1AAAO: Sending packet PING data None
+Awr94T9mehgVa4p1AAAO: Received packet PONG data 
+B6aW2V-5_jLubGjvAAAQ: Sending packet PING data None
+B6aW2V-5_jLubGjvAAAQ: Received packet PONG data 
+P-eOoRkVxW8PH3MBAAAS: Sending packet PING data None
+P-eOoRkVxW8PH3MBAAAS: Received packet PONG data 
+P7eeNexn1-DFeP_pAAAU: Sending packet PING data None
+P7eeNexn1-DFeP_pAAAU: Received packet PONG data 
+rnuyy7ZPh_9ZtF0UAAAA: Sending packet PING data None
+rnuyy7ZPh_9ZtF0UAAAA: Received packet PONG data 
+SnfNXxDAS14qKd0WAAAC: Sending packet PING data None
+SnfNXxDAS14qKd0WAAAC: Received packet PONG data 
+mvU5T3q8MOoBFbyMAAAE: Sending packet PING data None
+mvU5T3q8MOoBFbyMAAAE: Received packet PONG data 
+Hqyh6ihTMPS-4QEjAAAG: Sending packet PING data None
+Hqyh6ihTMPS-4QEjAAAG: Received packet PONG data 
+3__L8RUp9krbnVw3AAAI: Sending packet PING data None
+3__L8RUp9krbnVw3AAAI: Received packet PONG data 
+6JLp5Qe8E2qRbWMPAAAK: Sending packet PING data None
+6JLp5Qe8E2qRbWMPAAAK: Received packet PONG data 
+8BxFz1j97rgmZdtfAAAM: Sending packet PING data None
+8BxFz1j97rgmZdtfAAAM: Received packet PONG data 
+Awr94T9mehgVa4p1AAAO: Sending packet PING data None
+Awr94T9mehgVa4p1AAAO: Received packet PONG data 
+B6aW2V-5_jLubGjvAAAQ: Sending packet PING data None
+B6aW2V-5_jLubGjvAAAQ: Received packet PONG data 
+P-eOoRkVxW8PH3MBAAAS: Sending packet PING data None
+P-eOoRkVxW8PH3MBAAAS: Received packet PONG data 
+6JLp5Qe8E2qRbWMPAAAK: Received packet MESSAGE data 2["ping"]
+received event "ping" from oHKmbBH3U7wVuFs4AAAL [/]
+emitting event "pong" to oHKmbBH3U7wVuFs4AAAL [/]
+6JLp5Qe8E2qRbWMPAAAK: Sending packet MESSAGE data 2["pong",{"timestamp":"2025-08-15T12:32:41.537405"}]
+127.0.0.1 - - [15/Aug/2025 12:32:41] "GET /api/crypto/dashboard-summary HTTP/1.1" 200 -
+P7eeNexn1-DFeP_pAAAU: Sending packet PING data None
+P7eeNexn1-DFeP_pAAAU: Received packet PONG data 
+rnuyy7ZPh_9ZtF0UAAAA: Sending packet PING data None
+rnuyy7ZPh_9ZtF0UAAAA: Received packet PONG data 
+SnfNXxDAS14qKd0WAAAC: Sending packet PING data None
+SnfNXxDAS14qKd0WAAAC: Received packet PONG data 
+mvU5T3q8MOoBFbyMAAAE: Sending packet PING data None
+mvU5T3q8MOoBFbyMAAAE: Received packet PONG data 
+Hqyh6ihTMPS-4QEjAAAG: Sending packet PING data None
+Hqyh6ihTMPS-4QEjAAAG: Received packet PONG data 
+3__L8RUp9krbnVw3AAAI: Sending packet PING data None
+3__L8RUp9krbnVw3AAAI: Received packet PONG data 
+6JLp5Qe8E2qRbWMPAAAK: Sending packet PING data None
+6JLp5Qe8E2qRbWMPAAAK: Received packet PONG data 
+8BxFz1j97rgmZdtfAAAM: Sending packet PING data None
+8BxFz1j97rgmZdtfAAAM: Received packet PONG data 
+Awr94T9mehgVa4p1AAAO: Sending packet PING data None
+Awr94T9mehgVa4p1AAAO: Received packet PONG data 
+B6aW2V-5_jLubGjvAAAQ: Sending packet PING data None
+B6aW2V-5_jLubGjvAAAQ: Received packet PONG data 
+P-eOoRkVxW8PH3MBAAAS: Sending packet PING data None
+P-eOoRkVxW8PH3MBAAAS: Received packet PONG data 
