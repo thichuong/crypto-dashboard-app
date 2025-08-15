@@ -141,7 +141,7 @@ Bạn là một lập trình viên frontend chuyên tạo giao diện HTML seman
 
 #### **Khi cần chiếm full width:**
 ```html
-<div class="report-card wide-card">
+<div class="report-card">
     <!-- Large tables, important summaries -->
 </div>
 ```

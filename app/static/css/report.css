@@ -85,6 +85,23 @@
     transform: translateY(-2px);
 }
 
+#report-container .sub-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: var(--card-shadow);
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+#report-container .sub-card:hover {
+    box-shadow: var(--card-shadow-hover);
+    transform: translateY(-2px);
+}
+
 #report-container .wide-card {
     grid-column: 1 / -1;
     background-color: var(--card-bg);
@@ -106,8 +123,15 @@
     align-items: start;
 }
 
-#report-container .content-grid .report-card {
-    grid-column: 1 / -1; /* Span full width of content-grid */
+#report-container .content-grid .report-card,
+#report-container .content-grid .sub-card {
+    grid-column: span 1; /* Allow 2 cards per row */
+}
+
+/* If there's an odd card at the end, make it span full width */
+#report-container .content-grid .report-card:last-child:nth-child(odd),
+#report-container .content-grid .sub-card:last-child:nth-child(odd) {
+    grid-column: 1 / -1; /* Span full width if it's the last odd card */
 }
 
 #report-container .stat-grid {
@@ -176,6 +200,22 @@
     color: var(--text-secondary);
     margin-bottom: 1rem;
 }
+
+#report-container .impact-tag {
+    display: inline-block;
+    width: 90%;           /* primary width limit relative to its container */
+    max-width: 90%;       /* ensure it doesn't exceed container */
+    overflow: hidden;     /* hide overflowed content */
+    text-overflow: ellipsis; /* show ellipsis for overflow */
+    white-space: nowrap;  /* keep on single line */
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-light);
+    border-radius: 0.5rem;
+}
+
 
 #report-container .analysis-text {
     margin-top: 1rem;
@@ -396,8 +436,9 @@
     #report-container h2 {
         font-size: 1.25rem;
     }
-    #report-container .wide-card
-    #report-container .report-card {
+    #report-container .wide-card,
+    #report-container .report-card,
+    #report-container .sub-card {
         padding: 0.75rem !important;
     }
     #report-container section {
@@ -480,6 +521,7 @@
 /* Reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
     .report-card,
+    .sub-card,
     .stats-card,
     .chart-container * {
         transition: none !important;
