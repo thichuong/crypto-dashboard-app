@@ -255,4 +255,23 @@ header p {
     box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
 }
 
+/* --- Disclaimer styling (specific ID to avoid collisions) --- */
+#disclaimer p {
+    font-size: 0.95rem; /* slightly larger for readability */
+    color: var(--text-secondary);
+}
+
+#disclaimer strong[data-i18n="disclaimer-title"] {
+    display: inline-block;
+    margin-right: 0.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+@media (max-width: 640px) {
+    #disclaimer p { font-size: 0.9rem; }
+    #disclaimer strong[data-i18n="disclaimer-title"] { font-size: 0.95rem; }
+}
+
 

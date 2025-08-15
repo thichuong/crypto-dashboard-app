@@ -430,54 +430,53 @@ async function CreateNav() {
         const navLinks = navLinksContainer.querySelectorAll('a');
 
         // Quan sát các section để tự động active nav link khi scroll
-        const observer = new IntersectionObserver((entries) => {
-            // Tìm section có 20% đầu nằm trong vùng 0-20% viewport
-            let bestEntry = null;
-            let bestScore = -1;
-            
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const rect = entry.target.getBoundingClientRect();
-                    const viewportHeight = window.innerHeight;
-                    
-                    // Tính vùng 0-20% đầu của section
-                    const sectionTop = rect.top;
-                    if (rect.height * 0.2 <= viewportHeight * 0.2)
-                        {const section20Percent = rect.top + (rect.height * 0.2);}
-                    else
-                        {const section20Percent = rect.top + viewportHeight * 0.2;}
-                    
-                    // Tính vùng 0-20% của viewport
-                    const viewport20Percent = viewportHeight * 0.2;
-                    
-                    // Kiểm tra 2 vùng có chạm nhau không:
-                    // - sectionTop nằm trong vùng 0-20% viewport HOẶC
-                    // - section20Percent nằm trong vùng 0-20% viewport
-                    if ((sectionTop >= 0 && sectionTop <= viewport20Percent) || 
-                        (section20Percent <= viewport20Percent && section20Percent >= 0)) {
-                        // Tính điểm ưu tiên: section càng gần top càng cao điểm
-                        const score = viewport20Percent - sectionTop;
-                        
-                        if (score > bestScore) {
-                            bestScore = score;
-                            bestEntry = entry;
-                        }
+        const observer = new IntersectionObserver(() => {
+            // More deterministic selection:
+            // Choose the section whose top is the closest to the anchor line (20% from top)
+            // Preference: sections with top <= anchor (the one closest below the anchor). If none, pick the nearest section below the anchor.
+            const viewportHeight = window.innerHeight;
+            const anchor = viewportHeight * 0.2; // 20% from top
+
+            let bestSection = null;
+            let bestTop = -Infinity; // for tops <= anchor we want the maximum (closest to anchor from above)
+
+            // First pass: find section top <= anchor and still at least partially visible
+            reportSections.forEach(section => {
+                const rect = section.getBoundingClientRect();
+                // ignore sections that are completely scrolled past
+                if (rect.bottom <= 0 || rect.top >= viewportHeight) return;
+                if (rect.top <= anchor) {
+                    if (rect.top > bestTop) {
+                        bestTop = rect.top;
+                        bestSection = section;
                     }
                 }
             });
-            
-            // Cập nhật nav link cho section tốt nhất
-            if (bestEntry) {
-                const targetId = bestEntry.target.id;
+
+            // Second pass: if none found, pick the section whose top is the smallest positive distance below anchor
+            if (!bestSection) {
+                let minBelow = Infinity;
+                reportSections.forEach(section => {
+                    const rect = section.getBoundingClientRect();
+                    if (rect.bottom <= 0 || rect.top >= viewportHeight) return;
+                    if (rect.top > anchor && rect.top < minBelow) {
+                        minBelow = rect.top;
+                        bestSection = section;
+                    }
+                });
+            }
+
+            if (bestSection) {
+                const targetId = bestSection.id;
                 navLinks.forEach(link => {
                     const isTarget = link.getAttribute('href').substring(1) === targetId;
                     link.classList.toggle('active', isTarget);
                 });
             }
-        }, { 
-            root: null, 
-            rootMargin: "0px", 
-            threshold: [0, 0.1, 0.2, 0.3, 0.5, 1.0] 
+        }, {
+            root: null,
+            rootMargin: "0px",
+            threshold: [0, 0.1, 0.25, 0.5, 1.0]
         });
 
         // Quan sát tất cả sections

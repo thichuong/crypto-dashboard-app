@@ -84,36 +84,49 @@ License: MIT
 ### LangGraph V2 Pipeline (component-based)
 
 **Pipeline các bước:**
-`prepare_data` → `research_deep` → `validate_report` → `generate_report_content` → `create_html` → `create_javascript` → `create_css` → `save_database`
+`prepare_data` → `research_deep` → `validate_report` → `generate_report_content` → `create_html` → `create_javascript` → `create_css` → `translate_content` → `save_database`
 
 **Chi tiết các bước:**
-- **prepare_data**: Chuẩn bị dữ liệu đầu vào, session, API key
-- **research_deep**: Nghiên cứu chuyên sâu, retry tối đa 3 lần nếu lỗi
-- **validate_report**: Kiểm tra chất lượng báo cáo, routing thông minh (retry hoặc tiếp tục)
+- **prepare_data**: Chuẩn bị dữ liệu đầu vào, session và `api_key`
+- **research_deep**: Nghiên cứu chuyên sâu (thực thi với retry routing khi cần)
+- **validate_report**: Kiểm tra chất lượng báo cáo; bước này có routing thông minh có thể dẫn về `research_deep` để retry, tiếp tục sang `generate_report_content`, hoặc kết thúc workflow
 - **generate_report_content**: Sinh nội dung báo cáo (text)
-- **create_html**: Tạo giao diện HTML, retry tối đa 3 lần nếu lỗi
-- **create_javascript**: Sinh mã JavaScript cho dashboard, retry tối đa 3 lần nếu lỗi
-- **create_css**: Sinh CSS cho giao diện, retry tối đa 3 lần nếu lỗi
-- **save_database**: Lưu kết quả vào database
+- **create_html**: Tạo HTML cho báo cáo; có conditional retry riêng (tăng `html_attempt` mỗi lần)
+- **create_javascript**: Sinh mã JavaScript cho dashboard; có conditional retry riêng (tăng `js_attempt` mỗi lần)
+- **create_css**: Sinh CSS cho giao diện; có conditional retry riêng (tăng `css_attempt` mỗi lần)
+- **translate_content**: (tùy chọn) Dịch/nối nội dung trước khi lưu
+- **save_database**: Lưu kết quả cuối cùng vào database
 
-**Logic retry thông minh:**
-- Mỗi bước giao diện (HTML, JS, CSS) đều có retry riêng biệt (tối đa 3 lần)
-- Nếu vượt quá số lần retry, workflow sẽ kết thúc với trạng thái lỗi
-- Metadata trả về gồm số lần thử cho từng bước, trạng thái validation, thời gian thực thi, session_id
+**Logic retry & routing:**
+- `validate_report` có thể trả về một trong: `retry` → quay lại `research_deep`, `continue` → sang `generate_report_content`, hoặc `end` → kết thúc workflow
+- Các bước giao diện (`create_html`, `create_javascript`, `create_css`) có conditional edges riêng: `retry_html`/`retry_js`/`retry_css` để lặp lại bước tương ứng, `continue` để chuyển bước, hoặc `end` để dừng workflow
+- `max_attempts` (mặc định 3) được truyền vào workflow; các bước interface tăng các counters `html_attempt`, `js_attempt`, `css_attempt` trong trạng thái
+- Nếu vượt quá số lần retry cho một bước, workflow có thể kết thúc với trạng thái lỗi
 
 **Progress tracking:**
-- Theo dõi tiến trình từng bước qua session_id
-- Cập nhật trạng thái, lỗi và thời gian thực thi
+- Workflow V2 dùng `progress_tracker` và bắt đầu với `total_steps=10` (một tiến trình theo `session_id`)
+- `session_id` được tạo tự động nếu không cung cấp; tiến trình được cập nhật (ví dụ: step 0 = initializing)
 
-**Kết quả trả về:**
-- `success`, `session_id`, `report_id`, `html_content`, `css_content`, `js_content`, `research_content`, `error_messages`, `execution_time`, `validation_result`, số lần thử cho từng bước
+**Return shape / metadata:**
+Workflow luôn trả về một dict có các khóa dự đoán được, bao gồm:
+- `success` (bool)
+- `session_id` (str)
+- `report_id` (str | None)
+- `html_content`, `css_content`, `js_content`, `research_content` (str)
+- `error_messages` (list[str])
+- `execution_time` (float, giây)
+- `validation_result` (str)
+- `html_attempt`, `js_attempt`, `css_attempt` (int) — số lần thử cho từng bước giao diện
+
+**Fallback / local dev behaviour:**
+- Nếu `langgraph` không có sẵn, workflow sử dụng một stub implementation hữu dụng cho development và test; stub đảm bảo trả về các khóa trên (ví dụ `report_id`, `html_content`, `research_content`) để caller có thể xử lý đồng nhất
+
+**Backward compatibility / wrappers:**
+- Có các wrapper để duy trì tương thích với API cũ: `create_report_workflow()` (legacy factory) và `generate_auto_research_report_langgraph()` là alias cho `generate_auto_research_report_langgraph_v2()`
 
 **Tích hợp:**
-- Google Gemini API cho AI research
-- Cache và inject data từ nhiều nguồn API
-
-**Backward compatibility:**
-- Vẫn hỗ trợ workflow cũ qua các hàm wrapper
+- Google Gemini API vẫn được sử dụng cho research step khi cấu hình API key
+- Cache và injection dữ liệu từ nhiều nguồn API tiếp tục được hỗ trợ
 
 ## 🛠️ Tech Stack
 

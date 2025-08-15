@@ -92,7 +92,7 @@ Bạn là JavaScript developer tạo biểu đồ cho báo cáo crypto.
 ```javascript
 // initializeAllVisuals_report phải kiểm tra ngôn ngữ khi được gọi
 // và truyền ngôn ngữ đó cho các hàm khởi tạo biểu đồ con.
-function initializeAllVisuals_report(language = undefined) {
+function initializeAllVisuals_report() {
   const lang = language || window.languageManager?.currentLanguage || 'vi';
   // Gọi tất cả biểu đồ ở đây, truyền lang xuống các hàm con
   initializeFearGreedGauge_report(lang);
@@ -221,16 +221,28 @@ function initializeFearGreedGauge_report(language) {
 - `volume-bar-chart-container` → `initializeVolumeBar_report()`
 
 ### **4. Ví dụ BTC Dominance với Data từ Comment (ngôn ngữ-aware):**
+```html
+<!-- CHART_DATA: {
+  "type": "doughnut", 
+  "data": [
+    {"value": 52.5, "color": "var(--bitcoin-color)", "label": "Bitcoin"},
+    {"value": 47.5, "color": "var(--ethereum-color)", "label": "Altcoins"}
+  ],
+  "config": {
+    "title": "BTC.D",
+    "showLegend": true,
+    "outerRadius": 80,
+    "innerRadius": 50
+  }
+} -->
+<div id="btc-dominance-doughnut-container" class="chart-container"></div>
+```
 ```javascript
 function initializeBTCDominance_report(language) {
     const lang = language;
     const id = lang === 'en' ? 'btc-dominance-doughnut-container-en' : 'btc-dominance-doughnut-container';
     const container = document.getElementById(id);
     if (!container) return;
-    
-    // Đọc data từ comment HTML thay vì hardcode
-    // Comment: <!-- CHART_DATA: {"type": "doughnut", "data": [...], "config": {...}} -->
-    
     const data = [
         {value: 52.5, color: 'var(--bitcoin-color)', label: lang === 'en' ? 'Bitcoin' : 'Bitcoin'},
         {value: 47.5, color: 'var(--ethereum-color)', label: lang === 'en' ? 'Altcoins' : 'Altcoins'}
@@ -255,6 +267,72 @@ function initializeBTCDominance_report(language) {
     const cfg = lang === 'en' ? config_en : config;
     createDoughnutChart(container, data, cfg);
 }
+```
+### **5. Ví dụ Price Line + Volume Bar (đọc từ CHART_DATA comment, ngôn ngữ-aware):**
+```html
+<!-- CHART_DATA: {
+  "type": "line",
+  "data": [67000, 68500, 67800, 69200, 70100, 68900, 71500],
+  "options": {
+    "color": "var(--accent-color)",
+    "valuePrefix": "$",
+    "valueSuffix": ""
+  }
+} -->
+<div id="price-line-chart-container" class="chart-container"></div>
+
+<!-- CHART_DATA: {
+  "type": "bar",
+  "data": [
+    {"value": 28.5, "label": "BTC", "color": "var(--bitcoin-color)"},
+    {"value": 15.2, "label": "ETH", "color": "var(--ethereum-color)"},
+    {"value": 8.7, "label": "BNB", "color": "var(--secondary-color)"}
+  ],
+  "options": {
+    "valuePrefix": "$",
+    "valueSuffix": "B",
+    "yAxisLabel": "Volume (Tỷ USD)"
+  }
+} -->
+<div id="volume-bar-chart-container" class="chart-container"></div>
+```
+```javascript
+function initializeBTCPriceLine_report(language) {
+  const lang = language || window.languageManager?.currentLanguage || 'vi';
+  const id = lang === 'en' ? 'price-line-chart-container-en' : 'price-line-chart-container';
+  const container = document.getElementById(id);
+  if (!container) return;
+
+  // Example parsed data from CHART_DATA comment
+  const data = [67000, 68500, 67800, 69200, 70100, 68900, 71500];
+
+  const config = { color: 'var(--accent-color)', valuePrefix: '$', valueSuffix: '' };
+  const config_en = { color: 'var(--accent-color)', valuePrefix: '$', valueSuffix: '' };
+
+  const cfg = lang === 'en' ? config_en : config;
+  createLineChart(container, data, cfg);
+}
+
+function initializeVolumeBar_report(language) {
+  const lang = language || window.languageManager?.currentLanguage || 'vi';
+  const id = lang === 'en' ? 'volume-bar-chart-container-en' : 'volume-bar-chart-container';
+  const container = document.getElementById(id);
+  if (!container) return;
+
+  // Example parsed data from CHART_DATA comment
+  const data = [
+    { value: 28.5, label: lang === 'en' ? 'BTC' : 'BTC', color: 'var(--bitcoin-color)' },
+    { value: 15.2, label: lang === 'en' ? 'ETH' : 'ETH', color: 'var(--ethereum-color)' },
+    { value: 8.7, label: lang === 'en' ? 'BNB' : 'BNB', color: 'var(--secondary-color)' }
+  ];
+
+  const config = { valuePrefix: '$', valueSuffix: 'B', yAxisLabel: 'Volume (Tỷ USD)' };
+  const config_en = { valuePrefix: '$', valueSuffix: 'B', yAxisLabel: 'Volume (Billion USD)' };
+
+  const cfg = lang === 'en' ? config_en : config;
+  createBarChart(container, data, cfg);
+}
+```
 ```
 
 ## QUY TẮC QUAN TRỌNG:
