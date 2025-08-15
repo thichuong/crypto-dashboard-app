@@ -55,7 +55,61 @@ def register_api_routes(app):
 
     @app.route('/api/health')
     def api_health_check():
-        """API endpoint để kiểm tra database health"""
+        """API endpoint để kiểm tra database health - graceful degradation for Railway"""
+        try:
+            # Try simple connection check but don't fail if it doesn't work
+            try:
+                connection_check = DatabaseHealthChecker.simple_connection_check()
+                
+                if connection_check.get('healthy', False):
+                    return jsonify({
+                        'status': 'healthy',
+                        'timestamp': time.time(),
+                        'connection': {
+                            'healthy': True,
+                            'response_time': connection_check.get('response_time')
+                        }
+                    }), 200
+                else:
+                    # Database connection failed but app is still running
+                    return jsonify({
+                        'status': 'degraded',
+                        'timestamp': time.time(),
+                        'app': 'running',
+                        'database': 'unavailable',
+                        'error': connection_check.get('error')
+                    }), 200  # Return 200 so Railway doesn't restart the app
+                    
+            except Exception as db_error:
+                # Database check failed completely but app is still running
+                return jsonify({
+                    'status': 'degraded',
+                    'timestamp': time.time(),
+                    'app': 'running',
+                    'database': 'error',
+                    'error': str(db_error)
+                }), 200  # Return 200 so Railway doesn't restart the app
+                
+        except Exception as e:
+            # Complete app failure
+            return jsonify({
+                'status': 'error',
+                'error': str(e),
+                'timestamp': time.time()
+            }), 500
+
+    @app.route('/api/health/basic')
+    def api_basic_health():
+        """Very basic health check - just app availability"""
+        return jsonify({
+            'status': 'healthy',
+            'timestamp': time.time(),
+            'app': 'running'
+        }), 200
+
+    @app.route('/api/health/detailed')
+    def api_detailed_health_check():
+        """Detailed health check with full diagnostics"""
         try:
             health_data = DatabaseHealthChecker.full_health_check()
             

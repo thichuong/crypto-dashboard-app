@@ -6,7 +6,7 @@
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 3,
     "healthcheckPath": "/api/health",
-    "healthcheckTimeout": 30,
+    "healthcheckTimeout": 60,
   "startCommand": "gunicorn --bind 0.0.0.0:$PORT --workers 2 --threads 2 --timeout 300 --keep-alive 5 --max-requests 1000 --max-requests-jitter 100 --preload run:app",
   "postDeploy": "python tools/migrate_db.py"
   },

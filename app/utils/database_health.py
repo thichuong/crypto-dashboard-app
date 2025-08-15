@@ -12,6 +12,41 @@ class DatabaseHealthChecker:
     """Utility class để monitor database health và connection"""
     
     @staticmethod
+    def simple_connection_check() -> dict:
+        """
+        Simple database connection check for Railway health endpoint
+        
+        Returns:
+            dict: {
+                'healthy': bool,
+                'response_time': float,
+                'error': str | None
+            }
+        """
+        start_time = time.time()
+        result = {
+            'healthy': False,
+            'response_time': 0.0,
+            'error': None
+        }
+        
+        try:
+            # Test basic connection with minimal query
+            with db.engine.connect() as conn:
+                result_proxy = conn.execute(db.text("SELECT 1"))
+                test_result = result_proxy.fetchone()
+                
+                if test_result and test_result[0] == 1:
+                    result['healthy'] = True
+                    
+        except Exception as e:
+            result['error'] = str(e)
+            result['healthy'] = False
+            
+        result['response_time'] = time.time() - start_time
+        return result
+    
+    @staticmethod
     def check_connection(timeout: int = 10) -> dict:
         """
         Kiểm tra kết nối database với timeout
