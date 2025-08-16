@@ -2,7 +2,7 @@
 
 import os
 from datetime import timezone
-from flask import render_template, request, flash, jsonify
+from flask import render_template, request, flash, jsonify, send_from_directory, abort
 from ..extensions import db
 from ..models import Report
 
@@ -127,3 +127,18 @@ def register_main_routes(app):
         # Log successful access
         app.logger.info('Authorized access to auto-update-system')
         return render_template('auto_update.html')
+
+    @app.route('/chart-tester')
+    def chart_tester():
+        """
+        Serve the tests/chart_tester.html file from the repository root tests/ folder.
+        """
+        # project root is one level above the `app` package
+        project_root = os.path.abspath(os.path.join(app.root_path, '..'))
+        tests_dir = os.path.join(project_root, 'tests')
+        filename = 'chart_tester.html'
+        filepath = os.path.join(tests_dir, filename)
+        if not os.path.exists(filepath):
+            app.logger.warning(f'chart_tester not found at {filepath}')
+            return abort(404)
+        return send_from_directory(tests_dir, filename)

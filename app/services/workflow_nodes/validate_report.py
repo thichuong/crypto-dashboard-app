@@ -11,7 +11,8 @@ def validate_report_node(state: ReportState) -> ReportState:
     session_id = state["session_id"]
     progress_tracker.update_step(session_id, 3, "Parse validation result", "Kiểm tra kết quả validation từ combined response")
     
-    if not state["research_content"]:
+    # research_content may be absent if previous nodes failed; handle safely
+    if not state.get("research_content"):
         state["validation_result"] = "UNKNOWN"
         progress_tracker.update_step(session_id, details="Không có research content để parse validation")
         state["success"] = False
@@ -94,7 +95,8 @@ def validate_report_node(state: ReportState) -> ReportState:
                     return state
         
     except Exception as e:
-        error_msg = f"Lần thử {state['current_attempt']}: Lỗi khi parse validation result: {e}"
+        # current_attempt may not exist in some failure scenarios
+        error_msg = f"Lần thử {state.get('current_attempt', 'unknown')}: Lỗi khi parse validation result: {e}"
         state["error_messages"].append(error_msg)
         state["validation_result"] = "UNKNOWN"
         state["success"] = False
