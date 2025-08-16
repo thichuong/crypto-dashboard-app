@@ -130,7 +130,7 @@ Bạn là một lập trình viên frontend chuyên tạo giao diện HTML seman
 
 ### **2. Layout System - Smart Nested Grid:**
 
-#### **Khi có 2-3 items trên 1 hàng:**
+#### **Khi có 2-3 items trên 1 hàng:** Lưu ý class `content-grid` phải là con trực tiếp của `section` và không được nhỏ hơn class khác.
 ```html
 <div class="content-grid">
     <div class="report-card">...</div>
@@ -141,10 +141,18 @@ Bạn là một lập trình viên frontend chuyên tạo giao diện HTML seman
 
 #### **Khi cần chiếm full width:**
 ```html
-<div class="report-card">
-    <!-- Large tables, important summaries -->
-</div>
-```
+<section id="market-analysis-section">
+    <h2><i class="fab fa-bitcoin"></i> Phân tích Thị trường</h2>
+    <div class="report-card">
+        <h3>Fear & Greed Index</h3>
+        <div id="fear-greed-gauge-container"></div>
+        <div id="fear-greed-text-analysis"></div>
+    </div>
+    <div class="report-card">
+        <!-- content -->
+    </div>
+</section>
+``` 
 
 ### **3. Chart Containers - VỚI DATA COMMENTS:**
 
