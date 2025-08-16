@@ -9,7 +9,7 @@ app = create_app()
 if __name__ == '__main__':
     # Railway configuration
     host = os.environ.get('HOST', '0.0.0.0')
-    port = int(os.environ.get('PORT', 8000))
+    port = int(os.environ.get('PORT', 8080))
     
     # Enable debug mode only for local development
     debug_mode = os.environ.get('RAILWAY_ENVIRONMENT') != 'production'
