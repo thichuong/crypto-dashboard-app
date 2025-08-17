@@ -5,7 +5,7 @@ from flask import Flask
 
 # Import các phần mở rộng và model
 from .extensions import db
-from .models import Report
+from .models import CryptoReport as Report
 
 # Import các blueprints và services khác
 from .utils.cache import cache

@@ -5,7 +5,7 @@ import time
 import psycopg2
 from sqlalchemy.exc import OperationalError
 from ..extensions import db
-from ..models import Report
+from ..models import CryptoReport as Report
 
 
 class DatabaseHealthChecker:

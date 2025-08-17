@@ -4,7 +4,7 @@ import os
 import threading
 import time
 from flask import jsonify
-from ..models import Report
+from ..models import CryptoReport as Report
 from ..services.progress_tracker import progress_tracker
 from ..utils.database_health import DatabaseHealthChecker
 

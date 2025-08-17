@@ -1,10 +1,10 @@
-Convert `report.created_at` to timestamptz
+Convert `crypto_report.created_at` to timestamptz
 ======================================
 
 What this does
 ---------------
 The SQL script `convert_created_at_to_timestamptz.sql` converts the `created_at`
-column on the `report` table from `timestamp without time zone` to
+column on the `crypto_report` table from `timestamp without time zone` to
 `timestamp with time zone` (Postgres: `timestamptz`). The script treats existing
 values as UTC.
 
@@ -34,8 +34,8 @@ Example snippet for an Alembic revision (inside `upgrade()`):
 from alembic import op
 
 op.execute("""
-ALTER TABLE report ALTER COLUMN created_at TYPE timestamptz USING created_at AT TIME ZONE 'UTC';
-ALTER TABLE report ALTER COLUMN created_at SET DEFAULT now();
+ALTER TABLE crypto_report ALTER COLUMN created_at TYPE timestamptz USING created_at AT TIME ZONE 'UTC';
+ALTER TABLE crypto_report ALTER COLUMN created_at SET DEFAULT now();
 """)
 ```
 

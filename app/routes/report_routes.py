@@ -5,7 +5,7 @@ import uuid
 import threading
 from flask import request, jsonify
 from ..extensions import db
-from ..models import Report
+from ..models import CryptoReport as Report
 from ..services.report_generator import create_report_from_content
 from ..services.progress_tracker import progress_tracker
 

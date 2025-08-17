@@ -3,10 +3,13 @@
 from .extensions import db
 from datetime import datetime, timezone
 
-class Report(db.Model):
+class CryptoReport(db.Model):
     """
     Model để lưu trữ nội dung báo cáo được tạo ra bởi AI.
+    Renamed from `Report` to `CryptoReport` but keep the original
+    table name (`report`) via __tablename__ to avoid migrating DB tables.
     """
+    __tablename__ = 'crypto_report'
     id = db.Column(db.Integer, primary_key=True)
     html_content = db.Column(db.Text, nullable=False)
     css_content = db.Column(db.Text, nullable=True)
@@ -17,4 +20,4 @@ class Report(db.Model):
     created_at = db.Column(db.DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
 
     def __repr__(self):
-        return f'<Report {self.id}>'
+        return f'<CryptoReport {self.id}>'

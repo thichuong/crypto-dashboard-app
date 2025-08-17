@@ -24,7 +24,7 @@ def add_translation_columns():
             result = db.session.execute(text("""
                 SELECT column_name 
                 FROM information_schema.columns 
-                WHERE table_name='report' AND column_name IN ('html_content_en', 'js_content_en')
+                WHERE table_name='crypto_report' AND column_name IN ('html_content_en', 'js_content_en')
             """))
             
             existing_columns = [row[0] for row in result.fetchall()]
@@ -33,7 +33,7 @@ def add_translation_columns():
             if 'html_content_en' not in existing_columns:
                 print("Thêm cột html_content_en...")
                 db.session.execute(text("""
-                    ALTER TABLE report ADD COLUMN html_content_en TEXT
+                    ALTER TABLE crypto_report ADD COLUMN html_content_en TEXT
                 """))
                 print("✓ Đã thêm cột html_content_en")
             else:
@@ -43,7 +43,7 @@ def add_translation_columns():
             if 'js_content_en' not in existing_columns:
                 print("Thêm cột js_content_en...")
                 db.session.execute(text("""
-                    ALTER TABLE report ADD COLUMN js_content_en TEXT
+                    ALTER TABLE crypto_report ADD COLUMN js_content_en TEXT
                 """))
                 print("✓ Đã thêm cột js_content_en")
             else:

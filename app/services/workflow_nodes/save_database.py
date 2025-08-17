@@ -4,7 +4,7 @@ Node lưu báo cáo vào database
 from .base import ReportState
 from ...services.progress_tracker import progress_tracker
 from ...extensions import db
-from ...models import Report
+from ...models import CryptoReport as Report
 
 
 """
@@ -16,7 +16,7 @@ from sqlalchemy.exc import OperationalError
 from .base import ReportState
 from ...services.progress_tracker import progress_tracker
 from ...extensions import db
-from ...models import Report
+from ...models import CryptoReport as Report
 
 
 def _save_to_database_with_retry(state: ReportState, session_id: str, max_retries: int = 3) -> ReportState:

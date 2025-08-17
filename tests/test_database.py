@@ -14,7 +14,7 @@ sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 from flask import Flask
 from app.extensions import db
-from app.models import Report
+from app.models import CryptoReport as Report
 
 
 def test_database_report_model():

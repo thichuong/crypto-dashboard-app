@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from google import genai
 from google.genai import types
 from ..extensions import db
-from ..models import Report
+from ..models import CryptoReport as Report
 from .report_workflow_v2 import generate_auto_research_report_langgraph_v2
 
 

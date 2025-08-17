@@ -4,7 +4,7 @@ import os
 from datetime import timezone
 from flask import render_template, request, flash, jsonify, send_from_directory, abort
 from ..extensions import db
-from ..models import Report
+from ..models import CryptoReport as Report
 
 
 def register_main_routes(app):

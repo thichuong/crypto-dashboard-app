@@ -110,7 +110,7 @@ def test_database_connection():
             # Test tables if connection works
             print("\n📋 Checking database tables...")
             try:
-                from app.models import Report
+                from app.models import CryptoReport as Report
                 
                 # Check if Report table exists and get count
                 report_count = Report.query.count()
@@ -120,12 +120,20 @@ def test_database_connection():
                 inspector = db.inspect(db.engine)
                 tables = inspector.get_table_names()
                 print(f"🗃️  Tables found: {', '.join(tables)}")
-                
-                if 'report' in tables:
-                    columns = inspector.get_columns('report')
+
+                # Prefer checking the new name 'crypto_report' but fall back to the old
+                # 'report' table if the database hasn't been migrated yet.
+                table_to_check = None
+                if 'crypto_report' in tables:
+                    table_to_check = 'crypto_report'
+                elif 'report' in tables:
+                    table_to_check = 'report'
+
+                if table_to_check:
+                    columns = inspector.get_columns(table_to_check)
                     column_names = [col['name'] for col in columns]
-                    print(f"📝 Report table columns: {', '.join(column_names)}")
-                    
+                    print(f"📝 {table_to_check} table columns: {', '.join(column_names)}")
+
                     # Check for translation columns
                     if 'html_content_en' in column_names:
                         print("✅ Translation columns found")

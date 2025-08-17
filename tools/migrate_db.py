@@ -8,7 +8,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from app import create_app
 from app.extensions import db
-from app.models import Report
+from app.models import CryptoReport as Report
 
 
 def setup_database():
@@ -28,7 +28,7 @@ def setup_database():
 
     from app import create_app
     from app.extensions import db
-    from app.models import Report
+    from app.models import CryptoReport as Report
 
 
     def setup_database():
