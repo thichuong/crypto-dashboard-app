@@ -146,6 +146,40 @@ function initializeFearGreedGauge_report(language) {
 
 ### **3. Chart Containers - ĐỒNG BỘ ID:**
 
+"KHÔNG TẠO HELPER" — TUYỆT ĐỐI không tự tạo các hàm tiện ích như `getChartDataFromComment` (hoặc tương tự). Việc đọc CHART_DATA phải thực hiện "inline" bên trong từng hàm `initialize*_report` hoặc (nếu môi trường đã cung cấp sẵn) chỉ được GỌI `window.getChartDataFromComment` mà không định nghĩa lại.
+
+- Inline bắt buộc: parse comment ngay trước container trong chính hàm khởi tạo của chart.
+- Hỗ trợ ngôn ngữ: chọn ID có hậu tố `-en` khi `language === 'en'`.
+
+Mẫu triển khai inline (rút gọn, KHÔNG tạo helper):
+
+```javascript
+function initializeSomeChart_report(language) {
+  const lang = language || window.languageManager?.currentLanguage || 'vi';
+  const id = lang === 'en' ? 'some-chart-container-en' : 'some-chart-container';
+  const container = document.getElementById(id);
+  if (!container) return;
+
+  // Đọc CHART_DATA từ comment ngay trước container (inline, không helper)
+  let prev = container.previousSibling;
+  while (prev && prev.nodeType === Node.TEXT_NODE && prev.nodeValue.trim() === '') {
+    prev = prev.previousSibling;
+  }
+  let chartData = null;
+  if (prev && prev.nodeType === Node.COMMENT_NODE) {
+    const txt = prev.nodeValue.trim();
+    if (txt.startsWith('CHART_DATA:')) {
+      const jsonStr = txt.replace(/^CHART_DATA:\s*/, '');
+      try { chartData = JSON.parse(jsonStr); } catch (_) { /* ignore parse errors */ }
+    }
+  }
+  if (!chartData) return;
+
+  // Gọi hàm vẽ tương ứng từ chart.js với dữ liệu từ comment
+  // Ví dụ: if (chartData.type === 'line') createLineChart(container, chartData.data, chartData.options || {});
+}
+```
+
 **QUAN TRỌNG**: Trong HTML sẽ có các chart containers với comment đầu vào làm dữ liệu cho chart. Bạn phải đọc comment này để lấy data thay vì dùng toàn bộ nội dung research.
 
 #### **Cấu trúc HTML Container:**
@@ -348,9 +382,10 @@ function initializeVolumeBar_report(language) {
 ### **❌ KHÔNG ĐƯỢC:**
 - Viết lại logic vẽ biểu đồ
 - Thay đổi function signatures
-- Hardcode màu sắc hoặc data values
+- Hardcode màu sắc
 - Gây lỗi console
 - **Bỏ qua chart data từ HTML comments**
+- Tạo helper parse dữ liệu như `getChartDataFromComment` (phải parse inline trong hàm khởi tạo, hoặc chỉ gọi hàm có sẵn nếu môi trường cung cấp)
 
 ### **📱 RESPONSIVE:**
 - Biểu đồ tự động resize theo màn hình
