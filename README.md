@@ -45,7 +45,7 @@ Thư mục quan trọng:
 Góp phần:
 - Mọi đóng góp, báo lỗi, đề xuất tính năng: mở Issue trên GitHub.
 
-License: MIT
+License: Apache 2.0
 # 📊 Crypto Dashboard & AI Report Generator
 
 Ứng dụng Flask hiện đại với **WebSocket real-time updates** và **Progressive Web App (PWA)** hỗ trợ, cung cấp dashboard thị trường crypto và AI report generator sử dụng LangGraph workflow.
@@ -259,8 +259,8 @@ crypto-dashboard-app/
 ## � Support & Contact
 
 **🔗 Demo**: [Live Application](https://ai-crypto-reports.up.railway.app/)  
-**� Issues**: [GitHub Issues](https://github.com/thichuong/crypto-dashboard-app/issues)  
-**� License**: MIT License
+**📝 Issues**: [GitHub Issues](https://github.com/thichuong/crypto-dashboard-app/issues)  
+**📄 License**: Apache 2.0 License
 
 **⭐ Nếu project này hữu ích, hãy star repo để support development!**
 
@@ -375,4 +375,4 @@ git checkout -b feature/your-feature-name
 **📧 Email**: thichuong@example.com  
 **🔗 Demo**: [Live Application](https://ai-crypto-reports.up.railway.app/)
 
-**📄 License**: MIT License - see LICENSE file for details
+**📄 License**: Apache 2.0 License - see LICENSE file for details
